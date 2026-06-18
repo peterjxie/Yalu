@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Yalu 1894" />
-<title>Yalu 1894 — Naval Action</title>
+<title>Yalu 1894 · Naval Action</title>
 <style>
 :root{
   --sea-deep:#0b252c; --sea-mid:#0f3540; --panel:#0d2a31; --panel-edge:#1c4651;
@@ -46,16 +46,13 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 #chartWrap{flex:1 1 auto;position:relative;min-width:0;touch-action:none;}
 #chart{display:block;width:100%;height:100%;cursor:crosshair;touch-action:none;-webkit-user-select:none;user-select:none;overscroll-behavior:none;-webkit-touch-callout:none;}
 
-/* ---- command panel: translucent glass, hidden until a ship is selected ---- */
-#panel{position:absolute;top:0;right:0;bottom:0;width:340px;z-index:8;
-  background:rgba(9,28,34,0.76);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  border-left:1px solid rgba(200,164,92,0.22);display:flex;flex-direction:column;min-height:0;
-  transform:translateX(102%);opacity:0;transition:transform .26s ease,opacity .22s ease;
-  box-shadow:-10px 0 34px rgba(0,0,0,0.42);pointer-events:none;}
-#panel.expanded{transform:translateX(0);opacity:1;pointer-events:auto;}
+/* ---- ship panel: docked, compact (~1/4), the map reflows around it ---- */
+#panel{display:none;flex:0 0 clamp(290px,25vw,360px);background:var(--panel);
+  border-left:1px solid var(--panel-edge);flex-direction:column;min-height:0;min-width:0;}
+#panel.expanded{display:flex;}
 .panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
   color:var(--brass-dim);padding:10px 14px 6px;border-bottom:1px solid #143b44;}
-#panelBody{overflow-y:auto;padding:12px 14px 16px;flex:1 1 auto;-webkit-overflow-scrolling:touch;}
+#panelBody{overflow-y:auto;overflow-x:hidden;padding:12px 14px 16px;flex:1 1 auto;-webkit-overflow-scrolling:touch;}
 .panel-hint p{font-size:13px;line-height:1.5;color:var(--ink-dim);margin:0 0 10px;}
 .panel-hint ul{margin:0 0 12px;padding-left:18px;}
 .panel-hint li{font-size:12.5px;line-height:1.6;color:var(--ink-dim);margin-bottom:4px;}
@@ -252,13 +249,10 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 
 /* ---- responsive: panel becomes bottom sheet ---- */
 @media (max-width:860px){
-  #panel{top:auto;left:0;right:0;bottom:0;width:auto;height:64%;
-    border-left:none;border-top:1px solid rgba(200,164,92,0.24);border-radius:16px 16px 0 0;
-    transform:translateY(100%);box-shadow:0 -12px 34px rgba(0,0,0,0.5);}
-  #panel.expanded{transform:translateY(0);}
-  .panel-title{cursor:pointer;text-align:center;position:relative;padding-top:14px;}
-  .panel-title::after{content:"";position:absolute;top:5px;left:50%;transform:translateX(-50%);width:40px;height:4px;background:#2a4a52;border-radius:2px;}
-  #logDrawer{bottom:0;max-height:40%;}
+  #main{flex-direction:column;}
+  #panel{flex:0 0 32vh;max-height:32vh;width:auto;border-left:none;border-top:1px solid var(--panel-edge);}
+  .panel-title{cursor:pointer;text-align:center;}
+  #logDrawer{bottom:0;max-height:36%;}
   .strengths .sbar{min-width:84px;}
   .brand{font-size:14px;}
 }
@@ -315,7 +309,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 
   <div id="topbar">
     <div class="brand">Yalu River, 1894<span class="sub">Sino-Japanese Naval Action</span></div>
-    <div class="turnbox">Turn <b id="turnNum">1</b> · <span id="phaseLabel">Plan — give orders</span></div>
+    <div class="turnbox">Turn <b id="turnNum">1</b> · <span id="phaseLabel">Plan · give orders</span></div>
     <div class="strengths">
       <div class="sbar"><div class="lab"><span class="nm">Beiyang</span><span id="chinaPct">100%</span></div><div class="track"><div id="chinaBarFill"></div></div></div>
       <div class="sbar"><div class="lab"><span class="nm">Combined</span><span id="japanPct">100%</span></div><div class="track"><div id="japanBarFill"></div></div></div>
@@ -360,7 +354,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <h1 class="start-title">Battle of the Yalu River</h1>
     <div class="start-date">17 September 1894</div>
-    <p class="start-blurb">Off the mouth of the Yalu, Japan's Combined Fleet — fast cruisers armed with quick-firing guns — met China's Beiyang Fleet and its two German ironclads, <i>Dingyuan</i> and <i>Zhenyuan</i>, whose 356 mm belts no Japanese shell could pierce. It became a contest between rate of fire and speed on one side, and heavy guns behind thick armour on the other. Take command and see whether history holds.</p>
+    <p class="start-blurb">Off the mouth of the Yalu, Japan's Combined Fleet, fast cruisers armed with quick-firing guns, met China's Beiyang Fleet and its two German ironclads, <i>Dingyuan</i> and <i>Zhenyuan</i>, whose 356 mm belts no Japanese shell could pierce. It became a contest between rate of fire and speed on one side, and heavy guns behind thick armour on the other. Take command and see whether history holds.</p>
     <div class="choose-label">Choose your fleet</div>
     <div class="side-choices">
       <div class="side-choice china active" data-side="China">
@@ -369,7 +363,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       </div>
       <div class="side-choice japan" data-side="Japan">
         <div class="sc-name">Combined Fleet</div>
-        <div class="sc-desc">Japan. Faster ships and a storm of quick-firing shells. You cannot crack the ironclads — savage the cruisers instead.</div>
+        <div class="sc-desc">Japan. Faster ships and a storm of quick-firing shells. You cannot crack the ironclads, so savage the cruisers instead.</div>
       </div>
     </div>
     <div class="field-row">
@@ -2081,7 +2075,7 @@ function setupScenario(playerSide, chineseFormationKey) {
   game.turn = 1;
   game.phase = "player";
   game.selectedId = null;
-  game.targetId = null;
+  game.targetId = null; game.cardId = null;
   game.log = [];
   game.tel = { turns: [], agg: {}, formationKey: chineseFormationKey || "chinese_actual_opening_arc" };   // battle telemetry for the post-action report
   game.effects = [];
@@ -2240,7 +2234,7 @@ function logLine(text, cls) {
 function describeSalvo(from, battery, target, r) {
   const cal = Math.round(gunCalibre(battery.gun));
   if (r.error) return null;
-  let s = `${from.name}: ${cal}mm × ${r.shots} at ${target.name} (${r.range}m) — `;
+  let s = `${from.name}: ${cal}mm × ${r.shots} at ${target.name} (${r.range}m) · `;
   if (r.hits === 0) s += "all short.";
   else {
     s += `${r.hits} hit`;
@@ -2335,7 +2329,7 @@ function aiActShip(S, focus) {
   if (S.torpedoes && S.torpedoes.ready && rangeBetween(S, T) <= TORPEDO_RANGE) {
     const tr = fireTorpedo(S, T, game.turn);
     if (tr && tr.hit) { S._aimWorld = absBearing(S, T); logLine(`${S.name} torpedo HIT on ${T.name}! Heavy flooding.`, "crit"); }
-    else if (tr && !tr.error) logLine(`${S.name} looses torpedoes at ${T.name} — miss.`, "");
+    else if (tr && !tr.error) logLine(`${S.name} launches torpedoes at ${T.name}, miss.`, "");
   }
   for (const b of S.batteries) {
     if (b.knockedOut) continue;
@@ -2371,13 +2365,13 @@ function endPlayerTurn() {
   game.phase = "enemy";
   game.busy = true;
   game.selectedId = null;
-  game.targetId = null;
+  game.targetId = null; game.cardId = null;
   game._fxDelay = 0;
   syncPanel();
   syncTopBar();
 
   startTurnForSide(game.ships, game.enemySide);
-  logLine(`— ${SIDE_LABEL[game.enemySide]} manoeuvres —`, "sys");
+  logLine(`${SIDE_LABEL[game.enemySide]} manoeuvres.`, "sys");
 
   // enemy ships act heaviest-first; the fleet concentrates on one focus target
   const order = aliveOnSide(game.enemySide).slice().sort((a, b) => b.structureMax - a.structureMax);
@@ -2392,7 +2386,7 @@ function endPlayerTurn() {
   upkeepTick(game.ships, game.turn, game.log);
 
   for (const s of game.ships) {
-    if (s.out && s.sunkTurn === game.turn) { spawnSink(s); logLine(`${s.name} (${s.side}) — ${s.outReason}.`, "crit"); }
+    if (s.out && s.sunkTurn === game.turn) { spawnSink(s); logLine(`${s.name} (${s.side}): ${s.outReason}.`, "crit"); }
   }
 
   game.turn += 1;
@@ -2411,7 +2405,7 @@ function endPlayerTurn() {
 function finishEnemyAnimation() {
   game.busy = false;
   if (game._pendingVerdict) { const v = game._pendingVerdict; game._pendingVerdict = null; showResult(v); return; }
-  logLine(`— Turn ${game.turn}: your orders —`, "sys");
+  logLine(`Turn ${game.turn}: your orders.`, "sys");
   syncTopBar();
   syncPanel();
 }
@@ -2701,6 +2695,7 @@ function redraw() {
     if (game.show.rings) drawRangeRings(ctx, v, sel, cone.solution);
     if (game.show.arcs) drawFiringCones(ctx, v, sel, cone.specs, planHeading != null ? planHeading : undefined);
     if (selTargetValid) drawTargetLine(ctx, v, sel, selTarget, "rgba(236,58,42,0.96)", 2.6, true, [9, 6]);
+    drawTorpedoRange(ctx, v, sel);
     if (game.phase === "plan" && sel.side === game.playerSide) drawReachable(ctx, v, sel);
   }
   // persistent course ghosts: every ordered friendly shows where it will end the turn,
@@ -2730,6 +2725,27 @@ function redraw() {
 }
 
 // faint dots over the hexes this ship may move to this turn (the turning cone)
+// torpedo reach: a ring at the ship's planned end position (1000 m). Torpedoes loose
+// automatically at any enemy whose path falls inside it, so this shows where to close to.
+function drawTorpedoRange(ctx, v, s) {
+  if (!s.torpedoes || (s.torpedoes.count || 0) <= 0) return;
+  const c0 = s.order ? hexToWorld(s.order.q, s.order.r) : { x: s.x, y: s.y };
+  const cx = wx(v, c0.x), cy = wy(v, c0.y), rr = TORPEDO_RANGE * v.scale;
+  if (rr < 6) return;
+  const ready = s.torpedoes.ready && (s.torpedoes.cooldownLeft || 0) <= 0;
+  ctx.save();
+  ctx.beginPath(); ctx.arc(cx, cy, rr, 0, Math.PI * 2);
+  ctx.fillStyle = "rgba(78,200,214,0.05)"; ctx.fill();
+  ctx.setLineDash([5, 5]); ctx.lineWidth = 1.4;
+  ctx.strokeStyle = ready ? "rgba(78,200,214,0.78)" : "rgba(78,200,214,0.32)";
+  ctx.stroke(); ctx.setLineDash([]);
+  ctx.font = "600 10px ui-monospace, SF Mono, monospace";
+  ctx.textAlign = "center"; ctx.textBaseline = "bottom";
+  ctx.fillStyle = ready ? "rgba(120,224,236,0.92)" : "rgba(120,224,236,0.45)";
+  ctx.fillText(ready ? "torpedo reach" : "torpedoes reloading", cx, cy - rr - 3);
+  ctx.restore();
+}
+
 function drawReachable(ctx, v, s) {
   const cells = reachableHexes(s);
   const rr = Math.max(1.5, HEX_M * v.scale * 0.15);
@@ -2902,7 +2918,7 @@ function launchTorpedo(s, T) {
   const aimY = T.y - Math.cos(T.heading * Math.PI / 180) * shipSpeedMps(T) * lead;
   const hr = Math.atan2(aimX - s.x, -(aimY - s.y));
   game.torpedoes.push({ side: s.side, x: s.x, y: s.y, hr, spd: tspd, runLeft: TORPEDO_RANGE * 1.3, trail: [], life: 1 });
-  logLine(`${s.name} looses torpedoes at ${T.name}.`, "");
+  logLine(`${s.name} launches torpedoes at ${T.name}.`, "");
 }
 
 function torpedoHit(target) {
@@ -2912,7 +2928,7 @@ function torpedoHit(target) {
   target.engine = clamp(target.engine - 0.2, 0.1, 1);
   game.effects.push({ type: "burst", x: target.x, y: target.y, life: 1, fade: 2.2, heavy: true });
   checkOutOfAction(target, 0);
-  logLine(`Torpedo strikes ${target.name}! Flooding ${Math.round(target.flooding)}%.`, "crit");
+  logLine(`Torpedo strikes ${target.name}! Flooding ${Math.round(target.flooding)}%.`, "sink");
   if (target.out) spawnSink(target);
 }
 
@@ -2939,36 +2955,62 @@ function closestPointOnSeg(ax, ay, bx, by, px, py) {
   t = Math.max(0, Math.min(1, t));
   return { x: ax + dx * t, y: ay + dy * t };
 }
-// At the start of resolution, any torpedo-armed ship whose track passes within range of an
-// enemy looses a torpedo from the closest point of that track. Hit or miss is rolled now;
-// the run then animates with a wake and the burst lands as it reaches the target.
+// Closest approach between two segments (the two ships' tracks this turn), found by
+// sampling the first track and measuring each sample to the second segment. This catches
+// a torpedo pass even when BOTH ships are moving; checking only the enemy's end point used
+// to miss those, which is why boats kept passing an enemy without ever firing.
+function segClosest(ax, ay, bx, by, cx, cy, dx, dy) {
+  let bestD = Infinity, p = { x: ax, y: ay }, q = { x: cx, y: cy };
+  const N = 12;
+  for (let i = 0; i <= N; i++) {
+    const px = ax + (bx - ax) * i / N, py = ay + (by - ay) * i / N;
+    const cp = closestPointOnSeg(cx, cy, dx, dy, px, py);
+    const d = Math.hypot(cp.x - px, cp.y - py);
+    if (d < bestD) { bestD = d; p = { x: px, y: py }; q = cp; }
+  }
+  return { d: bestD, p, q };
+}
+// At the start of resolution, a torpedo-armed ship whose track passes within range of an
+// enemy launches from the closest point of that track. It favours its chosen target if that
+// target comes within reach, otherwise the nearest enemy. Hit or miss is rolled now; the run
+// then animates with a wake and the burst lands as it reaches the target.
 function resolveTorpedoes() {
   for (const s of game.ships) {
     if (s.out || !s.torpedoes || (s.torpedoes.count || 0) <= 0) continue;
     if ((s.torpedoes.cooldownLeft || 0) > 0) { s.torpedoes.cooldownLeft = Math.max(0, s.torpedoes.cooldownLeft - GAME_TURN_SECONDS); continue; }
     const ax0 = s._ax0 != null ? s._ax0 : s.x, ay0 = s._ay0 != null ? s._ay0 : s.y;
     const ax1 = s._ax1 != null ? s._ax1 : s.x, ay1 = s._ay1 != null ? s._ay1 : s.y;
-    let best = null, bestPt = null, bestD = TORPEDO_RANGE * 1.02;
-    for (const e of game.ships) {
-      if (e.out || e.side === s.side) continue;
-      const ex = e._ax1 != null ? e._ax1 : e.x, ey = e._ay1 != null ? e._ay1 : e.y;
-      const pt = closestPointOnSeg(ax0, ay0, ax1, ay1, ex, ey);
-      const d = Math.hypot(ex - pt.x, ey - pt.y);
-      if (d < bestD) { bestD = d; best = e; bestPt = pt; }
+    const trackOf = (e) => {
+      const ex0 = e._ax0 != null ? e._ax0 : e.x, ey0 = e._ay0 != null ? e._ay0 : e.y;
+      const ex1 = e._ax1 != null ? e._ax1 : e.x, ey1 = e._ay1 != null ? e._ay1 : e.y;
+      return segClosest(ax0, ay0, ax1, ay1, ex0, ey0, ex1, ey1);
+    };
+    const reach = TORPEDO_RANGE * 1.02;
+    let best = null, bestPt = null, bestAim = null, bestD = reach;
+    const tgt = shipById(s.targetId);                    // favour the ordered target if it comes within reach
+    if (tgt && !tgt.out && tgt.side !== s.side) {
+      const sc = trackOf(tgt);
+      if (sc.d < reach) { best = tgt; bestPt = sc.p; bestAim = sc.q; bestD = sc.d; }
+    }
+    if (!best) {
+      for (const e of game.ships) {
+        if (e.out || e.side === s.side) continue;
+        const sc = trackOf(e);
+        if (sc.d < bestD) { bestD = sc.d; best = e; bestPt = sc.p; bestAim = sc.q; }
+      }
     }
     if (!best) continue;
-    const tx = best._ax1 != null ? best._ax1 : best.x, ty = best._ay1 != null ? best._ay1 : best.y;
-    const range = Math.hypot(tx - bestPt.x, ty - bestPt.y) || 1;
+    const range = Math.hypot(bestAim.x - bestPt.x, bestAim.y - bestPt.y) || 1;
     const evasion = (best.turnedHard ? 0.8 : 1) * clamp(best.engine != null ? best.engine : 1, 0.4, 1);
     const hc = clamp(0.09 * Math.exp(-range / 450) * evasion, 0.01, 0.18);
     const willHit = Math.random() < hc;
     s.torpedoes.count -= 1;
     s.torpedoes.cooldownLeft = 260;                      // long reload between salvos (~2 turns)
     if (s.torpedoes.count <= 0) s.torpedoes.ready = false;
-    const hr = Math.atan2(tx - bestPt.x, -(ty - bestPt.y));
+    const hr = Math.atan2(bestAim.x - bestPt.x, -(bestAim.y - bestPt.y));
     game.torpedoes.push({ side: s.side, x: bestPt.x, y: bestPt.y, hr, travelled: 0, runDist: range, willHit, targetId: best.id, resolved: false, dead: false, trail: [], life: 1 });
     { const A = telAgg(s.id); A.torpFired += 1; if (willHit) { A.torpHit += 1; const D = telAgg(best.id); D.torpHitTaken = (D.torpHitTaken || 0) + 1; } }
-    logLine(`${s.name} looses torpedoes at ${best.name}.`, "");
+    logLine(`${s.name} launches torpedoes at ${best.name}.`, "");
   }
 }
 // Advance live torpedo runs during the resolution animation, sized so each run completes
@@ -3118,7 +3160,7 @@ function startExecute() {
   refillReadiness();                                // refill both sides' reload banks for this turn
   resolveTorpedoes();                               // torpedo boats loose FIRST — they press the attack home before the gun line can shred them
   resolveFire();                                    // then the guns open up; salvos animate across the move
-  game.selectedId = null; game.targetId = null; game.pending = null;
+  game.selectedId = null; game.targetId = null; game.cardId = null; game.pending = null;
   syncTopBar(); syncPlayBtn(); syncPanel();
 }
 function stepExecute(dt) {
@@ -3246,7 +3288,7 @@ function resolveFire() {
   }
   if (pFired) {
     const n = pTargets.size;
-    logLine(`Your line engages ${n} target${n > 1 ? "s" : ""} — ${pHits} hit${pHits !== 1 ? "s" : ""}.`, "fire");
+    logLine(`Your line engages ${n} target${n > 1 ? "s" : ""}, ${pHits} hit${pHits !== 1 ? "s" : ""}.`, "fire");
   }
 }
 
@@ -3342,7 +3384,7 @@ function fmtClock(sec) {
 function syncPlayBtn() {
   if (typeof document === "undefined") return;
   const pb = document.getElementById("playBtn");
-  if (pb) pb.textContent = game.phase === "over" ? "—" : game.exec ? "Resolving…" : "End Turn ▶";
+  if (pb) pb.textContent = game.phase === "over" ? "·" : game.exec ? "Resolving…" : "End Turn ▶";
   const sb = document.getElementById("speedBtn");
   if (sb) { sb.textContent = "Skip ▶▶"; sb.classList.toggle("off", !game.exec); }
 }
@@ -3350,7 +3392,7 @@ function syncTopBar() {
   if (typeof document === "undefined") return;
   const t = document.getElementById("turnNum"); if (t) t.textContent = "Turn " + (game.turn || 1);
   const p = document.getElementById("phaseLabel");
-  if (p) p.textContent = game.phase === "over" ? "Battle over" : game.exec ? "Resolving…" : "Plan — give orders";
+  if (p) p.textContent = game.phase === "over" ? "Battle over" : game.exec ? "Resolving…" : "Plan · give orders";
   const cp = fleetPct("China"), jp = fleetPct("Japan");
   const cf = document.getElementById("chinaBarFill"); if (cf) cf.style.width = Math.round(cp * 100) + "%";
   const jf = document.getElementById("japanBarFill"); if (jf) jf.style.width = Math.round(jp * 100) + "%";
@@ -3361,32 +3403,16 @@ function syncTopBar() {
 function syncPanel() {
   if (typeof document === "undefined") return;
   const body = document.getElementById("panelBody");
-  if (!body) return;
-  const s = shipById(game.selectedId);
+  const panel = document.getElementById("panel");
+  if (!body || !panel) return;
 
-  if (!s) {
-    const open = game._helpOpen !== false;   // default open; collapsible per session
-    body.innerHTML = `
-      <div class="panel-hint">
-        <div class="hint-bar"><span>How to play</span><button class="hint-toggle" id="helpToggle">${open ? "Hide ▴" : "Show ▾"}</button></div>
-        ${open ? `
-        <p>Tap one of your ships, then tap a highlighted hex to set its course for this turn.</p>
-        <ul>
-          <li><b>Tap</b> a friendly ship to select it. Reachable hexes light up — a forward cone, narrower the harder you turn.</li>
-          <li><b>Tap a lit hex</b> to set the course and speed for the turn. A ghost shows where it ends up. Tap it again to open its schematic.</li>
-          <li><b>Tap an enemy</b> to make it that ship's target. Guns that bear fire automatically when the turn resolves.</li>
-          <li><b>End Turn</b> (bottom-left, or Space) resolves both fleets at once. <b>Skip</b> jumps to the end of the resolution.</li>
-        </ul>` : ""}
-        <div class="roster-counts">
-          <span class="tag china">${SIDE_LABEL.China}: ${aliveOnSide("China").length} afloat</span>
-          <span class="tag japan">${SIDE_LABEL.Japan}: ${aliveOnSide("Japan").length} afloat</span>
-        </div>
-        ${open ? `<p class="muted">You command the ${game.playerSide === "China" ? "ochre" : "slate"} ships (${SIDE_LABEL[game.playerSide]}).</p>` : ""}
-      </div>`;
-    const ht = document.getElementById("helpToggle");
-    if (ht) ht.onclick = () => { game._helpOpen = !(game._helpOpen !== false); syncPanel(); };
-    return;
-  }
+  // a tapped ship (own or enemy) shows its info card in this same docked panel
+  const card = shipById(game.cardId);
+  if (card) { renderShipCard(body, card); panel.classList.add("expanded"); resizeCanvas(); return; }
+
+  const s = shipById(game.selectedId);
+  if (!s || s.out) { panel.classList.remove("expanded"); resizeCanvas(); return; }
+  panel.classList.add("expanded"); resizeCanvas();
 
   const t = shipById(game.targetId);
   const targetValid = t && !t.out && t.side !== s.side;
@@ -3458,7 +3484,7 @@ function syncPanel() {
   const movedNote = helmHtml;
 
   const targetLine = targetValid
-    ? `<div class="target-line">Priority target: <b>${t.name}</b> — ${Math.round(range)} m, bearing ${Math.round(((relativeBearing(s, t) + 360) % 360))}° <span class="muted">· auto-firing</span></div>`
+    ? `<div class="target-line">Priority target: <b>${t.name}</b>, ${Math.round(range)} m, bearing ${Math.round(((relativeBearing(s, t) + 360) % 360))}° <span class="muted">· auto-firing</span></div>`
     : `<div class="target-line muted">Auto-engaging the nearest enemy in range. Tap an enemy to set a priority target.</div>`;
 
   const ms = moraleState(s.morale);
@@ -3526,7 +3552,7 @@ function playerFire(gunId) {
   const b = s.batteries.find((x) => x.gunId === gunId);
   if (!b) return;
   const res = fireBattery(s, b, t, game.turn);
-  if (res.error) { logLine(`${s.name}: ${Math.round(gunCalibre(b.gun))}mm — ${res.error}.`, "muted"); }
+  if (res.error) { logLine(`${s.name}: ${Math.round(gunCalibre(b.gun))}mm, ${res.error}.`, "muted"); }
   else {
     res.heavy = gunCalibre(b.gun) >= 200;
     scheduleSalvo(s, t, res, 0);
@@ -3543,9 +3569,9 @@ function playerTorpedo() {
   const s = shipById(game.selectedId), t = shipById(game.targetId);
   if (!s || !t || t.out) return;
   const res = fireTorpedo(s, t, game.turn);
-  if (res.error) logLine(`${s.name}: torpedo — ${res.error}.`, "muted");
+  if (res.error) logLine(`${s.name}: torpedo, ${res.error}.`, "muted");
   else if (res.hit) { scheduleSalvo(s, t, { hits: 1, heavy: true }, 0); logLine(`${s.name} torpedo HIT on ${t.name}! Flooding ${res.flooding}%.`, "crit"); }
-  else { scheduleSalvo(s, t, { hits: 0 }, 0); logLine(`${s.name} fires torpedoes at ${t.name} — miss.`, ""); }
+  else { scheduleSalvo(s, t, { hits: 0 }, 0); logLine(`${s.name} fires torpedoes at ${t.name}, miss.`, ""); }
   if (t.out) { spawnSink(t); logLine(`${t.name} is ${t.outReason}!`, "crit"); }
   syncPanel();
   syncTopBar();
@@ -3633,22 +3659,16 @@ function onPointerUp(e) {
     const sel0 = shipById(game.selectedId);
     if (dragStart.hitId) {
       const ship = shipById(dragStart.hitId);
-      if (ship && dragStart.reTap) {
-        openShipCard(ship);                                              // tap an already-selected ship -> schematic
-      } else if (ship && ship.side === game.playerSide && !ship.out) {
-        game.selectedId = ship.id; game.targetId = ship.targetId || null; // tap a friendly -> select it
-        const panel = document.getElementById("panel"); if (panel) panel.classList.add("expanded");
+      if (ship && ship.side === game.playerSide && !ship.out) {
+        game.selectedId = ship.id; game.targetId = ship.targetId || null;  // tap a friendly -> select it
+        game.cardId = null;                                                // show its dossier (with controls)
         syncPanel();
-      } else if (ship && ship.side === game.enemySide) {                  // enemy ship
-        if (sel0 && sel0.side === game.playerSide && !sel0.out) {
-          if (sel0.targetId === ship.id) {
-            openShipCard(ship);                                            // re-tap the current target -> view its specs
-          } else {
-            sel0.targetId = ship.id; game.targetId = ship.id; logLine(`${sel0.name}: target ${ship.name}.`, ""); syncPanel();
-          }
-        } else {
-          openShipCard(ship);                                              // nothing selected -> view the enemy's specs
+      } else if (ship && ship.side === game.enemySide) {                   // tap an enemy
+        if (sel0 && sel0.side === game.playerSide && !sel0.out && sel0.targetId !== ship.id) {
+          sel0.targetId = ship.id; game.targetId = ship.id; logLine(`${sel0.name}: target ${ship.name}.`, "");
         }
+        game.cardId = ship.id;                                             // and show the enemy's info card
+        syncPanel();
       }
     } else {                                                              // tap on open water
       let acted = false;
@@ -3657,12 +3677,8 @@ function onPointerUp(e) {
         const h = worldToHex(w.x, w.y);
         acted = setOrderHex(sel0, h.q, h.r);
       }
-      if (acted) syncPanel();
-      else if (game.selectedId) {                                         // open water off the cone clears the selection
-        game.selectedId = null; game.targetId = null;
-        const panel = document.getElementById("panel"); if (panel) panel.classList.remove("expanded");
-        syncPanel();
-      }
+      if (acted) { game.cardId = null; syncPanel(); }                      // course set -> back to its dossier
+      else { game.selectedId = null; game.targetId = null; game.cardId = null; syncPanel(); }  // clear -> panel hides
     }
   }
   if (dragMode === "pinch" && pointers.size === 1) {
@@ -3756,15 +3772,10 @@ function shipCardsHtml(side) {
 }
 
 // ship schematic popup: large top-down plan + armament and live condition
-function openShipCard(s) {
-  if (typeof document === "undefined" || !s) return;
-  const body = document.getElementById("codexBody");
-  const overlay = document.getElementById("codexOverlay");
-  if (!body || !overlay) return;
+function renderShipCard(body, s) {
+  if (!body || !s) return;
   const dims = s.def.dimensions_m || {};
-  // schematic is drawn to a canvas after innerHTML is set (engineering-drawing style)
-  // armament list from batteries (+ torpedoes)
-  let arm = s.batteries.map((b) => `<li class="${b.knockedOut ? "gun-out" : ""}">${b.count} × ${Math.round(gunCalibre(b.gun))} mm — ${b.gun.name} <span class="muted">(${b.arc.replace(/_/g, "/")})</span>${b.knockedOut ? ' <span class="gun-tag">✗ disabled</span>' : ""}</li>`).join("");
+  let arm = s.batteries.map((b) => `<li class="${b.knockedOut ? "gun-out" : ""}">${b.count} × ${Math.round(gunCalibre(b.gun))} mm · ${b.gun.name} <span class="muted">(${b.arc.replace(/_/g, "/")})</span>${b.knockedOut ? ' <span class="gun-tag">✗ disabled</span>' : ""}</li>`).join("");
   if (s.torpedoes) arm += `<li>${s.torpedoes.count} × torpedo tubes</li>`;
   const cond = s.out
     ? `<div class="card-out">${s.outReason || "out of action"}</div>`
@@ -3776,7 +3787,6 @@ function openShipCard(s) {
          ${s.engine < 0.99 ? `<div class="sys-bad">Engine ${Math.round(100 * s.engine)}%</div>` : ""}
          ${s.steering < 0.99 ? `<div class="sys-bad">Steering ${Math.round(100 * s.steering)}%</div>` : ""}
        </div>`;
-  body.dataset.built = "";  // allow codex rebuild later
   body.innerHTML = `
     <div class="shipcard">
       <div class="shipcard-head">
@@ -3804,7 +3814,13 @@ function openShipCard(s) {
     drawSideElevation(ec, s, ev.width - 40, "#c8a45c");
     ec.restore();
   }
-  overlay.classList.add("show");
+}
+
+// Inspect a ship's full card (own or enemy) in the same docked panel.
+function openShipCard(s) {
+  if (typeof document === "undefined" || !s) return;
+  game.cardId = s.id;
+  syncPanel();
 }
 
 function buildRoster() {
@@ -3836,7 +3852,7 @@ function buildRoster() {
         <span class="roster-bar">${s.out ? "" : bar(frac, barCol)}</span>
       </div>`;
     }).join("");
-    return `<h3 class="codex-h">${label} — ${afloat}/${ships.length} afloat</h3><div class="roster-list">${rows}</div>`;
+    return `<h3 class="codex-h">${label}: ${afloat}/${ships.length} afloat</h3><div class="roster-list">${rows}</div>`;
   };
   body.innerHTML = `<h3 class="codex-h" style="clear:both;margin-top:4px">Fleet roster · turn ${game.turn}</h3>`
     + sideBlock("China", "Beiyang Fleet") + sideBlock("Japan", "Combined Fleet");
@@ -3846,10 +3862,10 @@ function buildCodex() {
   const body = document.getElementById("codexBody");
   if (!body || body.dataset.built) return;
   body.innerHTML = `
-    <p class="codex-intro">The Battle of the Yalu River, 17 September 1894 — the largest naval action of the First Sino-Japanese War. Japan's faster, quick-firing cruiser line met China's Beiyang Fleet, built around two German-built ironclads whose 356 mm belts no Japanese gun could pierce. The lesson of the day: rate of fire and speed against armour and heavy shells.</p>
-    <h3 class="codex-h">Beiyang Fleet — China</h3>
+    <p class="codex-intro">The Battle of the Yalu River, 17 September 1894, the largest naval action of the First Sino-Japanese War. Japan's faster, quick-firing cruiser line met China's Beiyang Fleet, built around two German-built ironclads whose 356 mm belts no Japanese gun could pierce. The lesson of the day: rate of fire and speed against armour and heavy shells.</p>
+    <h3 class="codex-h">Beiyang Fleet · China</h3>
     <div class="codex-grid">${shipCardsHtml("China")}</div>
-    <h3 class="codex-h">Combined Fleet — Japan</h3>
+    <h3 class="codex-h">Combined Fleet · Japan</h3>
     <div class="codex-grid">${shipCardsHtml("Japan")}</div>
     <h3 class="codex-h">Ordnance</h3>
     ${gunCatalogueHtml()}
@@ -4126,7 +4142,7 @@ function showResult(verdict) {
     .filter((s) => (s.id === "dingyuan" || s.id === "zhenyuan"))
     .every((s) => !s.out);
 
-  let history = `Historically the battle was a decisive Japanese victory. The Combined Fleet lost no ships sunk, though several were badly damaged. The Beiyang Fleet lost five vessels — including Zhiyuan and Jingyuan — but both ironclads, Dingyuan and Zhenyuan, survived: Japanese quick-firers could not penetrate their belts.`;
+  let history = `Historically the battle was a decisive Japanese victory. The Combined Fleet lost no ships sunk, though several were badly damaged. The Beiyang Fleet lost five vessels, including Zhiyuan and Jingyuan, but both ironclads, Dingyuan and Zhenyuan, survived: Japanese quick-firers could not penetrate their belts.`;
 
   let compare;
   if (game.playerSide === "China") {
@@ -4171,14 +4187,14 @@ function showResult(verdict) {
   const enemyFlagCrippled = enemyFlag && (enemyFlag.out || enemyFlag.admiralAlive === false);
   const honours = [];
   if (enemyFlagCrippled) honours.push(enemyFlag.admiralAlive === false ? `Struck down ${ADMIRAL_NAME[foe]} aboard ${enemyFlag.name}.` : `Crippled the enemy flagship ${enemyFlag.name}.`);
-  if (me === "Japan" && (!live("dingyuan") || !live("zhenyuan"))) honours.push("Put a Chinese ironclad under — more than history allowed.");
+  if (me === "Japan" && (!live("dingyuan") || !live("zhenyuan"))) honours.push("Put a Chinese ironclad under, more than history allowed.");
   if (me === "China" && live("dingyuan") && live("zhenyuan")) honours.push("Both ironclads brought through unbroken.");
   if (enemySunk.length >= 1) honours.push(`Sank ${enemySunk.length} enemy ship${enemySunk.length > 1 ? "s" : ""}.`);
   if (enemyDisabled.length >= 1) honours.push(`Put ${enemyDisabled.length} more out of action.`);
-  if (enemyBroke.length >= 3) honours.push(`Broke the enemy's nerve — ${enemyBroke.length} ships sheered off.`);
-  if (myBroke.filter((s) => !s.out).length === 0 && myShips.some((s) => !s.out)) honours.push("Held the line — not one of your ships broke off and ran.");
+  if (enemyBroke.length >= 3) honours.push(`Broke the enemy's nerve: ${enemyBroke.length} ships sheered off.`);
+  if (myBroke.filter((s) => !s.out).length === 0 && myShips.some((s) => !s.out)) honours.push("Held the line, not one of your ships broke off and ran.");
   if (me === "Japan" && mySunk.length === 0) honours.push("Not a ship sunk.");
-  if (me === "China" && outcome.title === "Decisive Victory") honours.push("Avenged the Yalu — the day went the other way.");
+  if (me === "China" && outcome.title === "Decisive Victory") honours.push("Avenged the Yalu, the day went the other way.");
   const honoursBlock = honours.length ? `<div class="result-honours"><div class="honours-title">Honours</div>${honours.slice(0, 6).map((h) => `<div class="honour">★ ${h}</div>`).join("")}</div>` : "";
 
   const objAim = game.playerSide === "China"
@@ -4263,11 +4279,10 @@ function init() {
   bind("fleetClose", () => document.getElementById("fleetOverlay").classList.remove("show"));
   bind("logBtn", () => { const d = document.getElementById("logDrawer"); const open = d.classList.toggle("open"); const h = document.getElementById("logBtn"); if (h) h.textContent = open ? "Signal log  ▾" : "Signal log  ▴"; });
 
-  // tap the panel title/handle to close the glass card and deselect
+  // tap the panel title/handle to close the card and deselect
   const panelTitle = document.getElementById("panelTitle");
   if (panelTitle) panelTitle.addEventListener("click", () => {
-    const panel = document.getElementById("panel"); if (panel) panel.classList.remove("expanded");
-    game.selectedId = null; game.targetId = null; syncPanel();
+    game.selectedId = null; game.targetId = null; game.cardId = null; syncPanel();
   });
 
   // start screen
