@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -183,6 +186,12 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .start-date{font-family:var(--mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--brass-dim);margin-bottom:16px;}
 .start-blurb{font-size:13.5px;line-height:1.6;color:var(--ink-dim);margin-bottom:22px;text-align:left;}
 .choose-label{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--brass-dim);margin-bottom:8px;text-align:left;}
+.mode-choices{display:flex;gap:10px;margin-bottom:18px;}
+.mode-choice{flex:1;background:#0a242b;border:1px solid #1c4651;border-radius:7px;padding:12px 10px;cursor:pointer;text-align:left;}
+.mode-choice.active{border-color:var(--brass);box-shadow:0 0 0 1px var(--brass) inset;}
+.mode-choice .mc-name{font-family:var(--serif);font-size:16px;color:var(--ink);}
+.mode-choice .mc-desc{font-size:11px;color:var(--ink-dim);margin-top:4px;line-height:1.4;}
+.start-blurb-foot{margin:18px 0 0;}
 .side-choices{display:flex;gap:10px;margin-bottom:18px;}
 .side-choice{flex:1;background:#0a242b;border:1px solid #1c4651;border-radius:7px;padding:14px 10px;cursor:pointer;text-align:left;}
 .side-choice.active{border-color:var(--brass);box-shadow:0 0 0 1px var(--brass) inset;}
@@ -354,7 +363,17 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <h1 class="start-title">Battle of the Yalu River</h1>
     <div class="start-date">17 September 1894</div>
-    <p class="start-blurb">Off the mouth of the Yalu, Japan's Combined Fleet, fast cruisers armed with quick-firing guns, met China's Beiyang Fleet and its two German ironclads, <i>Dingyuan</i> and <i>Zhenyuan</i>, whose 356 mm belts no Japanese shell could pierce. It became a contest between rate of fire and speed on one side, and heavy guns behind thick armour on the other. Take command and see whether history holds.</p>
+    <div class="choose-label">Mode</div>
+    <div class="mode-choices">
+      <div class="mode-choice active" data-mode="historical">
+        <div class="mc-name">Historical Battle</div>
+        <div class="mc-desc">Both fleets deploy exactly as they did on the day.</div>
+      </div>
+      <div class="mode-choice" data-mode="skirmish">
+        <div class="mc-name">Skirmish</div>
+        <div class="mc-desc">Form your own fleet up against the historical enemy.</div>
+      </div>
+    </div>
     <div class="choose-label">Choose your fleet</div>
     <div class="side-choices">
       <div class="side-choice china active" data-side="China">
@@ -366,14 +385,16 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
         <div class="sc-desc">Japan. Faster ships and a storm of quick-firing shells. You cannot crack the ironclads, so savage the cruisers instead.</div>
       </div>
     </div>
-    <div class="field-row">
-      <label for="formationSelect">Chinese deployment</label>
+    <div class="field-row" id="skirmishOptions" style="display:none">
+      <label for="formationSelect">Your formation</label>
       <select id="formationSelect">
-        <option value="chinese_actual_opening_arc">Historical opening arc (signal confusion)</option>
-        <option value="chinese_intended_line_abreast">Intended line abreast</option>
+        <option value="line_abreast">Line abreast</option>
+        <option value="line_ahead">Line ahead (column)</option>
+        <option value="echelon">Echelon (indented line)</option>
       </select>
     </div>
     <button class="start-go" id="startBtn">Begin the action</button>
+    <p class="start-blurb start-blurb-foot">Off the mouth of the Yalu, Japan's Combined Fleet, fast cruisers armed with quick-firing guns, met China's Beiyang Fleet and its two German ironclads, <i>Dingyuan</i> and <i>Zhenyuan</i>, whose 356 mm belts no Japanese shell could pierce. It became a contest between rate of fire and speed on one side, and heavy guns behind thick armour on the other. Take command and see whether history holds.</p>
   </div>
 </div>
 
@@ -2070,6 +2091,34 @@ function shipDefById(id) {
   return GAME_DATA.ships.find((s) => s.id === id) || null;
 }
 
+// Procedural deployments for a quick-battle: arrange a side's whole order of battle
+// into a real formation facing the enemy. Positions are pure geometry; the combat that
+// follows is unchanged, so this is variety of INPUT, not a thumb on the scales.
+function centerOut(arr) {
+  const L = [], R = []; let mid = null;
+  arr.forEach((v, i) => { if (i === 0) mid = v; else if (i % 2 === 1) R.push(v); else L.push(v); });
+  return L.reverse().concat(mid != null ? [mid] : [], R);
+}
+function proceduralFormation(side, type) {
+  const roster = GAME_DATA.ships.filter((s) => s.side === side).map((s) => s.id);  // dataset order: heavies first
+  const n = roster.length;
+  const P = side === "China"
+    ? { cx: 150, hdg: 180, abreastY: 150, vanY: 560, colDir: -1, gap: 300, colGap: 235, echEY: 470, echX: 165, echY: 150 }
+    : { cx: -160, hdg: 0, abreastY: 1480, vanY: 1120, colDir: 1, gap: 300, colGap: 235, echEY: 1190, echX: 165, echY: 150 };
+  const out = [];
+  if (type === "line_abreast") {
+    const order = centerOut(roster);                 // heaviest ship in the centre of the line
+    const span = (n - 1) * P.gap;
+    order.forEach((id, k) => out.push({ id, x: Math.round(P.cx - span / 2 + k * P.gap), y: P.abreastY, heading_deg: P.hdg }));
+  } else if (type === "line_ahead") {
+    roster.forEach((id, i) => out.push({ id, x: P.cx, y: Math.round(P.vanY + P.colDir * i * P.colGap), heading_deg: P.hdg }));
+  } else { // echelon: an indented diagonal line
+    const span = (n - 1) * P.echX;
+    roster.forEach((id, i) => out.push({ id, x: Math.round(P.cx - span / 2 + i * P.echX), y: Math.round(P.echEY + P.colDir * i * P.echY), heading_deg: P.hdg }));
+  }
+  return { ships: out };
+}
+
 function setupScenario(playerSide, chineseFormationKey) {
   game.ships = [];
   game.turn = 1;
@@ -2097,12 +2146,25 @@ function setupScenario(playerSide, chineseFormationKey) {
     }
   }
 
-  // Chinese deployment: pick intended line-abreast or the messy actual arc.
-  const chKey = chineseFormationKey || "chinese_actual_opening_arc";
-  place(F[chKey]);
-  place(F.late_chinese_reinforcements_1430);    // Pingyuan group always present
-  // Japanese deployment: their approach column.
-  place(F.japanese_opening_column);
+  // The formation key now selects the PLAYER's deployment. Procedural shapes arrange the
+  // player's whole fleet; the enemy always uses its historical blocks. A historical key keeps
+  // both sides as they actually formed (the key choosing the Chinese deployment, as before).
+  const PROC = { line_ahead: 1, line_abreast: 1, echelon: 1 };
+  const key = chineseFormationKey || "chinese_actual_opening_arc";
+  if (PROC[key]) {
+    place(proceduralFormation(playerSide, key));
+    if (playerSide === "China") {
+      place(F.japanese_opening_column);
+    } else {
+      place(F.chinese_actual_opening_arc);
+      place(F.late_chinese_reinforcements_1430);
+    }
+  } else {
+    const chKey = key === "chinese_intended_line_abreast" ? "chinese_intended_line_abreast" : "chinese_actual_opening_arc";
+    place(F[chKey]);                              // Chinese line: intended line-abreast or the messy actual arc
+    place(F.late_chinese_reinforcements_1430);    // Pingyuan group always present
+    place(F.japanese_opening_column);             // Japanese approach column
+  }
 
   // any roster ship not in a block (safety) — drop in behind its side
   for (const def of GAME_DATA.ships) {
@@ -4000,7 +4062,7 @@ function buildBattleReport() {
   const pad = (s, n) => (String(s) + " ".repeat(n)).slice(0, n);
   const L = [];
   L.push("YALU 1894 - BATTLE REPORT");
-  L.push(`Player: ${game.playerSide === "China" ? "Beiyang Fleet (China)" : "Combined Fleet (Japan)"}  -  Chinese formation: ${tel.formationKey || "?"}  -  Turns fought: ${game.turn - 1}`);
+  L.push(`Player: ${game.playerSide === "China" ? "Beiyang Fleet (China)" : "Combined Fleet (Japan)"}  -  Your deployment: ${({historical:"Historical",line_abreast:"Line abreast",line_ahead:"Line ahead",echelon:"Echelon",chinese_actual_opening_arc:"Historical arc",chinese_intended_line_abreast:"Intended line abreast"})[tel.formationKey] || tel.formationKey || "?"}  -  Turns fought: ${game.turn - 1}`);
   L.push(`Result: ${outcome.title}  (${v.reason})`);
   L.push(`Tactical:  ${wv.tacTag} - ${wv.tacLine}`);
   L.push(`Strategic: ${wv.stratTag} - ${wv.stratLine}`);
@@ -4287,16 +4349,25 @@ function init() {
 
   // start screen
   let chosenSide = "China";
-  let chosenFormation = "chinese_actual_opening_arc";
+  let chosenMode = "historical";
+  let chosenFormation = "line_abreast";
   const sideBtns = document.querySelectorAll(".side-choice");
   sideBtns.forEach((b) => b.addEventListener("click", () => {
     sideBtns.forEach((x) => x.classList.remove("active"));
     b.classList.add("active");
     chosenSide = b.getAttribute("data-side");
   }));
+  const modeBtns = document.querySelectorAll(".mode-choice");
+  modeBtns.forEach((b) => b.addEventListener("click", () => {
+    modeBtns.forEach((x) => x.classList.remove("active"));
+    b.classList.add("active");
+    chosenMode = b.getAttribute("data-mode");
+    const opts = document.getElementById("skirmishOptions");
+    if (opts) opts.style.display = chosenMode === "skirmish" ? "flex" : "none";
+  }));
   const formSel = document.getElementById("formationSelect");
   if (formSel) formSel.addEventListener("change", () => { chosenFormation = formSel.value; });
-  bind("startBtn", () => startGame(chosenSide, chosenFormation));
+  bind("startBtn", () => startGame(chosenSide, chosenMode === "skirmish" ? chosenFormation : "historical"));
   bind("playAgainBtn", () => {
     document.getElementById("resultScreen").classList.remove("show");
     document.getElementById("startScreen").classList.add("show");
