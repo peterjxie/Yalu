@@ -720,6 +720,7 @@ function makeShip(def, side, pos, headingDeg) {
     turnedHard: false,
     firedThisTurn: false,
     ammoStores: 1,               // ready ammunition by the guns; depletes as she fires (drives cook-off risk)
+    doctrine: def.doctrine || null,   // shell choice: "auto" | "AP" | "HE"; null falls back to the nation default
     out: false,                  // out of action / sinking
     outReason: "",
     sunkTurn: null,
@@ -843,6 +844,37 @@ function addFlood(ship, amount, hardBreach) {
   ship.flooding = clamp(ship.flooding + amount, 0, Math.max(ship.flooding, ceiling));
 }
 
+// ---------- shell selection: AP vs HE (common) -------------------------------
+// Both were standard issue in 1905. AP is hardened with a small charge to punch the
+// belt; HE (common) is thin-walled with a large bursting charge that shatters the
+// upperworks and starts fires but cannot pierce heavy armour. "auto" fires AP only
+// when it can actually defeat a belted vital, otherwise HE to burn the target down.
+const NATION_DOCTRINE = { Japan: "auto", Russia: "auto", China: "AP" };  // China 1894: solid shot, not bursting shell
+const SHELL_QUALITY = { Japan: 1.0, Russia: 0.72, China: 0.6 };   // incendiary effect / fuze reliability of the fill
+function shellDoctrine(ship) { return ship.doctrine || NATION_DOCTRINE[ship.side] || "auto"; }
+function chooseShell(from, gun, target, range) {
+  const d = shellDoctrine(from);
+  if (d === "AP" || d === "HE") return d;
+  const belted = !isDeckProtected(target);
+  const belt = zoneArmour(target, "belt");
+  if (belted && belt > 1 && penAt(gun, range) >= belt) return "AP";   // a clean belt penetration is on: go for the kill
+  return "HE";                                                        // can't pierce, or no belt to pierce: burn it
+}
+
+// Impact obliquity in degrees from the plate normal on a target's vertical side.
+// 0 = target beam-on to the line of fire (shell strikes square, best penetration);
+// 90 = bow/stern-on (a grazing hit). Combines horizontal aspect with shell descent.
+function impactObliquity(from, target, descentDeg) {
+  const dx = from.x - target.x, dy = from.y - target.y;
+  const bearToShooter = (Math.atan2(dx, -dy) * 180 / Math.PI + 360) % 360;   // direction the shell arrives from
+  let a = Math.abs(((bearToShooter - target.heading + 540) % 360) - 180);    // angle between that and the keel (0..180)
+  if (a > 90) a = 180 - a;                                                    // keel is a line: fold to 0..90
+  const thH = 90 - a;                                                         // horizontal obliquity off the side normal
+  const c = Math.cos(thH * Math.PI / 180) * Math.cos((descentDeg || 0) * Math.PI / 180);
+  return Math.acos(clamp(c, -1, 1)) * 180 / Math.PI;
+}
+function descentAngle(range) { return clamp(range / 900, 0.5, 24); }   // approx fall of shot for flat pre-dreadnought trajectories
+
 // Resolve a single shell strike. Returns an event record for the log.
 function resolveHit(from, battery, target, range) {
   const gun = battery.gun;
@@ -865,12 +897,40 @@ function resolveHit(from, battery, target, range) {
     const descent = clamp((range - 2500) / 6000, 0.05, 1);
     effPen = pen * descent;
   }
+  const shell = chooseShell(from, gun, target, range); // "AP" (pierce the belt) or "HE" (burst and burn)
+  const heShell = shell === "HE";                      // HE bursts on impact: fires and topside wreckage, no deep penetration
+  const quality = SHELL_QUALITY[from.side] != null ? SHELL_QUALITY[from.side] : 1;  // fill / fuze reliability by navy
+
+  // --- penetration: de Marre nickel-steel (French, 1890), the formula of the era ----
+  // HE bursts on contact, so neither angle nor the ballistic limit apply to it; only AP
+  // tries to punch through. For AP vs an armoured zone three real effects are modelled:
+  //   velocity    - capacity falls with range as the striking velocity decays (penAt)
+  //   obliquity   - capacity scales as cos^2.143 of the impact angle (de Marre's cos^3
+  //                 raised to 0.714); harsher than bare geometry, since the shell also glances
+  //   variability - penetration is a probability band around the ballistic limit (the V50
+  //                 "zone of mixed results"), not a hard threshold; V_limit goes as thickness^0.7
+  // Very steep angles ricochet outright, the more so for 1905's soft or uncapped shells.
   const unarmoured = armour <= 1;
-  let penetrated, partial = false;
-  if (unarmoured) penetrated = true;
-  else if (effPen >= armour) penetrated = true;
-  else if (effPen >= 0.82 * armour) { penetrated = true; partial = true; }
-  else penetrated = false;
+  let penetrated, partial = false, ricochet = false, obDeg = 0;
+  if (heShell) {
+    penetrated = unarmoured;                            // HE: through if bare, else bursts on the surface (handled below)
+  } else if (unarmoured) {
+    penetrated = true;                                  // AP over-penetrates thin/unarmoured structure
+  } else {
+    if (zone !== "deck") {                              // deck obliquity is the descent angle, already in effPen above
+      obDeg = impactObliquity(from, target, descentAngle(range));
+      if (rnd() < clamp((obDeg - 55) / 23, 0, 0.85)) ricochet = true;   // glances off at steep angles
+    }
+    if (ricochet) penetrated = false;
+    else {
+      const obFactor = zone === "deck" ? 1 : Math.pow(Math.max(0, Math.cos(obDeg * Math.PI / 180)), 2.143);
+      const cap = effPen * obFactor;                                    // effective penetration capacity at this angle/range
+      const ratio = Math.pow(cap / armour, 0.7);                        // thickness margin -> velocity ratio (V_L ∝ t^0.7)
+      const pPen = 1 / (1 + Math.exp(-(ratio - 1) / 0.05));             // ballistic-limit probability band (zone of mixed results)
+      penetrated = rnd() < pPen;
+      partial = penetrated && ratio < 1.12;
+    }
+  }
 
   // base shell "power" — heavier shells hit harder; QF gets a fire/casualty edge
   const mass = shellMass(gun);
@@ -884,7 +944,6 @@ function resolveHit(from, battery, target, range) {
   else if (cal >= 130) power *= 1.15;
   const isQF = (gun.type || "").toLowerCase().includes("quick-firing");
   const isLight = cal <= 57;                           // 6-pdr and below: anti-TB / anti-personnel
-  const heShell = from.side === "Japan";               // Japanese fired bursting common shell; Chinese mostly solid shot
   // Over-penetration: a solid (non-bursting) shell punches clean through a thin hull and dumps little
   // of its energy inside. A shell matched to the target deposits far more; a bursting shell deposits in full.
   let depositEff = 1;
@@ -908,20 +967,29 @@ function resolveHit(from, battery, target, range) {
   let dmg = 0, fireSet = false, crewHit = 0, crit = null;
 
   if (!penetrated) {
-    // absorbed by armour; minor shock/spall only
-    dmg = power * 0.05 * (partial ? 1.4 : 1);
+    if (heShell) {
+      // HE bursts on the plate it cannot pierce: blast and splinters wreck the upperworks
+      // above and start fires. Soft damage only, so it cannot by itself sink a belted hull.
+      const baseP = Math.sqrt(mass) * 1.05;            // the burst, not a penetration (un-inflated by the heavy-gun curve)
+      dmg = baseP * 1.1 * quality;
+      crewHit = (isQF ? 0.008 : 0.005);
+      if (!dud && rnd() < 0.22 * quality) fireSet = true;
+    } else {
+      // AP fails to bite: absorbed by the plate, minor shock and spall only (the true bounce)
+      dmg = power * 0.05 * (partial ? 1.4 : 1);
+    }
   } else if (unarmoured || zone === "upper" || zone === "sidehull" || zone === "ends") {
     // through unarmoured structure — but a solid shell over-penetrates and dumps little energy
     dmg = power * (zone === "upper" ? 0.7 : 0.9) * (partial ? 0.6 : 1) * depositEff;
     crewHit = (isQF ? 0.010 : 0.006) * (zone === "upper" ? 1.3 : 1);
-    const fc = heShell ? (isQF ? 0.42 : 0.34) : 0.08;  // bursting common shell sets fires; solid shot rarely does
+    const fc = (heShell ? (isQF ? 0.42 : 0.34) * quality : 0.08);  // bursting shell sets fires; quality scales the fill
     if (!dud && rnd() < fc) fireSet = true;
   } else {
     // penetrating hit on a vital (belt/turret/deck/conn)
     dmg = power * (partial ? 0.8 : 1.5);
     crewHit = 0.008;
     if (!dud) {
-      if (rnd() < (heShell ? 0.22 : 0.08)) fireSet = true;
+      if (rnd() < (heShell ? 0.22 * quality : 0.08)) fireSet = true;
       const c = rnd();
       if (zone === "belt") {
         if (c < 0.30) crit = "flood";
@@ -997,7 +1065,7 @@ function resolveHit(from, battery, target, range) {
 
   return {
     zone, armour: Math.round(armour), pen: Math.round(pen),
-    penetrated, partial, dud, hard, dmg: Math.round(dmg),
+    penetrated, partial, ricochet, obliquity: Math.round(obDeg), dud, hard, dmg: Math.round(dmg),
     fireSet: fireSet || crit === "fire2", crit,
   };
 }
@@ -1035,7 +1103,7 @@ function fireBattery(from, battery, target, turn) {
   const volleys = shotsPerGun;                             // per gun
   const totalShots = Math.max(1, Math.round(volleys * battery.count * fireVolumeFactor(from)));
 
-  let hits = 0, shots = 0, totalDmg = 0, fires = 0, crits = [];
+  let hits = 0, shots = 0, totalDmg = 0, fires = 0, crits = [], pens = 0, ricochets = 0, bounces = 0;
   const hc = hitChance(from, battery, target, range) * fireMoraleFactor(from);
   for (let i = 0; i < totalShots; i++) {
     shots++;
@@ -1045,6 +1113,9 @@ function fireBattery(from, battery, target, turn) {
       totalDmg += ev.dmg;
       if (ev.fireSet) fires++;
       if (ev.crit && ev.crit !== "fire2") crits.push(ev.crit);
+      if (ev.penetrated && ev.hard) pens++;                       // a telling penetration of a vital
+      else if (ev.ricochet) ricochets++;                          // glanced off an angled plate
+      else if (!ev.penetrated && ev.armour > 1) bounces++;        // struck armour, failed to bite
       if (target.structure <= 0) break;
     }
   }
@@ -1055,7 +1126,7 @@ function fireBattery(from, battery, target, turn) {
 
   return {
     range: Math.round(range), shots, hits, totalDmg: Math.round(totalDmg),
-    fires, crits, hitChance: hc, penetration: Math.round(penAt(battery.gun, range)),
+    fires, crits, pens, ricochets, bounces, hitChance: hc, penetration: Math.round(penAt(battery.gun, range)),
     shotsPerGun: volleys,
   };
 }
@@ -1202,7 +1273,7 @@ if (typeof module !== "undefined" && module.exports) {
     maxTurnRate, moveDistance, executeMove, hitChance, rollZone, resolveHit,
     fireBattery, fireTorpedo, TORPEDO_RANGE, startTurnForSide, upkeepTick,
     checkOutOfAction, sideStrength, softFloorFrac, maxFlood,
-    NATION_ACC,
+    NATION_ACC, chooseShell, shellDoctrine, NATION_DOCTRINE, SHELL_QUALITY, impactObliquity, descentAngle,
   };
 }
 
@@ -2798,6 +2869,9 @@ function describeSalvo(from, battery, target, r) {
   else {
     s += `${r.hits} hit`;
     const bits = [];
+    if (r.pens) bits.push(`${r.pens} through`);
+    if (r.ricochets) bits.push(`${r.ricochets} ricochet${r.ricochets > 1 ? "s" : ""}`);
+    else if (r.bounces && !r.pens) bits.push("shells glancing");
     if (r.fires) bits.push(`${r.fires} fire${r.fires > 1 ? "s" : ""}`);
     if (r.crits && r.crits.length) bits.push(r.crits.join(", "));
     s += bits.length ? ` (${bits.join("; ")})` : "";
@@ -2814,12 +2888,17 @@ function aiScore(S, T) {
   const main = S.batteries.find((b) => !b.knockedOut) || S.batteries[0];
   if (!main) return 0;
   const sol = solution(main.gun, T, r);
+  const shell = chooseShell(S, main.gun, T, r);
   const deck = isDeckProtected(T);
-  let penF;
-  if (sol.verdict === "PENETRATES") penF = 1.0;
-  else if (sol.verdict === "PARTIAL") penF = 0.5;
-  else penF = deck ? 0.40 : 0.12;     // QF still maul upperworks; armour belts shrug
-  const value = T.structureMax;
+  let penF, value = T.structureMax;
+  if (shell === "AP") {
+    if (sol.verdict === "PENETRATES") penF = 1.0;
+    else if (sol.verdict === "PARTIAL") penF = 0.55;
+    else penF = 0.10;                  // AP that can't bite is wasted (auto would not pick it here)
+  } else {
+    penF = deck ? 0.7 : 0.45;          // HE burns topsides: lethal to unarmoured ships, still worthwhile on armoured ones
+    if (!deck) value *= 0.6;           // but HE cannot exploit a battleship's full bulk, only degrade it
+  }
   const prox = 1200 / (r + 600);
   const wounded = 1 + (1 - T.structure / T.structureMax) * 0.7;
   let reach = 1;
@@ -2832,6 +2911,21 @@ function aiChooseTarget(S) {
   let best = null, bestScore = -1;
   for (const T of foes) {
     const sc = aiScore(S, T);
+    if (sc > bestScore) { bestScore = sc; best = T; }
+  }
+  return best;
+}
+
+// Auto-fire target: among enemies a bearing battery can actually range, the one this
+// ship can do the most to (shell-aware via aiScore). Stops ships plinking the nearest
+// hull when a target they can hurt is in reach. Returns null if nothing is engageable.
+function bestFireTarget(s) {
+  let best = null, bestScore = 0;
+  for (const T of aliveOnSide(otherSide(s.side))) {
+    const r = rangeBetween(s, T);
+    const canEngage = s.batteries.some((b) => !b.knockedOut && batteryCanBear(s, b, T) && r <= maxEffectiveRange(b.gun));
+    if (!canEngage) continue;
+    const sc = aiScore(s, T);
     if (sc > bestScore) { bestScore = sc; best = T; }
   }
   return best;
@@ -3500,7 +3594,7 @@ function autoFire(s, step) {
     b.readiness = Math.min((b.readiness || 0) + step, reload * 1.25);  // small bank, no stockpiling
   }
   let T = s.targetId ? shipById(s.targetId) : null;
-  if (!T || T.out || T.side === s.side) T = nearestEnemyInReach(s);
+  if (!T || T.out || T.side === s.side) T = bestFireTarget(s) || nearestEnemyInReach(s);
   if (!T) return;
   s._aimWorld = absBearing(s, T);
   for (const b of s.batteries) {
@@ -4186,7 +4280,7 @@ function syncPanel() {
 
   const targetLine = targetValid
     ? `<div class="target-line">Priority target: <b>${t.name}</b>, ${Math.round(range)} m, bearing ${Math.round(((relativeBearing(s, t) + 360) % 360))}° <span class="muted">· auto-firing</span></div>`
-    : `<div class="target-line muted">Auto-engaging the nearest enemy in range. Tap an enemy to set a priority target.</div>`;
+    : `<div class="target-line muted">Firing on the best target it can hurt in range. Tap an enemy to set a priority target.</div>`;
 
   const ms = moraleState(s.morale);
   const nerve = s._routing ? ["Fleeing", "nerve-broken"] : { steady: ["Steady", "nerve-steady"], shaken: ["Shaken", "nerve-shaken"], wavering: ["Wavering", "nerve-wavering"], broken: ["Nerve gone", "nerve-broken"] }[ms];
@@ -4227,6 +4321,15 @@ function syncPanel() {
           <button class="seg-btn" data-sp="1">Full</button>
         </div>
       </div>
+      ${s.side === game.playerSide ? `<div class="ctl-row">
+        <span class="k">Shells</span>
+        <span class="val">${(s.doctrine || "auto") === "auto" ? "Auto" : s.doctrine} <span class="muted">· ${(s.doctrine || "auto") === "AP" ? "pierce the belt" : (s.doctrine || "auto") === "HE" ? "burn topsides" : "AP when it can pierce, else HE"}</span></span>
+        <div class="seg">
+          <button class="seg-btn" data-shell="auto">Auto</button>
+          <button class="seg-btn" data-shell="AP">AP</button>
+          <button class="seg-btn" data-shell="HE">HE</button>
+        </div>
+      </div>` : ""}
       <button class="card-btn" id="viewCardBtn">⊞ Ship schematic &amp; stats</button>
       <div class="batteries">${batRows}${torpHtml}</div>
     </div>`;
@@ -4238,6 +4341,13 @@ function syncPanel() {
       s.orderThrottle = th;
       if (s.orderHeading == null) s.orderHeading = s.heading;
       logLine(`${s.name}: ${th === 0 ? "all stop" : "make turns for " + Math.round(s.maxSpeed * th) + " kn"}.`, "");
+      syncPanel();
+    });
+  });
+  body.querySelectorAll(".seg-btn[data-shell]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      s.doctrine = btn.getAttribute("data-shell");
+      logLine(`${s.name}: ${s.doctrine === "auto" ? "shells to auto-select" : s.doctrine + " shell loaded"}.`, "");
       syncPanel();
     });
   });
