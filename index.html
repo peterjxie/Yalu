@@ -399,7 +399,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 
   <div id="rail">
     <button class="rail-btn" id="playBtn">End Turn ▶</button>
-    <button class="rail-btn icon" id="multiSelBtn" title="Form a squadron" aria-label="Form a squadron"><svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 3 L14.2 9 L12 7.6 L9.8 9 Z"/><path d="M6 11 L8.2 17 L6 15.6 L3.8 17 Z"/><path d="M18 11 L20.2 17 L18 15.6 L15.8 17 Z"/></svg></button>
+    <button class="rail-btn icon" id="multiSelBtn" title="Form a squadron" aria-label="Form a squadron"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2.6 2.2"/><circle cx="8" cy="12.2" r="2.1" fill="currentColor"/><circle cx="13.6" cy="10.2" r="1.7" fill="currentColor"/><circle cx="16.6" cy="14" r="1.7" fill="currentColor"/></svg></button>
     <button class="rail-btn" id="speedBtn">Skip ▶▶</button>
     <button class="rail-btn toggle" id="ringsBtn">Range rings</button>
     <button class="rail-btn toggle opt" id="arcsBtn">Arcs</button>
@@ -464,7 +464,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">—</p>
       <button class="start-go" id="startBtn">Begin the action</button>
     </div>
-    <div class="build-stamp" id="buildStamp">build 2026-06-21 02:08 UTC</div>
+    <div class="build-stamp" id="buildStamp">build 2026-06-22 12:55 UTC</div>
   </div>
 </div>
 
@@ -735,22 +735,47 @@ function maxEffectiveRange(gun) {
 function mountArc(mountText) {
   const m = (mountText || "").toLowerCase();
   const has = (...w) => w.some(x => m.includes(x));
-  if (has("fore and aft") || has("bow and stern")) return "FORE_AFT";
-  if (has("barbette", "turret", "pivot", "centre", "central", "centerline", "amidships")) return "ALL";
-  if (has("fore", "bow", "forward")) return "FORE";
-  if (has("aft", "stern")) return "AFT";
-  if (has("beam", "broadside", "side", "wing", "sponson", "casemate")) return "BEAM";
-  if (has("light")) return "ALL";   // distributed anti-torpedo battery
+  if (has("fore and aft") || has("bow and stern")) return "ALL";           // a centreline pair; split() turns it into a fore + an aft turret
+  if (has("light")) return "ALL";                                          // distributed anti-torpedo battery
+  if (has("centre", "central", "centerline", "amidships")) return "ALL";
+  if (has("casemate", "wing", "broadside", "sponson", "beam")) return "BEAM";
+  const fore = has("fore", "bow", "forward"), aft = has("aft", "stern"), turret = has("barbette", "turret", "pivot");
+  if (fore && aft) return "ALL";
+  if (fore) return turret ? "FORE_TURRET" : "FORE";                        // a forward turret trains across both bows; a bow chaser is narrow
+  if (aft) return turret ? "AFT_TURRET" : "AFT";
+  if (turret) return "ALL";
   return "BEAM";
 }
-// Does a relative bearing (deg, 0 = dead ahead) fall in an arc family?
+// Break a mount into the batteries that actually bear independently: a fore+aft turret pair
+// becomes a fore turret and an aft turret, and a broadside battery splits into its two sides,
+// so only the engaged side fires on a given target (no firing both broadsides at one mark).
+function splitMount(count, mount) {
+  const m = (mount || "").toLowerCase();
+  const has = (...w) => w.some(x => m.includes(x));
+  if (has("fore and aft") || has("bow and stern")) {
+    const f = Math.ceil(count / 2), a = count - f, out = [{ count: f, arc: "FORE_TURRET", mount: "fore turret" }];
+    if (a > 0) out.push({ count: a, arc: "AFT_TURRET", mount: "aft turret" });
+    return out;
+  }
+  const arc = mountArc(mount);
+  if (arc === "BEAM" && count >= 2) {
+    const sb = Math.ceil(count / 2), pt = count - sb;
+    return [{ count: sb, arc: "STARBOARD", mount: "stbd " + mount }, { count: pt, arc: "PORT", mount: "port " + mount }];
+  }
+  return [{ count, arc, mount }];
+}
+// Does a relative bearing (deg, 0 = dead ahead, + = starboard) fall in an arc family?
 function bearingInArc(relBearing, arc) {
-  const b = Math.abs(wrap180(relBearing));
+  const r = wrap180(relBearing), b = Math.abs(r);
   switch (arc) {
     case "FORE": return b <= 55;
     case "AFT": return b >= 125;
     case "BEAM": return b >= 35 && b <= 145;
     case "FORE_AFT": return b <= 55 || b >= 125;
+    case "FORE_TURRET": return b <= 150;                  // ahead + both beams; blind only in a dead-astern cone
+    case "AFT_TURRET": return b >= 30;                    // astern + both beams; blind only in a dead-ahead cone
+    case "STARBOARD": return r >= 35 && r <= 145;
+    case "PORT": return r <= -35 && r >= -145;
     case "ALL": return true;
     default: return b >= 35 && b <= 145;
   }
@@ -765,16 +790,19 @@ function makeShip(def, side, pos, headingDeg) {
     if (a.gun_id) {
       const g = guns[a.gun_id];
       if (!g) continue;
-      batteries.push({
-        gunId: a.gun_id,
-        gun: g,
-        count: a.count || 1,
-        mount: a.mount || "",
-        arc: mountArc(a.mount),
-        readiness: reloadMid(g),       // start one shot ready
-        lastFiredTurn: -99,
-        shotsThisTurn: 0,
-      });
+      for (const part of splitMount(a.count || 1, a.mount || "")) {
+        if (part.count <= 0) continue;
+        batteries.push({
+          gunId: a.gun_id,
+          gun: g,
+          count: part.count,
+          mount: part.mount,
+          arc: part.arc,
+          readiness: reloadMid(g),       // start one shot ready
+          lastFiredTurn: -99,
+          shotsThisTurn: 0,
+        });
+      }
     } else if (a.weapon_id) {          // torpedoes (any variant id)
       torpedoes = { count: (a.count || 1), ready: true };
     }
@@ -3585,7 +3613,6 @@ function redraw() {
     const cone = buildConeSpecs(sel, selTargetValid ? selTarget : null, planHeading);
     if (game.show.rings) drawRangeRings(ctx, v, sel, cone.solution);
     if (game.show.arcs) drawFiringCones(ctx, v, sel, cone.specs, planHeading != null ? planHeading : undefined);
-    if (selTargetValid) drawTargetLine(ctx, v, sel, selTarget, "rgba(236,58,42,0.96)", 2.6, true, [9, 6]);
     drawTorpedoRange(ctx, v, sel);
     if (game.phase === "plan" && sel.side === game.playerSide) drawReachable(ctx, v, sel);
   }
@@ -3598,9 +3625,18 @@ function redraw() {
     }
   }
 
-  // formation cue (Tsushima): show which ships are in a line and who leads, so the
-  // division structure is visible at rest and the line is seen flexing through a turn.
+  // formation cue: show which ships are in a line and who leads
   drawFormationLines(ctx, v);
+
+  // persistent target lines: every friendly ship shows what it is firing on (faint red), so
+  // the engagement stays legible without reselecting. The selected ship's line is a touch brighter.
+  for (const s of game.ships) {
+    if (s.out || s.side !== game.playerSide || !s.targetId) continue;
+    const t = shipById(s.targetId);
+    if (!t || t.out || t.side === s.side) continue;
+    const onSel = s.id === game.selectedId;
+    drawTargetLine(ctx, v, s, t, onSel ? "rgba(228,76,62,0.52)" : "rgba(214,72,60,0.24)", onSel ? 1.7 : 1.1, onSel, [6, 6]);
+  }
 
   // ships: enemies first so friendlies/labels sit on top
   const tgt = shipById(game.targetId);
@@ -3616,7 +3652,23 @@ function redraw() {
   }
 
   drawTorpedoes(ctx, v, game.torpedoes);
+  if (sel && !sel.out && selTargetValid && game.show.arcs) drawGunDots(ctx, v, sel, selTarget);
   drawEffects(ctx, v, game.effects);
+  // tiny squadron-number badges so you can tell at a glance which ships belong together
+  if (game.squadrons.length) {
+    ctx.save(); ctx.font = "600 9px ui-monospace, SFMono-Regular, Menlo, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+    for (const sq of game.squadrons) {
+      for (const id of sq.members) {
+        const s = shipById(id); if (!s || s.out) continue;
+        const r = Math.max(shipScreenLen(v, s) * 0.5, 9);
+        const lx = wx(v, s.x) + r + 7, ly = wy(v, s.y) - r - 1;
+        ctx.fillStyle = "rgba(8,22,26,0.82)"; ctx.beginPath(); ctx.arc(lx, ly, 6.4, 0, Math.PI * 2); ctx.fill();
+        ctx.lineWidth = 1; ctx.strokeStyle = "rgba(240,210,120,0.6)"; ctx.stroke();
+        ctx.fillStyle = "rgba(240,210,120,0.97)"; ctx.fillText(String(sq.id), lx, ly + 0.5);
+      }
+    }
+    ctx.restore();
+  }
   drawCompass(ctx, v);
 }
 
@@ -4384,10 +4436,57 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
+// Small per-gun readout next to the selected ship: one dot per barrel that bears on the
+// target. Main guns are larger dots, secondaries small; green = will tell (HE, or AP that
+// pierces at this range), red = AP that bounces. Torpedoes that can reach show a triangle.
+function drawGunDots(ctx, v, ship, target) {
+  const hd = (game.phase === "plan" && ship.order) ? ship.order.heading : (ship.dh != null ? ship.dh : ship.heading);
+  const range = rangeBetween(ship, target);
+  const rel = ((absBearing(ship, target) - hd + 540) % 360) - 180;
+  const he = ship.doctrine === "HE";
+  const zone = isDeckProtected(target) ? "deck" : (zoneArmour(target, "belt") > 0 ? "belt" : "deck");
+  const armour = zoneArmour(target, zone) || 1;
+  const main = [], sec = [];
+  for (const b of ship.batteries) {
+    if (b.knockedOut || range > maxEffectiveRange(b.gun) || !bearingInArc(rel, b.arc)) continue;
+    const pen = he || penAt(b.gun, range) >= armour;
+    const arr = gunCalibre(b.gun) >= 150 ? main : sec;
+    for (let i = 0; i < b.count; i++) arr.push(pen);
+  }
+  const torp = !!(ship.torpedoes && (ship.torpedoes.count || 0) > 0 && range <= (typeof TORPEDO_RANGE !== "undefined" ? TORPEDO_RANGE * 1.05 : 1050));
+  if (!main.length && !sec.length && !torp) return;
+  const sx = wx(v, ship.x), sy = wy(v, ship.y);
+  const tx = wx(v, target.x), ty = wy(v, target.y);
+  let dx = tx - sx, dy = ty - sy; const dd = Math.hypot(dx, dy) || 1; dx /= dd; dy /= dd;
+  const px = -dy, py = dx;                                       // perpendicular, for laying a row across the line of fire
+  const base = Math.max(shipScreenLen(v, ship) * 0.55, 12) + 8;
+  function row(arr, R, along) {
+    if (!arr.length) return;
+    const gap = R * 2.5, n = Math.min(arr.length, 9), w = (n - 1) * gap;
+    const ax = sx + dx * along, ay = sy + dy * along;
+    for (let i = 0; i < n; i++) {
+      const cxp = ax + px * (i * gap - w / 2), cyp = ay + py * (i * gap - w / 2);
+      ctx.beginPath(); ctx.arc(cxp, cyp, R, 0, Math.PI * 2);
+      ctx.fillStyle = arr[i] ? "rgba(95,207,115,0.96)" : "rgba(226,92,70,0.96)";
+      ctx.fill(); ctx.lineWidth = 0.6; ctx.strokeStyle = "rgba(6,20,24,0.7)"; ctx.stroke();
+    }
+  }
+  ctx.save();
+  row(main, 2.9, base);
+  row(sec, 1.7, base + 8);
+  if (torp) {                                                   // a small triangle past the dots
+    const ax = sx + dx * (base + 16), ay = sy + dy * (base + 16), s = 3.2;
+    ctx.beginPath(); ctx.moveTo(ax + dx * s, ay + dy * s); ctx.lineTo(ax + px * s - dx * s, ay + py * s - dy * s); ctx.lineTo(ax - px * s - dx * s, ay - py * s - dy * s); ctx.closePath();
+    ctx.fillStyle = "rgba(120,180,238,0.95)"; ctx.fill();
+  }
+  ctx.restore();
+}
 // Firing-cone + penetration-solution overlay specs for the selected ship.
 const ARC_WEDGES = {
   FORE: [[-55, 55]], AFT: [[125, 235]], BEAM: [[35, 145], [-145, -35]],
   FORE_AFT: [[-55, 55], [125, 235]], ALL: [[-180, 180]],
+  FORE_TURRET: [[-150, 150]], AFT_TURRET: [[30, 180], [-180, -30]],
+  STARBOARD: [[35, 145]], PORT: [[-145, -35]],
 };
 function buildConeSpecs(ship, target, headingForArcs) {
   const specs = [];
@@ -4412,7 +4511,8 @@ function buildConeSpecs(ship, target, headingForArcs) {
     const bearer = ship.batteries.find((b) => !b.knockedOut && range <= maxEffectiveRange(b.gun) && bearingInArc(rel, b.arc));
     if (bearer) {
       const sol = solution2(bearer.gun, target, range);
-      const col = sol.cls === "pen" ? "95,207,115" : sol.cls === "partial" ? "227,196,92" : "215,106,85";
+      const he = (ship.doctrine === "HE");                                  // HE does not care about belt penetration, so show it as effective
+      const col = he ? "95,207,115" : sol.cls === "pen" ? "95,207,115" : sol.cls === "partial" ? "227,196,92" : "215,106,85";
       specs.push({ relLo: rel - 5, relHi: rel + 5, reachM: range, fill: `rgba(${col},0.16)`, stroke: `rgba(${col},0.75)`, lw: 1.3 });
       const zone = isDeckProtected(target) ? "deck" : (zoneArmour(target, "belt") > 0 ? "belt" : "deck");
       const armour = zoneArmour(target, zone) || 1;
@@ -4528,7 +4628,7 @@ function renderSquadronPanel(body, sq) {
       <div class="sq-move muted">Tap a lit hex to steer the squadron \u2014 the flag leads, the rest hold station.</div>
       <div class="sq-members">${memberRows}</div>
       <div class="sq-actions"><button class="rail-btn" id="sqDisband">Disband</button></div>
-      <div class="muted sq-hint">Tap a member for its individual orders (these override the squadron).</div>
+      <div class="muted sq-hint">First tap on a ship is individual orders; this is the second tap. Tap a member for its own orders (these override the squadron).</div>
     </div>`;
   body.querySelectorAll("[data-sqdoc]").forEach((b) => b.addEventListener("click", () => { squadronSetDoctrine(sq, b.getAttribute("data-sqdoc")); syncPanel(); }));
   body.querySelectorAll(".sq-member").forEach((b) => b.addEventListener("click", () => { const id = b.getAttribute("data-ship"); const s = shipById(id); if (s && !s.out) { game.selectedId = id; game.menuMode = "ship"; game.selSquadId = null; game.cardId = null; syncPanel(); } }));
@@ -4591,7 +4691,7 @@ function syncPanel() {
         </div>
         <div class="bat-sub">
           <span class="bat-gun">${b.gun.name}</span>
-          <span class="bat-arc">${b.arc.replace("_", "/")}</span>
+          <span class="bat-arc">${b.arc.replace(/_/g, " ").toLowerCase()}</span>
         </div>
         ${solHtml ? `<div class="bat-sol">${solHtml}</div>` : ""}
       </div>`;
@@ -4642,6 +4742,7 @@ function syncPanel() {
         <span class="ship-type">${s.type}</span>
       </div>
       ${captLine ? `<div class="capt-line">${captLine}</div>` : ""}
+      ${squadronOf(s.id) ? `<div style="font-size:11px;color:#e8ca70;margin-top:4px">In Squadron ${squadronOf(s.id).id} · tap again for squadron orders</div>` : ""}
       <div class="spec-grid">
         <div><span class="k">Class</span><span class="val">${s.def.class || "—"}</span></div>
         <div><span class="k">Length</span><span class="val">${dims.length ?? "—"} m</span></div>
@@ -4829,9 +4930,9 @@ function onPointerUp(e) {
           syncPanel();
         } else {
           const sq = squadronOf(ship.id);
-          if (sq && game.selectedId === ship.id && game.menuMode === "squad") game.menuMode = "ship";   // tap the same squadroned ship again -> individual menu
-          else if (sq) { game.selectedId = ship.id; game.selSquadId = sq.id; game.menuMode = "squad"; }  // tap a squadroned ship -> its squadron menu
-          else { game.selectedId = ship.id; game.selSquadId = null; game.menuMode = "ship"; }            // ungrouped -> individual menu
+          if (game.selectedId === ship.id && sq) game.menuMode = (game.menuMode === "ship") ? "squad" : "ship";  // tap again on a squadron ship toggles to squadron orders
+          else { game.selectedId = ship.id; game.menuMode = "ship"; }                                            // first tap (or a new ship) shows the individual ship
+          game.selSquadId = sq ? sq.id : null;
           game.targetId = ship.targetId || null; game.cardId = null;
           syncPanel();
         }
@@ -4954,7 +5055,7 @@ function shipCardsHtml(side) {
 function renderShipCard(body, s) {
   if (!body || !s) return;
   const dims = s.def.dimensions_m || {};
-  let arm = s.batteries.map((b) => `<li class="${b.knockedOut ? "gun-out" : ""}">${b.count} × ${Math.round(gunCalibre(b.gun))} mm · ${b.gun.name} <span class="muted">(${b.arc.replace(/_/g, "/")})</span>${b.knockedOut ? ' <span class="gun-tag">✗ disabled</span>' : ""}</li>`).join("");
+  let arm = s.batteries.map((b) => `<li class="${b.knockedOut ? "gun-out" : ""}">${b.count} × ${Math.round(gunCalibre(b.gun))} mm · ${b.gun.name} <span class="muted">(${b.arc.replace(/_/g, " ").toLowerCase()})</span>${b.knockedOut ? ' <span class="gun-tag">✗ disabled</span>' : ""}</li>`).join("");
   if (s.torpedoes) arm += `<li>${s.torpedoes.count} × torpedo tubes</li>`;
   const cond = s.out
     ? `<div class="card-out">${s.outReason || "out of action"}</div>`
@@ -5583,7 +5684,7 @@ function startGame(playerSide, formationKey) {
 }
 
 function init() {
-  try { console.log("Echelon build 2026-06-21 02:08 UTC"); } catch (e) {}
+  try { console.log("Echelon build 2026-06-22 12:55 UTC"); } catch (e) {}
   canvas = document.getElementById("chart");
   ctx = canvas.getContext("2d");
   // Stop the page or the host viewer from scrolling/zooming on canvas touches.
