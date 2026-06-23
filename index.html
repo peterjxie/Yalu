@@ -464,7 +464,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">—</p>
       <button class="start-go" id="startBtn">Begin the action</button>
     </div>
-    <div class="build-stamp" id="buildStamp">build 2026-06-22 12:55 UTC</div>
+    <div class="build-stamp" id="buildStamp">build 2026-06-22 14:17 UTC</div>
   </div>
 </div>
 
@@ -2643,6 +2643,13 @@ const game = {
   simSeconds: 0,            // elapsed sim time
   maxSeconds: 5400,         // ~nightfall / disengagement
   started: false,
+  squadrons: [],            // player-formed squadrons (set up per battle; defined here so the render loop is safe before any battle)
+  _squadSeq: 0,
+  _divLines: null,
+  multiSel: false,
+  pendingSel: [],
+  menuMode: "ship",
+  selSquadId: null,
 };
 // sim-seconds advanced per real second at each speed setting (ultra-low default)
 const SIM_SPEEDS = [0.5, 2, 6];
@@ -3557,7 +3564,10 @@ let canvas, ctx;
 
 function cssSize() {
   const wrap = document.getElementById("chartWrap");
-  return { w: wrap.clientWidth, h: wrap.clientHeight };
+  let w = wrap ? wrap.clientWidth : 0, h = wrap ? wrap.clientHeight : 0;
+  if (!(w > 0)) w = (typeof window !== "undefined" && window.innerWidth) || 800;     // a collapsed/unlaid-out container would otherwise give a 0-size canvas (blank field)
+  if (!(h > 0)) h = (typeof window !== "undefined" && window.innerHeight) || 600;
+  return { w, h };
 }
 
 function resizeCanvas() {
@@ -3655,7 +3665,7 @@ function redraw() {
   if (sel && !sel.out && selTargetValid && game.show.arcs) drawGunDots(ctx, v, sel, selTarget);
   drawEffects(ctx, v, game.effects);
   // tiny squadron-number badges so you can tell at a glance which ships belong together
-  if (game.squadrons.length) {
+  if (game.squadrons && game.squadrons.length) {
     ctx.save(); ctx.font = "600 9px ui-monospace, SFMono-Regular, Menlo, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
     for (const sq of game.squadrons) {
       for (const id of sq.members) {
@@ -4429,11 +4439,41 @@ function loop() {
   game._lastT = now;
   if (!(dt > 0)) dt = 0.016;
   if (dt > 0.1) dt = 0.1;
-  if (game.exec) stepExecute(dt);
-  tickEffects(dt);
-  advanceTorpedoes(dt);
-  redraw();
+  try {
+    if (game.exec) stepExecute(dt);
+    tickEffects(dt);
+    advanceTorpedoes(dt);
+    redraw();
+  } catch (err) {
+    drawLoopError(err);                                   // a draw fault would otherwise leave a cleared, blank canvas; surface it instead
+  }
   requestAnimationFrame(loop);
+}
+// Paint the error onto the canvas (and log it once) so a render fault is visible rather than a blank field.
+function drawLoopError(err) {
+  if (!game._loopErrLogged) { game._loopErrLogged = true; try { console.error("Echelon render error:", err && (err.stack || err.message || err)); } catch (e) {} }
+  if (!ctx || !canvas) return;
+  try {
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.fillStyle = "#0a1418"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#e7e0cf"; ctx.font = "13px ui-monospace, Menlo, monospace"; ctx.textAlign = "left"; ctx.textBaseline = "top";
+    ctx.fillText("Render error (please send this line):", 16, 16);
+    const msg = String((err && (err.message || err)) || "unknown");
+    const stk = String((err && err.stack) || "").split("\n").slice(0, 3).join("  |  ");
+    ctx.fillStyle = "#e8a07a";
+    wrapText(ctx, msg, 16, 40, (canvas.width || 800) - 32, 17);
+    ctx.fillStyle = "#9fb3bd"; ctx.font = "11px ui-monospace, Menlo, monospace";
+    wrapText(ctx, stk, 16, 92, (canvas.width || 800) - 32, 15);
+  } catch (e) {}
+}
+function wrapText(ctx, text, x, y, maxW, lh) {
+  const words = String(text).split(/\s+/); let line = "", yy = y;
+  for (const w of words) {
+    const test = line ? line + " " + w : w;
+    if (ctx.measureText(test).width > maxW && line) { ctx.fillText(line, x, yy); line = w; yy += lh; }
+    else line = test;
+  }
+  if (line) ctx.fillText(line, x, yy);
 }
 
 // Small per-gun readout next to the selected ship: one dot per barrel that bears on the
@@ -5684,7 +5724,7 @@ function startGame(playerSide, formationKey) {
 }
 
 function init() {
-  try { console.log("Echelon build 2026-06-22 12:55 UTC"); } catch (e) {}
+  try { console.log("Echelon build 2026-06-22 14:17 UTC"); } catch (e) {}
   canvas = document.getElementById("chart");
   ctx = canvas.getContext("2d");
   // Stop the page or the host viewer from scrolling/zooming on canvas touches.
