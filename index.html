@@ -737,7 +737,8 @@ function mountArc(mountText) {
   const has = (...w) => w.some(x => m.includes(x));
   if (has("fore and aft") || has("bow and stern")) return "ALL";           // a centreline pair; split() turns it into a fore + an aft turret
   if (has("light")) return "ALL";                                          // distributed anti-torpedo battery
-  if (has("centre", "central", "centerline", "amidships")) return "ALL";
+  if (has("central", "centre")) return "BEAM";                            // a central/broadside battery box fires to the beams, not all-round
+  if (has("centerline", "amidships")) return "ALL";
   if (has("casemate", "wing", "broadside", "sponson", "beam")) return "BEAM";
   const fore = has("fore", "bow", "forward"), aft = has("aft", "stern"), turret = has("barbette", "turret", "pivot");
   if (fore && aft) return "ALL";
@@ -752,7 +753,7 @@ function mountArc(mountText) {
 function splitMount(count, mount) {
   const m = (mount || "").toLowerCase();
   const has = (...w) => w.some(x => m.includes(x));
-  if (has("fore and aft") || has("bow and stern")) {
+  if (has("fore and aft") || has("bow and stern") || has("echelon")) {
     const f = Math.ceil(count / 2), a = count - f, out = [{ count: f, arc: "FORE_TURRET", mount: "fore turret" }];
     if (a > 0) out.push({ count: a, arc: "AFT_TURRET", mount: "aft turret" });
     return out;
@@ -2885,6 +2886,7 @@ function sideA() { return SCN.sides[0].id; }
 function sideB() { return SCN.sides[1].id; }
 function otherSide(s) { return s === sideA() ? sideB() : sideA(); }
 function clsForSide(s) { const f = SCN.sides.find((x) => x.id === s); return f ? f.cls : "japan"; }
+function sideLabel(s) { return (SIDE_LABEL && SIDE_LABEL[s]) || s; }
 
 // ---- scenario setup --------------------------------------------------------
 // Build live ships from the historical formation blocks. Chinese blocks supply
@@ -4495,7 +4497,7 @@ function drawGunDots(ctx, v, ship, target) {
   const doc = ship.doctrine || "auto";
   const main = [], sec = [];
   for (const b of ship.batteries) {
-    if (b.knockedOut || range > maxEffectiveRange(b.gun) || !bearingInArc(rel, b.arc)) continue;
+    if (b.knockedOut || gunCalibre(b.gun) < 100 || range > maxEffectiveRange(b.gun) || !bearingInArc(rel, b.arc)) continue;
     const pierces = penAt(b.gun, range) >= armour;
     let verdict;                                              // HE: calibre is moot (amber); AP: green if it pierces else red; auto picks the effective round
     if (doc === "HE") verdict = "he";
