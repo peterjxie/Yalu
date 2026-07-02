@@ -105,6 +105,13 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .sysgrp.warn,.sysgrp.warn b{color:#e8643c;} .sysgrp.dead,.sysgrp.dead b{color:#7a8791;}
 .dossier-elev{background:#0b1f25;border:1px solid #1c4651;border-radius:6px;margin:2px 0 12px;padding:5px 4px;}
 .move-note{font-size:11px;margin-bottom:6px;}
+.cyc{background:none;border:1px solid #2a5563;color:var(--ink-dim);border-radius:4px;font-size:11px;line-height:1;padding:2px 6px;margin:0 6px;cursor:pointer;vertical-align:2px;}
+.cyc:active{color:var(--ink);border-color:#3d7e93;}
+.chip{background:#12333d;border:1px solid #2a5563;color:var(--ink-dim);border-radius:10px;font-size:9.5px;padding:2px 8px;margin-left:8px;cursor:pointer;}
+#toast{position:fixed;top:64px;left:50%;transform:translateX(-50%) translateY(-8px);background:rgba(9,28,34,0.92);border:1px solid #2a5563;color:var(--ink);font-family:var(--mono);font-size:12px;letter-spacing:.3px;padding:8px 16px;border-radius:6px;opacity:0;pointer-events:none;transition:opacity .35s, transform .35s;z-index:60;max-width:82vw;text-align:center;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#toast.good{border-color:#4f7d57;color:#a9d4ae;}
+#toast.bad{border-color:#8a4038;color:#e8a49b;}
 .move-note .moved{color:var(--brass);} 
 .target-line{font-size:12.5px;margin-bottom:10px;padding:6px 8px;background:rgba(192,57,43,.10);border-left:2px solid var(--japan-red);border-radius:2px;}
 .target-line.muted{background:transparent;border-left:2px solid #1c4651;}
@@ -412,6 +419,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <div id="panelBody"></div>
     </div>
   </div>
+  <div id="toast"></div>
 
   <div id="rail">
     <button class="rail-btn" id="playBtn">End Turn ▶</button>
@@ -420,6 +428,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
     <button class="rail-btn toggle" id="ringsBtn">Range rings</button>
     <button class="rail-btn toggle opt" id="arcsBtn">Arcs</button>
     <button class="rail-btn toggle opt" id="labelsBtn">Labels</button>
+    <button class="rail-btn toggle opt" id="soundBtn">Sound</button>
     <button class="rail-btn opt" id="codexBtn">Codex</button>
     <button class="rail-btn opt" id="fleetBtn">Fleet</button>
     <button class="rail-btn opt" id="menuBtn">Menu ✕</button>
@@ -799,6 +808,28 @@ function bearingInArc(relBearing, arc) {
 }
 
 // ---------- ship instance ----------------------------------------------------
+// ---- turret training ------------------------------------------------------------
+// Each rotating mount carries a hull-relative bearing it is trained on. It rests on
+// its natural bearing (fore turret ahead, aft turret astern, wing mounts abeam), slews
+// toward whatever it engages, and can only fire on a target it can reach within the
+// turn. Period hydraulic mounts trained at roughly 2-4 deg/s, so across a 120 s turn
+// almost any bearing inside the mechanical arc is reachable: loading, not slew, was
+// the binding constraint, and this model keeps that truth while tracking the barrels.
+function restTrain(arc) {
+  switch (arc) {
+    case "AFT": case "AFT_TURRET": return 180;
+    case "STARBOARD": return 90;
+    case "PORT": return -90;
+    case "BEAM": return 90;
+    default: return 0;                                   // FORE, FORE_TURRET, ALL
+  }
+}
+function slewRate(gun) { return gunCalibre(gun) >= 190 ? 3 : 8; }   // deg/s, heavy vs light mounts
+function trainReachable(b, relDeg, turnSeconds) {
+  const need = Math.abs(wrap180(relDeg - (b.train != null ? b.train : restTrain(b.arc))));
+  return need <= slewRate(b.gun) * (turnSeconds || 120);
+}
+
 function makeShip(def, side, pos, headingDeg) {
   const guns = GAME_DATA.guns;
   const batteries = [];
@@ -815,6 +846,7 @@ function makeShip(def, side, pos, headingDeg) {
           count: part.count,
           mount: part.mount,
           arc: part.arc,
+          train: restTrain(part.arc),    // hull-relative bearing the mount is trained on
           readiness: reloadMid(g),       // start one shot ready
           lastFiredTurn: -99,
           shotsThisTurn: 0,
@@ -2128,6 +2160,28 @@ function drawEffects(ctx, v, effects) {
       const sx = wx(v, e.x), sy = wy(v, e.y);
       ctx.globalAlpha = e.life * 0.7; ctx.strokeStyle = PALETTE.foam; ctx.lineWidth = 1.4;
       ctx.beginPath(); ctx.arc(sx, sy, (1 - e.life) * 18 + 3, 0, Math.PI * 2); ctx.stroke();
+    } else if (e.type === "gunsmoke") {
+      // pale powder cloud: blooms, hangs, and drifts downwind as it thins
+      const p = 1 - e.life;
+      const dx = (e.wx || 0) * p * 26, dy = (e.wy || 0) * p * 26;
+      const sx = wx(v, e.x + dx), sy = wy(v, e.y + dy);
+      const scl = Math.abs(wx(v, 100) - wx(v, 0)) / 100;
+      ctx.globalAlpha = e.life * 0.30;
+      ctx.fillStyle = "#d9d7cc";
+      ctx.beginPath(); ctx.arc(sx, sy, Math.max(2, (6 + p * 26) * scl), 0, Math.PI * 2); ctx.fill();
+    } else if (e.type === "slick") {
+      // spreading oil and coal dust where she went down; outlives the foam
+      const p = 1 - e.life;
+      const sx = wx(v, e.x), sy = wy(v, e.y);
+      const scl = Math.abs(wx(v, 100) - wx(v, 0)) / 100;
+      ctx.globalAlpha = Math.min(0.34, e.life * 0.5);
+      ctx.fillStyle = "#0b1418";
+      ctx.beginPath(); ctx.ellipse(sx, sy, Math.max(2, (22 + p * 95) * scl), Math.max(1.4, (14 + p * 60) * scl), (e.rot || 0.5), 0, Math.PI * 2); ctx.fill();
+    } else if (e.type === "debris") {
+      const sx = wx(v, e.x), sy = wy(v, e.y);
+      ctx.globalAlpha = Math.min(0.6, e.life * 0.8);
+      ctx.fillStyle = "#3a4a50";
+      ctx.fillRect(sx - 1.2, sy - 0.7, 2.4, 1.4);
     } else if (e.type === "explosion") {
       // a stylised white-hot blast that blooms outward to engulf the ship, then fades
       const sx = wx(v, e.x), sy = wy(v, e.y);
@@ -2147,6 +2201,65 @@ function drawEffects(ctx, v, effects) {
     }
     ctx.restore();
   }
+}
+
+// ---- period atmosphere: coal smoke, battle fires (purely cosmetic) --------------
+// Wind is scenario flavour only; it moves smoke, never shells. Tsushima was fought in
+// a fresh SW wind and heavy swell; Yalu in light airs.
+function sceneWind() {
+  const b = (typeof GAME_DATA !== "undefined" && GAME_DATA.metadata && GAME_DATA.metadata.battle) || "";
+  if (b.indexOf("Tsushima") >= 0) return { x: 0.71, y: -0.71, k: 26 };   // from SW: smoke streams NE
+  return { x: 0.5, y: -0.5, k: 9 };                                      // light airs
+}
+function hash01(n) { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+// Coal smoke from each funnel (researched funnel positions), streaming astern and
+// downwind; a burning ship adds a darker, denser column and a flame flicker.
+function drawShipSmoke(ctx, v, s, tSec) {
+  if (s.out) return;
+  const lay = SHIP_LAYOUT[s.id];
+  if (!lay || !lay.f || !lay.f.length) return;
+  const Lm = (s.def && s.def.dimensions_m && s.def.dimensions_m.length) || 90;
+  const hr = s.heading * Math.PI / 180;
+  const bx = Math.sin(hr), by = -Math.cos(hr);                 // bow unit vector (world)
+  const wind = sceneWind();
+  const seed = (s.id.charCodeAt(0) || 7) * 13 + (s.id.length || 1);
+  const scl = Math.abs(wx(v, 100) - wx(v, 0)) / 100;           // screen px per world metre
+  if (scl < 0.008) return;                                     // zoomed too far out to matter
+  ctx.save();
+  for (let fi = 0; fi < lay.f.length; fi++) {
+    const fEnt = lay.f[fi];
+    const fx = (typeof fEnt === "object") ? fEnt.x : fEnt;
+    const fwx = s.x + bx * fx * (Lm / 2), fwy = s.y + by * fx * (Lm / 2);
+    for (let i = 0; i < 6; i++) {
+      const drift = tSec * 6 + i * 14;                          // metres of travel for this puff
+      const wob = (hash01(seed + fi * 31 + i * 7 + Math.floor(tSec * 0.5)) - 0.5) * 10;
+      const px = fwx - bx * (i * 9 + drift * 0.14) + wind.x * (i / 6) * wind.k + wob * by;
+      const py = fwy - by * (i * 9 + drift * 0.14) + wind.y * (i / 6) * wind.k + wob * -bx;
+      const rWorld = 4 + i * 2.6, a = 0.11 * (1 - i / 6.5);
+      ctx.globalAlpha = a;
+      ctx.fillStyle = "#1a2226";
+      ctx.beginPath(); ctx.arc(wx(v, px), wy(v, py), Math.max(1, rWorld * scl), 0, Math.PI * 2); ctx.fill();
+    }
+  }
+  if (s.fires > 0) {                                            // she burns: flicker + a leaning black column
+    const n = Math.min(s.fires, 4);
+    for (let i = 0; i < n; i++) {
+      const along = ((hash01(seed + i * 17) - 0.5) * 0.7) * (Lm / 2);
+      const fxw = s.x + bx * along, fyw = s.y + by * along;
+      const flick = 0.55 + 0.45 * Math.sin(tSec * (7 + i * 2.3) + i * 2.1);
+      ctx.globalAlpha = 0.5 * flick;
+      ctx.fillStyle = i % 2 ? "#ff7a2e" : "#ffce5c";
+      ctx.beginPath(); ctx.arc(wx(v, fxw), wy(v, fyw), Math.max(1.2, 3.2 * scl * (1 + flick)), 0, Math.PI * 2); ctx.fill();
+      for (let k = 1; k <= 5; k++) {                            // the column leans downwind as it climbs
+        const cx2 = fxw + wind.x * k * 11 + (hash01(seed + i * 5 + k + Math.floor(tSec)) - 0.5) * 8;
+        const cy2 = fyw + wind.y * k * 11;
+        ctx.globalAlpha = 0.16 * (1 - k / 6) * (0.6 + 0.4 * s.fires / 4);
+        ctx.fillStyle = "#0c0f11";
+        ctx.beginPath(); ctx.arc(wx(v, cx2), wy(v, cy2), Math.max(1, (5 + k * 3.4) * scl), 0, Math.PI * 2); ctx.fill();
+      }
+    }
+  }
+  ctx.restore();
 }
 
 // ---- slow torpedo runs (Defcon-style: a creeping dot with a fading wake) ----
@@ -3101,7 +3214,13 @@ function spawnSink(ship, delay) {
   }
   const sinkDelay = delay + (ship._magazine ? 0.55 : 0); // let the blast bloom before she settles
   game.effects.push({ type: "sink", x: ship.x, y: ship.y, life: 1, fade: 1.1, delay: sinkDelay });
+  if (typeof SFX !== "undefined") setTimeout(() => SFX.sink(), Math.max(0, sinkDelay * 1000));
   for (let i = 0; i < 4; i++) game.effects.push({ type: "smoke", x: ship.x + (Math.random() - 0.5) * 60, y: ship.y + (Math.random() - 0.5) * 60, life: 1, fade: 0.7, delay: sinkDelay + i * 0.1 });
+  // what she leaves behind: a spreading slick and scattered wreckage, lingering well after the foam subsides
+  game.effects.push({ type: "slick", x: ship.x, y: ship.y, rot: (ship.heading || 0) * Math.PI / 180 + Math.PI / 2, life: 1, fade: 0.028, delay: sinkDelay + 0.5 });
+  for (let i = 0; i < 7; i++) {
+    game.effects.push({ type: "debris", x: ship.x + (Math.random() - 0.5) * 90, y: ship.y + (Math.random() - 0.5) * 55, life: 1, fade: 0.05, delay: sinkDelay + 0.6 + i * 0.05 });
+  }
 }
 
 let _lastChatterT = 0;
@@ -3660,6 +3779,8 @@ function redraw() {
 
   // ships: enemies first so friendlies/labels sit on top
   const tgt = shipById(game.targetId);
+  const _tSec = (typeof performance !== "undefined" ? performance.now() : Date.now()) / 1000;
+  for (const s of game.ships) drawShipSmoke(ctx, v, s, _tSec);   // coal smoke + battle fires under the hulls
   for (const s of game.ships) {
     let aimWorld = s._aimWorld;
     if (s.id === game.selectedId && selTargetValid) aimWorld = absBearing(s, selTarget);
@@ -3820,6 +3941,12 @@ function tickEffects(dt) {
       if (e.type === "muzzle") {
         e.x = from ? from.x : (e.x || 0); e.y = from ? from.y : (e.y || 0);
         if (from && to) from._aimWorld = absBearing(from, to);
+        if (typeof SFX !== "undefined") { if (e.heavy) SFX.boom(); else SFX.crack(); }
+        if (e.heavy && !e.smoked) {                            // black-powder gun smoke hangs after a heavy salvo
+          e.smoked = true;
+          const w = sceneWind();
+          spawned.push({ type: "gunsmoke", x: e.x, y: e.y, wx: w.x, wy: w.y, life: 1, fade: 0.4 });
+        }
       } else {
         const x0 = from ? from.x : (e.x0 || 0), y0 = from ? from.y : (e.y0 || 0);
         const x1 = to ? to.x : (e.x1 != null ? e.x1 : x0), y1 = to ? to.y : (e.y1 != null ? e.y1 : y0);
@@ -3832,8 +3959,14 @@ function tickEffects(dt) {
       e.t += dt / (e.dur || 0.4);
       if (e.t >= 1) {
         e.life = 0;
-        if (e.hit) spawned.push({ type: "burst", x: e.x1, y: e.y1, life: 1, fade: 2.6, heavy: e.heavy });
-        else spawned.push({ type: "splash", x: e.x1, y: e.y1, life: 1, fade: 3 });
+        if (e.hit) {
+          spawned.push({ type: "burst", x: e.x1, y: e.y1, life: 1, fade: 2.6, heavy: e.heavy });
+          if (typeof SFX !== "undefined") SFX.hit();
+          if (e.heavy) game._shake = Math.min(0.3, (game._shake || 0) + 0.22);
+        } else {
+          spawned.push({ type: "splash", x: e.x1, y: e.y1, life: 1, fade: 3 });
+          if (typeof SFX !== "undefined") SFX.splash();
+        }
       }
     } else {
       e.life -= dt * (e.fade || 3);
@@ -4319,6 +4452,7 @@ function startExecute() {
   refillReadiness();                                // refill both sides' reload banks for this turn
   resolveTorpedoes();                               // torpedo boats loose FIRST — they press the attack home before the gun line can shred them
   resolveFire();                                    // then the guns open up; salvos animate across the move
+  game._keepSel = game.selectedId; game._keepTgt = game.targetId;   // restore after the move resolves
   game.selectedId = null; game.targetId = null; game.cardId = null; game.pending = null;
   syncTopBar(); syncPlayBtn(); syncPanel();
 }
@@ -4377,6 +4511,23 @@ function finishExecute() {
   telSnapshotTurn(_mv);
   game.turn += 1;
   game.exec = null;
+  // restore what you had selected, so the next order picks up where you left off
+  const ks = game._keepSel ? shipById(game._keepSel) : null;
+  if (ks && !ks.out) {
+    game.selectedId = ks.id;
+    const kt = game._keepTgt ? shipById(game._keepTgt) : null;
+    if (kt && !kt.out && kt.side !== ks.side) { game.targetId = kt.id; ks.targetId = kt.id; }
+  }
+  game._keepSel = game._keepTgt = null;
+  // one-line turn headline: losses first, otherwise your gunnery
+  const newlyOut = game.ships.filter((s) => s.out && game._outAtTurnStart && !game._outAtTurnStart.has(s.id));
+  if (newlyOut.length) {
+    const mine = newlyOut.filter((s) => s.side === game.playerSide).length;
+    showToast(newlyOut.map((s) => s.name).join(" · ") + (newlyOut.length > 1 ? " are lost" : " is lost"), mine ? "bad" : "good");
+  } else if (game._pHitsTurn != null) {
+    showToast(game._pHitsTurn > 0 ? `Your line scores ${game._pHitsTurn} hit${game._pHitsTurn !== 1 ? "s" : ""}` : "Your salvos fall wide", game._pHitsTurn > 0 ? "good" : "");
+  }
+  game._pHitsTurn = null;
   const v = checkVictory();
   if (v.over) { game.phase = "over"; showResult(v); }
   else game.phase = "plan";
@@ -4396,11 +4547,12 @@ function skipExecute() {
 // opportunity instead of falling silent when the primary is out of their arc or range.
 function bestBatteryTarget(s, b, primary) {
   const maxR = maxEffectiveRange(b.gun);
-  if (primary && !primary.out && batteryCanBear(s, b, primary) && rangeBetween(s, primary) <= maxR) return primary;
+  if (primary && !primary.out && batteryCanBear(s, b, primary) && trainReachable(b, relativeBearing(s, primary), 120) && rangeBetween(s, primary) <= maxR) return primary;
   let best = null, bestD = Infinity;
   for (const e of game.ships) {
     if (e.out || e.side === s.side) continue;
     if (!batteryCanBear(s, b, e)) continue;
+    if (!trainReachable(b, relativeBearing(s, e), 120)) continue;
     const d = rangeBetween(s, e);
     if (d <= maxR && d < bestD) { bestD = d; best = e; }
   }
@@ -4433,6 +4585,7 @@ function resolveFire() {
       if (!tgt) continue;
       const res = fireBattery(s, b, tgt, game.turn);
       if (res && !res.error) {
+        b.train = wrap180(relativeBearing(s, tgt));               // the mount is now trained where it fired
         res.heavy = gunCalibre(b.gun) >= 200;
         telShot(s, tgt, b.gun, res);                              // record shots/hits/damage/range for the report
         const fireAt = shipDelay + bi * 0.06; bi++;
@@ -4451,6 +4604,7 @@ function resolveFire() {
     const n = pTargets.size;
     logLine(`Your line engages ${n} target${n > 1 ? "s" : ""}, ${pHits} hit${pHits !== 1 ? "s" : ""}.`, "fire");
   }
+  game._pHitsTurn = pFired ? pHits : null;
 }
 
 function loop() {
@@ -4463,6 +4617,18 @@ function loop() {
     if (game.exec) stepExecute(dt);
     tickEffects(dt);
     advanceTorpedoes(dt);
+    if (game._shake && game._shake > 0.005) {
+      game._shake *= Math.pow(0.02, dt);                          // fast exponential settle
+      const c = document.getElementById("chart");
+      if (c) {
+        const a = game._shake * 9;
+        c.style.transform = `translate(${(Math.random() - 0.5) * a}px,${(Math.random() - 0.5) * a}px)`;
+      }
+    } else if (game._shake) {
+      game._shake = 0;
+      const c = document.getElementById("chart");
+      if (c) c.style.transform = "";
+    }
     redraw();
   } catch (err) {
     drawLoopError(err);                                   // a draw fault would otherwise leave a cleared, blank canvas; surface it instead
@@ -4655,6 +4821,58 @@ function syncPlayBtn() {
   const sb = document.getElementById("speedBtn");
   if (sb) { sb.textContent = "Skip ▶▶"; sb.classList.toggle("off", !game.exec); }
 }
+// ---- turn headline toast ---------------------------------------------------------
+function showToast(text, cls, ms) {
+  if (typeof document === "undefined") return;
+  const el = document.getElementById("toast");
+  if (!el) return;
+  el.textContent = text;
+  el.className = "show" + (cls ? " " + cls : "");
+  clearTimeout(el._t);
+  el._t = setTimeout(() => { el.className = ""; }, ms || 2600);
+}
+
+// ---- sound: synthesised report of the guns (no assets, WebAudio) ------------------
+// Purely presentational. Heavy guns thud, quick-firers crack, hits ring, misses splash,
+// and a lost ship gets a low dirge. Muted with the rail button; volumes kept modest.
+const SFX = {
+  on: true, ctx: null, _last: {},
+  ensure() {
+    if (!this.on) return null;
+    if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { this.ctx = null; } }
+    if (this.ctx && this.ctx.state === "suspended") { try { this.ctx.resume(); } catch (e) {} }
+    return this.ctx;
+  },
+  _noise(dur, type, f0, f1, gain) {
+    const ctx = this.ensure(); if (!ctx) return;
+    const n = Math.floor(ctx.sampleRate * dur);
+    const buf = ctx.createBuffer(1, n, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    const src = ctx.createBufferSource(); src.buffer = buf;
+    const flt = ctx.createBiquadFilter(); flt.type = type; flt.frequency.value = f0;
+    if (f1) flt.frequency.exponentialRampToValueAtTime(f1, ctx.currentTime + dur);
+    const g = ctx.createGain(); g.gain.value = gain;
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    src.connect(flt); flt.connect(g); g.connect(ctx.destination); src.start();
+  },
+  _tone(dur, freq0, freq1, gain, type) {
+    const ctx = this.ensure(); if (!ctx) return;
+    const o = ctx.createOscillator(); o.type = type || "sine";
+    o.frequency.setValueAtTime(freq0, ctx.currentTime);
+    o.frequency.exponentialRampToValueAtTime(Math.max(20, freq1), ctx.currentTime + dur);
+    const g = ctx.createGain(); g.gain.setValueAtTime(gain, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + dur);
+  },
+  _gate(key, minMs) { const t = Date.now(); if (this._last[key] && t - this._last[key] < minMs) return false; this._last[key] = t; return true; },
+  boom() { if (!this.on || !this._gate("boom", 140)) return; this._noise(0.5, "lowpass", 300, 60, 0.16); this._tone(0.45, 70, 34, 0.12, "sine"); },
+  crack() { if (!this.on || !this._gate("crack", 90)) return; this._noise(0.12, "bandpass", 1400, 700, 0.05); },
+  hit() { if (!this.on || !this._gate("hit", 120)) return; this._noise(0.22, "bandpass", 800, 250, 0.09); this._tone(0.18, 220, 90, 0.045, "triangle"); },
+  splash() { if (!this.on || !this._gate("splash", 150)) return; this._noise(0.3, "highpass", 900, 2400, 0.035); },
+  sink() { if (!this.on) return; this._tone(1.6, 130, 40, 0.10, "sine"); this._noise(1.2, "lowpass", 240, 60, 0.08); },
+};
+
 function syncTopBar() {
   if (typeof document === "undefined") return;
   const t = document.getElementById("turnNum"); if (t) t.textContent = "Turn " + (game.turn || 1);
@@ -4779,7 +4997,7 @@ function syncPanel() {
         </div>
         <div class="bat-sub">
           <span class="bat-gun">${b.gun.name}</span>
-          <span class="bat-arc">${b.arc.replace(/_/g, " ").toLowerCase()}</span>
+          <span class="bat-arc">${b.arc.replace(/_/g, " ").toLowerCase()} · ∠${String(Math.round(((b.train != null ? b.train : 0) + 360) % 360)).padStart(3, "0")}</span>
         </div>
         ${solHtml ? `<div class="bat-sol">${solHtml}</div>` : ""}
       </div>`;
@@ -4829,7 +5047,7 @@ function syncPanel() {
     <div class="dossier">
       <div class="dossier-top">
         <div class="name-block">
-          <span class="ship-name ${clsForSide(s.side)}">${s.name}</span>
+          <span class="ship-name ${clsForSide(s.side)}">${s.side === game.playerSide ? `<button class="cyc" data-cyc="-1" title="Previous ship">◂</button>` : ""}${s.name}${s.side === game.playerSide ? `<button class="cyc" data-cyc="1" title="Next ship">▸</button>` : ""}</span>
           <span class="ship-type">${s.type}</span>
         </div>
         <div class="micro-spec">
@@ -4858,7 +5076,7 @@ function syncPanel() {
         </div>
       </div>
       ${sysLine}
-      <div class="move-note">${movedNote}</div>
+      <div class="move-note">${movedNote}${(s.side === game.playerSide && s.order && game.phase === "plan") ? ` <button class="chip" id="clearOrderBtn">✕ course</button>` : ""}</div>
       ${targetLine}
       ${s.side === game.playerSide ? `<div class="ctl-row">
         <span class="k">Shells</span>
@@ -4883,7 +5101,23 @@ function syncPanel() {
   });
   const vc = document.getElementById("viewCardBtn");
   if (vc) vc.addEventListener("click", () => openShipCard(s));
+  body.querySelectorAll(".cyc").forEach((btn) => btn.addEventListener("click", (ev) => { ev.stopPropagation(); cycleShip(parseInt(btn.getAttribute("data-cyc"), 10)); }));
+  const co = document.getElementById("clearOrderBtn");
+  if (co) co.addEventListener("click", () => { s.order = null; syncPanel(); });
   drawDossierProfile(s);
+}
+
+// Step selection through your own afloat ships (panel arrows, or [ ] keys on desktop)
+// and bring the camera to the newly selected ship.
+function cycleShip(dir) {
+  const own = game.ships.filter((x) => x.side === game.playerSide && !x.out);
+  if (!own.length) return;
+  let i = own.findIndex((x) => x.id === game.selectedId);
+  i = i < 0 ? 0 : (i + dir + own.length) % own.length;
+  const s = own[i];
+  game.selectedId = s.id; game.menuMode = "ship"; game.cardId = null; game.selSquadId = null;
+  game.cam.x = s.x; game.cam.y = s.y;
+  syncPanel();
 }
 
 // ---- player actions --------------------------------------------------------
@@ -5274,7 +5508,7 @@ function buildRoster() {
       const tgt = shipById(s.targetId), tgtValid = tgt && !tgt.out;
       const tgtTxt = s.out ? "" : (tgtValid ? `▸ ${tgt.name}` : (side === game.playerSide ? "▸ no target" : "▸ —"));
       const tgtCls = (!s.out && !tgtValid && side === game.playerSide) ? " none" : "";
-      return `<div class="roster-row${s.out ? " out" : ""}">
+      return `<div class="roster-row${s.out ? " out" : ""}" data-rosid="${s.id}">
         <span class="roster-name-cell">
           <span class="roster-name ${clsForSide(side)}">${s.name}${flags.length ? ` <em class="roster-flag">${flags.join(" · ")}</em>` : ""}</span>
           ${tgtTxt ? `<span class="roster-tgt${tgtCls}">${tgtTxt}</span>` : ""}
@@ -5287,6 +5521,14 @@ function buildRoster() {
   };
   body.innerHTML = `<h3 class="codex-h" style="clear:both;margin-top:4px">Fleet roster · turn ${game.turn}</h3>`
     + sideBlock(sideA(), SCN.sides[0].label) + sideBlock(sideB(), SCN.sides[1].label);
+  body.querySelectorAll("[data-rosid]").forEach((row) => row.addEventListener("click", () => {
+    const s = shipById(row.getAttribute("data-rosid"));
+    if (!s || s.out) return;
+    game.selectedId = s.id; game.menuMode = "ship"; game.cardId = null; game.selSquadId = null;
+    game.cam.x = s.x; game.cam.y = s.y;
+    const ov = document.getElementById("fleetOverlay"); if (ov) ov.classList.remove("show");
+    syncPanel();
+  }));
 }
 
 function buildCodex() {
@@ -5870,6 +6112,16 @@ function init() {
   bind("ringsBtn", (e) => { game.show.rings = !game.show.rings; e.currentTarget.classList.toggle("off", !game.show.rings); });
   bind("labelsBtn", (e) => { game.show.labels = !game.show.labels; e.currentTarget.classList.toggle("off", !game.show.labels); });
   bind("arcsBtn", (e) => { game.show.arcs = !game.show.arcs; e.currentTarget.classList.toggle("off", !game.show.arcs); });
+  bind("soundBtn", (e) => { SFX.on = !SFX.on; if (SFX.on) SFX.ensure(); e.currentTarget.classList.toggle("off", !SFX.on); });
+  canvas.addEventListener("pointerdown", () => { if (SFX.on) SFX.ensure(); }, { once: true });
+  // desktop niceties: Space ends the turn, Esc closes the panel, [ and ] cycle your ships
+  document.addEventListener("keydown", (ev) => {
+    if (ev.target && /INPUT|TEXTAREA|SELECT/.test(ev.target.tagName)) return;
+    if (ev.code === "Space") { ev.preventDefault(); const pb = document.getElementById("playBtn"); if (pb && game.phase === "plan" && !game.exec) pb.click(); }
+    else if (ev.key === "Escape") { game.selectedId = null; game.cardId = null; game.selSquadId = null; syncPanel(); }
+    else if (ev.key === "[") cycleShip(-1);
+    else if (ev.key === "]") cycleShip(1);
+  });
   bind("recenterBtn", fitCamera);
   bind("zoomInBtn", () => { game.cam.scale = Math.min(4, game.cam.scale * 1.2); });
   bind("zoomOutBtn", () => { game.cam.scale = Math.max(0.012, game.cam.scale * 0.83); });
