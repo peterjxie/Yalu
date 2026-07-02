@@ -428,7 +428,6 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
     <button class="rail-btn toggle" id="ringsBtn">Range rings</button>
     <button class="rail-btn toggle opt" id="arcsBtn">Arcs</button>
     <button class="rail-btn toggle opt" id="labelsBtn">Labels</button>
-    <button class="rail-btn toggle opt" id="soundBtn">Sound</button>
     <button class="rail-btn opt" id="codexBtn">Codex</button>
     <button class="rail-btn opt" id="fleetBtn">Fleet</button>
     <button class="rail-btn opt" id="menuBtn">Menu ✕</button>
@@ -1533,10 +1532,35 @@ function spriteFor(id) {
 }
 
 // ---- sea + plotting grid ---------------------------------------------------
+function seaHash(ix, iy) { const x = Math.sin(ix * 127.1 + iy * 311.7) * 43758.5453; return x - Math.floor(x); }
 function drawSea(ctx, v) {
   const g = ctx.createLinearGradient(0, 0, 0, v.h);
   g.addColorStop(0, PALETTE.seaHi); g.addColorStop(0.5, PALETTE.seaMid); g.addColorStop(1, PALETTE.seaDeep);
   ctx.fillStyle = g; ctx.fillRect(0, 0, v.w, v.h);
+  // swell: sparse world-anchored crests, only when close enough to read; they crawl slowly downwind
+  if (v.scale > 0.05) {
+    const cell = 260, t = (v.time || 0);
+    const l = screenToWorld(v, 0, v.h), r = screenToWorld(v, v.w, 0);
+    const x0 = Math.floor(l.x / cell) * cell, x1 = r.x, y0 = Math.floor(l.y / cell) * cell, y1 = r.y;
+    ctx.save(); ctx.lineCap = "round";
+    for (let gx = x0; gx <= x1; gx += cell) {
+      for (let gy = y0; gy <= y1; gy += cell) {
+        const h1 = seaHash(gx, gy); if (h1 > 0.62) continue;                     // sparse
+        const h2 = seaHash(gx + 7, gy + 3), h3 = seaHash(gx + 13, gy + 11);
+        const px = gx + (h2 - 0.5) * cell * 0.9 + Math.sin(t * 0.14 + h1 * 9) * 16;
+        const py = gy + (h3 - 0.5) * cell * 0.9;
+        const len = (34 + h2 * 46) * v.scale, ang = -0.42 + (h3 - 0.5) * 0.36;   // crests lie roughly across the SW wind
+        const sx = wx(v, px), sy = wy(v, py);
+        ctx.strokeStyle = "rgba(219,238,242," + (0.028 + h1 * 0.034).toFixed(3) + ")";
+        ctx.lineWidth = Math.max(0.6, 1.1 * Math.min(1, v.scale * 3));
+        ctx.beginPath();
+        ctx.moveTo(sx - Math.cos(ang) * len, sy - Math.sin(ang) * len);
+        ctx.quadraticCurveTo(sx, sy - len * 0.16, sx + Math.cos(ang) * len, sy + Math.sin(ang) * len);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
   const step = 1000;
   const left = screenToWorld(v, 0, v.h).x, right = screenToWorld(v, v.w, 0).x;
   const top = screenToWorld(v, 0, 0).y, bot = screenToWorld(v, 0, v.h).y;
@@ -1551,6 +1575,10 @@ function drawSea(ctx, v) {
     ctx.strokeStyle = (gy % step === 0) ? PALETTE.grid : PALETTE.gridFaint;
     ctx.beginPath(); ctx.moveTo(0, sy); ctx.lineTo(v.w, sy); ctx.stroke();
   }
+  // soft vignette pulls the eye to the action
+  const vg = ctx.createRadialGradient(v.w / 2, v.h / 2, Math.min(v.w, v.h) * 0.42, v.w / 2, v.h / 2, Math.max(v.w, v.h) * 0.78);
+  vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(2,10,13,0.34)");
+  ctx.fillStyle = vg; ctx.fillRect(0, 0, v.w, v.h);
 }
 
 function drawCompass(ctx, v) {
@@ -1753,8 +1781,8 @@ function hullPath(ctx, L, B) {
 // Per-class hull shape: bowP higher = blunter/fuller bow; sternW = transom width frac; mid = midbody fullness; rnd = rounded merchant bow.
 const HULL_TYPES = {
   iron:  { bowP: 2.7, sternP: 1.7, sternW: 0.42, mid: 1.00 },
-  cru:   { bowP: 2.2, sternP: 1.6, sternW: 0.30, mid: 0.98 },
-  els:   { bowP: 2.0, sternP: 1.6, sternW: 0.26, mid: 0.97 },
+  cru:   { bowP: 2.2, sternP: 1.6, sternW: 0.38, mid: 0.98 },
+  els:   { bowP: 2.0, sternP: 1.6, sternW: 0.34, mid: 0.97 },
   matsu: { bowP: 2.3, sternP: 1.8, sternW: 0.20, mid: 0.99 },
   tb:    { bowP: 1.7, sternP: 1.5, sternW: 0.12, mid: 0.92 },
   liner: { bowP: 3.2, sternP: 1.6, sternW: 0.28, mid: 1.00, rnd: true },
@@ -1785,7 +1813,10 @@ function hullHalfWidth(t, hb, P) {
 function hullOutline(L, B, N, P) {
   N = N || 60; const hl = L / 2, hb = B / 2; const pts = [];
   for (let i = 0; i <= N; i++) { const t = 1 - 2 * i / N; pts.push([t * hl, -hullHalfWidth(t, hb, P)]); }
-  for (let i = N; i >= 0; i--) { const t = 1 - 2 * i / N; pts.push([t * hl, hullHalfWidth(t, hb, P)]); }
+  // rounded counter stern: an elliptical cap instead of a flat transom
+  const sw = hullHalfWidth(-1, hb, P), cap = Math.min(hl * 0.07, sw * 1.6);
+  for (let k = 1; k < 7; k++) { const a = Math.PI * k / 7; pts.push([-hl - cap * Math.sin(a) * 0.9, -sw * Math.cos(a)]); }
+  for (let i = 0; i <= N; i++) { const t = -1 + 2 * i / N; pts.push([t * hl, hullHalfWidth(t, hb, P)]); }
   return pts;
 }
 // ---- researched per-ship gun & funnel layouts -------------------------------
@@ -1906,6 +1937,24 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim) {
     ctx.beginPath(); ctx.arc(bx + platL * 0.10, 0, cr, 0, Math.PI * 2);
     ctx.fillStyle = ink; ctx.fill();
   }
+  // masts: small disc with a yard tick, matching the researched side-view positions
+  if (plan.masts) for (const m of plan.masts) {
+    const mx = m[0] * hl, mr = Math.max(0.7, B * 0.045);
+    ctx.beginPath(); ctx.arc(mx, 0, mr, 0, Math.PI * 2);
+    ctx.fillStyle = ink; ctx.fill();
+    ctx.beginPath(); ctx.moveTo(mx, -B * 0.30); ctx.lineTo(mx, B * 0.30);
+    ctx.lineWidth = Math.max(0.5, lw * 0.4); ctx.strokeStyle = ink; ctx.stroke();
+  }
+  // ship's boats stowed on the deckhouse (larger ships only)
+  if (plan.ss && L > 120) {
+    const a = plan.ss[0] * hl, b = plan.ss[1] * hl, mid = (a + b) / 2, span = Math.abs(a - b);
+    const bw = Math.min(L * 0.055, span * 0.30), bh = Math.max(1.1, B * 0.075);
+    for (const [bx, by] of [[mid - span * 0.18, -B * 0.17], [mid - span * 0.18, B * 0.17], [mid + span * 0.16, -B * 0.17], [mid + span * 0.16, B * 0.17]]) {
+      ctx.beginPath(); ctx.ellipse(bx, by, bw / 2, bh / 2, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(20,30,34,0.85)"; ctx.fill();
+      ctx.lineWidth = Math.max(0.45, lw * 0.4); ctx.strokeStyle = ink; ctx.stroke();
+    }
+  }
   // funnels: capped ovals
   for (const fEnt of plan.funnels) {
     const fx = (typeof fEnt === "object") ? fEnt.x : fEnt;
@@ -1932,7 +1981,7 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim) {
     let my = m.y * hb;
     if (Math.abs(my) > lhw * 0.92) my = (m.y >= 0 ? 1 : -1) * lhw * 0.92;   // keep at/inside the hull edge
     const mx = m.x * hl;
-    const frac = cal >= 300 ? 0.21 : cal >= 240 ? 0.17 : cal >= 200 ? 0.145 : cal >= 160 ? 0.12 : cal >= 140 ? 0.11 : cal >= 100 ? 0.095 : 0.055;
+    const frac = cal >= 300 ? 0.27 : cal >= 240 ? 0.21 : cal >= 200 ? 0.165 : cal >= 160 ? 0.12 : cal >= 140 ? 0.11 : cal >= 100 ? 0.095 : 0.055;
     const r = Math.min(Math.max(0.4, frac * B), lhw * 0.82);
     if (m.t === "case") {                                                          // casemate gun set in the hull side (not a turret)
       const dy = m.y >= 0 ? 1 : -1, dx = m.x >= 0 ? 1 : -1;
@@ -1948,7 +1997,7 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim) {
       ctx.beginPath(); ctx.arc(mx, my, r, 0, Math.PI * 2);
       ctx.fillStyle = sacc.mount; ctx.fill(); ctx.lineWidth = Math.max(0.8, lw * 0.7); ctx.strokeStyle = ink; ctx.stroke();
       const outboard = Math.abs(m.y) >= 0.5, sp = r * 0.6;
-      const barW = Math.max(0.7, lw * (cal >= 240 ? 0.95 : cal >= 200 ? 0.8 : 0.65)), barLen = r * (cal >= 240 ? 1.7 : 1.4);
+      const barW = Math.max(0.7, lw * (cal >= 280 ? 1.15 : cal >= 240 ? 0.95 : cal >= 200 ? 0.8 : 0.65)), barLen = r * (cal >= 280 ? 1.55 : cal >= 240 ? 1.7 : 1.4);
       ctx.lineWidth = barW; ctx.lineCap = "round";
       for (let k = 0; k < m.guns; k++) {
         const off = (k - (m.guns - 1) / 2) * sp;
@@ -2347,7 +2396,7 @@ function sideElevationPrims(ship, L) {
       const fcb = shp.fcBreak != null ? shp.fcBreak : 0.45;
       if (xf > fcb) sy -= (shp.foreRise || 0) * fb * (xf - fcb) / (1 - fcb);        // raised forecastle forward of the break
       if (xf < -0.62) sy -= (shp.sternUp || 0) * fb * (-0.62 - xf) / 0.38;          // slight poop aft
-    } else if (xf > 0.45) sy -= 0.05 * fb * (xf - 0.45);
+    } else if (xf > 0.40) sy -= 0.22 * fb * (xf - 0.40) / 0.60;   // marked rise of sheer toward the stem
     deck.push([x, sy]);
   }
   const hull = deck.slice();
@@ -2357,7 +2406,21 @@ function sideElevationPrims(ship, L) {
   hull.push([-hl * 0.42, dr]); hull.push([-hl * 0.86, dr * 0.55]);                  // flat keel amidships
   hull.push([-hl * 1.0, -fb * 0.12]);                                              // counter stern
   poly(hull, 0.9);
-  line(-hl, 0, hl * 1.04, 0, 0.5);                                                 // waterline
+  {                                                                                // underwater body reads as water: shaded panel + boot-topping band
+    const under = [];
+    for (const pt of hull) if (pt[1] >= -0.01) under.push(pt);
+    if (under.length > 2) P.push({ t: "under", pts: [[under[0][0], 0], ...under, [under[under.length - 1][0], 0]] });
+  }
+  line(-hl, 0, hl * 1.04, 0, 2.0);                                                 // waterline
+  line(-hl * 0.995, fb * 0.10, hl * 0.995, fb * 0.10, 0.5);                        // boot-topping lower edge
+  const belt = ship.def && ship.def.armor_mm && ship.def.armor_mm.belt;
+  if (belt) line(-hl * 0.44, -fb * 0.22, hl * 0.46, -fb * 0.22, 1.3);              // armour belt strake amidships
+  if (!tb) {                                                                       // scuttle (porthole) row along the hull side
+    const py = -fb * 0.52, step = L * 0.033, d = Math.max(0.7, L * 0.0028);
+    for (let px = -hl * 0.86; px <= hl * 0.80; px += step) frect(px - d / 2, py - d / 2, d, d, 0.35);
+  }
+  { const ax = hl * 0.94, ay = -fb * 0.55;                                         // bower anchor at the hawse
+    line(ax, ay, ax, ay + fb * 0.34, 0.8); line(ax - L * 0.010, ay + fb * 0.30, ax + L * 0.010, ay + fb * 0.30, 0.8); }
   if (o.citadel) poly([[-hl * 0.4, -fb], [hl * 0.4, -fb], [hl * 0.4, -fb - cit], [-hl * 0.4, -fb - cit]], 0.8);
 
   const dk = -fb - cit;                                                            // working deck height
@@ -2381,9 +2444,35 @@ function sideElevationPrims(ship, L) {
   const brW = L * 0.058, brH = fb * (iron ? 0.55 : 0.94);
   frect(brX - brW / 2, dk - brH, brW, brH, 0.6);                                    // bridge tower
   frect(brX - brW * 0.34, dk - brH - fb * 0.34, brW * 0.68, fb * 0.34, 0.6);        // chart house above
+  { const nbY = dk - brH - fb * 0.34, nbW = brW * 1.5;                              // open navigating platform with rail
+    line(brX - nbW / 2, nbY, brX + nbW / 2, nbY, 0.9);
+    line(brX - nbW / 2, nbY, brX - nbW / 2, nbY - fb * 0.22, 0.5);
+    line(brX + nbW / 2, nbY, brX + nbW / 2, nbY - fb * 0.22, 0.5);
+    line(brX - nbW / 2, nbY - fb * 0.22, brX + nbW / 2, nbY - fb * 0.22, 0.5); }
+  if (!tb && L > 150) {                                                            // after deckhouse under the mainmast
+    const adX = (lay.ss ? Math.min(lay.ss[0], lay.ss[1]) : -0.30) * hl;
+    frect(adX - L * 0.030, dk - fb * 0.52, L * 0.052, fb * 0.52, 0.6);
+  }
   if (lay.ct != null) {                                                            // conning tower just forward of the bridge
     const ctH = fb * 0.46, ctW = L * 0.018;
     frect(brX + L * 0.030 - ctW / 2, dk - ctH, ctW, ctH, 0.5);
+  }
+  if (lay.ss && L > 150) {                                                         // ship's boats in davits, stowed clear of the funnels
+    const sA = Math.max(lay.ss[0], lay.ss[1]) * hl, sB = Math.min(lay.ss[0], lay.ss[1]) * hl;
+    const by = dk - ssH - fb * 0.16, blen = L * 0.052, bh = fb * 0.16;
+    const bfw = L * 0.042;
+    const busy = lay.f.map((fe) => { const fx = ((typeof fe === "object") ? fe.x : fe) * hl; return [fx - bfw * 1.1, fx + bfw * 1.1]; })
+      .filter((iv) => iv[1] > sB && iv[0] < sA).sort((a, b) => a[0] - b[0]);
+    const gaps = []; let cur = sB;
+    for (const iv of busy) { if (iv[0] - cur > blen * 1.25) gaps.push([cur, iv[0]]); cur = Math.max(cur, iv[1]); }
+    if (sA - cur > blen * 1.25) gaps.push([cur, sA]);
+    gaps.sort((a, b) => (b[1] - b[0]) - (a[1] - a[0]));
+    for (const g of gaps.slice(0, 2)) {
+      const bx = (g[0] + g[1]) / 2;
+      fpoly([[bx - blen / 2, by], [bx + blen / 2, by], [bx + blen * 0.34, by + bh], [bx - blen * 0.34, by + bh]], 0.45);
+      line(bx - blen / 2, by, bx - blen / 2, dk - ssH, 0.4);                        // davit falls
+      line(bx + blen / 2, by, bx + blen / 2, dk - ssH, 0.4);
+    }
   }
 
   // ---- funnels (solid, capped) ----
@@ -2406,9 +2495,9 @@ function sideElevationPrims(ship, L) {
       fpoly([[gx - tw / 2, dk], [gx + tw / 2, dk], [gx + tw * 0.34, dk - th], [gx - tw * 0.34, dk - th]], 0.5);
       const blen = L * 0.024, bt = L * 0.005, by = dk - th * 0.55;
       frect(gx + dir * tw * 0.30, by - bt / 2, dir * blen, bt, 0.4);
-    } else if (cal >= 180) {                                                       // main gun turret: LOW gun-house + barrel(s)
-      const cf = Math.max(0.85, Math.min(1.4, cal / 270));
-      const gw = L * 0.058 * cf, gh = fb * 0.42 * cf, topW = gw * 0.74;            // turret ~0.42 freeboard tall, well below the bridge
+    } else if (cal >= 180) {                                                       // main gun turret / barbette: wide LOW drum + barrel(s)
+      const cf = Math.max(0.85, Math.min(1.35, cal / 260));
+      const gw = L * (cal >= 280 ? 0.092 : 0.062) * cf, gh = fb * 0.40 * cf, topW = gw * (cal >= 280 ? 0.86 : 0.74);   // heavy barbettes were fully a tenth of the ship's length across
       fpoly([[gx - gw / 2, dk], [gx + gw / 2, dk], [gx + topW / 2, dk - gh], [gx - topW / 2, dk - gh]], 0.6);
       const blen = L * (0.040 + cal / 11000), bthick = L * (cal >= 300 ? 0.0072 : cal >= 240 ? 0.0062 : 0.0052);
       const by = dk - gh * 0.55;
@@ -2424,19 +2513,35 @@ function sideElevationPrims(ship, L) {
     }
   }
 
-  // ---- masts: compact military poles with fighting tops (not sailing rig) ----
-  for (const m of sideMastsFor(id)) {
-    const mx = m[0] * hl, hasTop = !!m[1], mastH = L * 0.108;
-    const bw = L * 0.014, tw = L * 0.008, top = dk - mastH;
-    fpoly([[mx - bw / 2, dk], [mx + bw / 2, dk], [mx + tw / 2, top], [mx - tw / 2, top]], 0.4);
+  // ---- masts: full military rig — lower mast, fighting top, topmast, yards ----
+  const masts = sideMastsFor(id);
+  const mastHeads = [];
+  for (const m of masts) {
+    const mx = m[0] * hl, hasTop = !!m[1];
+    const lowH = L * (hasTop ? 0.125 : 0.105);                                     // lower mast to the top
+    const topmH = L * (hasTop ? 0.115 : 0.075);                                    // topmast above it
+    const bw = L * 0.013, tw = L * 0.007;
+    const lowTop = dk - lowH, head = lowTop - topmH;
+    fpoly([[mx - bw / 2, dk], [mx + bw / 2, dk], [mx + tw / 2, lowTop], [mx - tw / 2, lowTop]], 0.45);
+    line(mx, lowTop, mx, head, 0.9);                                               // topmast
     if (hasTop) {
-      const ty = dk - mastH * 0.66, ftw = L * 0.010, fth = L * 0.016;
-      frect(mx - ftw, ty - fth, ftw * 2, fth, 0.4);                                // compact fighting top
-      line(mx, top, mx, top - L * 0.016, 1.0);                                     // short topmast stub
-    } else {
-      const yy = dk - mastH * 0.80, yw = L * 0.018;
-      line(mx - yw, yy, mx + yw, yy, 0.8);                                         // light derrick yard
+      const fth = L * 0.014, ftw = L * 0.011;
+      frect(mx - ftw, lowTop - fth * 0.2, ftw * 2, fth, 0.45);                     // fighting top straddling the doubling
     }
+    const y1 = lowTop - topmH * 0.35, y2 = lowTop - topmH * 0.72;                  // signal yards on the topmast
+    line(mx - L * 0.045, y1, mx + L * 0.045, y1, 0.7);
+    line(mx - L * 0.028, y2, mx + L * 0.028, y2, 0.55);
+    mastHeads.push([mx, head]);
+  }
+  // standing rigging: forestay to the stem, backstay to the stern, triatic between mastheads
+  if (mastHeads.length) {
+    const fwd = mastHeads.reduce((a, b) => (b[0] > a[0] ? b : a));
+    const aft = mastHeads.reduce((a, b) => (b[0] < a[0] ? b : a));
+    line(fwd[0], fwd[1], hl * 1.02, dk * 0.9, 0.3);
+    line(aft[0], aft[1], -hl * 0.99, dk * 0.9, 0.3);
+    if (mastHeads.length > 1) line(fwd[0], fwd[1], aft[0], aft[1], 0.3);
+    line(fwd[0], fwd[1] + L * 0.02, hl * 0.55, dk, 0.25);                          // forward lower stay
+    if (mastHeads.length > 1) line(aft[0], aft[1] + L * 0.02, -hl * 0.55, dk, 0.25);
   }
 
   return P;
@@ -2449,7 +2554,12 @@ function drawSideElevation(ctx, ship, L, ink, bg) {
   for (const p of prims) {
     ctx.lineWidth = p.w || 1;
     ctx.beginPath();
-    if (p.t === "line") { ctx.strokeStyle = ink; ctx.moveTo(p.a[0], p.a[1]); ctx.lineTo(p.a[2], p.a[3]); ctx.stroke(); }
+    if (p.t === "under") {                                    // dim wash over the underwater body
+      ctx.moveTo(p.pts[0][0], p.pts[0][1]);
+      for (let i = 1; i < p.pts.length; i++) ctx.lineTo(p.pts[i][0], p.pts[i][1]);
+      ctx.closePath(); ctx.fillStyle = "rgba(28,78,95,0.72)"; ctx.fill();
+    }
+    else if (p.t === "line") { ctx.strokeStyle = ink; ctx.moveTo(p.a[0], p.a[1]); ctx.lineTo(p.a[2], p.a[3]); ctx.stroke(); }
     else if (p.t === "poly") {
       ctx.moveTo(p.pts[0][0], p.pts[0][1]);
       for (let i = 1; i < p.pts.length; i++) ctx.lineTo(p.pts[i][0], p.pts[i][1]);
@@ -2500,13 +2610,13 @@ function _case(a) { a.forEach(function (m) { m.t = "case"; }); return a; }      
 function _turret(a) { a.forEach(function (m) { m.t = "turret"; }); return a; }  // secondary gun turrets: on deck
 // Distinct hull plan profiles (no two classes share a silhouette).
 Object.assign(HULL_TYPES, {
-  bdino:    { bowP: 2.4, sternP: 1.7, sternW: 0.22, mid: 1.00 },   // Borodino: fine ends, tumblehome, high freeboard
-  navhull:  { bowP: 1.85, sternP: 1.6, sternW: 0.30, mid: 1.00 },  // Navarin: bluff full ram ship, low freeboard
-  coasthull:{ bowP: 2.0, sternP: 1.9, sternW: 0.34, mid: 0.99 },   // Ushakov: short and full
-  pdmod:    { bowP: 2.05, sternP: 1.7, sternW: 0.26, mid: 1.00 },  // Sisoy: moderate pre-dreadnought
-  nikhull:  { bowP: 1.9, sternP: 1.7, sternW: 0.30, mid: 1.00 },   // Nikolai I: older, fuller, high forecastle
-  jpd:      { bowP: 2.2, sternP: 1.7, sternW: 0.24, mid: 1.00 },   // British-built Japanese pre-dreadnought
-  jpdf:     { bowP: 2.05, sternP: 1.7, sternW: 0.27, mid: 1.00 },  // Fuji: older, slightly fuller
+  bdino:    { bowP: 2.4, sternP: 1.7, sternW: 0.42, mid: 1.00 },   // Borodino: fine ends, tumblehome, high freeboard
+  navhull:  { bowP: 1.85, sternP: 1.6, sternW: 0.46, mid: 1.00 },  // Navarin: bluff full ram ship, low freeboard
+  coasthull:{ bowP: 2.0, sternP: 1.9, sternW: 0.48, mid: 0.99 },   // Ushakov: short and full
+  pdmod:    { bowP: 2.05, sternP: 1.7, sternW: 0.42, mid: 1.00 },  // Sisoy: moderate pre-dreadnought
+  nikhull:  { bowP: 1.9, sternP: 1.7, sternW: 0.44, mid: 1.00 },   // Nikolai I: older, fuller, high forecastle
+  jpd:      { bowP: 2.2, sternP: 1.7, sternW: 0.42, mid: 1.00 },   // British-built Japanese pre-dreadnought
+  jpdf:     { bowP: 2.05, sternP: 1.7, sternW: 0.42, mid: 1.00 },  // Fuji: older, slightly fuller
 });
 Object.assign(SIDE_FB, { bdino: 0.052, navhull: 0.048, coasthull: 0.050, pdmod: 0.050, nikhull: 0.054, jpd: 0.052, jpdf: 0.050 });
 Object.assign(SIDE_DR, { bdino: 0.060, navhull: 0.062, coasthull: 0.056, pdmod: 0.060, nikhull: 0.058, jpd: 0.058, jpdf: 0.058 });
@@ -3214,7 +3324,6 @@ function spawnSink(ship, delay) {
   }
   const sinkDelay = delay + (ship._magazine ? 0.55 : 0); // let the blast bloom before she settles
   game.effects.push({ type: "sink", x: ship.x, y: ship.y, life: 1, fade: 1.1, delay: sinkDelay });
-  if (typeof SFX !== "undefined") setTimeout(() => SFX.sink(), Math.max(0, sinkDelay * 1000));
   for (let i = 0; i < 4; i++) game.effects.push({ type: "smoke", x: ship.x + (Math.random() - 0.5) * 60, y: ship.y + (Math.random() - 0.5) * 60, life: 1, fade: 0.7, delay: sinkDelay + i * 0.1 });
   // what she leaves behind: a spreading slick and scattered wreckage, lingering well after the foam subsides
   game.effects.push({ type: "slick", x: ship.x, y: ship.y, rot: (ship.heading || 0) * Math.PI / 180 + Math.PI / 2, life: 1, fade: 0.028, delay: sinkDelay + 0.5 });
@@ -3941,7 +4050,6 @@ function tickEffects(dt) {
       if (e.type === "muzzle") {
         e.x = from ? from.x : (e.x || 0); e.y = from ? from.y : (e.y || 0);
         if (from && to) from._aimWorld = absBearing(from, to);
-        if (typeof SFX !== "undefined") { if (e.heavy) SFX.boom(); else SFX.crack(); }
         if (e.heavy && !e.smoked) {                            // black-powder gun smoke hangs after a heavy salvo
           e.smoked = true;
           const w = sceneWind();
@@ -3961,11 +4069,9 @@ function tickEffects(dt) {
         e.life = 0;
         if (e.hit) {
           spawned.push({ type: "burst", x: e.x1, y: e.y1, life: 1, fade: 2.6, heavy: e.heavy });
-          if (typeof SFX !== "undefined") SFX.hit();
           if (e.heavy) game._shake = Math.min(0.3, (game._shake || 0) + 0.22);
         } else {
           spawned.push({ type: "splash", x: e.x1, y: e.y1, life: 1, fade: 3 });
-          if (typeof SFX !== "undefined") SFX.splash();
         }
       }
     } else {
@@ -4617,6 +4723,11 @@ function loop() {
     if (game.exec) stepExecute(dt);
     tickEffects(dt);
     advanceTorpedoes(dt);
+    if (game._camGoal) {                                          // glide, don't teleport
+      const g = game._camGoal, k = 1 - Math.pow(0.0018, dt);
+      game.cam.x += (g.x - game.cam.x) * k; game.cam.y += (g.y - game.cam.y) * k;
+      if (Math.hypot(g.x - game.cam.x, g.y - game.cam.y) < 4) game._camGoal = null;
+    }
     if (game._shake && game._shake > 0.005) {
       game._shake *= Math.pow(0.02, dt);                          // fast exponential settle
       const c = document.getElementById("chart");
@@ -4832,47 +4943,6 @@ function showToast(text, cls, ms) {
   el._t = setTimeout(() => { el.className = ""; }, ms || 2600);
 }
 
-// ---- sound: synthesised report of the guns (no assets, WebAudio) ------------------
-// Purely presentational. Heavy guns thud, quick-firers crack, hits ring, misses splash,
-// and a lost ship gets a low dirge. Muted with the rail button; volumes kept modest.
-const SFX = {
-  on: true, ctx: null, _last: {},
-  ensure() {
-    if (!this.on) return null;
-    if (!this.ctx) { try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { this.ctx = null; } }
-    if (this.ctx && this.ctx.state === "suspended") { try { this.ctx.resume(); } catch (e) {} }
-    return this.ctx;
-  },
-  _noise(dur, type, f0, f1, gain) {
-    const ctx = this.ensure(); if (!ctx) return;
-    const n = Math.floor(ctx.sampleRate * dur);
-    const buf = ctx.createBuffer(1, n, ctx.sampleRate);
-    const d = buf.getChannelData(0);
-    for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
-    const src = ctx.createBufferSource(); src.buffer = buf;
-    const flt = ctx.createBiquadFilter(); flt.type = type; flt.frequency.value = f0;
-    if (f1) flt.frequency.exponentialRampToValueAtTime(f1, ctx.currentTime + dur);
-    const g = ctx.createGain(); g.gain.value = gain;
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-    src.connect(flt); flt.connect(g); g.connect(ctx.destination); src.start();
-  },
-  _tone(dur, freq0, freq1, gain, type) {
-    const ctx = this.ensure(); if (!ctx) return;
-    const o = ctx.createOscillator(); o.type = type || "sine";
-    o.frequency.setValueAtTime(freq0, ctx.currentTime);
-    o.frequency.exponentialRampToValueAtTime(Math.max(20, freq1), ctx.currentTime + dur);
-    const g = ctx.createGain(); g.gain.setValueAtTime(gain, ctx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
-    o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime + dur);
-  },
-  _gate(key, minMs) { const t = Date.now(); if (this._last[key] && t - this._last[key] < minMs) return false; this._last[key] = t; return true; },
-  boom() { if (!this.on || !this._gate("boom", 140)) return; this._noise(0.5, "lowpass", 300, 60, 0.16); this._tone(0.45, 70, 34, 0.12, "sine"); },
-  crack() { if (!this.on || !this._gate("crack", 90)) return; this._noise(0.12, "bandpass", 1400, 700, 0.05); },
-  hit() { if (!this.on || !this._gate("hit", 120)) return; this._noise(0.22, "bandpass", 800, 250, 0.09); this._tone(0.18, 220, 90, 0.045, "triangle"); },
-  splash() { if (!this.on || !this._gate("splash", 150)) return; this._noise(0.3, "highpass", 900, 2400, 0.035); },
-  sink() { if (!this.on) return; this._tone(1.6, 130, 40, 0.10, "sine"); this._noise(1.2, "lowpass", 240, 60, 0.08); },
-};
-
 function syncTopBar() {
   if (typeof document === "undefined") return;
   const t = document.getElementById("turnNum"); if (t) t.textContent = "Turn " + (game.turn || 1);
@@ -5059,7 +5129,7 @@ function syncPanel() {
       ${captLine ? `<div class="capt-line">${captLine}</div>` : ""}
       ${squadronOf(s.id) ? `<div style="font-size:11px;color:#e8ca70;margin-top:4px">In Squadron ${squadronOf(s.id).id} · tap again for squadron orders</div>` : ""}
       <div class="armour-line"><span class="k">Armour</span> ${armourSummary(s)}</div>
-      <div class="dossier-elev"><canvas id="dossierElev" width="440" height="132" style="width:100%;height:auto;display:block"></canvas></div>
+      <div class="dossier-elev"><canvas id="dossierElev" width="440" height="168" style="width:100%;height:auto;display:block"></canvas></div>
 
       <div class="cond2">
         <div class="c2">
@@ -5116,7 +5186,7 @@ function cycleShip(dir) {
   i = i < 0 ? 0 : (i + dir + own.length) % own.length;
   const s = own[i];
   game.selectedId = s.id; game.menuMode = "ship"; game.cardId = null; game.selSquadId = null;
-  game.cam.x = s.x; game.cam.y = s.y;
+  game._camGoal = { x: s.x, y: s.y };
   syncPanel();
 }
 
@@ -5209,6 +5279,7 @@ function onPointerMove(e) {
       game.cam.scale = Math.max(0.012, Math.min(4, game.cam.scale * (d / pinchDist)));
       const v1 = makeViewCss();
       const after = screenToWorld(v1, mid.x, mid.y);
+      game._camGoal = null;
       game.cam.x += before.x - after.x;
       game.cam.y += before.y - after.y;
     }
@@ -5225,6 +5296,7 @@ function onPointerMove(e) {
     const v = makeViewCss();
     const w0 = screenToWorld(v, dragStart.x, dragStart.y);
     const w1 = screenToWorld(v, p.x, p.y);
+    game._camGoal = null;
     game.cam.x -= (w1.x - w0.x);
     game.cam.y -= (w1.y - w0.y);
     dragStart.x = p.x; dragStart.y = p.y;
@@ -5392,7 +5464,7 @@ function renderShipCard(body, s) {
         <span class="ship-type">${s.type} · ${s.def.class || ""}</span>
       </div>
       <div class="card-section-h">Side elevation</div>
-      <div class="shipcard-art"><canvas id="cardElev" width="520" height="196" style="width:100%;height:auto;display:block"></canvas></div>
+      <div class="shipcard-art"><canvas id="cardElev" width="520" height="220" style="width:100%;height:auto;display:block"></canvas></div>
       <div class="spec-grid">
         <div><span class="k">Length</span><span class="val">${dims.length ?? "—"} m</span></div>
         <div><span class="k">Speed</span><span class="val">${s.maxSpeed} kn</span></div>
@@ -5409,7 +5481,7 @@ function renderShipCard(body, s) {
     try {
       const ec = ev.getContext("2d");
       ec.clearRect(0, 0, ev.width, ev.height);
-      ec.save(); ec.translate(ev.width / 2, ev.height * 0.74);
+      ec.save(); ec.translate(ev.width / 2, ev.height * 0.80);
       drawSideElevation(ec, s, ev.width - 40, "#c8a45c");
       ec.restore();
     } catch (err) { /* a drawing edge case must never stop the card from opening */ }
@@ -5435,7 +5507,7 @@ function drawDossierProfile(s) {
     const plate = "#0b1f25";
     const L = W - 44;
     ctx.save();
-    ctx.translate(W / 2, H * 0.66);
+    ctx.translate(W / 2, H * 0.80);
     ctx.lineJoin = "round"; ctx.lineCap = "round";
     const prims = sideElevationPrims(s, L);
     const hull = prims.find((p) => p.t === "poly");          // first poly is the hull outline
@@ -5467,7 +5539,12 @@ function drawDossierProfile(s) {
 
     for (const p of prims) {                                       // outline + fittings on top (hull only stroked, so washes show)
       ctx.lineWidth = p.w || 1;
-      if (p.t === "line") { ctx.strokeStyle = ink; ctx.beginPath(); ctx.moveTo(p.a[0], p.a[1]); ctx.lineTo(p.a[2], p.a[3]); ctx.stroke(); }
+      if (p.t === "under") {
+        ctx.beginPath(); ctx.moveTo(p.pts[0][0], p.pts[0][1]);
+        for (let i = 1; i < p.pts.length; i++) ctx.lineTo(p.pts[i][0], p.pts[i][1]);
+        ctx.closePath(); ctx.fillStyle = "rgba(28,78,95,0.72)"; ctx.fill();
+      }
+      else if (p.t === "line") { ctx.strokeStyle = ink; ctx.beginPath(); ctx.moveTo(p.a[0], p.a[1]); ctx.lineTo(p.a[2], p.a[3]); ctx.stroke(); }
       else if (p.t === "poly") {
         ctx.beginPath(); ctx.moveTo(p.pts[0][0], p.pts[0][1]); for (let i = 1; i < p.pts.length; i++) ctx.lineTo(p.pts[i][0], p.pts[i][1]); if (p.close) ctx.closePath();
         if (p.fill && p !== hull) { ctx.fillStyle = plate; ctx.fill(); }
@@ -5525,7 +5602,7 @@ function buildRoster() {
     const s = shipById(row.getAttribute("data-rosid"));
     if (!s || s.out) return;
     game.selectedId = s.id; game.menuMode = "ship"; game.cardId = null; game.selSquadId = null;
-    game.cam.x = s.x; game.cam.y = s.y;
+    game._camGoal = { x: s.x, y: s.y };
     const ov = document.getElementById("fleetOverlay"); if (ov) ov.classList.remove("show");
     syncPanel();
   }));
@@ -6112,8 +6189,6 @@ function init() {
   bind("ringsBtn", (e) => { game.show.rings = !game.show.rings; e.currentTarget.classList.toggle("off", !game.show.rings); });
   bind("labelsBtn", (e) => { game.show.labels = !game.show.labels; e.currentTarget.classList.toggle("off", !game.show.labels); });
   bind("arcsBtn", (e) => { game.show.arcs = !game.show.arcs; e.currentTarget.classList.toggle("off", !game.show.arcs); });
-  bind("soundBtn", (e) => { SFX.on = !SFX.on; if (SFX.on) SFX.ensure(); e.currentTarget.classList.toggle("off", !SFX.on); });
-  canvas.addEventListener("pointerdown", () => { if (SFX.on) SFX.ensure(); }, { once: true });
   // desktop niceties: Space ends the turn, Esc closes the panel, [ and ] cycle your ships
   document.addEventListener("keydown", (ev) => {
     if (ev.target && /INPUT|TEXTAREA|SELECT/.test(ev.target.tagName)) return;
