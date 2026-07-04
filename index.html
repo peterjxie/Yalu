@@ -423,6 +423,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 
   <div id="rail">
     <button class="rail-btn" id="playBtn">End Turn ▶</button>
+    <button class="rail-btn" id="ffBtn" title="Steam on until the guns open">⏩ Contact</button>
+    <button class="rail-btn" id="zoomBtn" title="Cycle Fleet / Action / Close">🔍 Zoom</button>
     <button class="rail-btn icon" id="multiSelBtn" title="Form a squadron" aria-label="Form a squadron"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2.6 2.2"/><circle cx="8" cy="12.2" r="2.1" fill="currentColor"/><circle cx="13.6" cy="10.2" r="1.7" fill="currentColor"/><circle cx="16.6" cy="14" r="1.7" fill="currentColor"/></svg></button>
     <button class="rail-btn" id="speedBtn">Skip ▶▶</button>
     <button class="rail-btn toggle" id="ringsBtn">Range rings</button>
@@ -1760,7 +1762,7 @@ function drawTargetLine(ctx, v, from, to, color, lw, withHead, dash) {
 }
 
 // ---- procedural warship token ---------------------------------------------
-function shipScreenLen(v, ship) { return Math.max(ship.length * v.scale, 9); }
+function shipScreenLen(v, ship) { return Math.max(ship.length * v.scale, 14); }   // symbol floor: at fleet zoom ships draw as oversized counters so they stay readable and tappable on a phone
 
 // hull: pointed clipper bow at local -y, flat transom stern at local +y
 function hullPath(ctx, L, B) {
@@ -1827,13 +1829,13 @@ function sBroad(xs, y, c) { const o = []; for (let i = 0; i < xs.length; i++) { 
 function sCat() { let o = []; for (let i = 0; i < arguments.length; i++) { const a = arguments[i]; o = o.concat(Array.isArray(a) ? a : [a]); } return o; }
 const SHIP_LAYOUT = {
   // --- China ---
-  dingyuan: { f: [-0.22, -0.40], m: sCat(sM(0.34, 0.50, 2, 305), sM(0.14, -0.50, 2, 305), sM(0.86, 0, 1, 150), sM(-0.86, 0, 1, 150)) },
-  zhenyuan: { f: [-0.22, -0.40], m: sCat(sM(0.34, 0.50, 2, 305), sM(0.14, -0.50, 2, 305), sM(0.86, 0, 1, 150), sM(-0.86, 0, 1, 150)) },
+  dingyuan: { f: [-0.34, -0.48], m: sCat(sM(0.34, 0.50, 2, 305), sM(0.14, -0.50, 2, 305), sM(0.86, 0, 1, 150), sM(-0.86, 0, 1, 150)) },
+  zhenyuan: { f: [-0.34, -0.48], m: sCat(sM(0.34, 0.50, 2, 305), sM(0.14, -0.50, 2, 305), sM(0.86, 0, 1, 150), sM(-0.86, 0, 1, 150)) },
   jiyuan: { f: [0.0], m: sCat(sM(0.42, 0, 2, 210), sM(-0.50, 0, 1, 150)) },
-  zhiyuan: { f: [-0.05, 0.18], m: sCat(sM(0.50, 0, 2, 210), sM(-0.52, 0, 1, 210), sPair(0.05, 0.72, 1, 152)) },
-  jingyuan_1886: { f: [-0.05, 0.18], m: sCat(sM(0.50, 0, 2, 210), sM(-0.52, 0, 1, 210), sPair(0.05, 0.72, 1, 152)) },
-  jingyuan_1887: { f: [-0.05, 0.16], m: sCat(sM(0.45, 0, 2, 210), sPair(0.0, 0.72, 1, 150)) },
-  laiyuan: { f: [-0.05, 0.16], m: sCat(sM(0.45, 0, 2, 210), sPair(0.0, 0.72, 1, 150)) },
+  zhiyuan: { f: [0.03], m: sCat(sM(0.50, 0, 2, 210), sM(-0.52, 0, 1, 210), sPair(0.05, 0.72, 1, 152)) },
+  jingyuan_1886: { f: [0.03], m: sCat(sM(0.50, 0, 2, 210), sM(-0.52, 0, 1, 210), sPair(0.05, 0.72, 1, 152)) },
+  jingyuan_1887: { f: [0.03, -0.19], m: sCat(sM(0.45, 0, 2, 210), sPair(0.0, 0.72, 1, 150)) },
+  laiyuan: { f: [0.03, -0.19], m: sCat(sM(0.45, 0, 2, 210), sPair(0.0, 0.72, 1, 150)) },
   chaoyong: { f: [0.0], m: sCat(sM(0.55, 0, 1, 254), sM(-0.55, 0, 1, 254), sPair(0.20, 0.62, 1, 120), sPair(-0.20, 0.62, 1, 120)) },
   yangwei: { f: [0.0], m: sCat(sM(0.55, 0, 1, 254), sM(-0.55, 0, 1, 254), sPair(0.20, 0.62, 1, 120), sPair(-0.20, 0.62, 1, 120)) },
   pingyuan: { f: [-0.12], m: sCat(sM(0.45, 0, 1, 260), sPair(-0.05, 0.66, 1, 150)) },
@@ -1994,6 +1996,10 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim) {
       else { ctx.moveTo(mx, my); ctx.lineTo(mx + dx * barL, my); }
       ctx.stroke(); ctx.lineCap = "butt";
     } else if (cal >= 100) {
+      if (cal >= 240 && r > 2.2) {                                                 // barbette ring under the heavy gunhouse
+        ctx.beginPath(); ctx.arc(mx, my, r * 1.22, 0, Math.PI * 2);
+        ctx.lineWidth = Math.max(0.5, lw * 0.5); ctx.strokeStyle = ink; ctx.stroke();
+      }
       ctx.beginPath(); ctx.arc(mx, my, r, 0, Math.PI * 2);
       ctx.fillStyle = sacc.mount; ctx.fill(); ctx.lineWidth = Math.max(0.8, lw * 0.7); ctx.strokeStyle = ink; ctx.stroke();
       const outboard = Math.abs(m.y) >= 0.5, sp = r * 0.6;
@@ -2036,6 +2042,22 @@ function drawShip(ctx, v, ship, opts) {
   const hr = ph * Math.PI / 180;
 
   // ---- wake + bow wave (bow at local -y, rotation 180 - heading) ----
+  if (ship._hitFlash > 0) {                                   // white flash on the struck hull, fading fast
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate((180 - ph) * Math.PI / 180);
+    ctx.globalAlpha = Math.min(0.85, ship._hitFlash * 2.6);
+    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2;
+    hullPath(ctx, L, B); ctx.stroke();
+    ctx.restore();
+  }
+  if (opts.selected) {                                        // breathing selection halo
+    const t = (typeof performance !== "undefined" ? performance.now() : Date.now()) / 1000;
+    const pr = Math.max(L * 0.62, 13) + Math.sin(t * 3.1) * 2.2;
+    ctx.save();
+    ctx.globalAlpha = 0.5 + 0.25 * Math.sin(t * 3.1);
+    ctx.strokeStyle = PALETTE.brass; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(cx, cy, pr, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+  }
   if (moving) {
     ctx.save(); ctx.translate(cx, cy); ctx.rotate((180 - ph) * Math.PI / 180);
     const wlen = Math.min(L * (0.5 + speed / 26), L * 1.8);   // a faint fan of hairlines astern, no filled wedge or bow wave
@@ -2231,6 +2253,15 @@ function drawEffects(ctx, v, effects) {
       ctx.globalAlpha = Math.min(0.6, e.life * 0.8);
       ctx.fillStyle = "#3a4a50";
       ctx.fillRect(sx - 1.2, sy - 0.7, 2.4, 1.4);
+    } else if (e.type === "shockwave") {
+      const p = 1 - e.life;
+      const sx = wx(v, e.x), sy = wy(v, e.y);
+      const scl = Math.abs(wx(v, 100) - wx(v, 0)) / 100;
+      const rr = Math.max(2, (e.rMax || 200) * p * scl);
+      ctx.globalAlpha = e.life * 0.55;
+      ctx.lineWidth = Math.max(1, 3.2 * (1 - p));
+      ctx.strokeStyle = p < 0.45 ? "#ffd060" : "#ff7a2e";
+      ctx.beginPath(); ctx.arc(sx, sy, rr, 0, Math.PI * 2); ctx.stroke();
     } else if (e.type === "explosion") {
       // a stylised white-hot blast that blooms outward to engulf the ship, then fades
       const sx = wx(v, e.x), sy = wy(v, e.y);
@@ -2345,12 +2376,14 @@ const SIDE_DR = { iron: 0.032, cru: 0.030, els: 0.028, matsu: 0.030, tb: 0.018, 
 const SIDE_SHAPE = {};   // optional per-hull-type side-profile tweaks (forecastle rise, poop); filled per chapter
 // per-ship vertical character; only deviations worth noting are listed
 const SHIP_SIDE = {
-  dingyuan:  { citadel: true, masts: [[0.56, 1], [-0.60, 1]], bridge: -0.02, flyingDeck: [0.56, -0.22] },
-  zhenyuan:  { citadel: true, masts: [[0.56, 1], [-0.60, 1]], bridge: -0.02, flyingDeck: [0.56, -0.22] },
+  dingyuan:  { citadel: true, masts: [[0.56, 1], [-0.62, 1]], bridge: -0.02, flyingDeck: [0.56, -0.30] },
+  zhenyuan:  { citadel: true, masts: [[0.56, 1], [-0.62, 1]], bridge: -0.02, flyingDeck: [0.56, -0.30] },
   pingyuan:  { fb: 0.046, masts: [[-0.16, 1]], bridge: 0.16, low: true },
-  jiyuan:    { masts: [[0.12, 1], [-0.34, 1]], bridge: 0.16 },
-  zhiyuan:   { masts: [[0.30, 1], [-0.28, 1]], bridge: 0.28 },
-  jingyuan_1886: { masts: [[0.30, 1], [-0.28, 1]], bridge: 0.28 },
+  jiyuan:    { masts: [[-0.12, 1]], bridge: 0.16 },
+  jingyuan_1887: { masts: [[0.17, 1]], bridge: 0.34 },
+  laiyuan:       { masts: [[0.17, 1]], bridge: 0.34 },
+  zhiyuan:   { masts: [[0.30, 1], [-0.30, 0]], bridge: 0.28 },
+  jingyuan_1886: { masts: [[0.30, 1], [-0.30, 0]], bridge: 0.28 },
   chiyoda:   { masts: [[0.42, 1], [-0.05, 1], [-0.40, 1]], bridge: 0.24 },
   chaoyong:  { fb: 0.052, masts: [[0.30, 0], [-0.32, 0]], bridge: 0.06, flush: true },
   yangwei:   { fb: 0.052, masts: [[0.30, 0], [-0.32, 0]], bridge: 0.06, flush: true },
@@ -2421,6 +2454,10 @@ function sideElevationPrims(ship, L) {
   }
   { const ax = hl * 0.94, ay = -fb * 0.55;                                         // bower anchor at the hawse
     line(ax, ay, ax, ay + fb * 0.34, 0.8); line(ax - L * 0.010, ay + fb * 0.30, ax + L * 0.010, ay + fb * 0.30, 0.8); }
+  { const rx = -hl * 0.985;                                                        // rudder and screw under the counter
+    line(rx, dr * 0.15, rx, dr * 0.95, 1.1);
+    line(rx + L * 0.020, dr * 0.55, rx + L * 0.008, dr * 0.30, 0.7);
+    line(rx + L * 0.020, dr * 0.55, rx + L * 0.008, dr * 0.80, 0.7); }
   if (o.citadel) poly([[-hl * 0.4, -fb], [hl * 0.4, -fb], [hl * 0.4, -fb - cit], [-hl * 0.4, -fb - cit]], 0.8);
 
   const dk = -fb - cit;                                                            // working deck height
@@ -2485,6 +2522,18 @@ function sideElevationPrims(ship, L) {
     const base = overHouse ? dk - ssH : dk;                                         // rise from the upper deck if there is one, else the main deck
     fpoly([[fx - funW / 2, base], [fx + funW / 2, base], [fx + funW / 2 - rake, top], [fx - funW / 2 - rake, top]], 0.6);
     frect(fx - rake - funW * 0.62, top - L * 0.006, funW * 1.24, L * 0.012, 0.4);
+    line(fx - funW * 0.44 - rake * 0.9, top + funH * 0.10, fx + funW * 0.44 - rake * 0.9, top + funH * 0.10, 0.6);   // cap band
+    line(fx - funW * 0.48, base - funH * 0.10, fx + funW * 0.48, base - funH * 0.10, 0.5);                            // base ring
+    line(fx + funW * 0.60, base, fx + funW * 0.60 - rake * 0.9, top + funH * 0.06, 0.45);                             // steam pipe abaft
+  }
+  if (!tb && lay.f.length) {                                                        // J-cowl ventilators flanking the boiler space
+    const fVals = lay.f.map((fe) => ((typeof fe === "object") ? fe.x : fe) * hl);
+    const cvBase = lay.ss ? dk - ssH : dk;
+    for (const cvx of [Math.max(...fVals) + L * 0.040, Math.min(...fVals) - L * 0.040]) {
+      const cvH = fb * 0.55;
+      line(cvx, cvBase, cvx, cvBase - cvH, 0.8);
+      fpoly([[cvx, cvBase - cvH], [cvx - L * 0.007, cvBase - cvH - L * 0.007], [cvx - L * 0.015, cvBase - cvH + L * 0.001]], 0.45);
+    }
   }
 
   // ---- guns last, so near-side deck-mounted secondaries stay in front of the superstructure ----
@@ -2532,16 +2581,6 @@ function sideElevationPrims(ship, L) {
     line(mx - L * 0.045, y1, mx + L * 0.045, y1, 0.7);
     line(mx - L * 0.028, y2, mx + L * 0.028, y2, 0.55);
     mastHeads.push([mx, head]);
-  }
-  // standing rigging: forestay to the stem, backstay to the stern, triatic between mastheads
-  if (mastHeads.length) {
-    const fwd = mastHeads.reduce((a, b) => (b[0] > a[0] ? b : a));
-    const aft = mastHeads.reduce((a, b) => (b[0] < a[0] ? b : a));
-    line(fwd[0], fwd[1], hl * 1.02, dk * 0.9, 0.3);
-    line(aft[0], aft[1], -hl * 0.99, dk * 0.9, 0.3);
-    if (mastHeads.length > 1) line(fwd[0], fwd[1], aft[0], aft[1], 0.3);
-    line(fwd[0], fwd[1] + L * 0.02, hl * 0.55, dk, 0.25);                          // forward lower stay
-    if (mastHeads.length > 1) line(aft[0], aft[1] + L * 0.02, -hl * 0.55, dk, 0.25);
   }
 
   return P;
@@ -2927,7 +2966,7 @@ const SCENARIO_CONFIGS = {
       jiyuan:        { name: "Fang Boqian",   resolve: 0.30 },
       guangjia:      { name: "Wu Jingrong",   resolve: 0.35 },
     },
-    ai: { Japan: { min: 2200, max: 3200 } },        // others fall back to armour-based bands
+    ai: { Japan: { min: 2200, max: 3200, doctrine: "standoff_flank" } },        // others fall back to armour-based bands
     maxTurns: 20, maxSeconds: 5400,
     intro: "Off the mouth of the Yalu, Japan's Combined Fleet, fast cruisers armed with quick-firing guns, met China's Beiyang Fleet and its two German ironclads, Dingyuan and Zhenyuan, whose 356 mm belts no Japanese shell could pierce. It became a contest between rate of fire and speed on one side, and heavy guns behind thick armour on the other.",
     deploy: function (place, playerSide, key, proc, F) {
@@ -3321,6 +3360,13 @@ function spawnSink(ship, delay) {
   if (ship._magazine) {                                   // the magazine went up: an engulfing white blast
     const r = Math.max(60, (ship.length || 90) * 1.8);
     game.effects.push({ type: "explosion", x: ship.x, y: ship.y, life: 1, fade: 0.8, rMax: r, delay });
+    for (let k = 0; k < 3; k++)                            // concussion rings racing out across the water
+      game.effects.push({ type: "shockwave", x: ship.x, y: ship.y, life: 1, fade: 0.55 - k * 0.10, rMax: r * (2.2 + k * 1.3), delay: delay + 0.08 + k * 0.16 });
+    game._shake = Math.min(0.5, (game._shake || 0) + 0.4);
+    game._camGoal = { x: ship.x, y: ship.y };              // the eye goes to the blast
+    const { w, h } = (typeof cssSize === "function") ? cssSize() : { w: 390, h: 700 };
+    const act = Math.min(w, h) / 3200;
+    if (game.cam.scale < act * 0.8) game._zoomGoal = act;
   }
   const sinkDelay = delay + (ship._magazine ? 0.55 : 0); // let the blast bloom before she settles
   game.effects.push({ type: "sink", x: ship.x, y: ship.y, life: 1, fade: 1.1, delay: sinkDelay });
@@ -3414,9 +3460,47 @@ function bestFireTarget(s) {
   return best;
 }
 
+// ---- fleet doctrine: speed-standoff and flanking -----------------------------------
+// A ship with a real speed margin over her target fights at the outer edge of her own
+// gun reach while working past the enemy van, instead of closing head-on to slug.
+// This is Tsuboi's 1894 handling of the Flying Squadron: superior speed spent on
+// position, gunnery kept at ranges where quick-firers told and the heavy reply was slow.
+// The doctrine is a coordinated fleet evolution, so it demands a functioning command:
+// it is only followed while the ship's nerve holds and the flagship's admiral commands.
+const DOCTRINE_MORALE_FLOOR = 50;      // the engine's own shaken/wavering boundary: below it a crew no longer executes coordinated evolutions
+const DOCTRINE_SPEED_MARGIN_KN = 4;    // under ~4 kn (~125 m per turn) the overtake of the enemy van exceeds the battle's horizon; the Flying Squadron held ~6 kn over the Beiyang line
+function effSpeedKn(s) { return s.maxSpeed * (s.engine != null ? s.engine : 1) * (1 - 0.4 * ((s.flooding || 0) / 100)); }
+function bestMainGun(S) {
+  let best = null, cal = 0;
+  for (const b of S.batteries) { if (b.knockedOut) continue; const c = gunCalibre(b.gun); if (c > cal) { cal = c; best = b.gun; } }
+  return best;
+}
+function doctrineFor(S) { const d = SCN.ai && SCN.ai[S.side]; return (d && d.doctrine === "standoff_flank") ? d : null; }
+function doctrineActive(S, T) {
+  if (game._doctrineOff) return false;
+  const d = doctrineFor(S); if (!d) return false;
+  if (!game._doctrineUngated) {
+    if ((S.morale != null ? S.morale : 100) < DOCTRINE_MORALE_FLOOR) return false;
+    if (sideFlagshipDown(S.side)) return false;
+  }
+  return effSpeedKn(S) - effSpeedKn(T) >= DOCTRINE_SPEED_MARGIN_KN;   // slow ships never flank, gated or not
+}
+// The enemy van: his lead ship along his fleet's own mean heading.
+function enemyVanOf(side) {
+  const foes = game.ships.filter((e) => !e.out && e.side !== side);
+  if (!foes.length) return null;
+  let sx = 0, sy = 0;
+  for (const e of foes) { const h = e.heading * Math.PI / 180; sx += Math.sin(h); sy += Math.cos(h); }
+  const mh = Math.atan2(sx, sy);
+  const ux = Math.sin(mh), uy = -Math.cos(mh);                        // world axis of his advance
+  let van = null, best = -Infinity;
+  for (const e of foes) { const p = e.x * ux + e.y * uy; if (p > best) { best = p; van = e; } }
+  return van;
+}
+
 function aiBand(S) {
   const d = SCN.ai && SCN.ai[S.side];
-  if (d) return { min: d.min, max: d.max };          // scenario doctrine for this side
+  if (d && d.min != null) return { min: d.min, max: d.max };          // scenario range doctrine for this side
   const belt = zoneArmour(S, "belt");
   if (!isDeckProtected(S) && belt >= 300) return { min: 1800, max: 3400 }; // ironclad: close
   return { min: 2200, max: 3300 };
@@ -3425,6 +3509,29 @@ function aiBand(S) {
 function aiManeuver(S, T) {
   const ab = absBearing(S, T);
   const r = rangeBetween(S, T);
+  if (doctrineActive(S, T)) {
+    // standoff: hold the outer edge of own reach; flank: work past the enemy van at speed
+    const g = bestMainGun(S);
+    const reach = g ? maxEffectiveRange(g) : 3000;
+    const lo = reach * 0.80, hi = reach * 0.95;
+    const van = enemyVanOf(S.side) || T;
+    const vh = van.heading * Math.PI / 180;
+    const fp = { x: van.x + Math.sin(vh) * 1500, y: van.y - Math.cos(vh) * 1500 };   // a point ahead of his van, one band-width out
+    let desired;
+    if (r > hi) desired = absBearing(S, fp);                          // close, but on the van, not the centre
+    else if (r < lo) desired = (ab + 150) % 360;                      // too close: use the legs, open back to reach
+    else {
+      const opt1 = (ab + 90) % 360, opt2 = (ab + 270) % 360;          // in band: race along it toward the van
+      const bf = absBearing(S, fp);
+      const d1 = Math.abs(((opt1 - bf + 540) % 360) - 180);
+      const d2 = Math.abs(((opt2 - bf + 540) % 360) - 180);
+      desired = d1 <= d2 ? opt1 : opt2;
+    }
+    S.orderHeading = desired;
+    S.orderThrottle = 0.95;                                           // the whole point of the doctrine is spending the speed margin
+    if (game._docTrace) game._docTrace.push(S.id);
+    return;
+  }
   const band = aiBand(S);
   let desired, throttle;
   if (r > band.max) { desired = ab; throttle = S.maxSpeed > 17 ? 0.95 : 0.85; }       // close
@@ -3819,6 +3926,16 @@ function resizeCanvas() {
   canvas.style.height = h + "px";
 }
 
+// Zoom presets for small screens: Fleet frames everything, Action frames the fight
+// around the selected ship (or your flagship), Close goes to gun-deck scale.
+function zoomPreset(kind) {
+  const { w, h } = cssSize();
+  const sel = shipById(game.selectedId) || shipById(FLAGSHIP_ID[game.playerSide]) || game.ships.find((x) => !x.out && x.side === game.playerSide);
+  if (kind === "fleet") { fitCamera(); game._zoomGoal = null; game._camGoal = null; return; }
+  const target = kind === "close" ? Math.min(w, h) / 900 : Math.min(w, h) / 3200;
+  game._zoomGoal = Math.max(0.012, Math.min(4, target));
+  if (sel) game._camGoal = { x: sel.x, y: sel.y };
+}
 function fitCamera() {
   const xs = game.ships.map((s) => s.x), ys = game.ships.map((s) => s.y);
   if (!xs.length) return;
@@ -4070,6 +4187,9 @@ function tickEffects(dt) {
         if (e.hit) {
           spawned.push({ type: "burst", x: e.x1, y: e.y1, life: 1, fade: 2.6, heavy: e.heavy });
           if (e.heavy) game._shake = Math.min(0.3, (game._shake || 0) + 0.22);
+          let hs = null, hd = 1e9;                                                  // flash the struck hull
+          for (const sh of game.ships) { if (sh.out) continue; const d = Math.hypot(sh.x - e.x1, sh.y - e.y1); if (d < 80 && d < hd) { hd = d; hs = sh; } }
+          if (hs) hs._hitFlash = e.heavy ? 0.34 : 0.2;
         } else {
           spawned.push({ type: "splash", x: e.x1, y: e.y1, life: 1, fade: 3 });
         }
@@ -4080,6 +4200,7 @@ function tickEffects(dt) {
   }
   if (spawned.length) game.effects.push(...spawned);
   game.effects = game.effects.filter((e) => e.life > 0);
+  for (const sh of game.ships) if (sh._hitFlash) sh._hitFlash = Math.max(0, sh._hitFlash - dt);
 }
 
 // ===========================================================================
@@ -4354,13 +4475,17 @@ function chooseAIOrder(s) {
   if (T) aiManeuver(s, T); else s.orderHeading = s.heading;
   const want = s.orderHeading != null ? s.orderHeading : s.heading;
   const w0 = hexToWorld(s.hex.q, s.hex.r);
+  const cells = reachableHexes(s);
+  let maxD = 0;
+  for (const c of cells) { const w = hexToWorld(c.q, c.r); const d = Math.hypot(w.x - w0.x, w.y - w0.y) / HEX_M; if (d > maxD) maxD = d; }
+  const wantD = maxD * clamp(s.orderThrottle != null ? s.orderThrottle : 1, 0.3, 1);   // the helm order carries a speed as well as a heading
   let best = null, bestScore = -1e9;
-  for (const c of reachableHexes(s)) {
+  for (const c of cells) {
     const w = hexToWorld(c.q, c.r);
     const dHex = Math.hypot(w.x - w0.x, w.y - w0.y) / HEX_M;
     const head = c.stay ? s.heading : c.heading;
     const dev = Math.abs(((head - want + 540) % 360) - 180);
-    const score = -dev * 1.2 + dHex * 6;
+    const score = game._legacyScorer ? (-dev * 1.2 + dHex * 6) : (-dev * 1.2 - Math.abs(dHex - wantD) * 5);
     if (score > bestScore) { bestScore = score; best = c; }
   }
   s.order = best ? { q: best.q, r: best.r, heading: best.stay ? s.heading : best.heading } : null;
@@ -4727,6 +4852,11 @@ function loop() {
       const g = game._camGoal, k = 1 - Math.pow(0.0018, dt);
       game.cam.x += (g.x - game.cam.x) * k; game.cam.y += (g.y - game.cam.y) * k;
       if (Math.hypot(g.x - game.cam.x, g.y - game.cam.y) < 4) game._camGoal = null;
+    }
+    if (game._zoomGoal) {                                         // and the zoom eases with it
+      const k = 1 - Math.pow(0.004, dt);
+      game.cam.scale += (game._zoomGoal - game.cam.scale) * k;
+      if (Math.abs(game._zoomGoal - game.cam.scale) < game.cam.scale * 0.02) game._zoomGoal = null;
     }
     if (game._shake && game._shake > 0.005) {
       game._shake *= Math.pow(0.02, dt);                          // fast exponential settle
@@ -5246,7 +5376,7 @@ function pickShip(cssX, cssY) {
   for (const s of game.ships) {
     const sx = wx(v, s.x), sy = wy(v, s.y);
     const L = shipScreenLen(v, s);
-    const rr = Math.max(L * 0.8, 16);
+    const rr = Math.max(L * 0.8, 22);
     const d = Math.hypot(sx - cssX, sy - cssY);
     if (d < rr && d < bestD) { bestD = d; best = s; }
   }
@@ -5296,7 +5426,7 @@ function onPointerMove(e) {
     const v = makeViewCss();
     const w0 = screenToWorld(v, dragStart.x, dragStart.y);
     const w1 = screenToWorld(v, p.x, p.y);
-    game._camGoal = null;
+    game._camGoal = null; game._zoomGoal = null;
     game.cam.x -= (w1.x - w0.x);
     game.cam.y -= (w1.y - w0.y);
     dragStart.x = p.x; dragStart.y = p.y;
@@ -5482,7 +5612,8 @@ function renderShipCard(body, s) {
       const ec = ev.getContext("2d");
       ec.clearRect(0, 0, ev.width, ev.height);
       ec.save(); ec.translate(ev.width / 2, ev.height * 0.80);
-      drawSideElevation(ec, s, ev.width - 40, "#c8a45c");
+      const LmC = (s.def && s.def.dimensions_m && s.def.dimensions_m.length) || 100;
+      drawSideElevation(ec, s, (ev.width - 40) * Math.max(0.45, Math.min(1, LmC / 115)), "#c8a45c");
       ec.restore();
     } catch (err) { /* a drawing edge case must never stop the card from opening */ }
   }
@@ -5505,7 +5636,8 @@ function drawDossierProfile(s) {
     ctx.clearRect(0, 0, W, H);
     const ink = s.side === "Japan" ? "#aab6c2" : "#e0b85a";
     const plate = "#0b1f25";
-    const L = W - 44;
+    const Lm0 = (s.def && s.def.dimensions_m && s.def.dimensions_m.length) || 100;
+    const L = (W - 44) * Math.max(0.45, Math.min(1, Lm0 / 115));   // profile length tracks the real ship
     ctx.save();
     ctx.translate(W / 2, H * 0.80);
     ctx.lineJoin = "round"; ctx.lineCap = "round";
@@ -6189,6 +6321,24 @@ function init() {
   bind("ringsBtn", (e) => { game.show.rings = !game.show.rings; e.currentTarget.classList.toggle("off", !game.show.rings); });
   bind("labelsBtn", (e) => { game.show.labels = !game.show.labels; e.currentTarget.classList.toggle("off", !game.show.labels); });
   bind("arcsBtn", (e) => { game.show.arcs = !game.show.arcs; e.currentTarget.classList.toggle("off", !game.show.arcs); });
+  bind("zoomBtn", () => {
+    game._zoomCycle = ((game._zoomCycle || 0) + 1) % 3;
+    const kind = ["action", "close", "fleet"][game._zoomCycle % 3];
+    zoomPreset(kind);
+    showToast(kind === "fleet" ? "Fleet view" : kind === "action" ? "Action view" : "Close view");
+  });
+  bind("ffBtn", () => {
+    // steam on: play full turns until any guns speak, then let that turn animate
+    if (game.phase !== "plan" || game.exec || game.busy) return;
+    for (let i = 0; i < 12; i++) {
+      startExecute();
+      if (game.effects.length > 0 || game.torpedoes.length > 0) break;   // contact: leave the salvo to play out
+      skipExecute();
+      if (game.phase === "over") break;
+    }
+    const ff = document.getElementById("ffBtn");
+    if (ff && (game.effects.length > 0 || game._contactMade)) { game._contactMade = true; ff.style.display = "none"; }
+  });
   // desktop niceties: Space ends the turn, Esc closes the panel, [ and ] cycle your ships
   document.addEventListener("keydown", (ev) => {
     if (ev.target && /INPUT|TEXTAREA|SELECT/.test(ev.target.tagName)) return;
