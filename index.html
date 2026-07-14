@@ -12,6 +12,8 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
+<link rel="apple-touch-icon" href="icon.png" />
+<link rel="icon" type="image/png" href="icon.png" />
 <title>Echelon · Naval Action</title>
 <style>
 :root{
@@ -50,12 +52,13 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 #chart{display:block;width:100%;height:100%;cursor:crosshair;touch-action:none;-webkit-user-select:none;user-select:none;overscroll-behavior:none;-webkit-touch-callout:none;}
 
 /* ---- ship panel: docked, compact (~1/4), the map reflows around it ---- */
-#panel{display:none;flex:0 0 clamp(290px,25vw,360px);background:var(--panel);
-  border-left:1px solid var(--panel-edge);flex-direction:column;min-height:0;min-width:0;}
+#panel{display:none;flex:0 0 clamp(278px,24vw,340px);background:rgba(8,31,38,.84);
+  -webkit-backdrop-filter:blur(16px) saturate(1.15);backdrop-filter:blur(16px) saturate(1.15);
+  border-left:1px solid rgba(200,164,92,.42);flex-direction:column;min-height:0;min-width:0;}
 #panel.expanded{display:flex;}
 .panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
   color:var(--brass-dim);padding:10px 14px 6px;border-bottom:1px solid #143b44;}
-#panelBody{overflow-y:auto;overflow-x:hidden;padding:12px 14px 16px;flex:1 1 auto;-webkit-overflow-scrolling:touch;}
+#panelBody{overflow-y:auto;overflow-x:hidden;padding:9px 10px 12px;flex:1 1 auto;-webkit-overflow-scrolling:touch;}
 .panel-hint p{font-size:13px;line-height:1.5;color:var(--ink-dim);margin:0 0 10px;}
 .panel-hint ul{margin:0 0 12px;padding-left:18px;}
 .panel-hint li{font-size:12.5px;line-height:1.6;color:var(--ink-dim);margin-bottom:4px;}
@@ -344,7 +347,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 /* ---- responsive: panel becomes bottom sheet ---- */
 @media (max-width:860px){
   #main{flex-direction:column;}
-  #panel{flex:0 0 32vh;max-height:32vh;width:auto;border-left:none;border-top:1px solid var(--panel-edge);}
+  #panel{flex:0 0 38vh;max-height:38vh;width:auto;border-left:none;border-top:1px solid rgba(200,164,92,.42);}
   .panel-title{cursor:pointer;text-align:center;}
   #logDrawer{bottom:0;max-height:36%;}
   .strengths .sbar{min-width:84px;}
@@ -409,6 +412,19 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .range-state{font-family:var(--mono);font-size:9px;letter-spacing:.45px;text-transform:uppercase;color:var(--brass-dim);margin-left:auto;}
 .squad-auto{font-family:var(--mono);font-size:9px;color:var(--brass-dim);letter-spacing:.5px;text-transform:uppercase;margin-left:6px;}
 
+
+/* compact glass command layer */
+.command-glass{position:relative;background:linear-gradient(145deg,rgba(16,52,62,.72),rgba(5,22,28,.62));border:1px solid rgba(200,164,92,.32);border-radius:12px;padding:9px;box-shadow:inset 0 1px rgba(255,255,255,.04),0 10px 28px rgba(0,0,0,.22)}
+.command-head{display:flex;align-items:center;gap:7px;min-width:0}.command-name,.command-head>div{min-width:0;flex:1}.command-title{font-family:var(--serif);font-size:18px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.command-sub{font-family:var(--mono);font-size:9px;color:var(--ink-dim);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;padding:0;border-radius:8px;border:1px solid rgba(200,164,92,.28);background:rgba(7,29,36,.58);color:var(--ink);cursor:pointer;flex:none}.icon-btn:hover,.icon-btn:active{background:rgba(200,164,92,.15);border-color:rgba(200,164,92,.55)}.icon-btn svg,.rail-btn.icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.icon-btn.tiny{width:27px;height:27px;font-family:var(--mono);font-size:14px}.rail-aa{font-family:var(--serif);font-size:13px}
+.mini-profile{height:92px;overflow:hidden;margin:5px 0 4px;border-radius:8px;background:rgba(4,19,24,.35)}.status-strip,.battery-strip,.doctrine-icons,.helm-strip,.formation-strip{display:flex;align-items:center;gap:5px;margin-top:6px;flex-wrap:wrap}.status-chip{display:flex;align-items:center;gap:4px;padding:4px 6px;border-radius:8px;background:rgba(3,18,23,.52);border:1px solid rgba(255,255,255,.055);font-family:var(--mono);font-size:9px}.status-chip i{font-style:normal;color:var(--brass-dim)}.status-chip b{font-weight:600;color:var(--ink)}
+.target-chip{display:flex;align-items:center;gap:7px;margin-top:6px;padding:6px 8px;border-radius:9px;background:rgba(192,57,43,.09);border:1px solid rgba(192,57,43,.20);font-family:var(--mono);font-size:10px;white-space:nowrap;overflow:hidden}.target-chip svg{width:16px;height:16px;fill:none;stroke:#df8277;stroke-width:1.7;flex:none}.target-chip span{overflow:hidden;text-overflow:ellipsis}
+.helm-strip{justify-content:center}.helm-strip .icon-btn{flex:1;max-width:54px}.formation-strip{justify-content:center}.formation-strip .icon-btn{width:29px;height:28px}.formation-strip .icon-btn.active{background:rgba(47,127,214,.32);border-color:#7ab4ee;color:#eff7ff}.spacing-readout{font-family:var(--mono);font-size:9px;color:var(--ink-dim);min-width:42px;text-align:center}.text-icon{height:28px;min-width:31px;padding:0 7px;border-radius:8px;border:1px solid rgba(200,164,92,.25);background:rgba(6,25,31,.55);color:var(--ink-dim);font-family:var(--mono);font-size:10px;cursor:pointer}.text-icon.active{background:rgba(47,127,214,.32);border-color:#7ab4ee;color:#eff7ff}.doctrine-icons{justify-content:center}
+.battery-strip{justify-content:center}.battery-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 6px;border-radius:8px;background:rgba(5,23,29,.58);border:1px solid rgba(255,255,255,.07);font-family:var(--mono);font-size:9px;color:var(--ink-dim)}.battery-chip b{color:var(--ink);font-weight:600}.battery-chip small{font-size:8px;color:var(--brass-dim)}.battery-chip.bearing{border-color:rgba(111,207,115,.35)}.battery-chip.dead{opacity:.38}.battery-chip.torp{border-color:rgba(58,143,176,.42)}
+.help-pop{position:relative;flex:none}.help-pop summary{list-style:none}.help-pop summary::-webkit-details-marker{display:none}.help-pop>div{position:absolute;right:0;top:34px;z-index:20;width:230px;padding:9px 10px;border-radius:9px;background:rgba(5,22,28,.96);border:1px solid rgba(200,164,92,.38);box-shadow:0 12px 30px rgba(0,0,0,.5);font-size:11px;line-height:1.45;color:var(--ink-dim)}.inline-help{display:flex;justify-content:flex-end;margin-top:5px}.inline-help>div{bottom:34px;top:auto}.member-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px}.member-chip{display:flex;justify-content:space-between;gap:6px;align-items:center;min-width:0;padding:6px 7px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:rgba(5,23,29,.5);color:var(--ink);font-size:10px;cursor:pointer}.member-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.member-chip b{font-family:var(--mono);font-size:9px;color:var(--ink-dim)}.member-chip.flag{border-color:rgba(200,164,92,.42)}.member-chip.out{opacity:.38}.command-foot{display:flex;justify-content:flex-end;margin-top:7px}
+#rail{gap:5px;padding-left:8px;padding-right:8px}.rail-btn.icon{width:34px;height:32px;padding:0;justify-content:center}.rail-btn.icon svg{width:17px;height:17px}.rail-btn.icon span{pointer-events:none}
+@media(max-width:560px){#rail{overflow-x:auto}.rail-btn.icon{width:32px;min-width:32px}.member-grid{grid-template-columns:1fr 1fr}.command-glass{padding:8px}.mini-profile{height:82px}}
+
 </style>
 </head>
 <body>
@@ -441,18 +457,18 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 
   <div id="rail">
     <button class="rail-btn" id="playBtn">End Turn</button>
-    <button class="rail-btn" id="ffBtn" title="Steam on until the guns open">⏩ Contact</button>
-    <button class="rail-btn" id="zoomBtn" title="Cycle Fleet / Action / Close">🔍 Zoom</button>
-    <button class="rail-btn icon" id="multiSelBtn" title="Form a squadron" aria-label="Form a squadron"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2.6 2.2"/><circle cx="8" cy="12.2" r="2.1" fill="currentColor"/><circle cx="13.6" cy="10.2" r="1.7" fill="currentColor"/><circle cx="16.6" cy="14" r="1.7" fill="currentColor"/></svg></button>
-    <button class="rail-btn" id="speedBtn">Skip ▶▶</button>
-    <button class="rail-btn toggle" id="ringsBtn">Range rings</button>
-    <button class="rail-btn toggle opt" id="arcsBtn">Arcs</button>
-    <button class="rail-btn toggle opt" id="labelsBtn">Labels</button>
-    <button class="rail-btn opt" id="codexBtn">Codex</button>
-    <button class="rail-btn opt" id="fleetBtn">Fleet</button>
-    <button class="rail-btn opt" id="menuBtn">Menu ✕</button>
+    <button class="rail-btn icon" id="ffBtn" title="Continue to contact" aria-label="Continue to contact"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button>
+    <button class="rail-btn icon" id="zoomBtn" title="Cycle zoom" aria-label="Cycle zoom"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="M15 15l6 6M7 10h6M10 7v6"/></svg></button>
+    <button class="rail-btn icon" id="multiSelBtn" title="Form a squadron" aria-label="Form a squadron"><svg viewBox="0 0 24 24"><path d="M3 6h7M3 12h10M3 18h7M15 6h6M17 12h4M15 18h6"/></svg></button>
+    <button class="rail-btn icon" id="speedBtn" title="Skip resolution" aria-label="Skip resolution"><svg viewBox="0 0 24 24"><path d="M4 5l7 7-7 7M12 5l7 7-7 7"/></svg></button>
+    <button class="rail-btn icon toggle" id="ringsBtn" title="Range rings" aria-label="Range rings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg></button>
+    <button class="rail-btn icon toggle opt" id="arcsBtn" title="Firing arcs" aria-label="Firing arcs"><svg viewBox="0 0 24 24"><path d="M12 20V4M12 12L3 7M12 12l9-5"/></svg></button>
+    <button class="rail-btn icon toggle opt" id="labelsBtn" title="Ship names" aria-label="Ship names"><span class="rail-aa">Aa</span></button>
+    <button class="rail-btn icon opt" id="codexBtn" title="Codex" aria-label="Codex">?</button>
+    <button class="rail-btn icon opt" id="fleetBtn" title="Fleet roster" aria-label="Fleet roster"><svg viewBox="0 0 24 24"><path d="M3 6h18M5 12h14M7 18h10"/></svg></button>
+    <button class="rail-btn icon opt" id="menuBtn" title="Menu" aria-label="Menu">⋯</button>
     <div class="rail-spacer"></div>
-    <button class="rail-btn" id="recenterBtn">Recenter</button>
+    <button class="rail-btn icon" id="recenterBtn" title="Re-centre" aria-label="Re-centre"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></svg></button>
     <div class="rail-zoom">
       <button class="rail-btn" id="zoomOutBtn">−</button>
       <button class="rail-btn" id="zoomInBtn">+</button>
@@ -508,7 +524,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin the action</button>
     </div>
-    <div class="build-stamp" id="buildStamp">build 2026-07-14 command and combat pass</div>
+    <div class="build-stamp" id="buildStamp">build 2026-07-14 control and interface pass</div>
   </div>
 </div>
 
@@ -676,9 +692,7 @@ function zoneArmour(ship, zone) {
 // (most Yalu protected cruisers). Their "side" hits land on thin/no plate.
 function isDeckProtected(ship) {
   const a = ship.armor_mm || {};
-  // Several Tsushima data records explicitly store belt:null. Treat a null or zero
-  // belt as no side belt, rather than as an armoured belt merely because the key exists.
-  return normArmor(a.belt) <= 0 && normArmor(a.deck != null ? a.deck : a.protective) > 0;
+  return !("belt" in a) && ("deck" in a || "protective" in a);
 }
 
 // ---------- gun ballistics & penetration -------------------------------------
@@ -990,8 +1004,7 @@ function hitChance(from, battery, target, range) {
   let cond = (0.55 + 0.45 * from.crew);            // crew casualties hurt gunnery
   if (from.turnedHard) cond *= 0.82;               // hard manoeuvre spoils aim
   if (from.fires > 0) cond *= clamp(1 - 0.06 * from.fires, 0.6, 1);
-  const ranging = battery && battery._rangingFactor != null ? battery._rangingFactor : 1;
-  return clamp(base * rangeFactor * sizeFactor * evade * cond * ranging, 0.02, 0.9);
+  return clamp(base * rangeFactor * sizeFactor * evade * cond, 0.02, 0.9);
 }
 
 // Choose an impact zone. Weights shift if the ship has no side belt.
@@ -1367,10 +1380,8 @@ function fireTorpedo(from, target, turn) {
   from.firedThisTurn = true;
 
   // close-range hit chance, decaying fast with distance and target evasion
-  const engine = clamp(target.engine != null ? target.engine : 1, 0.3, 1);
-  const speed = Math.max(0, target.maxSpeed * (target.throttle != null ? target.throttle : 1) * engine);
-  const evasion = (1.10 - 0.32 * clamp(speed / 18, 0, 1)) * (target.turnedHard ? 0.75 : 1);
-  let hc = 0.18 * Math.exp(-range / 550) * evasion;
+  const evasion = (target.movedThisTurn ? 0.7 : 1) * (target.turnedHard ? 0.75 : 1);
+  let hc = 0.18 * Math.exp(-range / 550) * evasion * clamp(target.engine, 0.3, 1);
   hc = clamp(hc, 0.01, 0.6);
 
   if (rnd() >= hc) {
@@ -4055,13 +4066,10 @@ function redraw() {
   for (const s of visibleShips) {
     let aimWorld = s._aimWorld;
     if (s.id === game.selectedId && selTargetValid) aimWorld = absBearing(s, selTarget);
-    const sq = squadronOf(s.id);
-    const important = s.id === game.selectedId || s.id === game.targetId || s.isFlagship || (sq && sq.leaderId === s.id);
-    const labelReadable = (s.length || 80) * v.scale >= 18;
     drawShip(ctx, v, s, {
       selected: s.id === game.selectedId,
       targeted: s.id === game.targetId && tgt && !tgt.out,
-      showLabel: game.show.labels && (labelReadable || important),
+      showLabel: game.show.labels,
       aimWorld,
     });
   }
@@ -4188,6 +4196,14 @@ function drawOrderGhost(ctx, v, s, highlight) {
   drawSchematic(ctx, L, B, s._plan, "rgba(150,205,245,0.95)",
     { fill: "rgba(120,200,255,0.08)", deck: "rgba(120,200,255,0.12)", mount: "rgba(120,200,255,0.2)" }, false);
   ctx.restore();
+  if (highlight) {
+    const ah = s.order.heading * Math.PI / 180;
+    const ax = Math.sin(ah), ay = -Math.cos(ah), len = Math.max(28, L * 1.25);
+    ctx.save(); ctx.strokeStyle = "rgba(180,225,255,0.95)"; ctx.fillStyle = ctx.strokeStyle; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(sx1, sy1); ctx.lineTo(sx1 + ax * len, sy1 + ay * len); ctx.stroke();
+    const tx = sx1 + ax * len, ty = sy1 + ay * len, px = -ay, py = ax;
+    ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(tx - ax * 7 + px * 4, ty - ay * 7 + py * 4); ctx.lineTo(tx - ax * 7 - px * 4, ty - ay * 7 - py * 4); ctx.closePath(); ctx.fill(); ctx.restore();
+  }
   // name tag so it is obvious which ship is bound where
   ctx.save();
   ctx.font = "600 10px ui-monospace, SF Mono, monospace";
@@ -4425,10 +4441,7 @@ function resolveTorpedoes() {
     }
     if (!best) continue;
     const range = Math.hypot(bestAim.x - bestPt.x, bestAim.y - bestPt.y) || 1;
-    const engine = clamp(best.engine != null ? best.engine : 1, 0.35, 1);
-    const speed = Math.max(0, best.maxSpeed * (best.throttle != null ? best.throttle : 1) * engine);
-    const speedEvasion = 1.08 - 0.28 * clamp(speed / 18, 0, 1);   // fast targets are harder, crippled targets easier
-    const evasion = speedEvasion * (best.turnedHard ? 0.78 : 1);
+    const evasion = (best.turnedHard ? 0.8 : 1) * clamp(best.engine != null ? best.engine : 1, 0.4, 1);
     const hc = clamp(0.09 * Math.exp(-range / 450) * evasion, 0.01, 0.18);
     const willHit = Math.random() < hc;
     s.torpedoes.count -= 1;
@@ -4523,6 +4536,36 @@ function setOrderHex(s, q, r) {
   s._manualThisTurn = true;            // a directly ordered ship steers itself this turn, not station-keeping
   return true;
 }
+function orderApproachHeading(s) {
+  if (!s.order) return s.heading;
+  const end = hexToWorld(s.order.q, s.order.r);
+  const dx = end.x - s.x, dy = end.y - s.y;
+  return Math.hypot(dx, dy) < HEX_M * 0.3 ? s.heading : ((Math.atan2(dx, -dy) * 180 / Math.PI) % 360 + 360) % 360;
+}
+function setOrderHeading(s, wanted) {
+  if (!s || s.out || s.side !== game.playerSide || game.phase !== "plan") return false;
+  if (!s.order) defaultOrder(s);
+  const maxFromStart = turnAllowance(s);
+  const approach = orderApproachHeading(s);
+  let h = ((wanted % 360) + 360) % 360;
+  let fromStart = wrap180(h - s.heading);
+  fromStart = clamp(fromStart, -maxFromStart, maxFromStart);
+  h = ((s.heading + fromStart) % 360 + 360) % 360;
+  const moved = s.order.q !== s.hex.q || s.order.r !== s.hex.r;
+  if (moved) {
+    let fromTrack = wrap180(h - approach);
+    fromTrack = clamp(fromTrack, -70, 70);
+    h = ((approach + fromTrack) % 360 + 360) % 360;
+  }
+  s.order.heading = h;
+  s._manualThisTurn = true;
+  return true;
+}
+function nudgeOrderHeading(s, delta) {
+  const base = s && s.order ? s.order.heading : (s ? s.heading : 0);
+  return setOrderHeading(s, base + delta);
+}
+function resetOrderHeading(s) { return setOrderHeading(s, orderApproachHeading(s)); }
 // AI: pick a target, then a destination hex that best matches its doctrine heading.
 function chooseAIOrder(s) {
   const T = aiChooseTarget(s);
@@ -4606,29 +4649,35 @@ function formSquadron(ids, name, autoFormed) {
   for (const sq of game.squadrons) sq.members = sq.members.filter((id) => !members.includes(id));
   game.squadrons = game.squadrons.filter((sq) => sq.members.length >= 2);
   game.squadrons.forEach((sq) => { if (!sq.members.includes(sq.leaderId)) sq.leaderId = sq.members[0]; });
-  const sq = { id: ++game._squadSeq, members: members.slice(), leaderId: members[0], name: name || `Squadron ${game._squadSeq}`, autoFormed: !!autoFormed };
+  const sq = { id: ++game._squadSeq, members: members.slice(), leaderId: members[0], name: name || `Squadron ${game._squadSeq}`, autoFormed: !!autoFormed, formation: "line", spacing: STATION_M };
   game.squadrons.push(sq);
   rebuildSquadronLines();
   return sq;
 }
 function autoFormHistoricalSquadrons() {
-  const add = (ids, name) => formSquadron(ids.filter((id) => !!shipById(id)), name, true);
+  const add = (ids, name) => formSquadron(ids.filter((id) => {
+    const s = shipById(id); return s && s.side === game.playerSide;
+  }), name, true);
   if (SCN.id === "tsushima" || SCN.id === "tsushima_approach") {
-    const groups = [
-      ["Russia", ["1st Armoured Division"], "1st Armoured Division"],
-      ["Russia", ["2nd Armoured Division", "2nd Division", "3rd Division"], "Older Battle Line"],
-      ["Russia", ["Cruiser Division"], "Cruiser Division"],
-      ["Japan", ["1st Division", "2nd Division"], "Togo's Battle Line"],
-      ["Japan", ["3rd Division", "4th Division", "6th Division"], "Scouting Cruisers"],
-    ];
-    for (const [side, divs, name] of groups) {
-      const ids = GAME_DATA.ships.filter((d) => d.side === side && divs.includes(d.division)).map((d) => d.id);
+    const groups = game.playerSide === "Russia"
+      ? [
+          [["1st Armoured Division"], "1st Armoured Division"],
+          [["2nd Armoured Division", "2nd Division", "3rd Division"], "Older Battle Line"],
+          [["Cruiser Division"], "Cruiser Division"],
+        ]
+      : [
+          [["1st Division", "2nd Division"], "Togo's Battle Line"],
+          [["3rd Division", "4th Division", "6th Division"], "Scouting Cruisers"],
+        ];
+    for (const [divs, name] of groups) {
+      const ids = GAME_DATA.ships.filter((d) => d.side === game.playerSide && divs.includes(d.division)).map((d) => d.id);
       if (ids.length >= 2) add(ids, name);
     }
-  } else if (SCN.id === "yalu") {
+  } else if (SCN.id === "yalu" && game.playerSide === "Japan") {
     const block = GAME_DATA.formations && GAME_DATA.formations.japanese_opening_column;
-    const ids = block && block.ships ? block.ships.map((x) => x.id) : game.ships.filter((x) => x.side === "Japan").map((x) => x.id);
-    if (ids.length >= 2) add(ids, "Combined Fleet Line");
+    const ids = block && block.ships ? block.ships.map((x) => x.id) : [];
+    add(ids.slice(0, 4), "Flying Squadron");
+    add(ids.slice(4), "Main Squadron");
   }
   rebuildSquadronLines();
 }
@@ -4637,6 +4686,16 @@ function disbandSquadron(id) {
   game.squadrons = game.squadrons.filter((sq) => sq.id !== id);
   rebuildSquadronLines();
 }
+function detachShipFromSquadron(shipId) {
+  const sq = squadronOf(shipId); if (!sq) return;
+  sq.members = sq.members.filter((id) => id !== shipId);
+  const s = shipById(shipId); if (s) { s._follow = null; s._inLine = false; s._manualThisTurn = true; }
+  if (sq.leaderId === shipId) sq.leaderId = sq.members[0] || null;
+  if (sq.members.length < 2) game.squadrons = game.squadrons.filter((q) => q.id !== sq.id);
+  rebuildSquadronLines();
+}
+function squadronSetFormation(sq, formation) { if (sq) { sq.formation = formation || "line"; rebuildSquadronLines(); } }
+function squadronAdjustSpacing(sq, delta) { if (sq) sq.spacing = clamp((sq.spacing || STATION_M) + delta, 250, 900); }
 // Squadron orders write to every member; individuals are overridden because last write wins.
 function squadronSetDoctrine(sq, d) { for (const id of sq.members) { const s = shipById(id); if (s) s.doctrine = d; } }
 function squadronSetTarget(sq, tid) { for (const id of sq.members) { const s = shipById(id); if (s && !s.out) s.targetId = tid; } }
@@ -4681,7 +4740,14 @@ function stationKeepOrder(s, lead, reserved) {
   const lo = lead.order ? hexToWorld(lead.order.q, lead.order.r) : { x: lead.x, y: lead.y };
   const lh = lead.order ? lead.order.heading : lead.heading;
   const fx = Math.sin(lh * Math.PI / 180), fy = -Math.cos(lh * Math.PI / 180);
-  const px = lo.x - fx * STATION_M, py = lo.y - fy * STATION_M;
+  const rx = Math.cos(lh * Math.PI / 180), ry = Math.sin(lh * Math.PI / 180);
+  const sq = squadronOf(s.id), spacing = sq && sq.spacing ? sq.spacing : STATION_M;
+  const form = sq && sq.formation ? sq.formation : "line";
+  let back = spacing, side = 0;
+  if (form === "abreast") { back = 0; side = spacing; }
+  else if (form === "echelon_port") { back = spacing * 0.72; side = -spacing * 0.72; }
+  else if (form === "echelon_starboard") { back = spacing * 0.72; side = spacing * 0.72; }
+  const px = lo.x - fx * back + rx * side, py = lo.y - fy * back + ry * side;
   const target = shipById(s.targetId) || shipById(lead.targetId);
   let best = null, bestScore = 1e18;
   for (const c of reachableHexes(s)) {
@@ -4958,9 +5024,6 @@ function mannedBatteryCount(s) {
 function resolveFire() {
   const dur = (game.exec && game.exec.dur) || 5.5;
   const queue = [];
-  const concentration = new Map();
-  for (const s of game.ships) if (!s.out && s.targetId) concentration.set(s.targetId, (concentration.get(s.targetId) || 0) + 1);
-
   // Declare every eligible salvo before applying damage. Each battery evaluates range
   // and bearing at its actual firing moment during the simultaneous movement phase.
   for (const s of game.ships) {
@@ -4984,8 +5047,6 @@ function resolveFire() {
       if (!same) { b.rangeTargetId = tgt.id; b.rangeLevel = 0; }
       let lvl = Math.max(0, Math.min(3, b.rangeLevel || 0));
       if (s.turnedHard) lvl = Math.max(0, lvl - 1);
-      const assist = Math.min(0.08, Math.max(0, (concentration.get(tgt.id) || 1) - 1) * 0.025);
-      b._rangingFactor = [0.76, 0.90, 1.00, 1.08][lvl] + assist;
       queue.push({ s, b, tgt, fireAt, shooterPose: firing.shooterPose, targetPose: firing.targetPose,
         state: { crew: s.crew, morale: s.morale, fires: s.fires, captainHitTurns: s.captainHitTurns, turnedHard: s.turnedHard } });
     }
@@ -5019,7 +5080,6 @@ function resolveFire() {
       if (s.side === game.playerSide) { pFired = true; pHits += res.hits || 0; pTargets.add(tgt.name); }
       if (!targetOut && tgt.out && !sunkAt.has(tgt.id)) sunkAt.set(tgt.id, { at: fireAt + 0.4, pose: targetPose });
     }
-    b._rangingFactor = null;
   }
 
   for (const [id, loss] of sunkAt) {
@@ -5255,9 +5315,9 @@ function fmtClock(sec) {
 function syncPlayBtn() {
   if (typeof document === "undefined") return;
   const pb = document.getElementById("playBtn");
-  if (pb) pb.textContent = game.phase === "over" ? "·" : game.exec ? "Resolving…" : "End Turn";
+  if (pb) pb.textContent = game.phase === "over" ? "·" : game.exec ? "Resolving" : "End Turn";
   const sb = document.getElementById("speedBtn");
-  if (sb) { sb.textContent = "Skip ▶▶"; sb.classList.toggle("off", !game.exec); }
+  if (sb) sb.classList.toggle("off", !game.exec);
 }
 // ---- turn headline toast ---------------------------------------------------------
 function showToast(text, cls, ms, allowHtml) {
@@ -5274,7 +5334,7 @@ function syncTopBar() {
   if (typeof document === "undefined") return;
   const t = document.getElementById("turnNum"); if (t) t.textContent = String(game.turn || 1);
   const p = document.getElementById("phaseLabel");
-  if (p) p.textContent = game.phase === "over" ? "Battle over" : game.exec ? "Resolving…" : "Plan · give orders";
+  if (p) p.textContent = game.phase === "over" ? "Battle over" : game.exec ? "Resolving" : "Plan";
   const cp = fleetPct(sideA()), jp = fleetPct(sideB());
   const cf = document.getElementById("chinaBarFill"); if (cf) cf.style.width = Math.round(cp * 100) + "%";
   const jf = document.getElementById("japanBarFill"); if (jf) jf.style.width = Math.round(jp * 100) + "%";
@@ -5318,58 +5378,87 @@ function squadronCohesion(sq) {
   let total = 0;
   for (const s of followers) {
     const lead = effectiveLeader(s);
-    const d = lead ? rangeBetween(s, lead) : STATION_M * 2;
-    total += clamp(1 - Math.abs(d - STATION_M) / (STATION_M * 1.35), 0, 1);
+    const spacing = sq.spacing || STATION_M;
+    const d = lead ? rangeBetween(s, lead) : spacing * 2;
+    total += clamp(1 - Math.abs(d - spacing) / (spacing * 1.35), 0, 1);
   }
   return Math.round(100 * total / followers.length);
 }
-function squadronRangingLabel(sq, target) {
-  if (!target || target.out) return "local control";
-  const levels = [];
-  for (const id of sq.members) {
-    const s = shipById(id); if (!s || s.out) continue;
-    for (const b of s.batteries) if (!b.knockedOut && b.rangeTargetId === target.id) levels.push(b.rangeLevel || 0);
-  }
-  if (!levels.length) return "unranged";
-  const level = Math.max(0, Math.min(3, Math.round(levels.reduce((a, b) => a + b, 0) / levels.length)));
-  return ["unranged", "bracketing", "straddling", "on target"][level];
+function iconSvg(kind) {
+  const paths = {
+    info: '<circle cx="12" cy="12" r="9"/><path d="M12 10v7M12 7h.01"/>',
+    squad: '<path d="M4 6h7l2 2h7M4 12h7l2 0h7M4 18h7l2-2h7"/>',
+    target: '<circle cx="12" cy="12" r="7"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/>',
+    portHard: '<path d="M20 5H9a6 6 0 0 0-6 6v8M3 19l-3-4M3 19l4-3"/>',
+    port: '<path d="M18 5H9a5 5 0 0 0-5 5v8M4 18l-3-4M4 18l4-3"/>',
+    straight: '<path d="M12 21V4M12 4L7 9M12 4l5 5"/>',
+    starboard: '<path d="M6 5h9a5 5 0 0 1 5 5v8M20 18l-4-3M20 18l3-4"/>',
+    starboardHard: '<path d="M4 5h11a6 6 0 0 1 6 6v8M21 19l-4-3M21 19l3-4"/>',
+    detach: '<path d="M4 7h8M4 12h6M4 17h8M14 12h7M18 8l4 4-4 4"/>',
+    line: '<path d="M12 3v18M8 6h8M8 12h8M8 18h8"/>',
+    abreast: '<path d="M3 12h18M6 8v8M12 8v8M18 8v8"/>',
+    echelonPort: '<path d="M19 4L5 20M16 5l3 3M11 10l3 3M6 15l3 3"/>',
+    echelonStarboard: '<path d="M5 4l14 16M8 5L5 8M13 10l-3 3M18 15l-3 3"/>',
+  };
+  return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[kind] || paths.info}</svg>`;
+}
+function headingButtonsHtml(scope) {
+  return `<div class="helm-strip" data-helm-scope="${scope}">
+    <button class="icon-btn" data-hdg="-30" title="Hard to port" aria-label="Hard to port">${iconSvg("portHard")}</button>
+    <button class="icon-btn" data-hdg="-10" title="Ten degrees to port" aria-label="Ten degrees to port">${iconSvg("port")}</button>
+    <button class="icon-btn" data-hdg="0" title="Align with plotted course" aria-label="Align with plotted course">${iconSvg("straight")}</button>
+    <button class="icon-btn" data-hdg="10" title="Ten degrees to starboard" aria-label="Ten degrees to starboard">${iconSvg("starboard")}</button>
+    <button class="icon-btn" data-hdg="30" title="Hard to starboard" aria-label="Hard to starboard">${iconSvg("starboardHard")}</button>
+  </div>`;
+}
+function wireHeadingButtons(body, getShip) {
+  body.querySelectorAll("[data-hdg]").forEach((b) => b.addEventListener("click", () => {
+    const s = getShip(); if (!s) return;
+    const d = parseInt(b.getAttribute("data-hdg"), 10);
+    if (d === 0) resetOrderHeading(s); else nudgeOrderHeading(s, d);
+    syncPanel();
+  }));
 }
 function renderSquadronPanel(body, sq) {
   const lead = shipById(sq.leaderId);
   const live = sq.members.map(shipById).filter((s) => s && !s.out);
-  const docs = new Set(live.map((s) => s.doctrine || "auto"));
-  const docLabel = docs.size > 1 ? "mixed" : ([...docs][0] || "auto");
   const tgt = lead ? shipById(lead.targetId) : null;
-  const cohesion = squadronCohesion(sq);
-  const ranging = squadronRangingLabel(sq, tgt);
   const title = sq.name || `Squadron ${sq.id}`;
-  const memberRows = sq.members.map((id) => {
+  const members = sq.members.map((id) => {
     const s = shipById(id); if (!s) return "";
-    const condition = s.out ? "lost" : `${Math.round(100 * s.structure / s.structureMax)}%`;
-    return `<div class="sq-member${s.out ? " out" : ""}${id === sq.leaderId ? " flag" : ""}" data-ship="${id}"><span>${id === sq.leaderId ? "\u26d1 " : ""}${s.name}</span><span class="sq-member-state">${condition}</span></div>`;
+    const pct = Math.round(100 * s.structure / s.structureMax);
+    return `<button class="member-chip${s.out ? " out" : ""}${id === sq.leaderId ? " flag" : ""}" data-ship="${id}" title="${s.name}"><span>${id === sq.leaderId ? "◆ " : ""}${s.name}</span><b>${s.out ? "X" : pct + "%"}</b></button>`;
   }).join("");
-  body.innerHTML = `<div class="sq-panel">
-      <div class="sq-title"><button class="cyc" data-sqcyc="-1" title="Previous division">\u25c2</button>${title}<button class="cyc" data-sqcyc="1" title="Next division">\u25b8</button>${sq.autoFormed ? `<span class="squad-auto">historical division</span>` : ""}</div>
-      <div class="sq-flag">Flag: ${lead ? lead.name : "not available"} \u00b7 ${live.length}/${sq.members.length} ships</div>
-      <div class="sq-metrics">
-        <div><span>Cohesion</span><b>${cohesion}%</b></div>
-        <div><span>Fire control</span><b>${ranging}</b></div>
+  body.innerHTML = `<div class="command-glass squad-command">
+      <div class="command-head">
+        <button class="icon-btn tiny" data-sqcyc="-1" title="Previous division" aria-label="Previous division">‹</button>
+        <div><div class="command-title">${title}</div><div class="command-sub">${live.length}/${sq.members.length} · cohesion ${squadronCohesion(sq)}%</div></div>
+        <button class="icon-btn tiny" data-sqcyc="1" title="Next division" aria-label="Next division">›</button>
+        <details class="help-pop"><summary class="icon-btn tiny" aria-label="Division help">?</summary><div>Tap a lit hex to move the division. The flagship leads. Tap a ship below for individual control.</div></details>
       </div>
-      <div class="choose-label" style="margin-top:12px">Doctrine \u00b7 whole division</div>
-      <div class="seg-row">
-        <button class="seg-btn${docLabel === "auto" ? " active" : ""}" data-sqdoc="auto">Auto</button>
-        <button class="seg-btn${docLabel === "AP" ? " active" : ""}" data-sqdoc="AP">AP</button>
-        <button class="seg-btn${docLabel === "HE" ? " active" : ""}" data-sqdoc="HE">HE</button>
+      <div class="target-chip">${iconSvg("target")}<span>${tgt && !tgt.out ? tgt.name + " · " + Math.round(rangeBetween(lead, tgt)) + " m" : "Local targets"}</span></div>
+      <div class="formation-strip" aria-label="Formation">
+        <button class="icon-btn${(sq.formation||"line") === "line" ? " active" : ""}" data-form="line" title="Line ahead">${iconSvg("line")}</button>
+        <button class="icon-btn${sq.formation === "abreast" ? " active" : ""}" data-form="abreast" title="Line abreast">${iconSvg("abreast")}</button>
+        <button class="icon-btn${sq.formation === "echelon_port" ? " active" : ""}" data-form="echelon_port" title="Echelon to port">${iconSvg("echelonPort")}</button>
+        <button class="icon-btn${sq.formation === "echelon_starboard" ? " active" : ""}" data-form="echelon_starboard" title="Echelon to starboard">${iconSvg("echelonStarboard")}</button>
+        <button class="text-icon" data-space="-100" title="Close spacing">−</button><span class="spacing-readout">${Math.round(sq.spacing || STATION_M)} m</span><button class="text-icon" data-space="100" title="Open spacing">+</button>
       </div>
-      <div class="sq-tgt">Target: ${tgt && !tgt.out ? tgt.name : "local control"} <span class="muted">\u00b7 tap an enemy to set</span></div>
-      <div class="sq-move muted">Tap a lit hex to steer the division. The flag leads and the rest hold station.</div>
-      <div class="sq-members">${memberRows}</div>
-      <div class="sq-actions"><button class="rail-btn" id="sqDisband">Disband</button></div>
-      <div class="muted sq-hint">Tap a member for individual orders. A direct ship order overrides station keeping for that turn.</div>
+      ${headingButtonsHtml("squad")}
+      <div class="doctrine-icons" aria-label="Shell doctrine">
+        <button class="text-icon${live.every((s)=> (s.doctrine||"auto") === "auto") ? " active" : ""}" data-sqdoc="auto" title="Automatic shell selection">A</button>
+        <button class="text-icon${live.every((s)=> s.doctrine === "AP") ? " active" : ""}" data-sqdoc="AP" title="Armour-piercing shells">AP</button>
+        <button class="text-icon${live.every((s)=> s.doctrine === "HE") ? " active" : ""}" data-sqdoc="HE" title="High-explosive shells">HE</button>
+      </div>
+      <div class="member-grid">${members}</div>
+      <div class="command-foot"><button class="icon-btn" id="sqDisband" title="Disband division" aria-label="Disband division">${iconSvg("detach")}</button></div>
     </div>`;
   body.querySelectorAll("[data-sqdoc]").forEach((b) => b.addEventListener("click", () => { squadronSetDoctrine(sq, b.getAttribute("data-sqdoc")); syncPanel(); }));
+  body.querySelectorAll("[data-form]").forEach((b) => b.addEventListener("click", () => { squadronSetFormation(sq, b.getAttribute("data-form")); syncPanel(); }));
+  body.querySelectorAll("[data-space]").forEach((b) => b.addEventListener("click", () => { squadronAdjustSpacing(sq, parseInt(b.getAttribute("data-space"),10)); syncPanel(); }));
   body.querySelectorAll("[data-sqcyc]").forEach((b) => b.addEventListener("click", () => cycleSquadron(parseInt(b.getAttribute("data-sqcyc"), 10))));
-  body.querySelectorAll(".sq-member").forEach((b) => b.addEventListener("click", () => { const id = b.getAttribute("data-ship"); const s = shipById(id); if (s && !s.out) { game.selectedId = id; game.menuMode = "ship"; game.selSquadId = null; game.cardId = null; game._camGoal = { x: s.x, y: s.y }; syncPanel(); } }));
+  body.querySelectorAll("[data-ship]").forEach((b) => b.addEventListener("click", () => { const s = shipById(b.getAttribute("data-ship")); if (s && !s.out) { game.selectedId = s.id; game.menuMode = "ship"; game.selSquadId = null; game.cardId = null; game._camGoal = { x: s.x, y: s.y }; syncPanel(); } }));
+  wireHeadingButtons(body, () => shipById(sq.leaderId));
   const db = document.getElementById("sqDisband");
   if (db) db.addEventListener("click", () => { disbandSquadron(sq.id); game.selSquadId = null; game.menuMode = "ship"; game.selectedId = null; syncPanel(); });
 }
@@ -5402,141 +5491,56 @@ function syncPanel() {
   const dims = s.def.dimensions_m || {};
   const speedNow = orderedSpeedKn(s).toFixed(1);
 
-  // battery rows
-  let batRows = "";
-  for (const b of s.batteries) {
-    const cal = Math.round(gunCalibre(b.gun));
-    const ready = shotsReady(s, b);
-    const canBear = targetValid ? batteryCanBear(s, b, t) : false;
-    let solHtml = "";
-    if (targetValid) {
-      if (range > maxEffectiveRange(b.gun)) solHtml = `<span class="sol bounce">beyond range</span>`;
-      else if (!canBear) solHtml = `<span class="sol nobear">no bearing</span>`;
-      else {
-        const sol = solution(b.gun, t, range);
-        solHtml = `<span class="sol ${sol.cls}">${sol.pen}mm pen vs ${sol.arm}mm ${sol.zone} → ${sol.verdict}</span>`;
-      }
-    }
-    const status = b.knockedOut ? `<span class="ko">knocked out</span>`
-      : ready >= 1 ? `<span class="rdy">loaded ×${ready}</span>`
-      : `<span class="reloading">reloading</span>`;
-    batRows += `
-      <div class="bat-row${b.knockedOut ? " ko-row" : ""}">
-        <div class="bat-head">
-          <span class="bat-name">${b.count}× ${cal}mm</span>
-          ${status}
-          ${(targetValid && canBear && !b.knockedOut) ? `<span class="auto-tag">firing</span>` : ``}
-          ${b.rangeTargetId ? `<span class="range-state">${["unranged","bracketing","straddling","on target"][Math.max(0, Math.min(3, b.rangeLevel || 0))]}</span>` : ``}
-        </div>
-        <div class="bat-sub">
-          <span class="bat-gun">${b.gun.name}</span>
-          <span class="bat-arc">${b.arc.replace(/_/g, " ").toLowerCase()} · ∠${String(Math.round(((b.train != null ? b.train : 0) + 360) % 360)).padStart(3, "0")}</span>
-        </div>
-        ${solHtml ? `<div class="bat-sol">${solHtml}</div>` : ""}
-      </div>`;
-  }
-
-  let torpHtml = "";
-  if (s.torpedoes) {
-    const inRange = targetValid && range <= TORPEDO_RANGE;
-    const torpReady = s.torpedoes.ready && s.torpedoes.count > 0;
-    torpHtml = `
-      <div class="bat-row torp">
-        <div class="bat-head">
-          <span class="bat-name">Torpedoes ×${s.torpedoes.count}</span>
-          <span class="${torpReady ? "rdy" : "reloading"}">${torpReady ? "ready" : (s.torpedoes.count ? "reloading" : "spent")}</span>
-          ${(torpReady && inRange) ? `<span class="auto-tag">firing</span>` : ``}
-        </div>
-        <div class="bat-sub"><span class="bat-gun">runs to ${TORPEDO_RANGE}m · strikes below the belt</span></div>
-        ${targetValid && !inRange ? `<div class="bat-sol"><span class="sol bounce">target beyond ${TORPEDO_RANGE}m</span></div>` : ""}
-      </div>`;
-  }
-
-  // helm status: current heading, and whether still swinging toward a standing order
-  const hdg = Math.round((s.heading + 360) % 360);
-  let helmHtml;
-  if (s.orderHeading != null) {
-    const diff = Math.abs(((s.orderHeading - s.heading + 540) % 360) - 180);
-    helmHtml = diff > 3
-      ? `<span class="moved">coming around to ${Math.round(s.orderHeading)}°</span> <span class="muted">(heading ${hdg}°)</span>`
-      : `<span class="moved">steady on ${hdg}°</span>`;
-  } else {
-    helmHtml = `<span class="muted">heading ${hdg}°</span>`;
-  }
-  const movedNote = helmHtml;
-
-  const targetLine = targetValid
-    ? `<div class="target-line">Priority target: <b>${t.name}</b>, ${Math.round(range)} m, bearing ${Math.round(((relativeBearing(s, t) + 360) % 360))}° <span class="muted">· auto-firing</span></div>`
-    : `<div class="target-line muted">Auto-firing on the best target in range.</div>`;
-
+  const sq = squadronOf(s.id);
   const ms = moraleState(s.morale);
   const nerve = s._routing ? ["Fleeing", "nerve-broken"] : { steady: ["Steady", "nerve-steady"], shaken: ["Shaken", "nerve-shaken"], wavering: ["Wavering", "nerve-wavering"], broken: ["Nerve gone", "nerve-broken"] }[ms];
-  let captLine = s.captainAlive ? (s.captainName ? "Capt. " + s.captainName : "") : `<span class="nerve-broken">commander lost</span>`;
-  if (s.isFlagship) captLine += (captLine ? " · " : "") + (s.admiralAlive === false ? `<span class="nerve-broken">${ADMIRAL_NAME[s.side]} down</span>` : ADMIRAL_NAME[s.side]);
-
-  const sysGroups = systemsBreakdown(s);
-  const sysLine = sysGroups.length ? `<div class="sysline">${sysGroups.map((g) => { const cls = g.live === 0 ? "dead" : g.live < g.total ? "warn" : "ok"; return `<span class="sysgrp ${cls}">${g.label} <b>${g.live}/${g.total}</b></span>`; }).join("")}</div>` : "";
-  body.innerHTML = `
-    <div class="dossier">
-      <div class="dossier-top">
-        <div class="name-block">
-          <span class="ship-name ${clsForSide(s.side)}">${s.side === game.playerSide ? `<button class="cyc" data-cyc="-1" title="Previous ship">◂</button>` : ""}${s.name}${s.side === game.playerSide ? `<button class="cyc" data-cyc="1" title="Next ship">▸</button>` : ""}</span>
-          <span class="ship-type">${s.type}</span>
-        </div>
-        <div class="micro-spec">
-          <div><span>Class</span><b>${s.def.class || "-"}</b></div>
-          <div><span>Length</span><b>${dims.length ?? "-"} m</b></div>
-          <div><span>Disp</span><b>${shipTons(s) ? shipTons(s).toLocaleString() + " t" : "-"}</b></div>
-        </div>
+  const hdg = Math.round(((s.order ? s.order.heading : s.heading) + 360) % 360);
+  const hull = Math.round(100 * s.structure / s.structureMax);
+  const tgtText = targetValid ? `${t.name} · ${Math.round(range)} m` : "Local targets";
+  const batChips = s.batteries.map((b) => {
+    const cal = Math.round(gunCalibre(b.gun));
+    const ready = shotsReady(s, b);
+    const bearing = targetValid && batteryCanBear(s, b, t) && range <= maxEffectiveRange(b.gun);
+    const cls = b.knockedOut ? " dead" : bearing ? " bearing" : "";
+    const title = `${b.count} x ${cal} mm · ${b.gun.name} · ${b.arc.replace(/_/g," ")} · ${b.knockedOut ? "knocked out" : ready ? ready + " salvo ready" : "reloading"}`;
+    return `<span class="battery-chip${cls}" title="${title}"><b>${cal}</b><small>${b.knockedOut ? "X" : ready || "·"}</small></span>`;
+  }).join("");
+  const torpChip = s.torpedoes ? `<span class="battery-chip torp${s.torpedoes.count ? " bearing" : " dead"}" title="Torpedoes"><b>T</b><small>${s.torpedoes.count}</small></span>` : "";
+  body.innerHTML = `<div class="command-glass ship-command">
+      <div class="command-head">
+        ${s.side === game.playerSide ? `<button class="icon-btn tiny" data-cyc="-1" title="Previous ship" aria-label="Previous ship">‹</button>` : ""}
+        <div class="command-name"><div class="command-title ${clsForSide(s.side)}">${s.name}</div><div class="command-sub">${s.type} · ${hdg}° · ${speedNow} kn</div></div>
+        ${s.side === game.playerSide ? `<button class="icon-btn tiny" data-cyc="1" title="Next ship" aria-label="Next ship">›</button>` : ""}
+        ${sq && s.side === game.playerSide ? `<button class="icon-btn tiny" id="openSquadBtn" title="Division control" aria-label="Division control">${iconSvg("squad")}</button><button class="icon-btn tiny" id="detachShipBtn" title="Detach ship" aria-label="Detach ship">${iconSvg("detach")}</button>` : ""}
+        <button class="icon-btn tiny" id="viewCardBtn" title="Ship details" aria-label="Ship details">?</button>
       </div>
-      ${captLine ? `<div class="capt-line">${captLine}</div>` : ""}
-      ${squadronOf(s.id) ? `<div style="font-size:11px;color:#e8ca70;margin-top:4px">In ${squadronOf(s.id).name || `Squadron ${squadronOf(s.id).id}`} · tap the map ship to return to division orders</div>` : ""}
-      <div class="armour-line"><span class="k">Armour</span> ${armourSummary(s)}</div>
-      <div class="dossier-elev"><canvas id="dossierElev" width="440" height="168" style="width:100%;height:auto;display:block"></canvas></div>
-
-      <div class="cond2">
-        <div class="c2">
-          <div class="cell"><span class="lbl">Hull</span>${bar(s.structure / s.structureMax, "#79b07a")}<span class="cnum">${Math.round(100 * s.structure / s.structureMax)}%</span></div>
-          <div class="cell"><span class="lbl">Flooding</span>${bar(s.flooding / 100, "#2e6f86")}<span class="cnum">${Math.round(s.flooding)}%</span></div>
-        </div>
-        <div class="c2">
-          <div class="cell"><span class="lbl">Fires</span>${bar(s.fires / 6, "#ff7a2e")}<span class="cnum">${s.fires}</span></div>
-          <div class="cell"><span class="lbl">Crew</span>${bar(s.crew, "#c8a45c")}<span class="cnum">${Math.round(100 * s.crew)}%</span></div>
-        </div>
-        <div class="c2">
-          <div class="cell txt"><span class="lbl">Speed</span><span class="cnum">${speedNow}/${s.maxSpeed} kn</span></div>
-          <div class="cell txt"><span class="lbl">Nerve</span><span class="nerve ${nerve[1]}">${nerve[0]}</span></div>
-        </div>
+      <div class="mini-profile"><canvas id="dossierElev" width="440" height="140" style="width:100%;height:auto;display:block"></canvas></div>
+      <div class="status-strip">
+        <span class="status-chip" title="Hull"><i>H</i><b>${hull}%</b></span>
+        <span class="status-chip" title="Flooding"><i>W</i><b>${Math.round(s.flooding)}%</b></span>
+        <span class="status-chip" title="Fires"><i>F</i><b>${s.fires}</b></span>
+        <span class="status-chip" title="Crew"><i>C</i><b>${Math.round(100*s.crew)}%</b></span>
+        <span class="status-chip ${nerve[1]}" title="Nerve"><i>N</i><b>${nerve[0]}</b></span>
       </div>
-      ${sysLine}
-      <div class="move-note">${movedNote}${(s.side === game.playerSide && s.order && game.phase === "plan") ? ` <button class="chip" id="clearOrderBtn">✕ course</button>` : ""}</div>
-      ${targetLine}
-      ${s.side === game.playerSide ? `<div class="ctl-row">
-        <span class="k">Shells</span>
-        <span class="val">${(s.doctrine || "auto") === "auto" ? "Auto" : s.doctrine} <span class="muted">· ${(s.doctrine || "auto") === "AP" ? "pierce the belt" : (s.doctrine || "auto") === "HE" ? "burn topsides" : "AP when it can pierce, else HE"}</span></span>
-        <div class="seg">
-          <button class="seg-btn${(s.doctrine || "auto") === "auto" ? " active" : ""}" data-shell="auto">Auto</button>
-          <button class="seg-btn${(s.doctrine || "auto") === "AP" ? " active" : ""}" data-shell="AP">AP</button>
-          <button class="seg-btn${(s.doctrine || "auto") === "HE" ? " active" : ""}" data-shell="HE">HE</button>
-        </div>
+      <div class="target-chip">${iconSvg("target")}<span>${tgtText}</span></div>
+      ${s.side === game.playerSide ? headingButtonsHtml("ship") : ""}
+      ${s.side === game.playerSide ? `<div class="doctrine-icons" aria-label="Shell doctrine">
+        <button class="text-icon${(s.doctrine||"auto") === "auto" ? " active" : ""}" data-shell="auto" title="Automatic shell selection">A</button>
+        <button class="text-icon${s.doctrine === "AP" ? " active" : ""}" data-shell="AP" title="Armour-piercing shells">AP</button>
+        <button class="text-icon${s.doctrine === "HE" ? " active" : ""}" data-shell="HE" title="High-explosive shells">HE</button>
+        ${s.order ? `<button class="icon-btn" id="clearOrderBtn" title="Clear plotted course" aria-label="Clear plotted course">×</button>` : ""}
       </div>` : ""}
-      <button class="card-btn" id="viewCardBtn">⊞ Ship schematic &amp; stats</button>
-      <div class="batteries">${batRows}${torpHtml}</div>
-      ${(!s.order || !targetValid) ? `<div class="panel-hint">${[!s.order ? "Tap a lit hex to set course." : "", !targetValid ? "Tap an enemy to set a priority target." : ""].filter(Boolean).join(" ")}</div>` : ""}
+      <div class="battery-strip">${batChips}${torpChip}</div>
+      <details class="help-pop inline-help"><summary class="icon-btn tiny" aria-label="Control help">?</summary><div>Tap a lit hex for destination. Use the helm icons to set final heading independently, so batteries can be unmasked. Tap an enemy for a priority target.</div></details>
     </div>`;
 
-  // wire shell doctrine + schematic (speed is implied by the plotted hex, no manual throttle)
-  body.querySelectorAll(".seg-btn[data-shell]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      s.doctrine = btn.getAttribute("data-shell");
-      syncPanel();
-    });
-  });
-  const vc = document.getElementById("viewCardBtn");
-  if (vc) vc.addEventListener("click", () => openShipCard(s));
-  body.querySelectorAll(".cyc").forEach((btn) => btn.addEventListener("click", (ev) => { ev.stopPropagation(); cycleShip(parseInt(btn.getAttribute("data-cyc"), 10)); }));
-  const co = document.getElementById("clearOrderBtn");
-  if (co) co.addEventListener("click", () => { s.order = null; syncPanel(); });
+  body.querySelectorAll("[data-shell]").forEach((btn) => btn.addEventListener("click", () => { s.doctrine = btn.getAttribute("data-shell"); syncPanel(); }));
+  const vc = document.getElementById("viewCardBtn"); if (vc) vc.addEventListener("click", () => openShipCard(s));
+  const os = document.getElementById("openSquadBtn"); if (os && sq) os.addEventListener("click", () => { game.menuMode = "squad"; game.selSquadId = sq.id; game.selectedId = sq.leaderId; game.targetId = shipById(sq.leaderId).targetId || null; syncPanel(); });
+  const ds = document.getElementById("detachShipBtn"); if (ds && sq) ds.addEventListener("click", () => { detachShipFromSquadron(s.id); game.selSquadId = null; game.menuMode = "ship"; syncPanel(); });
+  body.querySelectorAll("[data-cyc]").forEach((btn) => btn.addEventListener("click", (ev) => { ev.stopPropagation(); cycleShip(parseInt(btn.getAttribute("data-cyc"), 10)); }));
+  const co = document.getElementById("clearOrderBtn"); if (co) co.addEventListener("click", () => { s.order = null; syncPanel(); });
+  wireHeadingButtons(body, () => s);
   drawDossierProfile(s);
 }
 
@@ -5696,15 +5700,8 @@ function onPointerUp(e) {
           if (i >= 0) game.pendingSel.splice(i, 1); else game.pendingSel.push(ship.id);
           syncPanel();
         } else {
-          const sq = squadronOf(ship.id);
-          if (sq) {
-            const lead = shipById(sq.leaderId) || ship;
-            game.selectedId = lead.id; game.menuMode = "squad"; game.selSquadId = sq.id;
-            game.targetId = lead.targetId || null;
-          } else {
-            game.selectedId = ship.id; game.menuMode = "ship"; game.selSquadId = null;
-            game.targetId = ship.targetId || null;
-          }
+          game.selectedId = ship.id; game.menuMode = "ship"; game.selSquadId = null;
+          game.targetId = ship.targetId || null;
           game.cardId = null;
           syncPanel();
         }
@@ -6450,7 +6447,7 @@ function serializeGame() {
   const sv = {
     v: 2, scn: SCN.id, side: game.playerSide, turn: game.turn,
     sel: game.selectedId || null, tgt: game.targetId || null, menu: game.menuMode || "ship", sqsel: game.selSquadId || null,
-    squads: game.squadrons.map((sq) => ({ id: sq.id, m: sq.members.slice(), l: sq.leaderId, n: sq.name || null, a: sq.autoFormed ? 1 : 0 })),
+    squads: game.squadrons.map((sq) => ({ id: sq.id, m: sq.members.slice(), l: sq.leaderId, n: sq.name || null, a: sq.autoFormed ? 1 : 0, f: sq.formation || "line", sp: sq.spacing || STATION_M })),
     ships: game.ships.map((s) => {
       const o = { i: s.id, x: Math.round(s.x), y: Math.round(s.y), h: Math.round(s.heading), th: r2(s.throttle), st: Math.round(s.structure) };
       if (s.order) o.ord = { q: s.order.q, r: s.order.r, h: Math.round(s.order.heading) };
@@ -6511,7 +6508,7 @@ function loadGameFromCode(code) {
     if (d.tp && s.torpedoes) { s.torpedoes.count = d.tp.c; s.torpedoes.cooldownLeft = d.tp.cd || 0; s.torpedoes.ready = (d.tp.cd || 0) <= 0; }
   }
   if (sv.v >= 2 && Array.isArray(sv.squads)) {
-    game.squadrons = sv.squads.map((q) => ({ id: q.id, members: q.m || [], leaderId: q.l, name: q.n || `Squadron ${q.id}`, autoFormed: !!q.a }));
+    game.squadrons = sv.squads.map((q) => ({ id: q.id, members: q.m || [], leaderId: q.l, name: q.n || `Squadron ${q.id}`, autoFormed: !!q.a, formation: q.f || "line", spacing: q.sp || STATION_M }));
     game._squadSeq = game.squadrons.reduce((m, q) => Math.max(m, q.id || 0), 0);
     rebuildSquadronLines();
   }
@@ -6562,7 +6559,7 @@ function startGame(playerSide, formationKey) {
 }
 
 function init() {
-  try { console.log("Echelon build 2026-07-14 command and combat pass"); } catch (e) {}
+  try { console.log("Echelon build 2026-07-14 control and interface pass"); } catch (e) {}
   canvas = document.getElementById("chart");
   ctx = canvas.getContext("2d");
   // Stop the page or the host viewer from scrolling/zooming on canvas touches.
