@@ -148,7 +148,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   border:1px solid #1c4651;border-radius:5px;padding:8px 10px;cursor:pointer;white-space:nowrap;}
 .rail-btn.off{opacity:.45;} 
 .rail-btn.toggle.active{}
-#endTurnBtn{background:var(--brass);color:#1a1206;border:none;font-weight:700;font-size:12px;padding:9px 18px;letter-spacing:1px;}
+#playBtn{background:var(--brass);color:#1a1206;border:none;font-weight:700;font-size:12px;padding:9px 18px;letter-spacing:1px;}
 .rail-spacer{flex:1 1 auto;}
 .rail-btn.icon{padding:6px 9px;display:inline-flex;align-items:center;}
 .rail-btn.icon svg path{fill:currentColor;}
@@ -166,6 +166,12 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .sq-actions .rail-btn.primary{background:#2f7fd6;border-color:#2f7fd6;color:#fff;}
 .sq-actions .rail-btn[disabled]{opacity:.4;pointer-events:none;}
 .sq-hint{font-size:11px;margin-top:10px;}
+.sq-metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0 4px;}
+.sq-metrics>div{display:flex;justify-content:space-between;gap:8px;padding:6px 8px;background:#0a242b;border:1px solid #163b44;border-radius:5px;font-family:var(--mono);font-size:10px;}
+.sq-metrics span{color:var(--ink-dim);text-transform:uppercase;letter-spacing:.4px;}
+.sq-metrics b{color:var(--ink);font-weight:600;}
+.sq-member{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.sq-member-state{font-family:var(--mono);font-size:9.5px;color:var(--ink-dim);}
 .seg-row{display:flex;gap:6px;margin-top:6px;}
 .rail-zoom{display:flex;gap:4px;}
 .rail-zoom .rail-btn{padding:8px 11px;font-size:13px;}
@@ -317,11 +323,11 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .result-roster{display:flex;gap:14px;margin:6px 0 4px;flex-wrap:wrap;}
 .roster-col{flex:1;min-width:220px;}
 .roster-h{margin-bottom:5px;}
-.roster-row{display:flex;align-items:center;gap:7px;font-size:11.5px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.045);}
-.roster-row .rr-name{flex:1;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.roster-row .rr-stat{font-family:var(--mono);font-size:10px;color:var(--ink-dim);white-space:nowrap;}
-.roster-row .rr-dot{width:9px;height:9px;border-radius:2px;flex:none;}
-.roster-row .rr-sil{width:66px;height:22px;flex:none;object-fit:contain;opacity:.92;}
+.result-roster .roster-row{display:flex;align-items:center;gap:7px;font-size:11.5px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.045);}
+.result-roster .roster-row .rr-name{flex:1;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.result-roster .roster-row .rr-stat{font-family:var(--mono);font-size:10px;color:var(--ink-dim);white-space:nowrap;}
+.result-roster .roster-row .rr-dot{width:9px;height:9px;border-radius:2px;flex:none;}
+.result-roster .roster-row .rr-sil{width:66px;height:22px;flex:none;object-fit:contain;opacity:.92;}
 .st-sunk .rr-sil,.st-out .rr-sil{opacity:.4;}
 .st-sunk .rr-dot{background:#c0392b;} .st-sunk .rr-name{text-decoration:line-through;opacity:.65;}
 .st-out .rr-dot{background:#8a5a2b;} .st-out .rr-name{opacity:.85;}
@@ -391,6 +397,18 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .logmodal-btns button{background:rgba(200,164,92,0.1);color:#e8ddc7;border:1px solid rgba(200,164,92,0.35);border-radius:5px;padding:6px 14px;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;}
 .logmodal-btns button:hover{background:rgba(200,164,92,0.2);}
 #logModalPre{margin:0;padding:14px 16px;overflow:auto;font-family:var(--mono);font-size:11px;line-height:1.5;color:#cfe0d8;white-space:pre;flex:1;}
+
+/* ---- admiralty chart chrome ---- */
+#topbar,#rail{box-shadow:inset 0 1px rgba(232,221,199,.06),inset 0 -1px rgba(200,164,92,.12);}
+#panel{border-left:2px solid var(--brass-dim);box-shadow:inset 5px 0 18px rgba(0,0,0,.24);}
+#panel.expanded::before{content:"";display:block;height:2px;background:linear-gradient(90deg,transparent,var(--brass),transparent);opacity:.55;}
+.overlay-card,.logmodal-card{border:1px solid var(--brass-dim);box-shadow:0 18px 60px rgba(0,0,0,.65),inset 0 0 0 1px rgba(232,221,199,.035);}
+.dossier-elev,.bat-row,.mode-choice,.theatre-choice,.opening-choice,.side-choice,.form-btn{box-shadow:inset 0 0 0 1px rgba(200,164,92,.035);}
+.type-glyph{display:inline-flex;width:18px;height:12px;vertical-align:-2px;margin-right:5px;opacity:.9;}
+.type-glyph svg{width:18px;height:12px;overflow:visible;}
+.range-state{font-family:var(--mono);font-size:9px;letter-spacing:.45px;text-transform:uppercase;color:var(--brass-dim);margin-left:auto;}
+.squad-auto{font-family:var(--mono);font-size:9px;color:var(--brass-dim);letter-spacing:.5px;text-transform:uppercase;margin-left:6px;}
+
 </style>
 </head>
 <body>
@@ -422,7 +440,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div id="toast"></div>
 
   <div id="rail">
-    <button class="rail-btn" id="playBtn">End Turn ▶</button>
+    <button class="rail-btn" id="playBtn">End Turn</button>
     <button class="rail-btn" id="ffBtn" title="Steam on until the guns open">⏩ Contact</button>
     <button class="rail-btn" id="zoomBtn" title="Cycle Fleet / Action / Close">🔍 Zoom</button>
     <button class="rail-btn icon" id="multiSelBtn" title="Form a squadron" aria-label="Form a squadron"><svg viewBox="0 0 24 24" width="17" height="17" aria-hidden="true"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2.6 2.2"/><circle cx="8" cy="12.2" r="2.1" fill="currentColor"/><circle cx="13.6" cy="10.2" r="1.7" fill="currentColor"/><circle cx="16.6" cy="14" r="1.7" fill="currentColor"/></svg></button>
@@ -464,8 +482,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
     <!-- 2. campaign setup for the chosen theatre -->
     <div id="setupPanel" style="display:none">
       <button class="setup-back" id="setupBack">‹ Theatres</button>
-      <h1 class="start-title" id="startTitle">—</h1>
-      <div class="start-date" id="startDate">—</div>
+      <h1 class="start-title" id="startTitle">-</h1>
+      <div class="start-date" id="startDate">-</div>
       <div id="openingRow" style="display:none">
         <div class="choose-label">Opening</div>
         <div class="opening-choices" id="openingChoices"></div>
@@ -487,10 +505,10 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
         <div class="choose-label">Your formation</div>
         <div class="formation-grid" id="formationGrid"></div>
       </div>
-      <p class="start-blurb" id="startBlurb">—</p>
+      <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin the action</button>
     </div>
-    <div class="build-stamp" id="buildStamp">build 2026-06-23 08:27 UTC</div>
+    <div class="build-stamp" id="buildStamp">build 2026-07-14 command and combat pass</div>
   </div>
 </div>
 
@@ -555,11 +573,11 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 
 <script>
 // ===== scenarios_data.js =====
-// AUTO-GENERATED by build_echelon.py — do not edit by hand.
+// AUTO-GENERATED by build_echelon.py - do not edit by hand.
 var SCENARIO_DATA = {"yalu":{"metadata":{"battle":"Battle of the Yalu River","date":"1894-09-17","scope":"Combatant ships present in the main battle, with period-informed reconstructions for poorly documented small craft.","sprite_scale_recommendation":{"pixels_per_metre":2,"note":"Values below already include sprite dimensions at this scale."},"uncertainty_legend":{"low":"Layout and dimensions well attested in accessible sources.","medium":"Broad characteristics secure; some detail variation by source.","medium_inferred_dimensions":"Broad layout reconstructed from sister ships and period practice.","high_inferred_dimensions":"Dimensions or broad arrangement reconstructed from sister ships.","very_high_inferred_dimensions":"Small craft reconstructed from sparse battle-order data and period Yarrow torpedo-boat practice."},"research_note":"Use the factual fields as source-driven. Use reload bands, coordinates, and reconstructed plans as game-design baselines rather than archival absolutes."},"guns":{"krupp_305mm_l25":{"name":"30.5 cm MRK L/25 Krupp","calibre_mm":305,"type":"Breech-loading heavy gun","shell_weight_kg":333,"muzzle_velocity_mps":468,"reload_seconds_practical":{"min":180,"max":300,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[{"range_m":2900,"penetration_mm":400,"note":"Fort Harssens contemporary data"}],"historical_effect_note":"Could threaten any ship at Yalu if it hit; heavy but relatively slow-firing.","sources":["https://en.wikipedia.org/wiki/30.5_cm_MRK_L/25","https://forten.nl/fort-harssens/geschutpantserkoepels/pantserkoepel-met-30-5-cm-kanonnen/"],"confidence":"medium"},"canet_320mm_38":{"name":"32 cm Canet naval gun","calibre_mm":320,"type":"Breech-loading heavy gun","shell_weight_kg":{"AP":450,"HE":350},"muzzle_velocity_mps":643,"reload_seconds_practical":{"min":1200,"max":3600,"confidence":"medium"},"max_range_m":8000,"sourced_penetration":[],"historical_effect_note":"Enormous hitting power but cripplingly slow. Matsushima fired its 320 mm gun only four times at Yalu.","sources":["https://en.wikipedia.org/wiki/Canet_guns_on_board_the_Matsushima-class_cruisers","https://en.wikipedia.org/wiki/Japanese_cruiser_Matsushima"],"confidence":"medium"},"krupp_260mm_l22":{"name":"26 cm RK L/22 Krupp","calibre_mm":260,"type":"Breech-loading heavy gun","shell_weight_kg":null,"muzzle_velocity_mps":{"steel_shell":490,"chilled_cast_iron":428},"reload_seconds_practical":{"min":180,"max":300,"confidence":"low_inferred"},"max_range_m":5000,"sourced_penetration":[],"historical_effect_note":"Comparable to older heavy breech-loaders: dangerous to cruisers and potentially to medium armour, but slow.","sources":["https://en.wikipedia.org/wiki/26_cm_RK_L/22","https://en.wikipedia.org/wiki/Preussen-class_ironclad"],"confidence":"low"},"armstrong_254mm_rbl":{"name":"10-inch Armstrong breech-loader","calibre_mm":254,"type":"Breech-loading heavy gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":180,"max":300,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[{"range_m":3300,"penetration_mm":203,"note":"10-inch class gun penetration against armour plate in coastal-defence reference"}],"historical_effect_note":"Very destructive if it hit, but the Chaoyong class was tactically hampered by slow fire and poor protection.","sources":["https://monumentaustralia.org.au/themes/technology/military/display/99916-10-inch-guns"],"confidence":"low"},"krupp_240mm_bl":{"name":"24 cm Krupp gun","calibre_mm":240,"type":"Breech-loading heavy gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":150,"max":240,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Older heavy ironclad battery gun; respectable against cruisers and moderate armour.","sources":["https://en.wikipedia.org/wiki/Japanese_ironclad_Fus%C5%8D"],"confidence":"low"},"krupp_210mm_l35":{"name":"21 cm Krupp L/35","calibre_mm":210,"type":"Breech-loading gun","shell_weight_kg":140,"muzzle_velocity_mps":{"common_shell":548,"AP_shell":580},"reload_seconds_practical":{"min":90,"max":150,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"The main cruiser gun on several Chinese ships; powerful against unarmoured and moderately armoured targets.","sources":["https://en.wikipedia.org/wiki/21_cm_Kanone_L/35"],"confidence":"medium"},"krupp_170mm_l25":{"name":"17 cm RK L/25 Krupp","calibre_mm":170,"type":"Breech-loading gun","shell_weight_kg":55.8,"muzzle_velocity_mps":472,"reload_seconds_practical":{"min":45,"max":90,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Older medium-heavy ironclad gun.","sources":["https://en.wikipedia.org/wiki/17_cm_RK_L/25"],"confidence":"medium"},"krupp_150mm_l35":{"name":"15 cm SK L/35 Krupp","calibre_mm":150,"type":"Breech-loading gun","shell_weight_kg":{"AP":41.0,"common":43.7},"muzzle_velocity_mps":{"AP":620,"common":656},"reload_seconds_practical":{"min":10,"max":15,"confidence":"medium"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"A useful secondary gun with much higher sustained fire than the heavy battery.","sources":["https://en.wikipedia.org/wiki/15_cm_SK_L/35"],"confidence":"medium"},"armstrong_152mm_bl":{"name":"6-inch Armstrong breech-loader","calibre_mm":152,"type":"Breech-loading gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":20,"max":40,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Used on some Chinese cruisers; older and slower than later QF 6-inch guns.","sources":["https://en.wikipedia.org/wiki/Chinese_cruiser_Zhiyuan"],"confidence":"low"},"qf_6in_40_elswick":{"name":"6-inch/40 Elswick quick-firing gun","calibre_mm":152,"type":"Quick-firing gun","shell_weight_kg":45.4,"muzzle_velocity_mps":701,"reload_seconds_practical":{"min":8.5,"max":12,"confidence":"medium"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Japanese high-output medium gun. Decisive against lightly protected upperworks but not against thick ironclad belts.","sources":["https://www.navweaps.com/Weapons/WNJAP_6-40_EOC.php","https://en.wikipedia.org/wiki/QF_6-inch_gun"],"confidence":"medium"},"qf_47in_mk1_4":{"name":"QF 4.7-inch Mk I-IV naval gun","calibre_mm":120,"type":"Quick-firing gun","shell_weight_kg":20.4,"muzzle_velocity_mps":{"black_powder":544,"cordite":655},"reload_seconds_practical":{"min":10,"max":12,"confidence":"medium"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"The most important Japanese damage-dealing weapon class at Yalu. Excellent fire-setting and personnel-killing effect against cruisers.","sources":["https://en.wikipedia.org/wiki/QF_4.7-inch_Mk_I%E2%80%93IV_naval_gun"],"confidence":"medium"},"krupp_120mm_qf":{"name":"12 cm Krupp quick-firing gun","calibre_mm":120,"type":"Quick-firing gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":8,"max":15,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Likely similar tactical role to the Japanese 4.7-inch QF when fitted on Chinese small craft.","sources":["https://en.wikipedia.org/wiki/Chinese_corvette_Kwan_Chia","https://en.wikipedia.org/wiki/Guangbing"],"confidence":"low"},"krupp_120mm_l22":{"name":"12 cm Krupp L/22 gun","calibre_mm":120,"type":"Breech-loading gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":15,"max":30,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Medium gun on smaller ships.","sources":["https://en.wikipedia.org/wiki/Japanese_gunboat_Akagi"],"confidence":"low"},"hotchkiss_57mm_qf":{"name":"Hotchkiss 6-pounder QF","calibre_mm":57,"type":"Quick-firing light gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":2,"max":4,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Anti-torpedo-boat and upperworks weapon.","sources":["https://en.wikipedia.org/wiki/Saiky%C5%8D_Maru"],"confidence":"low"},"qf_3pdr_hotchkiss":{"name":"Hotchkiss 3-pounder QF","calibre_mm":47,"type":"Quick-firing light gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":2,"max":4,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Anti-torpedo-boat and personnel weapon.","sources":["https://en.wikipedia.org/wiki/Japanese_cruiser_Yoshino"],"confidence":"low"},"hotchkiss_47mm_revolver":{"name":"47 mm Hotchkiss revolving cannon","calibre_mm":47,"type":"Light rapid-fire gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":3,"max":6,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Very light anti-torpedo-boat and deck-sweeping weapon.","sources":["https://en.wikipedia.org/wiki/Chinese_ironclad_Dingyuan"],"confidence":"low"},"maxim_nordenfelt_37mm_qf":{"name":"37 mm Maxim-Nordenfelt or Hotchkiss class light QF","calibre_mm":37,"type":"Light quick-firing gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":1.5,"max":4,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Close-range anti-torpedo-boat and anti-personnel weapon.","sources":["https://en.wikipedia.org/wiki/Chinese_ironclad_Dingyuan"],"confidence":"low"},"krupp_240mm_l22":{"name":"24 cm Krupp gun","calibre_mm":240,"type":"Breech-loading heavy gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":150,"max":240,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Older heavy ironclad battery gun; respectable against cruisers and moderate armour.","sources":["https://en.wikipedia.org/wiki/Japanese_ironclad_Fus%C5%8D"],"confidence":"low"},"armstrong_120mm_bl":{"name":"4.7-inch Armstrong breech-loader","calibre_mm":120,"type":"Breech-loading gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":15,"max":30,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Older medium gun, slower than later quick-firers.","sources":["https://en.wikipedia.org/wiki/Chinese_corvette_Kwan_Chia"],"confidence":"low"},"armstrong_9pdr":{"name":"9-pounder QF or RBL class gun","calibre_mm":null,"type":"Light gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":4,"max":8,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Light secondary weapon.","sources":["https://en.wikipedia.org/wiki/Chinese_cruiser_Zhiyuan"],"confidence":"low"},"field_75mm_long":{"name":"75 mm gun","calibre_mm":75,"type":"Light/medium gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":6,"max":10,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Light battery weapon.","sources":["https://en.wikipedia.org/wiki/Japanese_ironclad_Fus%C5%8D"],"confidence":"low"},"field_75mm_short":{"name":"75 mm gun","calibre_mm":75,"type":"Light/medium gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":6,"max":10,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Light battery weapon.","sources":["https://en.wikipedia.org/wiki/Japanese_ironclad_Hiei"],"confidence":"low"},"gatling_11mm":{"name":"11 mm Gatling gun","calibre_mm":11,"type":"Machine gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":0.2,"max":1.0,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Anti-personnel and anti-boat weapon.","sources":["https://en.wikipedia.org/wiki/Chinese_cruiser_Zhiyuan"],"confidence":"low"},"hotchkiss_1pdr_5barrel":{"name":"1-pounder Hotchkiss revolving cannon","calibre_mm":37,"type":"Light rapid-fire gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":1,"max":3,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Light anti-personnel and anti-boat gun.","sources":["https://en.wikipedia.org/wiki/Japanese_cruiser_Matsushima"],"confidence":"low"},"hotchkiss_37mm":{"name":"37 mm Hotchkiss gun","calibre_mm":37,"type":"Light rapid-fire gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":1.5,"max":4,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Light anti-boat and anti-personnel gun.","sources":["https://en.wikipedia.org/wiki/Chinese_torpedo_boat_Fulong"],"confidence":"low"},"hotchkiss_47mm":{"name":"47 mm Hotchkiss gun","calibre_mm":47,"type":"Light rapid-fire gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":2,"max":5,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Light anti-boat and deck-sweeping weapon.","sources":["https://en.wikipedia.org/wiki/Chinese_corvette_Kwan_Chia"],"confidence":"low"},"hotchkiss_57mm":{"name":"Hotchkiss 6-pounder QF","calibre_mm":57,"type":"Quick-firing light gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":2,"max":4,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Anti-torpedo-boat and upperworks weapon.","sources":["https://en.wikipedia.org/wiki/Saiky%C5%8D_Maru"],"confidence":"low"},"hotchkiss_mixed_light":{"name":"Mixed Hotchkiss light guns","calibre_mm":{"range":"37-47"},"type":"Light rapid-fire battery","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":1.5,"max":5,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Mixed light anti-torpedo-boat battery.","sources":["https://en.wikipedia.org/wiki/Japanese_cruiser_Naniwa"],"confidence":"low"},"krupp_120mm_breechloader":{"name":"12 cm Krupp breech-loading gun","calibre_mm":120,"type":"Breech-loading gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":15,"max":30,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Medium gun on older small cruisers.","sources":["https://en.wikipedia.org/wiki/Chinese_corvette_Kwan_Chia"],"confidence":"low"},"machine_gun":{"name":"Machine gun","calibre_mm":null,"type":"Machine gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":0.2,"max":1,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Anti-personnel weapon.","sources":["https://en.wikipedia.org/wiki/Japanese_cruiser_Akitsushima"],"confidence":"low"},"machine_guns":{"name":"Machine guns","calibre_mm":null,"type":"Machine gun battery","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":0.2,"max":1,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Anti-personnel weapon.","sources":["https://en.wikipedia.org/wiki/Chinese_cruiser_Jingyuan_(1887)"],"confidence":"low"},"mixed_machine_guns":{"name":"Mixed machine guns","calibre_mm":null,"type":"Machine gun battery","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":0.2,"max":1,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Anti-personnel weapon.","sources":["https://en.wikipedia.org/wiki/Chinese_cruiser_Zhiyuan"],"confidence":"low"},"nordenfelt_10barrel":{"name":"10-barrel Nordenfelt gun","calibre_mm":null,"type":"Volley gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":1,"max":3,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Close-range anti-personnel weapon.","sources":["https://en.wikipedia.org/wiki/Japanese_gunboat_Akagi"],"confidence":"low"},"nordenfelt_1in_quad":{"name":"1-inch Nordenfelt gun","calibre_mm":25,"type":"Light rapid-fire gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":1,"max":3,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Light anti-boat weapon.","sources":["https://en.wikipedia.org/wiki/Japanese_cruiser_Chiyoda"],"confidence":"low"},"nordenfelt_4barrel":{"name":"4-barrel Nordenfelt gun","calibre_mm":null,"type":"Volley gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":1,"max":3,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Close-range anti-personnel weapon.","sources":["https://en.wikipedia.org/wiki/Saiky%C5%8D_Maru"],"confidence":"low"},"qf_6pdr":{"name":"6-pounder quick-firing gun","calibre_mm":57,"type":"Quick-firing light gun","shell_weight_kg":null,"muzzle_velocity_mps":null,"reload_seconds_practical":{"min":2,"max":4,"confidence":"low_inferred"},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Anti-torpedo-boat weapon.","sources":["https://en.wikipedia.org/wiki/Japanese_cruiser_Akitsushima"],"confidence":"low"}},"weapons":{"torpedo_356_381mm":{"name":"Whitehead-pattern torpedo tube","type":"Torpedo armament","calibre_mm":{"range":"356-381"},"historical_effect_note":"Potentially decisive at close range but with low probability in the battle's actual engagement geometry.","confidence":"low"}},"ships":[{"id":"dingyuan","name":"Dingyuan","side":"China","fleet":"Beiyang Fleet","type":"Ironclad turret ship","class":"Dingyuan class","dimensions_m":{"length":94.0,"beam":18.3,"draft":6.1},"displacement_lt":{"normal":7144,"deep_load":7670},"speed_kn":15.4,"complement":350,"armament":[{"count":4,"gun_id":"krupp_305mm_l25","mount":"2x twin en echelon barbettes"},{"count":2,"gun_id":"krupp_150mm_l35","mount":"single fore and aft"},{"count":2,"gun_id":"hotchkiss_47mm_revolver","mount":"light"},{"count":6,"gun_id":"maxim_nordenfelt_37mm_qf","mount":"light"},{"count":3,"weapon_id":"torpedo_356_381mm","mount":"torpedo tubes"}],"armor_mm":{"belt":356,"deck":76,"barbettes":"305-356","casemate":203,"conning_tower":203},"sources":["https://en.wikipedia.org/wiki/Dingyuan-class_ironclad","https://en.wikipedia.org/wiki/Chinese_ironclad_Dingyuan","https://en.wikipedia.org/wiki/30.5_cm_MRK_L/25","https://en.wikipedia.org/wiki/15_cm_SK_L/35"],"plan_template":"dingyuan","uncertainty":"low","sprite_px_2ppm":{"length_px":188,"beam_px":37},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"zhenyuan","name":"Zhenyuan","side":"China","fleet":"Beiyang Fleet","type":"Ironclad turret ship","class":"Dingyuan class","dimensions_m":{"length":94.0,"beam":18.3,"draft":6.1},"displacement_lt":{"normal":7144,"deep_load":7670},"speed_kn":15.4,"complement":350,"armament":[{"count":4,"gun_id":"krupp_305mm_l25","mount":"2x twin en echelon barbettes"},{"count":2,"gun_id":"krupp_150mm_l35","mount":"single fore and aft"},{"count":2,"gun_id":"hotchkiss_47mm_revolver","mount":"light"},{"count":6,"gun_id":"maxim_nordenfelt_37mm_qf","mount":"light"},{"count":3,"weapon_id":"torpedo_356_381mm","mount":"torpedo tubes"}],"armor_mm":{"belt":356,"deck":76,"barbettes":"305-356","casemate":203,"conning_tower":203},"sources":["https://en.wikipedia.org/wiki/Dingyuan-class_ironclad","https://en.wikipedia.org/wiki/Chinese_ironclad_Zhenyuan","https://en.wikipedia.org/wiki/30.5_cm_MRK_L/25","https://en.wikipedia.org/wiki/15_cm_SK_L/35"],"plan_template":"dingyuan","uncertainty":"low","sprite_px_2ppm":{"length_px":188,"beam_px":37},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"jiyuan","name":"Jiyuan","side":"China","fleet":"Beiyang Fleet","type":"Protected cruiser","class":"Jiyuan","dimensions_m":{"length":71.9,"beam":10.5,"draft":5.2},"displacement_lt":{"normal":2300},"speed_kn":15.0,"complement":180,"armament":[{"count":2,"gun_id":"krupp_210mm_l35","mount":"single fore and aft"},{"count":1,"gun_id":"krupp_150mm_l35","mount":"single stern/broadside heavy position"},{"count":5,"gun_id":"hotchkiss_mixed_light","mount":"light"},{"count":4,"weapon_id":"torpedo_above_water","mount":"torpedo tubes"}],"armor_mm":{"deck":76,"barbettes":254,"gun_shields":51},"sources":["https://en.wikipedia.org/wiki/Chinese_cruiser_Jiyuan","https://en.wikipedia.org/wiki/21_cm_L/35","https://en.wikipedia.org/wiki/15_cm_SK_L/35"],"plan_template":"jiyuan","uncertainty":"low","sprite_px_2ppm":{"length_px":144,"beam_px":21},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"guangjia","name":"Guangjia","side":"China","fleet":"Beiyang Fleet","type":"Composite cruiser/corvette","class":"Kwan Chia","dimensions_m":{"length":67.665,"beam":10.21,"draft":3.81},"displacement_lt":{"normal":1296},"speed_kn":16.0,"complement":180,"armament":[{"count":1,"gun_id":"krupp_150mm_l35","mount":"single"},{"count":4,"gun_id":"krupp_120mm_breechloader","mount":"broadside"},{"count":6,"gun_id":"hotchkiss_37mm","mount":"light"}],"armor_mm":{"protective":0},"sources":["https://en.wikipedia.org/wiki/Chinese_corvette_Kwan_Chia"],"plan_template":"small_cruiser_single_funnel","uncertainty":"medium","sprite_px_2ppm":{"length_px":135,"beam_px":20},"reconstruction_note":"Layout is reasonably known but some weapon placement or dimensions vary by source."},{"id":"zhiyuan","name":"Zhiyuan","side":"China","fleet":"Beiyang Fleet","type":"Protected cruiser","class":"Zhiyuan class","dimensions_m":{"length":81.7,"beam":11.6,"draft":4.6},"displacement_lt":{"normal":2300},"speed_kn":18.0,"complement":230,"armament":[{"count":2,"gun_id":"krupp_210mm_l35","mount":"twin barbette forward"},{"count":1,"gun_id":"krupp_210mm_l35","mount":"single barbette aft"},{"count":2,"gun_id":"armstrong_152mm_bl","mount":"sponsons"},{"count":16,"gun_id":"mixed_machine_guns","mount":"light"},{"count":4,"weapon_id":"torpedo_above_water","mount":"torpedo tubes"}],"armor_mm":{"deck":{"flat":76,"slope":102},"gun_shields":51},"sources":["https://en.wikipedia.org/wiki/Chinese_cruiser_Zhiyuan","https://en.wikipedia.org/wiki/21_cm_L/35"],"plan_template":"elswick_chinese_protected","uncertainty":"low","sprite_px_2ppm":{"length_px":163,"beam_px":23},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"jingyuan_1886","name":"Jingyuan (protected cruiser)","side":"China","fleet":"Beiyang Fleet","type":"Protected cruiser","class":"Zhiyuan class","dimensions_m":{"length":81.7,"beam":11.6,"draft":4.6},"displacement_lt":{"normal":2300},"speed_kn":18.0,"complement":230,"armament":[{"count":2,"gun_id":"krupp_210mm_l35","mount":"twin barbette forward"},{"count":1,"gun_id":"krupp_210mm_l35","mount":"single barbette aft"},{"count":2,"gun_id":"armstrong_152mm_bl","mount":"sponsons"},{"count":16,"gun_id":"mixed_machine_guns","mount":"light"},{"count":4,"weapon_id":"torpedo_above_water","mount":"torpedo tubes"}],"armor_mm":{"deck":{"flat":76,"slope":102},"gun_shields":51},"sources":["https://en.wikipedia.org/wiki/Chinese_cruiser_Jingyuan_%281886%29","https://en.wikipedia.org/wiki/21_cm_L/35"],"plan_template":"elswick_chinese_protected","uncertainty":"low","sprite_px_2ppm":{"length_px":163,"beam_px":23},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"jingyuan_1887","name":"Jingyuan (armoured cruiser)","side":"China","fleet":"Beiyang Fleet","type":"Armoured cruiser","class":"Jingyuan/Laiyuan class","dimensions_m":{"length":82.4,"beam":11.99,"draft":5.11},"displacement_lt":{"normal":2900},"speed_kn":16.0,"complement":270,"armament":[{"count":2,"gun_id":"krupp_210mm_l35","mount":"single fore and aft"},{"count":2,"gun_id":"krupp_150mm_l35","mount":"broadside"},{"count":8,"gun_id":"machine_guns","mount":"light"},{"count":4,"weapon_id":"torpedo_457mm","mount":"torpedo tubes"}],"armor_mm":{"belt":240,"deck":"64-76","turret":200,"conning_tower":203},"sources":["https://en.wikipedia.org/wiki/Chinese_cruiser_Jingyuan_%281887%29","https://en.wikipedia.org/wiki/21_cm_L/35","https://en.wikipedia.org/wiki/15_cm_SK_L/35"],"plan_template":"armoured_cruiser_2x210","uncertainty":"low","sprite_px_2ppm":{"length_px":165,"beam_px":24},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"laiyuan","name":"Laiyuan","side":"China","fleet":"Beiyang Fleet","type":"Armoured cruiser","class":"Jingyuan/Laiyuan class","dimensions_m":{"length":82.4,"beam":11.99,"draft":5.11},"displacement_lt":{"normal":2900},"speed_kn":16.0,"complement":270,"armament":[{"count":2,"gun_id":"krupp_210mm_l35","mount":"single fore and aft"},{"count":2,"gun_id":"krupp_150mm_l35","mount":"broadside"},{"count":8,"gun_id":"machine_guns","mount":"light"},{"count":4,"weapon_id":"torpedo_457mm","mount":"torpedo tubes"}],"armor_mm":{"belt":240,"deck":"64-76","turret":200,"conning_tower":203},"sources":["https://en.wikipedia.org/wiki/Chinese_cruiser_Laiyuan","https://en.wikipedia.org/wiki/21_cm_L/35","https://en.wikipedia.org/wiki/15_cm_SK_L/35"],"plan_template":"armoured_cruiser_2x210","uncertainty":"low","sprite_px_2ppm":{"length_px":165,"beam_px":24},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"chaoyong","name":"Chaoyong","side":"China","fleet":"Beiyang Fleet","type":"Light cruiser / Rendel cruiser","class":"Chaoyong/Yangwei","dimensions_m":{"length":67.1,"beam":9.75,"draft":4.72},"displacement_lt":{"normal":1350},"speed_kn":16.0,"complement":140,"armament":[{"count":2,"gun_id":"armstrong_254mm_rbl","mount":"single fore and aft"},{"count":4,"gun_id":"armstrong_120mm_bl","mount":"side guns"},{"count":2,"gun_id":"armstrong_9pdr","mount":"twin"},{"count":4,"gun_id":"gatling_11mm","mount":"light"},{"count":4,"gun_id":"hotchkiss_37mm","mount":"light"},{"count":2,"gun_id":"nordenfelt_4barrel","mount":"light"}],"armor_mm":{"protective":0},"sources":["https://en.wikipedia.org/wiki/Chinese_cruiser_Chaoyong"],"plan_template":"rendel_cruiser","uncertainty":"medium","sprite_px_2ppm":{"length_px":134,"beam_px":20},"reconstruction_note":"Layout is reasonably known but some weapon placement or dimensions vary by source."},{"id":"yangwei","name":"Yangwei","side":"China","fleet":"Beiyang Fleet","type":"Light cruiser / Rendel cruiser","class":"Chaoyong/Yangwei","dimensions_m":{"length":67.1,"beam":9.75,"draft":4.72},"displacement_lt":{"normal":1350},"speed_kn":16.0,"complement":140,"armament":[{"count":2,"gun_id":"armstrong_254mm_rbl","mount":"single fore and aft"},{"count":4,"gun_id":"armstrong_120mm_bl","mount":"side guns"},{"count":2,"gun_id":"armstrong_9pdr","mount":"twin"},{"count":4,"gun_id":"gatling_11mm","mount":"light"},{"count":4,"gun_id":"hotchkiss_37mm","mount":"light"},{"count":2,"gun_id":"nordenfelt_4barrel","mount":"light"}],"armor_mm":{"protective":0},"sources":["https://en.wikipedia.org/wiki/Chinese_cruiser_Yangwei"],"plan_template":"rendel_cruiser","uncertainty":"medium","sprite_px_2ppm":{"length_px":134,"beam_px":20},"reconstruction_note":"Layout is reasonably known but some weapon placement or dimensions vary by source."},{"id":"pingyuan","name":"Pingyuan","side":"China","fleet":"Beiyang Fleet","type":"Coastal battleship / armoured gunboat","class":"Pingyuan","dimensions_m":{"length":60.96,"beam":12.19,"draft":4.19},"displacement_lt":{"normal":2150},"speed_kn":10.5,"complement":202,"armament":[{"count":1,"gun_id":"krupp_260mm_l22","mount":"single bow barbette"},{"count":2,"gun_id":"krupp_150mm_l35","mount":"side guns"},{"count":2,"gun_id":"hotchkiss_57mm","mount":"light"},{"count":2,"gun_id":"hotchkiss_47mm","mount":"light"},{"count":4,"gun_id":"hotchkiss_37mm","mount":"light"},{"count":3,"weapon_id":"torpedo_457mm","mount":"torpedo tubes"}],"armor_mm":{"belt":203,"deck":50,"turret":203,"conning_tower":127},"sources":["https://en.wikipedia.org/wiki/Chinese_ironclad_Pingyuan","https://en.wikipedia.org/wiki/26_cm_RK_L/22"],"plan_template":"pingyuan","uncertainty":"low","sprite_px_2ppm":{"length_px":122,"beam_px":24},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"guangbing","name":"Guangbing","side":"China","fleet":"Beiyang Fleet","type":"Steel torpedo gunboat / torpedo cruiser","class":"Guangyi/Guangbing/Guangding group","dimensions_m":{"length":71.6,"beam":8.2,"draft":3.6},"displacement_lt":{"normal":1000},"speed_kn":16.0,"complement":120,"armament":[{"count":3,"gun_id":"krupp_120mm_qf","mount":"fore, aft, centerline"},{"count":8,"gun_id":"machine_guns","mount":"light"},{"count":4,"weapon_id":"torpedo_356mm","mount":"torpedo tubes"}],"armor_mm":{"deck":25},"sources":["https://en.wikipedia.org/wiki/Guangdong_Fleet","https://en.wikipedia.org/wiki/Battle_of_the_Yalu_River_%281894%29"],"plan_template":"torpedo_gunboat","uncertainty":"high_inferred_dimensions","sprite_px_2ppm":{"length_px":143,"beam_px":16},"reconstruction_note":"Dimensions or exact plan are reconstructed from sister ships and period practice."},{"id":"fulong","name":"Fulong","side":"China","fleet":"Beiyang Fleet","type":"Torpedo boat","class":"Type H","dimensions_m":{"length":44.0,"beam":5.03,"draft":1.52},"displacement_lt":{"normal":120},"speed_kn":24.2,"complement":20,"armament":[{"count":3,"weapon_id":"torpedo_356mm","mount":"2 bow rooms + 1 stern dropping tube"},{"count":2,"gun_id":"hotchkiss_37mm","mount":"light"}],"armor_mm":{"protective":0},"sources":["https://en.wikipedia.org/wiki/Chinese_torpedo_boat_Fulong"],"plan_template":"torpedo_boat_large","uncertainty":"low","sprite_px_2ppm":{"length_px":88,"beam_px":10},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"zuo1","name":"Zuo 1","side":"China","fleet":"Beiyang Fleet","type":"Torpedo boat","class":"Yarrow-built small torpedo boat","dimensions_m":{"length":39.0,"beam":4.6,"draft":1.8},"displacement_lt":{"normal":69},"speed_kn":16.0,"complement":16,"armament":[{"count":3,"weapon_id":"torpedo_356mm","mount":"torpedo tubes"},{"count":1,"gun_id":"machine_gun","mount":"light"}],"armor_mm":{"protective":0},"sources":["https://en.wikipedia.org/wiki/Battle_of_the_Yalu_River_%281894%29","https://en.wikipedia.org/wiki/Chinese_torpedo_boat_Fulong"],"plan_template":"torpedo_boat_small","uncertainty":"very_high_inferred_dimensions","sprite_px_2ppm":{"length_px":78,"beam_px":9},"reconstruction_note":"Exact dimensions and deck plan are poorly documented in accessible sources; this is a period-informed torpedo-boat reconstruction."},{"id":"yoshino","name":"Yoshino","side":"Japan","fleet":"Combined Fleet","type":"Protected cruiser","class":"Yoshino","dimensions_m":{"length":109.72,"beam":14.17,"draft":5.18},"displacement_lt":{"normal":4150},"speed_kn":23.0,"complement":360,"armament":[{"count":1,"gun_id":"qf_6in_40_elswick","mount":"bow pivot"},{"count":1,"gun_id":"qf_6in_40_elswick","mount":"stern pivot"},{"count":2,"gun_id":"qf_6in_40_elswick","mount":"wing"},{"count":8,"gun_id":"qf_47in_mk1_4","mount":"broadside"},{"count":22,"gun_id":"qf_3pdr_hotchkiss","mount":"light"},{"count":5,"weapon_id":"torpedo_356mm","mount":"torpedo tubes"}],"armor_mm":{"deck":{"slope":115,"flat":45},"gun_shields_front":115},"sources":["https://en.wikipedia.org/wiki/Japanese_cruiser_Yoshino","https://www.navweaps.com/Weapons/WNJAP_6-40_EOC.php","https://en.wikipedia.org/wiki/QF_4.7-inch_Mk_I%E2%80%93IV_naval_gun"],"plan_template":"yoshino","uncertainty":"low","sprite_px_2ppm":{"length_px":219,"beam_px":28},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"naniwa","name":"Naniwa","side":"Japan","fleet":"Combined Fleet","type":"Protected cruiser","class":"Naniwa class","dimensions_m":{"length":97.54,"beam":14.02,"draft":6.1},"displacement_lt":{"normal":3727},"speed_kn":18.0,"complement":338,"armament":[{"count":2,"gun_id":"krupp_260mm_l22","mount":"single bow and stern"},{"count":6,"gun_id":"armstrong_152mm_bl","mount":"broadside"},{"count":2,"gun_id":"qf_6pdr","mount":"light"},{"count":10,"gun_id":"nordenfelt_4barrel","mount":"light"},{"count":4,"gun_id":"nordenfelt_10barrel","mount":"light"},{"count":4,"weapon_id":"torpedo_356mm","mount":"torpedo tubes"}],"armor_mm":{"deck":"51-76","gun_shields":51,"conning_tower":76},"sources":["https://en.wikipedia.org/wiki/Japanese_cruiser_Naniwa","https://en.wikipedia.org/wiki/Naniwa-class_cruiser","https://en.wikipedia.org/wiki/26_cm_RK_L/22"],"plan_template":"naniwa","uncertainty":"low","sprite_px_2ppm":{"length_px":195,"beam_px":28},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"takachiho","name":"Takachiho","side":"Japan","fleet":"Combined Fleet","type":"Protected cruiser","class":"Naniwa class","dimensions_m":{"length":97.54,"beam":14.02,"draft":6.1},"displacement_lt":{"normal":3727},"speed_kn":18.0,"complement":338,"armament":[{"count":2,"gun_id":"krupp_260mm_l22","mount":"single bow and stern"},{"count":6,"gun_id":"armstrong_152mm_bl","mount":"broadside"},{"count":2,"gun_id":"qf_6pdr","mount":"light"},{"count":10,"gun_id":"nordenfelt_4barrel","mount":"light"},{"count":4,"gun_id":"nordenfelt_10barrel","mount":"light"},{"count":4,"weapon_id":"torpedo_356mm","mount":"torpedo tubes"}],"armor_mm":{"deck":"51-76","gun_shields":51,"conning_tower":76},"sources":["https://en.wikipedia.org/wiki/Japanese_cruiser_Takachiho","https://en.wikipedia.org/wiki/Naniwa-class_cruiser","https://en.wikipedia.org/wiki/26_cm_RK_L/22"],"plan_template":"naniwa","uncertainty":"low","sprite_px_2ppm":{"length_px":195,"beam_px":28},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"akitsushima","name":"Akitsushima","side":"Japan","fleet":"Combined Fleet","type":"Protected cruiser","class":"Akitsushima","dimensions_m":{"length":91.7,"beam":13.14,"draft":5.32},"displacement_lt":{"normal":3100},"speed_kn":19.0,"complement":330,"armament":[{"count":1,"gun_id":"qf_6in_40_elswick","mount":"bow pivot"},{"count":1,"gun_id":"qf_6in_40_elswick","mount":"stern pivot"},{"count":2,"gun_id":"qf_6in_40_elswick","mount":"wing"},{"count":6,"gun_id":"qf_47in_mk1_4","mount":"broadside"},{"count":10,"gun_id":"qf_3pdr_hotchkiss","mount":"light"},{"count":2,"gun_id":"nordenfelt_1in_quad","mount":"light"},{"count":4,"weapon_id":"torpedo_356mm","mount":"torpedo tubes"}],"armor_mm":{"deck":75,"gun_shields":115},"sources":["https://en.wikipedia.org/wiki/Japanese_cruiser_Akitsushima","https://www.navweaps.com/Weapons/WNJAP_6-40_EOC.php","https://en.wikipedia.org/wiki/QF_4.7-inch_Mk_I%E2%80%93IV_naval_gun"],"plan_template":"akitsushima","uncertainty":"low","sprite_px_2ppm":{"length_px":183,"beam_px":26},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"matsushima","name":"Matsushima","side":"Japan","fleet":"Combined Fleet","type":"Protected cruiser","class":"Matsushima class","dimensions_m":{"length":91.81,"beam":15.6,"draft":6.05},"displacement_lt":{"normal":4217},"speed_kn":16.5,"complement":360,"armament":[{"count":1,"gun_id":"canet_320mm_38","mount":"single aft barbette"},{"count":12,"gun_id":"qf_47in_mk1_4","mount":"broadside + fantail"},{"count":6,"gun_id":"qf_3pdr_hotchkiss","mount":"light"},{"count":2,"gun_id":"hotchkiss_1pdr_5barrel","mount":"light"},{"count":4,"weapon_id":"torpedo_356mm","mount":"torpedo tubes"}],"armor_mm":{"deck":50,"gun_turret":300,"gun_shield":100},"sources":["https://en.wikipedia.org/wiki/Japanese_cruiser_Matsushima","https://en.wikipedia.org/wiki/Matsushima-class_cruiser","https://en.wikipedia.org/wiki/Canet_gun"],"plan_template":"matsushima_aft","uncertainty":"low","sprite_px_2ppm":{"length_px":184,"beam_px":31},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"itsukushima","name":"Itsukushima","side":"Japan","fleet":"Combined Fleet","type":"Protected cruiser","class":"Matsushima class","dimensions_m":{"length":91.81,"beam":15.6,"draft":6.05},"displacement_lt":{"normal":4278},"speed_kn":16.5,"complement":360,"armament":[{"count":1,"gun_id":"canet_320mm_38","mount":"single bow barbette"},{"count":11,"gun_id":"qf_47in_mk1_4","mount":"broadside + fantail"},{"count":5,"gun_id":"qf_3pdr_hotchkiss","mount":"light"},{"count":11,"gun_id":"hotchkiss_1pdr_5barrel","mount":"light"},{"count":4,"weapon_id":"torpedo_356mm","mount":"torpedo tubes"}],"armor_mm":{"deck":50,"gun_turret":300,"gun_shield":100},"sources":["https://en.wikipedia.org/wiki/Japanese_cruiser_Itsukushima","https://en.wikipedia.org/wiki/Matsushima-class_cruiser","https://en.wikipedia.org/wiki/Canet_gun"],"plan_template":"matsushima_bow","uncertainty":"low","sprite_px_2ppm":{"length_px":184,"beam_px":31},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"hashidate","name":"Hashidate","side":"Japan","fleet":"Combined Fleet","type":"Protected cruiser","class":"Matsushima class","dimensions_m":{"length":91.81,"beam":15.6,"draft":6.05},"displacement_lt":{"normal":4278},"speed_kn":16.5,"complement":360,"armament":[{"count":1,"gun_id":"canet_320mm_38","mount":"single bow barbette"},{"count":11,"gun_id":"qf_47in_mk1_4","mount":"broadside + fantail"},{"count":6,"gun_id":"qf_3pdr_hotchkiss","mount":"light"},{"count":11,"gun_id":"hotchkiss_1pdr_5barrel","mount":"light"},{"count":4,"weapon_id":"torpedo_356mm","mount":"torpedo tubes"}],"armor_mm":{"deck":50,"gun_turret":300,"gun_shield":100},"sources":["https://en.wikipedia.org/wiki/Japanese_cruiser_Hashidate","https://en.wikipedia.org/wiki/Matsushima-class_cruiser","https://en.wikipedia.org/wiki/Canet_gun"],"plan_template":"matsushima_bow","uncertainty":"medium","sprite_px_2ppm":{"length_px":184,"beam_px":31},"reconstruction_note":"Layout is reasonably known but some weapon placement or dimensions vary by source."},{"id":"chiyoda","name":"Chiyoda","side":"Japan","fleet":"Combined Fleet","type":"Belted cruiser","class":"Chiyoda","dimensions_m":{"length":94.49,"beam":12.81,"draft":4.27},"displacement_lt":{"normal":2439},"speed_kn":19.0,"complement":350,"armament":[{"count":10,"gun_id":"qf_47in_mk1_4","mount":"broadside"},{"count":14,"gun_id":"qf_3pdr_hotchkiss","mount":"light"},{"count":3,"gun_id":"nordenfelt_10barrel","mount":"light"},{"count":3,"weapon_id":"torpedo_356mm","mount":"torpedo tubes"}],"armor_mm":{"belt":"82-92","deck":"30-35","conning_tower":30},"sources":["https://en.wikipedia.org/wiki/Japanese_cruiser_Chiyoda","https://en.wikipedia.org/wiki/QF_4.7-inch_Mk_I%E2%80%93IV_naval_gun"],"plan_template":"chiyoda","uncertainty":"low","sprite_px_2ppm":{"length_px":189,"beam_px":26},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"fuso","name":"Fusō","side":"Japan","fleet":"Combined Fleet","type":"Central-battery ironclad","class":"Fusō","dimensions_m":{"length":67.06,"beam":14.63,"draft":5.49},"displacement_lt":{"normal":3717},"speed_kn":13.0,"complement":295,"armament":[{"count":4,"gun_id":"krupp_240mm_l22","mount":"central battery"},{"count":2,"gun_id":"krupp_170mm_l25","mount":"single bow and stern"},{"count":4,"gun_id":"field_75mm_long","mount":"light"},{"count":2,"gun_id":"field_75mm_short","mount":"light"}],"armor_mm":{"belt":"163-229","battery":229,"bulkheads":203},"sources":["https://en.wikipedia.org/wiki/Japanese_ironclad_Fus%C5%8D","https://en.wikipedia.org/wiki/24_cm_RK_L/22","https://en.wikipedia.org/wiki/17_cm_RK_L/25"],"plan_template":"fuso","uncertainty":"low","sprite_px_2ppm":{"length_px":134,"beam_px":29},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"hiei","name":"Hiei","side":"Japan","fleet":"Combined Fleet","type":"Armoured corvette","class":"Kongō class","dimensions_m":{"length":67.06,"beam":12.5,"draft":5.79},"displacement_lt":{"normal":2248},"speed_kn":13.0,"complement":234,"armament":[{"count":1,"gun_id":"krupp_170mm_l25","mount":"bow pivot"},{"count":2,"gun_id":"krupp_170mm_l25","mount":"broadside"},{"count":6,"gun_id":"krupp_150mm_l35","mount":"broadside"},{"count":2,"gun_id":"field_75mm_short","mount":"light"}],"armor_mm":{"belt":"76-114"},"sources":["https://en.wikipedia.org/wiki/Japanese_ironclad_Hiei","https://en.wikipedia.org/wiki/17_cm_RK_L/25","https://en.wikipedia.org/wiki/15_cm_SK_L/35"],"plan_template":"hiei","uncertainty":"low","sprite_px_2ppm":{"length_px":134,"beam_px":25},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"akagi","name":"Akagi","side":"Japan","fleet":"Combined Fleet","type":"Gunboat","class":"Maya class","dimensions_m":{"length":51.0,"beam":8.2,"draft":2.95},"displacement_lt":{"normal":622},"speed_kn":10.0,"complement":111,"armament":[{"count":4,"gun_id":"krupp_120mm_breechloader","mount":"single"},{"count":2,"gun_id":"nordenfelt_1in_quad","mount":"light"}],"armor_mm":{"protective":0},"sources":["https://en.wikipedia.org/wiki/Japanese_gunboat_Akagi"],"plan_template":"akagi","uncertainty":"low","sprite_px_2ppm":{"length_px":102,"beam_px":16},"reconstruction_note":"Hull and broad layout can be based on published plans or sister-ship plans with low ambiguity."},{"id":"saikyo_maru","name":"Saikyō Maru","side":"Japan","fleet":"Combined Fleet","type":"Armed merchant cruiser / dispatch vessel","class":"Saikyō Maru","dimensions_m":{"length":99.1,"beam":12.6,"draft":6.0},"displacement_lt":{"gross_tons":2913},"speed_kn":10.0,"complement":120,"armament":[{"count":1,"gun_id":"krupp_120mm_breechloader","mount":"single"},{"count":1,"gun_id":"qf_6pdr","mount":"single"},{"count":2,"gun_id":"hotchkiss_47mm","mount":"light"}],"armor_mm":{"protective":0},"sources":["https://en.wikipedia.org/wiki/Saiky%C5%8D_Maru"],"plan_template":"merchant_armed","uncertainty":"medium_inferred_dimensions","sprite_px_2ppm":{"length_px":198,"beam_px":25},"reconstruction_note":"Broad layout is inferred from sister ships and contemporary small-warship practice."}],"formations":{"metadata":{"battle":"Battle of the Yalu River","date":"1894-09-17","coordinate_system":{"origin_note":"Arbitrary tactical map origin for scenario setup rather than geodetic coordinates.","units":"metres","x_positive":"east","y_positive":"north","heading_degrees":"0 = north, 90 = east, 180 = south, 270 = west"},"confidence":"The order of ships is historical. The coordinates below are schematic starting positions for a scenario, not claimed exact GPS-like positions."},"japanese_opening_column":{"note":"Japanese approached in column, Flying Squadron leading and the slower ironclads and auxiliaries toward the rear.","sources":["https://en.wikipedia.org/wiki/Battle_of_the_Yalu_River_(1894)","https://www.usni.org/magazines/proceedings/1895/february/naval-battle-hai-yang"],"ships":[{"id":"yoshino","sequence":1,"x":-2200,"y":900,"heading_deg":255},{"id":"takachiho","sequence":2,"x":-1850,"y":1000,"heading_deg":255},{"id":"akitsushima","sequence":3,"x":-1500,"y":1100,"heading_deg":255},{"id":"naniwa","sequence":4,"x":-1150,"y":1200,"heading_deg":255},{"id":"matsushima","sequence":5,"x":-700,"y":1350,"heading_deg":255},{"id":"chiyoda","sequence":6,"x":-350,"y":1450,"heading_deg":255},{"id":"itsukushima","sequence":7,"x":0,"y":1550,"heading_deg":255},{"id":"hashidate","sequence":8,"x":350,"y":1650,"heading_deg":255},{"id":"fuso","sequence":9,"x":700,"y":1750,"heading_deg":255},{"id":"hiei","sequence":10,"x":1000,"y":1850,"heading_deg":255},{"id":"akagi","sequence":11,"x":1300,"y":1950,"heading_deg":255},{"id":"saikyo_maru","sequence":12,"x":1650,"y":2050,"heading_deg":255}]},"chinese_intended_line_abreast":{"note":"Chinese intent was a south-facing line abreast with Dingyuan and Zhenyuan at the centre.","sources":["https://en.wikipedia.org/wiki/Battle_of_the_Yalu_River_(1894)","https://www.usni.org/magazines/proceedings/1895/february/naval-battle-hai-yang"],"ships":[{"id":"jiyuan","sequence":1,"x":-1500,"y":0,"heading_deg":180},{"id":"guangjia","sequence":2,"x":-1200,"y":0,"heading_deg":180},{"id":"zhiyuan","sequence":3,"x":-900,"y":0,"heading_deg":180},{"id":"dingyuan","sequence":4,"x":-450,"y":0,"heading_deg":180},{"id":"zhenyuan","sequence":5,"x":0,"y":0,"heading_deg":180},{"id":"laiyuan","sequence":6,"x":450,"y":0,"heading_deg":180},{"id":"jingyuan_1887","sequence":7,"x":800,"y":0,"heading_deg":180},{"id":"jingyuan_1886","sequence":8,"x":1100,"y":0,"heading_deg":180},{"id":"chaoyong","sequence":9,"x":1400,"y":0,"heading_deg":180},{"id":"yangwei","sequence":10,"x":1700,"y":0,"heading_deg":180}]},"chinese_actual_opening_arc":{"note":"By first contact the Chinese line was not a neat line abreast but an irregular arc or indented wedge due to signal confusion and unequal speed.","sources":["https://en.wikipedia.org/wiki/Battle_of_the_Yalu_River_(1894)"],"ships":[{"id":"jiyuan","sequence":1,"x":-1650,"y":220,"heading_deg":180},{"id":"guangjia","sequence":2,"x":-1280,"y":130,"heading_deg":180},{"id":"zhiyuan","sequence":3,"x":-930,"y":60,"heading_deg":180},{"id":"dingyuan","sequence":4,"x":-430,"y":0,"heading_deg":180},{"id":"zhenyuan","sequence":5,"x":60,"y":0,"heading_deg":180},{"id":"laiyuan","sequence":6,"x":520,"y":40,"heading_deg":180},{"id":"jingyuan_1887","sequence":7,"x":920,"y":100,"heading_deg":180},{"id":"jingyuan_1886","sequence":8,"x":1290,"y":170,"heading_deg":180},{"id":"chaoyong","sequence":9,"x":1600,"y":250,"heading_deg":180},{"id":"yangwei","sequence":10,"x":1880,"y":330,"heading_deg":180}]},"late_chinese_reinforcements_1430":{"note":"Pingyuan, Guangbing, Fulong, and Zuo 1 arrived later on the Chinese right and complicated the Japanese attempt to work around that flank.","sources":["https://en.wikipedia.org/wiki/Battle_of_the_Yalu_River_(1894)"],"ships":[{"id":"pingyuan","sequence":1,"x":2300,"y":500,"heading_deg":180},{"id":"guangbing","sequence":2,"x":2550,"y":600,"heading_deg":180},{"id":"fulong","sequence":3,"x":2800,"y":720,"heading_deg":180},{"id":"zuo1","sequence":4,"x":2950,"y":790,"heading_deg":180}]}}},"tsushima":{"metadata":{"battle":"Battle of Tsushima","date":"1905-05-27","chapter":"Tsushima Chapter 2","scope":"v1 capital-ship battle line: the 14 ships the renderer can currently draw. Oslyabya, the armoured cruisers Kasuga and Nisshin, the armoured-cruiser squadrons, protected cruisers, and destroyers are out of scope until their plans are added.","sprite_scale_recommendation":{"pixels_per_metre":2,"note":"sprite_px_2ppm fields use this scale."},"build_note":"Same schema as the Yalu dataset; intended to compile through build_data.py into a Tsushima data.js.","data_status_legend":{"structural_low":"Hull, dimensions, and main/intermediate/secondary armament drawn from the project's own vetted renderer and harness.","pending":"Field deliberately left null until sourced from references or the Part 1/2 battleship dossiers."},"penetration_model":"AP penetration vs range is anchored to the sourced 12in/40 Pattern 1895 APC curve. Other guns scale from shell mass, muzzle velocity and calibre. AP shells carry a small burster and do internal damage only on penetration; Common/HE shells have low penetration but large bursters that damage upperworks and start fires. Japanese doctrine in 1905 was overwhelmingly HE (fires); Russian was mixed/AP.","specs_pass":"Pass 2 complete: cruiser force + Oslyabya added; cruiser guns sourced (navweaps); capital-ship armour cross-checked against per-ship references (Sisoy corrected to nickel steel)."},"guns":{"obukhov_305mm_l40":{"name":"12 in/40 Obukhov Pattern 1895","calibre_mm":305,"type":"Breech-loading heavy gun","shell_weight_kg":331.7,"muzzle_velocity_mps":792,"reload_seconds_practical":{"min":85,"max":120,"confidence":"sourced"},"max_range_m":10980,"sourced_penetration":[{"range_m":0,"penetration_mm":381,"striking_mps":792,"note":"APC vs KC"},{"range_m":1830,"penetration_mm":311,"striking_mps":687},{"range_m":3660,"penetration_mm":251,"striking_mps":592},{"range_m":5490,"penetration_mm":201,"striking_mps":507},{"range_m":7320,"penetration_mm":159,"striking_mps":436},{"range_m":9140,"penetration_mm":129,"striking_mps":379},{"range_m":10970,"penetration_mm":93,"striking_mps":344}],"confidence":"high","burster_kg":{"AP":5.3,"HE":12.4},"historical_effect_note":"Good APC penetration on paper, but capped AP was scarce in 1904-05; Russians fired mostly uncapped AP and HE, so real penetration was below this curve.","sources":["navweaps.com (Tony DiGiulian)","Gangut Issue 7 (Titushkin)","Campbell, Warship II"]},"obukhov_305mm_l35":{"name":"12 in/35 Obukhov Pattern 1886","calibre_mm":305,"type":"Breech-loading heavy gun","shell_weight_kg":331.7,"muzzle_velocity_mps":637,"reload_seconds_practical":{"min":120,"max":180,"confidence":"inferred"},"max_range_m":null,"sourced_penetration":[],"confidence":"medium","burster_kg":{"AP":5.3,"HE":12.4},"historical_effect_note":"Same projectiles as the /40 but lower velocity; shorter range and less penetration.","sources":["navweaps.com (Tony DiGiulian)"]},"obukhov_305mm_l30":{"name":"12 in/30 Obukhov Pattern 1877","calibre_mm":305,"type":"Breech-loading heavy gun","shell_weight_kg":331.7,"muzzle_velocity_mps":530,"reload_seconds_practical":{"min":180,"max":300,"confidence":"inferred"},"max_range_m":null,"sourced_penetration":[],"confidence":"medium","burster_kg":{"AP":5.3,"HE":12.4},"historical_effect_note":"Obsolete low-velocity gun; short effective range.","sources":["navweaps.com (Tony DiGiulian)"]},"obukhov_254mm_l45":{"name":"10 in/45 Obukhov Pattern 1891","calibre_mm":254,"type":"Breech-loading heavy gun","shell_weight_kg":225.2,"muzzle_velocity_mps":692,"reload_seconds_practical":{"min":40,"max":75,"confidence":"inferred"},"max_range_m":20400,"sourced_penetration":[],"confidence":"high","burster_kg":{"AP":2.9,"HE":8.3},"historical_effect_note":"Light-built design, never reached its design velocity; intermediate hitter.","sources":["navweaps.com (Tony DiGiulian)","Wikipedia 254 mm 45 cal Pattern 1891"]},"obukhov_229mm_l35":{"name":"9 in/35 Obukhov","calibre_mm":229,"type":"Breech-loading gun","shell_weight_kg":126.1,"muzzle_velocity_mps":640,"reload_seconds_practical":{"min":45,"max":90,"confidence":"inferred"},"max_range_m":null,"sourced_penetration":[],"confidence":"low_medium","burster_kg":{"AP":2.0,"HE":5.0},"historical_effect_note":"Old intermediate gun on a 1880s ironclad.","sources":["Conway's 1860-1905"]},"canet_152mm_l45":{"name":"6 in/45 Canet Pattern 1892","calibre_mm":152,"type":"Quick-firing gun","shell_weight_kg":41.4,"muzzle_velocity_mps":792,"reload_seconds_practical":{"min":9,"max":30,"confidence":"sourced"},"max_range_m":15500,"sourced_penetration":[],"confidence":"high","burster_kg":{"AP":1.2,"HE":3.0},"historical_effect_note":"Workhorse QF gun; 2 rpm in twin turret mounts up to 7 rpm in single deck mounts. Several barrels burst in action in 1904-05.","sources":["navweaps.com (Tony DiGiulian)","Wikipedia 152 mm 45 cal Pattern 1892"]},"canet_120mm_l45":{"name":"4.7 in/45 Canet Pattern 1892","calibre_mm":120,"type":"Quick-firing gun","shell_weight_kg":20.4,"muzzle_velocity_mps":823,"reload_seconds_practical":{"min":4,"max":6,"confidence":"sourced"},"max_range_m":11800,"sourced_penetration":[],"confidence":"high","burster_kg":{"AP":0.5,"HE":1.4},"historical_effect_note":"Fast-firing light QF gun against torpedo craft and unarmoured upperworks.","sources":["navweaps.com (Tony DiGiulian)","Wikipedia 120 mm 45 cal Pattern 1892"]},"eoc_305mm_l40":{"name":"12 in/40 EOC (Elswick) type 41","calibre_mm":305,"type":"Breech-loading heavy gun","shell_weight_kg":386,"muzzle_velocity_mps":732,"reload_seconds_practical":{"min":55,"max":70,"confidence":"sourced"},"max_range_m":13700,"sourced_penetration":[{"range_m":3000,"penetration_mm":152,"note":"EFFECTIVE ceiling at RJW (Common/HE shells, fuze issues); did not beat ~6in Russian belt armour at any range."}],"confidence":"high","burster_kg":{"AP_Shimose":19.3,"Common_HE":39.0},"historical_effect_note":"At Tsushima fired almost entirely Common (HE) shells with Shimose/black-powder bursters: poor penetration but devastating topside blast and fires. This HE doctrine, not penetration, did the damage.","sources":["navweaps.com (Tony DiGiulian)","Campbell, Warship II","Forczyk"]},"armstrong_152mm_l40_qf":{"name":"6 in/40 QF Elswick pattern","calibre_mm":152,"type":"Quick-firing gun","shell_weight_kg":45.4,"muzzle_velocity_mps":700,"reload_seconds_practical":{"min":9,"max":12,"confidence":"inferred"},"max_range_m":9100,"sourced_penetration":[],"confidence":"medium_high","burster_kg":{"AP":1.3,"Common_HE":3.7},"historical_effect_note":"Elswick QF gun; the bulk of the Japanese broadside volume, firing HE shells for fires and topside damage.","sources":["Conway's 1860-1905","navweaps Japan 6in"]},"eoc_203mm_l45":{"name":"8\"/45 (20.3 cm) EOC / 41st Year Type","calibre_mm":203,"type":"Quick-firing/BL cruiser gun","shell_weight_kg":113.4,"muzzle_velocity_mps":756,"reload_seconds_practical":{"min":25,"max":35,"confidence":"sourced"},"burster_kg":{"AP_Shimose":3.8,"Common_HE":8.0},"max_range_m":18000,"sourced_penetration":[],"historical_effect_note":"Main gun of every Japanese armoured cruiser; ~2 rpm. Shimose AP suffered bore prematures (3 of 4 disabled on Nisshin at Tsushima); mostly fired HE.","sources":["navweaps.com (Tony DiGiulian)","Campbell, Warship II"],"confidence":"high"},"eoc_254mm_l40":{"name":"10\"/40 (25.4 cm) EOC Pattern R (Armstrong)","calibre_mm":254,"type":"Breech-loading heavy gun","shell_weight_kg":227,"muzzle_velocity_mps":700,"reload_seconds_practical":{"min":40,"max":60,"confidence":"inferred"},"burster_kg":{"AP":3.0,"HE":7.5},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Single bow gun of Kasuga (Garibaldi-type asymmetric battery).","sources":["naval-encyclopedia Kasuga class","navweaps.com (Tony DiGiulian)"],"confidence":"medium"},"armstrong_120mm_l40_qf":{"name":"4.7\"/40 (12 cm) QF Armstrong","calibre_mm":120,"type":"Quick-firing gun","shell_weight_kg":20.4,"muzzle_velocity_mps":655,"reload_seconds_practical":{"min":6,"max":10,"confidence":"inferred"},"burster_kg":{"HE":1.5},"max_range_m":9100,"sourced_penetration":[],"historical_effect_note":"Secondary battery of the Japanese protected cruisers.","sources":["Conway's 1860-1905 (standard reference)"],"confidence":"medium"},"qf_12pdr_76mm":{"name":"12-pdr 3\"/40 (7.62 cm) QF","calibre_mm":76,"type":"Light quick-firing gun","shell_weight_kg":5.7,"muzzle_velocity_mps":720,"reload_seconds_practical":{"min":4,"max":5,"confidence":"inferred"},"burster_kg":{"HE":0.4},"max_range_m":9100,"sourced_penetration":[],"historical_effect_note":"Anti-torpedo-boat battery, ubiquitous on both fleets.","sources":["Conway's 1860-1905 (standard reference)"],"confidence":"medium"},"obukhov_203mm_l35":{"name":"8\"/35 (20.3 cm) Pattern 1885","calibre_mm":203,"type":"Breech-loading gun","shell_weight_kg":87.8,"muzzle_velocity_mps":664,"reload_seconds_practical":{"min":45,"max":90,"confidence":"inferred"},"burster_kg":{"AP":1.8,"HE":4.5},"max_range_m":null,"sourced_penetration":[],"historical_effect_note":"Old gun in Nakhimov's four twin barbettes.","sources":["Conway's 1860-1905 (standard reference)","navweaps Russian 8in"],"confidence":"low_medium"},"canet_75mm_l50":{"name":"75 mm/50 Canet Pattern 1892","calibre_mm":75,"type":"Light quick-firing gun","shell_weight_kg":4.9,"muzzle_velocity_mps":823,"reload_seconds_practical":{"min":4,"max":5,"confidence":"sourced"},"burster_kg":{"HE":0.3},"max_range_m":8000,"sourced_penetration":[],"historical_effect_note":"Standard Russian anti-torpedo-boat gun; main armament of the yacht Almaz.","sources":["navweaps.com (Tony DiGiulian)","Wikipedia 75 mm Canet"],"confidence":"high"}},"weapons":{"torpedo_381_457mm":{"name":"Whitehead-pattern torpedo tube","type":"Torpedo armament","calibre_mm":{"range":"381-457"},"historical_effect_note":"Carried by all battleships; negligible role in the daylight gun action.","confidence":"low"}},"ships":[{"id":"suvorov","name":"Knyaz Suvorov","side":"Russia","fleet":"2nd Pacific Squadron","division":"1st Armoured Division","type":"Pre-dreadnought battleship","class":"Borodino class","dimensions_m":{"length":121.0,"beam":23.2,"draft":8.2},"displacement_lt":{"normal":13516,"deep_load":15275},"speed_kn":17.5,"complement":835,"armament":[{"count":4,"gun_id":"obukhov_305mm_l40","mount":"2x twin turrets fore and aft"},{"count":12,"gun_id":"canet_152mm_l45","mount":"6x twin wing turrets"}],"armor_mm":{"belt":194,"deck":51,"barbettes":254,"casemate":76,"conning_tower":203,"scheme":"Krupp"},"plan_template":"suvorov","sprite_px_2ppm":{"length_px":242,"beam_px":46},"uncertainty":"high","data_status":"Pass 1 complete: hull/armament project-vetted; draft/displacement/speed/complement/armour from standard references.","sources":["in-project: game/render.js SHIP_LAYOUT","in-project: tsushima_preview.js dimensions","Conway's 1860-1905 (standard reference)"]},{"id":"aleksandr3","name":"Imperator Aleksandr III","side":"Russia","fleet":"2nd Pacific Squadron","division":"1st Armoured Division","type":"Pre-dreadnought battleship","class":"Borodino class","dimensions_m":{"length":121.0,"beam":23.2,"draft":8.2},"displacement_lt":{"normal":13516,"deep_load":15275},"speed_kn":17.7,"complement":835,"armament":[{"count":4,"gun_id":"obukhov_305mm_l40","mount":"2x twin turrets fore and aft"},{"count":12,"gun_id":"canet_152mm_l45","mount":"6x twin wing turrets"}],"armor_mm":{"belt":194,"deck":51,"barbettes":254,"casemate":76,"conning_tower":203,"scheme":"Krupp"},"plan_template":"aleksandr3","sprite_px_2ppm":{"length_px":242,"beam_px":46},"uncertainty":"high","data_status":"Pass 1 complete: hull/armament project-vetted; draft/displacement/speed/complement/armour from standard references.","sources":["in-project: game/render.js SHIP_LAYOUT","in-project: tsushima_preview.js dimensions","Conway's 1860-1905 (standard reference)"]},{"id":"borodino","name":"Borodino","side":"Russia","fleet":"2nd Pacific Squadron","division":"1st Armoured Division","type":"Pre-dreadnought battleship","class":"Borodino class","dimensions_m":{"length":121.0,"beam":23.2,"draft":8.2},"displacement_lt":{"normal":13516,"deep_load":15275},"speed_kn":17.5,"complement":835,"armament":[{"count":4,"gun_id":"obukhov_305mm_l40","mount":"2x twin turrets fore and aft"},{"count":12,"gun_id":"canet_152mm_l45","mount":"6x twin wing turrets"}],"armor_mm":{"belt":194,"deck":51,"barbettes":254,"casemate":76,"conning_tower":203,"scheme":"Krupp"},"plan_template":"borodino","sprite_px_2ppm":{"length_px":242,"beam_px":46},"uncertainty":"high","data_status":"Pass 1 complete: hull/armament project-vetted; draft/displacement/speed/complement/armour from standard references.","sources":["in-project: game/render.js SHIP_LAYOUT","in-project: tsushima_preview.js dimensions","Conway's 1860-1905 (standard reference)"]},{"id":"oryol","name":"Oryol","side":"Russia","fleet":"2nd Pacific Squadron","division":"1st Armoured Division","type":"Pre-dreadnought battleship","class":"Borodino class","dimensions_m":{"length":121.0,"beam":23.2,"draft":7.97},"displacement_lt":{"normal":13516,"deep_load":15275},"speed_kn":17.5,"complement":835,"armament":[{"count":4,"gun_id":"obukhov_305mm_l40","mount":"2x twin turrets fore and aft"},{"count":12,"gun_id":"canet_152mm_l45","mount":"6x twin wing turrets"}],"armor_mm":{"belt":194,"deck":51,"barbettes":254,"casemate":76,"conning_tower":203,"scheme":"Krupp"},"plan_template":"oryol","sprite_px_2ppm":{"length_px":242,"beam_px":46},"uncertainty":"high","data_status":"Pass 1 complete: hull/armament project-vetted; draft/displacement/speed/complement/armour from standard references.","sources":["in-project: game/render.js SHIP_LAYOUT","in-project: tsushima_preview.js dimensions","Conway's 1860-1905 (standard reference)"]},{"id":"sisoy","name":"Sisoy Veliky","side":"Russia","fleet":"2nd Pacific Squadron","division":"2nd Division","type":"Pre-dreadnought battleship","class":"Sisoy Veliky (own class)","dimensions_m":{"length":107.2,"beam":20.7,"draft":7.8},"displacement_lt":{"normal":10400,"deep_load":10940},"speed_kn":15.7,"complement":586,"armament":[{"count":4,"gun_id":"obukhov_305mm_l40","mount":"2x twin turrets fore and aft"},{"count":6,"gun_id":"canet_152mm_l45","mount":"casemates"}],"armor_mm":{"belt":406,"deck":76,"barbettes":305,"casemate":127,"conning_tower":229,"scheme":"Nickel steel"},"plan_template":"sisoy","sprite_px_2ppm":{"length_px":214,"beam_px":41},"uncertainty":"high","data_status":"Pass 1 complete: hull/armament project-vetted; draft/displacement/speed/complement/armour from standard references.","sources":["in-project: game/render.js SHIP_LAYOUT","in-project: tsushima_preview.js dimensions","Conway's 1860-1905 (standard reference)"]},{"id":"navarin","name":"Navarin","side":"Russia","fleet":"2nd Pacific Squadron","division":"2nd Division","type":"Pre-dreadnought battleship","class":"Navarin (own class)","dimensions_m":{"length":107.0,"beam":20.4,"draft":8.4},"displacement_lt":{"normal":10200,"deep_load":10370},"speed_kn":15.85,"complement":622,"armament":[{"count":4,"gun_id":"obukhov_305mm_l35","mount":"2x twin turrets fore and aft"},{"count":8,"gun_id":"canet_152mm_l45","mount":"casemates"}],"armor_mm":{"belt":406,"deck":76,"barbettes":305,"casemate":127,"conning_tower":254,"scheme":"Compound"},"plan_template":"navarin","sprite_px_2ppm":{"length_px":214,"beam_px":41},"uncertainty":"medium_high_verified","data_status":"Pass 1 complete: hull/armament project-vetted; draft/displacement/speed/complement/armour from standard references.","sources":["in-project: game/render.js SHIP_LAYOUT","in-project: tsushima_preview.js dimensions","Conway's 1860-1905 (standard reference)"]},{"id":"nikolai1","name":"Imperator Nikolai I","side":"Russia","fleet":"2nd Pacific Squadron","division":"3rd Division","type":"Barbette battleship","class":"Imperator Aleksandr II class","dimensions_m":{"length":105.6,"beam":20.4,"draft":7.5},"displacement_lt":{"normal":9672,"deep_load":9748},"speed_kn":14.5,"complement":616,"armament":[{"count":2,"gun_id":"obukhov_305mm_l30","mount":"twin barbette forward"},{"count":4,"gun_id":"obukhov_229mm_l35","mount":"single mounts"},{"count":8,"gun_id":"canet_152mm_l45","mount":"casemates"}],"armor_mm":{"belt":356,"deck":63,"barbettes":254,"casemate":76,"conning_tower":203,"scheme":"Compound"},"plan_template":"nikolai1","sprite_px_2ppm":{"length_px":211,"beam_px":41},"uncertainty":"medium","data_status":"Pass 1 complete: hull/armament project-vetted; draft/displacement/speed/complement/armour from standard references.","sources":["in-project: game/render.js SHIP_LAYOUT","in-project: tsushima_preview.js dimensions","Conway's 1860-1905 (standard reference)"]},{"id":"apraksin","name":"General-Admiral Apraksin","side":"Russia","fleet":"2nd Pacific Squadron","division":"3rd Division","type":"Coastal defence ship","class":"Admiral Ushakov class","dimensions_m":{"length":87.3,"beam":15.85,"draft":5.9},"displacement_lt":{"normal":4126,"deep_load":4648},"speed_kn":16.0,"complement":406,"armament":[{"count":3,"gun_id":"obukhov_254mm_l45","mount":"twin turret forward, single turret aft"},{"count":4,"gun_id":"canet_120mm_l45","mount":"corner casemates"}],"armor_mm":{"belt":254,"deck":51,"barbettes":203,"casemate":51,"conning_tower":178,"scheme":"Harvey"},"plan_template":"apraksin","sprite_px_2ppm":{"length_px":175,"beam_px":32},"uncertainty":"medium","data_status":"Pass 1 complete: hull/armament project-vetted; draft/displacement/speed/complement/armour from standard references.","sources":["in-project: game/render.js SHIP_LAYOUT","in-project: tsushima_preview.js dimensions","Conway's 1860-1905 (standard reference)"]},{"id":"senyavin","name":"Admiral Senyavin","side":"Russia","fleet":"2nd Pacific Squadron","division":"3rd Division","type":"Coastal defence ship","class":"Admiral Ushakov class","dimensions_m":{"length":87.3,"beam":15.85,"draft":5.9},"displacement_lt":{"normal":4126,"deep_load":4648},"speed_kn":16.0,"complement":406,"armament":[{"count":4,"gun_id":"obukhov_254mm_l45","mount":"2x twin turrets fore and aft"},{"count":4,"gun_id":"canet_120mm_l45","mount":"corner casemates"}],"armor_mm":{"belt":254,"deck":51,"barbettes":203,"casemate":51,"conning_tower":178,"scheme":"Harvey"},"plan_template":"senyavin","sprite_px_2ppm":{"length_px":175,"beam_px":32},"uncertainty":"medium","data_status":"Pass 1 complete: hull/armament project-vetted; draft/displacement/speed/complement/armour from standard references.","sources":["in-project: game/render.js SHIP_LAYOUT","in-project: tsushima_preview.js dimensions","Conway's 1860-1905 (standard reference)"]},{"id":"ushakov","name":"Admiral Ushakov","side":"Russia","fleet":"2nd Pacific Squadron","division":"3rd Division","type":"Coastal defence ship","class":"Admiral Ushakov class","dimensions_m":{"length":87.3,"beam":15.85,"draft":5.9},"displacement_lt":{"normal":4126,"deep_load":4648},"speed_kn":16.0,"complement":406,"armament":[{"count":4,"gun_id":"obukhov_254mm_l45","mount":"2x twin turrets fore and aft"},{"count":4,"gun_id":"canet_120mm_l45","mount":"corner casemates"}],"armor_mm":{"belt":254,"deck":51,"barbettes":203,"casemate":51,"conning_tower":178,"scheme":"Harvey"},"plan_template":"ushakov","sprite_px_2ppm":{"length_px":175,"beam_px":32},"uncertainty":"medium","data_status":"Pass 1 complete: hull/armament project-vetted; draft/displacement/speed/complement/armour from standard references.","sources":["in-project: game/render.js SHIP_LAYOUT","in-project: tsushima_preview.js dimensions","Conway's 1860-1905 (standard reference)"]},{"id":"mikasa","name":"Mikasa","side":"Japan","fleet":"Combined Fleet","division":"1st Division","type":"Pre-dreadnought battleship","class":"Mikasa class","dimensions_m":{"length":131.7,"beam":23.2,"draft":8.3},"displacement_lt":{"normal":15140,"deep_load":15979},"speed_kn":18.0,"complement":830,"armament":[{"count":4,"gun_id":"eoc_305mm_l40","mount":"2x twin turrets fore and aft"},{"count":14,"gun_id":"armstrong_152mm_l40_qf","mount":"casemates"}],"armor_mm":{"belt":229,"deck":76,"barbettes":356,"casemate":152,"conning_tower":356,"scheme":"Krupp"},"plan_template":"mikasa","sprite_px_2ppm":{"length_px":263,"beam_px":46},"uncertainty":"high","data_status":"Pass 1 complete: hull/armament project-vetted; draft/displacement/speed/complement/armour from standard references.","sources":["in-project: game/render.js SHIP_LAYOUT","in-project: tsushima_preview.js dimensions","Conway's 1860-1905 (standard reference)"]},{"id":"shikishima","name":"Shikishima","side":"Japan","fleet":"Combined Fleet","division":"1st Division","type":"Pre-dreadnought battleship","class":"Shikishima class","dimensions_m":{"length":133.5,"beam":23.0,"draft":8.3},"displacement_lt":{"normal":14850,"deep_load":15453},"speed_kn":18.0,"complement":836,"armament":[{"count":4,"gun_id":"eoc_305mm_l40","mount":"2x twin turrets fore and aft"},{"count":14,"gun_id":"armstrong_152mm_l40_qf","mount":"casemates"}],"armor_mm":{"belt":229,"deck":76,"barbettes":356,"casemate":152,"conning_tower":356,"scheme":"Harvey-nickel"},"plan_template":"shikishima","sprite_px_2ppm":{"length_px":267,"beam_px":46},"uncertainty":"high","data_status":"Pass 1 complete: hull/armament project-vetted; draft/displacement/speed/complement/armour from standard references.","sources":["in-project: game/render.js SHIP_LAYOUT","in-project: tsushima_preview.js dimensions","Conway's 1860-1905 (standard reference)"]},{"id":"fuji","name":"Fuji","side":"Japan","fleet":"Combined Fleet","division":"1st Division","type":"Pre-dreadnought battleship","class":"Fuji class","dimensions_m":{"length":125.6,"beam":22.4,"draft":8.1},"displacement_lt":{"normal":12533,"deep_load":12649},"speed_kn":18.25,"complement":637,"armament":[{"count":4,"gun_id":"eoc_305mm_l40","mount":"2x twin turrets fore and aft"},{"count":10,"gun_id":"armstrong_152mm_l40_qf","mount":"casemates"}],"armor_mm":{"belt":457,"deck":63,"barbettes":356,"casemate":152,"conning_tower":356,"scheme":"Harvey/compound"},"plan_template":"fuji","sprite_px_2ppm":{"length_px":251,"beam_px":45},"uncertainty":"medium_high_verified","data_status":"Pass 1 complete: hull/armament project-vetted; draft/displacement/speed/complement/armour from standard references.","sources":["in-project: game/render.js SHIP_LAYOUT","in-project: tsushima_preview.js dimensions","Conway's 1860-1905 (standard reference)"]},{"id":"asahi","name":"Asahi","side":"Japan","fleet":"Combined Fleet","division":"1st Division","type":"Pre-dreadnought battleship","class":"Asahi (Shikishima type)","dimensions_m":{"length":129.6,"beam":22.9,"draft":8.3},"displacement_lt":{"normal":15200,"deep_load":15453},"speed_kn":18.0,"complement":836,"armament":[{"count":4,"gun_id":"eoc_305mm_l40","mount":"2x twin turrets fore and aft"},{"count":14,"gun_id":"armstrong_152mm_l40_qf","mount":"casemates"}],"armor_mm":{"belt":229,"deck":76,"barbettes":356,"casemate":152,"conning_tower":356,"scheme":"Harvey-nickel"},"plan_template":"asahi","sprite_px_2ppm":{"length_px":259,"beam_px":46},"uncertainty":"high","data_status":"Pass 1 complete: hull/armament project-vetted; draft/displacement/speed/complement/armour from standard references.","sources":["in-project: game/render.js SHIP_LAYOUT","in-project: tsushima_preview.js dimensions","Conway's 1860-1905 (standard reference)"]},{"id":"oslyabya","name":"Oslyabya","side":"Russia","fleet":"2nd Pacific Squadron","division":"2nd Armoured Division","type":"Pre-dreadnought battleship","class":"Peresvet class","dimensions_m":{"length":132.4,"beam":21.8,"draft":8.0},"displacement_lt":{"normal":12674,"deep_load":13320},"speed_kn":18.0,"complement":778,"armament":[{"count":4,"gun_id":"obukhov_254mm_l45","mount":"2x twin turrets fore and aft"},{"count":11,"gun_id":"canet_152mm_l45","mount":"casemates + bow chaser"},{"count":20,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":229,"deck":63,"barbettes":229,"casemate":127,"conning_tower":152,"scheme":"Harvey-nickel"},"plan_template":"oslyabya","uncertainty":"high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"asama","name":"Asama","side":"Japan","fleet":"Combined Fleet","division":"2nd Division","type":"Armoured cruiser","class":"Asama class","dimensions_m":{"length":134.7,"beam":20.5,"draft":7.4},"displacement_lt":{"normal":9700,"deep_load":10500},"speed_kn":21.5,"complement":726,"armament":[{"count":4,"gun_id":"eoc_203mm_l45","mount":"2x twin turrets fore and aft"},{"count":14,"gun_id":"armstrong_152mm_l40_qf","mount":"casemates"},{"count":12,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":178,"deck":51,"barbettes":152,"casemate":152,"conning_tower":356,"scheme":"Harvey"},"plan_template":"asama","uncertainty":"high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"tokiwa","name":"Tokiwa","side":"Japan","fleet":"Combined Fleet","division":"2nd Division","type":"Armoured cruiser","class":"Asama class","dimensions_m":{"length":134.7,"beam":20.5,"draft":7.4},"displacement_lt":{"normal":9700,"deep_load":10500},"speed_kn":21.5,"complement":726,"armament":[{"count":4,"gun_id":"eoc_203mm_l45","mount":"2x twin turrets fore and aft"},{"count":14,"gun_id":"armstrong_152mm_l40_qf","mount":"casemates"},{"count":12,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":178,"deck":51,"barbettes":152,"casemate":152,"conning_tower":356,"scheme":"Harvey"},"plan_template":"tokiwa","uncertainty":"high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"izumo","name":"Izumo","side":"Japan","fleet":"Combined Fleet","division":"2nd Division","type":"Armoured cruiser","class":"Izumo class","dimensions_m":{"length":132.3,"beam":20.9,"draft":7.4},"displacement_lt":{"normal":9750,"deep_load":10750},"speed_kn":20.75,"complement":672,"armament":[{"count":4,"gun_id":"eoc_203mm_l45","mount":"2x twin turrets fore and aft"},{"count":14,"gun_id":"armstrong_152mm_l40_qf","mount":"casemates"},{"count":12,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":178,"deck":63,"barbettes":152,"casemate":152,"conning_tower":356,"scheme":"Krupp"},"plan_template":"izumo","uncertainty":"high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"iwate","name":"Iwate","side":"Japan","fleet":"Combined Fleet","division":"2nd Division","type":"Armoured cruiser","class":"Izumo class","dimensions_m":{"length":132.3,"beam":20.9,"draft":7.4},"displacement_lt":{"normal":9750,"deep_load":10750},"speed_kn":20.75,"complement":672,"armament":[{"count":4,"gun_id":"eoc_203mm_l45","mount":"2x twin turrets fore and aft"},{"count":14,"gun_id":"armstrong_152mm_l40_qf","mount":"casemates"},{"count":12,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":178,"deck":63,"barbettes":152,"casemate":152,"conning_tower":356,"scheme":"Krupp"},"plan_template":"iwate","uncertainty":"high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"azuma","name":"Azuma","side":"Japan","fleet":"Combined Fleet","division":"2nd Division","type":"Armoured cruiser","class":"Azuma (own class)","dimensions_m":{"length":137.9,"beam":17.7,"draft":7.2},"displacement_lt":{"normal":9460,"deep_load":10400},"speed_kn":20.0,"complement":644,"armament":[{"count":4,"gun_id":"eoc_203mm_l45","mount":"2x twin turrets fore and aft"},{"count":12,"gun_id":"armstrong_152mm_l40_qf","mount":"casemates"},{"count":12,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":178,"deck":63,"barbettes":152,"casemate":127,"conning_tower":356,"scheme":"Harvey"},"plan_template":"azuma","uncertainty":"medium_high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"yakumo","name":"Yakumo","side":"Japan","fleet":"Combined Fleet","division":"2nd Division","type":"Armoured cruiser","class":"Yakumo (own class)","dimensions_m":{"length":132.3,"beam":19.6,"draft":7.2},"displacement_lt":{"normal":9735,"deep_load":10288},"speed_kn":20.0,"complement":698,"armament":[{"count":4,"gun_id":"eoc_203mm_l45","mount":"2x twin turrets fore and aft"},{"count":12,"gun_id":"armstrong_152mm_l40_qf","mount":"casemates"},{"count":12,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":178,"deck":63,"barbettes":152,"casemate":152,"conning_tower":356,"scheme":"Krupp"},"plan_template":"yakumo","uncertainty":"high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"kasuga","name":"Kasuga","side":"Japan","fleet":"Combined Fleet","division":"1st Division","type":"Armoured cruiser","class":"Kasuga class","dimensions_m":{"length":111.7,"beam":18.9,"draft":7.4},"displacement_lt":{"normal":7700,"deep_load":8500},"speed_kn":20.0,"complement":595,"armament":[{"count":1,"gun_id":"eoc_254mm_l40","mount":"single turret forward"},{"count":2,"gun_id":"eoc_203mm_l45","mount":"twin turret aft"},{"count":14,"gun_id":"armstrong_152mm_l40_qf","mount":"casemates"},{"count":10,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":150,"deck":38,"barbettes":150,"casemate":150,"conning_tower":150,"scheme":"Krupp (Terni)"},"plan_template":"kasuga","uncertainty":"high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"nisshin","name":"Nisshin","side":"Japan","fleet":"Combined Fleet","division":"1st Division","type":"Armoured cruiser","class":"Kasuga class","dimensions_m":{"length":111.7,"beam":18.9,"draft":7.4},"displacement_lt":{"normal":7700,"deep_load":8500},"speed_kn":20.0,"complement":595,"armament":[{"count":4,"gun_id":"eoc_203mm_l45","mount":"2x twin turrets fore and aft"},{"count":14,"gun_id":"armstrong_152mm_l40_qf","mount":"casemates"},{"count":10,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":150,"deck":38,"barbettes":150,"casemate":150,"conning_tower":150,"scheme":"Krupp (Terni)"},"plan_template":"nisshin","uncertainty":"high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"kasagi","name":"Kasagi","side":"Japan","fleet":"Combined Fleet","division":"3rd Division","type":"Protected cruiser","class":"Kasagi class","dimensions_m":{"length":114.1,"beam":14.9,"draft":5.4},"displacement_lt":{"normal":4900,"deep_load":5060},"speed_kn":22.5,"complement":405,"armament":[{"count":2,"gun_id":"eoc_203mm_l45","mount":"single shielded fore and aft"},{"count":10,"gun_id":"armstrong_120mm_l40_qf","mount":"casemates"},{"count":12,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":null,"deck":114,"barbettes":null,"casemate":114,"conning_tower":114,"scheme":"Protective deck"},"plan_template":"kasagi","uncertainty":"medium_high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"chitose","name":"Chitose","side":"Japan","fleet":"Combined Fleet","division":"3rd Division","type":"Protected cruiser","class":"Kasagi class","dimensions_m":{"length":115.3,"beam":15.0,"draft":5.4},"displacement_lt":{"normal":4900,"deep_load":5060},"speed_kn":22.5,"complement":405,"armament":[{"count":2,"gun_id":"eoc_203mm_l45","mount":"single shielded fore and aft"},{"count":10,"gun_id":"armstrong_120mm_l40_qf","mount":"casemates"},{"count":12,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":null,"deck":114,"barbettes":null,"casemate":114,"conning_tower":114,"scheme":"Protective deck"},"plan_template":"chitose","uncertainty":"medium_high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"suma","name":"Suma","side":"Japan","fleet":"Combined Fleet","division":"6th Division","type":"Protected cruiser","class":"Suma class","dimensions_m":{"length":93.5,"beam":12.2,"draft":4.6},"displacement_lt":{"normal":2657,"deep_load":2800},"speed_kn":20.0,"complement":310,"armament":[{"count":2,"gun_id":"armstrong_152mm_l40_qf","mount":"single fore and aft"},{"count":6,"gun_id":"armstrong_120mm_l40_qf","mount":"sponsons"},{"count":10,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":null,"deck":51,"barbettes":null,"casemate":51,"conning_tower":76,"scheme":"Protective deck"},"plan_template":"suma","uncertainty":"medium","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"akashi","name":"Akashi","side":"Japan","fleet":"Combined Fleet","division":"6th Division","type":"Protected cruiser","class":"Suma class","dimensions_m":{"length":93.5,"beam":12.2,"draft":4.6},"displacement_lt":{"normal":2657,"deep_load":2800},"speed_kn":20.0,"complement":310,"armament":[{"count":2,"gun_id":"armstrong_152mm_l40_qf","mount":"single fore and aft"},{"count":6,"gun_id":"armstrong_120mm_l40_qf","mount":"sponsons"},{"count":10,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":null,"deck":51,"barbettes":null,"casemate":51,"conning_tower":76,"scheme":"Protective deck"},"plan_template":"akashi","uncertainty":"medium","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"niitaka","name":"Niitaka","side":"Japan","fleet":"Combined Fleet","division":"3rd Division","type":"Protected cruiser","class":"Niitaka class","dimensions_m":{"length":102.0,"beam":13.4,"draft":5.3},"displacement_lt":{"normal":3420,"deep_load":3550},"speed_kn":20.0,"complement":320,"armament":[{"count":6,"gun_id":"armstrong_152mm_l40_qf","mount":"fore/aft + sponsons"},{"count":10,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":null,"deck":63,"barbettes":null,"casemate":63,"conning_tower":102,"scheme":"Protective deck"},"plan_template":"niitaka","uncertainty":"medium","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"tsushima_cruiser","name":"Tsushima","side":"Japan","fleet":"Combined Fleet","division":"4th Division","type":"Protected cruiser","class":"Niitaka class","dimensions_m":{"length":102.0,"beam":13.4,"draft":5.3},"displacement_lt":{"normal":3420,"deep_load":3550},"speed_kn":20.0,"complement":320,"armament":[{"count":6,"gun_id":"armstrong_152mm_l40_qf","mount":"fore/aft + sponsons"},{"count":10,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":null,"deck":63,"barbettes":null,"casemate":63,"conning_tower":102,"scheme":"Protective deck"},"plan_template":"tsushima_cruiser","uncertainty":"medium","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"otowa","name":"Otowa","side":"Japan","fleet":"Combined Fleet","division":"3rd Division","type":"Protected cruiser","class":"Otowa (own class)","dimensions_m":{"length":98.0,"beam":12.6,"draft":4.8},"displacement_lt":{"normal":3000,"deep_load":3100},"speed_kn":21.0,"complement":312,"armament":[{"count":2,"gun_id":"armstrong_152mm_l40_qf","mount":"single fore and aft"},{"count":6,"gun_id":"armstrong_120mm_l40_qf","mount":"sponsons"},{"count":4,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":null,"deck":76,"barbettes":null,"casemate":null,"conning_tower":102,"scheme":"Protective deck"},"plan_template":"otowa","uncertainty":"medium","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"admiral_nakhimov","name":"Admiral Nakhimov","side":"Russia","fleet":"2nd Pacific Squadron","division":"Cruiser Division","type":"Armoured cruiser","class":"Admiral Nakhimov (own class)","dimensions_m":{"length":103.3,"beam":18.6,"draft":7.7},"displacement_lt":{"normal":8524,"deep_load":8800},"speed_kn":16.7,"complement":572,"armament":[{"count":8,"gun_id":"obukhov_203mm_l35","mount":"4x twin barbettes (rhomboid)"},{"count":10,"gun_id":"canet_152mm_l45","mount":"casemates"},{"count":6,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":254,"deck":76,"barbettes":203,"casemate":76,"conning_tower":152,"scheme":"Compound"},"plan_template":"admiral_nakhimov","uncertainty":"medium","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"vladimir_monomakh","name":"Vladimir Monomakh","side":"Russia","fleet":"2nd Pacific Squadron","division":"Cruiser Division","type":"Belted cruiser","class":"Vladimir Monomakh (own class)","dimensions_m":{"length":90.3,"beam":15.85,"draft":8.0},"displacement_lt":{"normal":5593,"deep_load":5750},"speed_kn":15.2,"complement":591,"armament":[{"count":5,"gun_id":"canet_152mm_l45","mount":"forecastle + sponsons"},{"count":6,"gun_id":"canet_120mm_l45","mount":"battery deck"},{"count":16,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":229,"deck":76,"barbettes":null,"casemate":102,"conning_tower":152,"scheme":"Compound"},"plan_template":"vladimir_monomakh","uncertainty":"medium","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"dmitri_donskoi","name":"Dmitrii Donskoi","side":"Russia","fleet":"2nd Pacific Squadron","division":"Cruiser Division","type":"Belted cruiser","class":"Dmitrii Donskoi (own class)","dimensions_m":{"length":93.4,"beam":15.8,"draft":7.9},"displacement_lt":{"normal":5800,"deep_load":6200},"speed_kn":16.5,"complement":514,"armament":[{"count":6,"gun_id":"canet_152mm_l45","mount":"sponsons fore and aft"},{"count":10,"gun_id":"canet_120mm_l45","mount":"battery deck"},{"count":6,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":152,"deck":51,"barbettes":null,"casemate":null,"conning_tower":152,"scheme":"Compound"},"plan_template":"dmitri_donskoi","uncertainty":"medium","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"oleg","name":"Oleg","side":"Russia","fleet":"2nd Pacific Squadron","division":"Cruiser Division","type":"Protected cruiser","class":"Bogatyr class","dimensions_m":{"length":134.2,"beam":16.6,"draft":6.6},"displacement_lt":{"normal":6975,"deep_load":7100},"speed_kn":23.0,"complement":576,"armament":[{"count":12,"gun_id":"canet_152mm_l45","mount":"2 twin turrets + 8 casemates"},{"count":12,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":null,"deck":80,"barbettes":127,"casemate":80,"conning_tower":140,"scheme":"Krupp deck + turrets"},"plan_template":"oleg","uncertainty":"high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"aurora","name":"Aurora","side":"Russia","fleet":"2nd Pacific Squadron","division":"Cruiser Division","type":"Protected cruiser","class":"Pallada class","dimensions_m":{"length":126.8,"beam":16.8,"draft":6.4},"displacement_lt":{"normal":6731,"deep_load":6932},"speed_kn":19.0,"complement":570,"armament":[{"count":8,"gun_id":"canet_152mm_l45","mount":"forecastle + sponsons + aft"},{"count":24,"gun_id":"canet_75mm_l50","mount":"casemates + pivots"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":null,"deck":63,"barbettes":null,"casemate":null,"conning_tower":152,"scheme":"Protective deck"},"plan_template":"aurora","uncertainty":"high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"svetlana","name":"Svetlana","side":"Russia","fleet":"2nd Pacific Squadron","division":"Cruiser Division","type":"Protected cruiser","class":"Svetlana (own class)","dimensions_m":{"length":101.0,"beam":13.0,"draft":5.7},"displacement_lt":{"normal":3862,"deep_load":3960},"speed_kn":21.0,"complement":401,"armament":[{"count":6,"gun_id":"canet_152mm_l45","mount":"fore/aft + sponsons"},{"count":10,"gun_id":"canet_75mm_l50","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":null,"deck":51,"barbettes":null,"casemate":null,"conning_tower":102,"scheme":"Protective deck"},"plan_template":"svetlana","uncertainty":"high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"zhemchug","name":"Zhemchug","side":"Russia","fleet":"2nd Pacific Squadron","division":"Cruiser Division","type":"Protected scout cruiser","class":"Izumrud class","dimensions_m":{"length":111.0,"beam":12.2,"draft":5.0},"displacement_lt":{"normal":3168,"deep_load":3380},"speed_kn":24.0,"complement":334,"armament":[{"count":6,"gun_id":"canet_120mm_l45","mount":"fore/aft + sponsons"},{"count":6,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":null,"deck":50,"barbettes":null,"casemate":null,"conning_tower":30,"scheme":"Protective deck"},"plan_template":"zhemchug","uncertainty":"high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"izumrud","name":"Izumrud","side":"Russia","fleet":"2nd Pacific Squadron","division":"Cruiser Division","type":"Protected scout cruiser","class":"Izumrud class","dimensions_m":{"length":111.0,"beam":12.2,"draft":5.0},"displacement_lt":{"normal":3168,"deep_load":3380},"speed_kn":24.0,"complement":334,"armament":[{"count":6,"gun_id":"canet_120mm_l45","mount":"fore/aft + sponsons"},{"count":6,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":null,"deck":50,"barbettes":null,"casemate":null,"conning_tower":30,"scheme":"Protective deck"},"plan_template":"izumrud","uncertainty":"high","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]},{"id":"almaz","name":"Almaz","side":"Russia","fleet":"2nd Pacific Squadron","division":"Cruiser Division","type":"Armed yacht / scout","class":"Almaz (own class)","dimensions_m":{"length":111.0,"beam":13.3,"draft":5.3},"displacement_lt":{"normal":3285,"deep_load":3400},"speed_kn":19.0,"complement":336,"armament":[{"count":4,"gun_id":"canet_75mm_l50","mount":"light"},{"count":8,"gun_id":"qf_12pdr_76mm","mount":"light"},{"count":4,"weapon_id":"torpedo_381_457mm","mount":"submerged/beam tubes"}],"armor_mm":{"belt":null,"deck":null,"barbettes":null,"casemate":null,"conning_tower":null,"scheme":"Unprotected (yacht)"},"plan_template":"almaz","uncertainty":"medium","data_status":"Cruiser pass: hull/armament project-vetted; specs and armour from standard references + navweaps.","sources":["in-project: game/render.js SHIP_LAYOUT","Conway's 1860-1905 (standard reference)","navweaps.com (Tony DiGiulian)"]}],"formations":{"metadata":{"battle":"Battle of Tsushima","date":"1905-05-27","time_snapshot":"approx. 14:08, opening of the daylight action","coordinate_system":{"origin_note":"Arbitrary tactical map origin for scenario setup, not geodetic coordinates. Origin sits on the Russian van.","units":"metres","x_positive":"east","y_positive":"north","heading_degrees":"0 = north, 90 = east, 180 = south, 270 = west"},"confidence":"Ship order within each line is historical. Coordinates are schematic starting positions for a scenario, not exact positions.","omitted_from_v1":["oslyabya (2nd Division flagship)","admiral_nakhimov (armoured cruiser)","kasuga","nisshin","kamimura 2nd Division armoured cruisers"],"sources":["https://en.wikipedia.org/wiki/Battle_of_Tsushima","https://en.wikipedia.org/wiki/Second_Pacific_Squadron","https://en.wikipedia.org/wiki/T%C5%8Dg%C5%8D_Heihachir%C5%8D"]},"russian_battle_line":{"note":"Second Pacific Squadron in single line ahead steaming for Vladivostok, course about NNE, having shaken out of its approach formation as contact was made. 1st Armoured Division leads, Nebogatov's 3rd Division (the coastal ships) brings up the rear.","heading_summary_deg":23,"ships":[{"id":"suvorov","sequence":1,"x":0,"y":0,"heading_deg":23},{"id":"aleksandr3","sequence":2,"x":-195,"y":-460,"heading_deg":23},{"id":"borodino","sequence":3,"x":-391,"y":-921,"heading_deg":23},{"id":"oryol","sequence":4,"x":-586,"y":-1381,"heading_deg":23},{"id":"sisoy","sequence":5,"x":-977,"y":-2301,"heading_deg":23},{"id":"navarin","sequence":6,"x":-1172,"y":-2762,"heading_deg":23},{"id":"nikolai1","sequence":7,"x":-1563,"y":-3682,"heading_deg":23},{"id":"apraksin","sequence":8,"x":-1758,"y":-4142,"heading_deg":23},{"id":"senyavin","sequence":9,"x":-1954,"y":-4603,"heading_deg":23},{"id":"ushakov","sequence":10,"x":-2149,"y":-5063,"heading_deg":23}]},"japanese_crossing_the_t":{"note":"Togo's 1st Division after the 16-point turn in succession (the Togo Turn), capping the Russian van and crossing its T, then settling onto a course down the Russian engaged side. Kamimura's 2nd Division armoured cruisers followed astern (not in v1).","heading_summary_deg":293,"manoeuvre":"turn in succession to port completed across the Russian van's bow; column then steadies to run down the engaged (port) side","ships":[{"id":"mikasa","sequence":1,"x":1460,"y":5356,"heading_deg":293},{"id":"shikishima","sequence":2,"x":1920,"y":5161,"heading_deg":293},{"id":"fuji","sequence":3,"x":2381,"y":4965,"heading_deg":293},{"id":"asahi","sequence":4,"x":2841,"y":4770,"heading_deg":293}]}}}};
 var GAME_DATA = SCENARIO_DATA.yalu;
 // ===== sprites.js =====
-// sprites.js — top-down ship art extracted from the fleet package (bow points +x).
+// sprites.js - top-down ship art extracted from the fleet package (bow points +x).
 const SHIP_SPRITES = {
   akagi: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAATAAAAAyCAYAAADbRIdMAAAE/klEQVR4nO2dv08bMRTHXyr+ExYWNiaEykAFEgxIpUOHjBkqyFBl7MTUEXUIqENGhg6lEgOVkMpAhTp1Y2Hhb0mH9F0uwXd+9vnOv74fqVIKSewczifvOc92jxJndW196rsPofP89Njz3QcAbIh64ErkdHE+7qIrUXN8MvTdhaiA8MMhyD+ENGqCnIAPbIUP8bmn8wuKqAnkCsTnnlYvjEpWvuV0c33ltf1QOTg88t0FUAHEV01rL3B1bX3ahaxMhTQa9hu3+frNu+L271/fGz9fCJyNL313IQpiEn0O4mulo03lZSIlF0IyJUWBARlNRR+DACXiC0VyTjvBKaNUXlWi8iElEyAwYIuLSDcECbLkfIvMWeOmUdfN9VXwoqoCAgM+CSkK9C0yJ42ayIujrljlRRSXwN6+/1Dc/vHtq8eegFCQCtBEdOW0s0uZNW7IVF4xi4uJRWBleTGQGJBSFp2NzLoQWaMGcpQXURwCU8mLgcSAKTYy6yIqW7F9oFReKaSMAORO+f0rlVnZD8cnwymRe5FZCcxEXhAXAGmhkpkuKmNfuBaZ0ZOYlEmkLK8YUkgizIGB7jBNMV2ll+IH5jrfpSIWgRHhW0jQPbYysxGZ6AGY71okJoEB4BMTmdmITHtHzHe9BAKbs7G5/+Jnf//89NATEDrS+TITkdXeAfJSA4HNUMmLgcRAFSYi00nsVdUvIC8gZWtrq/gHgI7RsE+jYV+7acPF+ZhW19andXsIKgUmkdfN9RXkBQCwRioxFpnq9wt1YNIyCYgLAOCC0bAvSikvzsd0fDKcLqeUhcByThnLczmYuwFtgDFWDfvkbHxpLLFXRHmnjMsT0XUT0wDYgDEmQ5pS3t7dF+nkilResYnLZpAMBgOaTCa0sbmPT0ngBB6Hg8Gg+BnGWDXSlPL27n66t7PdW7GV16fTL406Gjr8+h4eHmrvVy6pYPBtXPrjw4bJZLLwf8mH7O7ublvdCYrPpx+L29KU8vbuftrjG3VPnmqFfdWnI9F8nkIlKB251Ibx9SsLm4WP6GJGeYwtC0xCjtdRWie2t7PdKybDUk0lddhUkqOQdQYEJgOrFeTooi6ixQLXog7s+emxpzuN5ODwKLnjt5YHEgYWcA3GmJ6z8aWxvIiW6sD+S6w2EitLLJVoDAMKtA3GmJqm6yNfVOJLI7EUozEAQHdwxCWNulTrIpVLiSQSI0ozpQQAtItJuqhb0K3djYJItrSIKJ2UUgcm8WdgNwpgQufb6TA5LzNSAYHNwTdsoA7vGxoykNgcCCwMsF12mAS3pTSDraVnQGD+wYElYdHk3MhODvVgcLgHBOYbHNobDtJ5Lcb1YbfG50JyrRiRfnKfv6VMUWIA5IqvaEuF1cG23Ald0StRmoWvAORGE2kRuRcX0/hJc0wpkUL6B3Ng7WMjLaL2oi0VThrITWIQWBjgW0g7pMXnJtIi6lZcjLOGTCVGFG9KCYEBnzRd/WIqpjq6SBPrcNqgtHKfqdo+NnSxQWDAFhdL71wKyBYf0ZaKVho3icZU6PbFXqZr4UFg+RJS9NMWknXQvsXFtNaJphIzwUR4LmSXqsCwMF9PDAJiJCJSEYqcJLTaUdVhlF1JrQrT6C4nYnpz5kQOIrKl8xdYd0w441tyALQBROSeIC+MRHJEEB3wA0QUDlFfUERzbrB9Q+YKRBQOyf8hpNFczuANCWLlHwKqQb/2V9f4AAAAAElFTkSuQmCC",
   akitsushima: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAiUAAABQCAYAAADGHQWwAAAM1ElEQVR4nO3df4wU5R3H8c/u3g9AaaxF/NGKnNemZ+K1qbWtGIpGhNbaRhQrJ6DUBA2FszGYJo1ag6IEix6kHEjl0KK0HhH1bKNRigiI9A+laaXA+YNaaWL/06YpyHI/pn+cs8wd+2N295mdmWfer78ue8vs83Azz3zm+zwzmxIirbml1Qm7DQjXod59qbDbAAC1wGAXgnKCxto1nUE2BTGwcFF72E1ARBBQYTt2cEMIGgCCVm1AJdQg6thBiyBoALAJoQZRl7gdjKABAJUh1CBoVuwgSQ4aL77wbNhNQI1cfc3MsJsAVIVQg1Ji9QcuFD5sChrlhozF7XMDakntTbny+tzPu7ZtCbEl0dTRuSnsJqDGohJEb73lptzP6594KrR2EGrsVxd2A/xww0jcwkclVQybQgbMYt9IHhNBNCrBxoRqzwELF7VX9YgFQk3wIh9KmltanaiEkSRXMQDUnokxhArbCYSa6Iv0f1DQgYSQES1M3wDR5D02Z8yYUdE2bKrYVMrP9FPSg0skKyUmp2uKBQ9CBgCUp9Jxk6kof+c0bzUmiQElcqHEVHXEDSMEDwAIX1SmoqIebLznvyQGlEiFEpOBhDACAHZJWrBJYkCJRCgxPV1DILHfdW0Lcj8/170uxJZUzoY+SPb0A8lQy2BjMrwkJaCE3hmma+Dys9DVewIcKS4nRBv6INnTD5TGIvTKeMNLUNUV7+JZGwJKqJUSpmsAALbynpeCCii2VVBCabSp6RqqI3YpdTVW7MrcFfUrdBv6INnTD/hDpcSskdM/QVRR3ApK3MJJzSslVEcAAEk28twVRBXFPc/GrXpS01BiIpBQHQEA2CTIaZ64Te/UpFEmp2sII/ZioWt8+iDZ0w+UxvRNOIJcKBvVBbKBV0qYrgEAoHxJrKAE+uFM16Ac5VyN2fBsDBv6INnTDxRGpSRabK6gBPKBTNegEgx8QDRxbEaXbQHF+PQN1REAAGqj0BSPVH1ICWOKx2goMRVICCMAAJQnyFuN8wWUIMKJkVDCdA0AANES1ELZkc9AMRlOqg4lTNcAyXPxpT8o+Z639rxUg5YA8CNfQDEZTkwFk6pCCdM1QPL4CSTu+wgmQPS451yT4cRU1aSiUGJiuobqCBBvkydPLvi73bt317AlACphMpyYqpqUHUqojgAAYA9vOAm7apIu580EEgAA7LS4fa5efOHZ3ExGpdau6dTaNZ25WZVy+KqUMF0DAID9gqialFMxKRlKqI4AAJAsi9vnGltrUs50TtFQUm0goTpSWr47GbhjAQCCx/hbnKmFsOUsgs27pqS5pdUxEUgWt88lkBRR6NZKv7dcAgAqw/jrn3suN7HWxM0Xhd5zUqWE6khtuDv+/PnzT/pdV1cXz3gAgIAw/lbGxJROqarJsEoJ1ZHaKHZAeF8nsQOAWYy/1Qm6apILJaYCCYordUC4ODAAwCzGX3NM3D6c79bhOkl65dWdZd9L7LJ5uibIHbKrq+uk10odKAAARIXJhbDudE5dtYHEbxi5a8mqSj8m8Wz8vyv1GPIpV15/0mvFHmuOaLJx37VdEo/NfBeJriAuTqdPn258m0FatuSOor838WyTz2ZqnJRU3dSNzZWSIPgtH0onDhQbF1zlG9hK2bVtSwAtQbncfdjPd9/YuO/azuZjs9D4WyyUBMG248LE80wWLmrXod59qTpp6IEmCxe1VxRM3EZ0dG4imMC3fIOYdzCMyyAH2CaJx2ahu3Ak+wKESaa+ZdgNJJJnoetnwaTijV59zUx1dG7KNRL5uTt4qWTOAQEAZjH+muGe66++ZmbV1RFvIJFG3BLsBpNKw4nbQIJJcaUODA4IAAgG4291TIeRkc8qKfi4Vx6iFrxiC6iSeEDYXiK2BWtKksfGY5PxtzxBTNXkU/C7b6pZZyKx1sSPt/a8xHcvAEAIGH/9MRlGpNJfylf0C/ncYCKdeDRsudzpHIJJfhwAABAOxt/CTIURqXR1xKtoKJFOpJpqqyZuBwknAABEVzXPG/HyWx3xKhlKXNVWTZjOAQAgusKqjnj5DiUSVRMAAGxjOoxI5VVHvMoKJS4WwQIAEG9RCiOuikKJ+8GmFsFKVE2AuCn1HSkAoslkGJEqn6rJp+JQIpmbzpGomgBxUehWynzvAxAN3oeamgwjUvXVEa+qQomr2ukciaoJECcEDiD6gggiUjBhxGUklEjmpnMkqiYAAJRr5Fe8BBFEpGDCiMtYKJHMTOdIVE0AAPAjqGqIVLsg4mU0lLiomiBo17UtyP38XPe6EFtSORv6INnTDyAubAsiXoF/YLVf7Cfx5X5J4edLv7wnwJHickK0oQ+SPf1AaTZ+IV/c2BxEvAKplHiZWgQrUTUBACRHUoKIV80a0tzSWtV0jouqib1KXY0VuzJ3Rf0K3YY+SPb0A/5QKamdJAYRr8ArJS6Ti2AlqiYAADsEGUSkYG/hNa1mocRlYjpHOnGHDsEEABAnQd6664pDVSSf0BrKdA5GYqFrfPog2dMPlMb0TfWCroZI8Q0iXjWvlLiYzgEA2IwgUr5IdICqCaTyrsZseDaGDX2Q7OkHCqNSMtzI6ZdCCCLli1RnTDzTRBoKJwST+GHgA6LJpmPTb6AoJqiwUYzNQcQrtOmbfEwvgpWomgCALeIaKCqVlCDiFalQIpl5RL00fK1JPoQVAKidpAWKSiUxiHhFusOmpnPycdeflEJ4qR2bSsSATbzH5owZMyraRhICRSnewFFIEoOIV+QqJV6mpnPy8XuA+E33hBcAUWSiQuGV5HDhJ1QUk/TA4UekQ4lkbjqnUqbDi0SAAeBPVKY8enp6qt5GFBAqoi/yoUQa/kyTkb8LI6jkU86BT/UFKMz0lX2cJbkqkQ+hwn6xCCWuQ737UssefMC56+57cjtWvqCST1TCi8TUkWmcxOzCiTh+1vx6pT5/+umaPXde0ff5DRX92SNKpTPK1I8a9jqhwn6J+QO7D2grJkrBpRx+F+3aipNYtBz+8EMtXXKPmr/8Ff3i7nvDbk5oVq96RGeMP1Nts6u7aHj1T1vV/fundNHF39JPF/3MUOsK+88nn+i5LZu17+2/SUrpO5Mm6dqZN6ixsbFgqBjIHpVSKWUaRhfdtt9Q0dY2y/laa6u8F6BIhlhVSqrh52CIY9VF4qSMaHl952ua2HS+/nHoff37o4909jnnhN2k2PrX4Q+19ZWX1HR+s5HtlaxUOI76j/1PqXRG6YZRSqVS2rHzde3YtVvpTH3NKhXd3ZtT3d2ba/FRiBhSaAVsrroA1eg7flx33nG7bl2wUNu2vqwvnTtBP55147D3dKxYri+MG6fssaz2vf1XnTexSel0Wqeddpqy2azee+9dDfT3a/KUyzV12nQ9velJHTywX6NHj9FVP/yRrpg6LbetTRuf0M4d2yVJp5xyqs5vblbb7Lkaf+ZZuc+qZLuO42jb1pf12vZt+uTjj3XG+PGa9r2r9N0plw/rx7hxZ6ivr08H9v9dg4OD+vYlkzTrxjna+HiX9rzx+rB+L132kM46239Ay2aP6YEl9+qGG+dox/Ztqquv174D7xb9NwPZo0rXNSiVGX69OdiXlSR9cOjdomP+A0vvd57veUF79+7l3IBQsOMFhOCCJPrznjfU8+wzWv7wSv1l75v63ZO/1YqVq5XJZHLv6VixXL0HD2jOzT/RJZMuVWPjKHWsWK53eg/qlvm36RsXfVPv9PZq9apHclMC6UydBgf6NZA9qrpRY5VKp0/+cMfRQN8xOYP9qhs1VtLQ2gRnoF+ZhjFK19XJGRhQf/ZIye0O9mU1OHBcmYYxSqXTcgYH1J89+tm/qR+x7aHXHGdQ/dkjytSPUrquYWhdRCqjTMPwdRGD/X0aOH5U9aM/J6UKD8EDxz+VJGUaRg9tSyn984NDRcfsxzd0OQ/9aoU2bHhMkydflpKkVas6nPXrN2j//v2M94g8dtIQ+QkuEuHFVe3KewSv/9gRpTN1Stc3SpL6Pv3vsBO5NHQyl6S6xlOGvZZSSpnGMbnXJn5xvC64oEWdnWty49SkSZOc29sXavacmwqOXU1NTc4f/9CjC1u/nmprm+WMHTtW69d35d4/depUp9R2W1q+6vxm3aO67PIrcu/p6HjYefPNt/T0090paWjdw9hTT9X6rg2597S3L3Ia6uvVsXJVat68m52J552n++5fOqytW57Z7Cy+8+c6fPhwwT5seWazs/bRddq+/bWUJM2bd7OzceOTvsbrxx5b59x22wLGdsQSO24M+A0vtmPlfbQdev8d58pp39eundt17oSmlCQtW/agc/DAQT21aVPub9fWNstpaWnRkiX3DXut9cILdfc9v8y9du21M5znn+/hbw4AAMo3YcIEAjSAiv0fXdB0TRqJeUEAAAAASUVORK5CYII=",
@@ -592,7 +610,7 @@ const SHIP_SPRITE_DIMS = {"akagi": [304, 50], "akitsushima": [549, 80], "chaoyon
 if (typeof module !== "undefined" && module.exports) { module.exports = { SHIP_SPRITES, SHIP_SPRITE_DIMS }; }
 // ===== engine.js =====
 // ============================================================================
-//  engine.js  —  Yalu naval combat engine (pure logic, no DOM)
+//  engine.js  -  Yalu naval combat engine (pure logic, no DOM)
 //  Models: ballistics, calibre-vs-armour penetration, reload-banded gunnery,
 //  zone-based damage, fire / flooding / crew / engine criticals.
 // ============================================================================
@@ -658,7 +676,9 @@ function zoneArmour(ship, zone) {
 // (most Yalu protected cruisers). Their "side" hits land on thin/no plate.
 function isDeckProtected(ship) {
   const a = ship.armor_mm || {};
-  return !("belt" in a) && ("deck" in a || "protective" in a);
+  // Several Tsushima data records explicitly store belt:null. Treat a null or zero
+  // belt as no side belt, rather than as an armoured belt merely because the key exists.
+  return normArmor(a.belt) <= 0 && normArmor(a.deck != null ? a.deck : a.protective) > 0;
 }
 
 // ---------- gun ballistics & penetration -------------------------------------
@@ -915,7 +935,7 @@ function batteryCanBear(from, battery, target) {
 }
 
 // ---------- turning / movement -----------------------------------------------
-// Max heading change per turn (deg) — small/light ships are nimbler.
+// Max heading change per turn (deg) - small/light ships are nimbler.
 function maxTurnRate(ship) {
   const base = ship.length < 50 ? 60 : ship.length < 75 ? 42 : ship.length < 90 ? 32 : 26;
   return base * ship.steering * (0.6 + 0.4 * ship.throttle);
@@ -970,7 +990,8 @@ function hitChance(from, battery, target, range) {
   let cond = (0.55 + 0.45 * from.crew);            // crew casualties hurt gunnery
   if (from.turnedHard) cond *= 0.82;               // hard manoeuvre spoils aim
   if (from.fires > 0) cond *= clamp(1 - 0.06 * from.fires, 0.6, 1);
-  return clamp(base * rangeFactor * sizeFactor * evade * cond, 0.02, 0.9);
+  const ranging = battery && battery._rangingFactor != null ? battery._rangingFactor : 1;
+  return clamp(base * rangeFactor * sizeFactor * evade * cond * ranging, 0.02, 0.9);
 }
 
 // Choose an impact zone. Weights shift if the ship has no side belt.
@@ -1103,7 +1124,7 @@ function resolveHit(from, battery, target, range) {
     }
   }
 
-  // base shell "power" — heavier shells hit harder; QF gets a fire/casualty edge
+  // base shell "power" - heavier shells hit harder; QF gets a fire/casualty edge
   const mass = shellMass(gun);
   let power = Math.sqrt(mass) * 1.05;                  // ~ structure points
   // Heavy shells told out of all proportion at the Yalu: a main-gun hit was devastating,
@@ -1150,7 +1171,7 @@ function resolveHit(from, battery, target, range) {
       dmg = power * 0.05 * (partial ? 1.4 : 1);
     }
   } else if (unarmoured || zone === "upper" || zone === "sidehull" || zone === "ends") {
-    // through unarmoured structure — but a solid shell over-penetrates and dumps little energy
+    // through unarmoured structure - but a solid shell over-penetrates and dumps little energy
     dmg = power * (zone === "upper" ? 0.7 : 0.9) * (partial ? 0.6 : 1) * depositEff;
     crewHit = (isQF ? 0.010 : 0.006) * (zone === "upper" ? 1.3 : 1);
     const fc = (heShell ? (isQF ? 0.42 : 0.34) * quality : 0.08);  // bursting shell sets fires; quality scales the fill
@@ -1191,8 +1212,8 @@ function resolveHit(from, battery, target, range) {
   }
   // A hole at the waterline floods whether or not the shell burst, and a bigger shell tears a bigger
   // hole. This cumulative flooding is what actually sinks ships here, over-penetration or not.
-  // Flooding from holes at or about the waterline. A clean breach — a penetration, or an HE
-  // burst in the unarmoured ends/side — lets water in, and with the low freeboard of these
+  // Flooding from holes at or about the waterline. A clean breach - a penetration, or an HE
+  // burst in the unarmoured ends/side - lets water in, and with the low freeboard of these
   // overloaded ships it floods progressively. This cumulative flooding, not belt penetration,
   // is what sank most ships at Tsushima, so it has to be able to build up under sustained fire.
   if (!isLight) {
@@ -1346,8 +1367,10 @@ function fireTorpedo(from, target, turn) {
   from.firedThisTurn = true;
 
   // close-range hit chance, decaying fast with distance and target evasion
-  const evasion = (target.movedThisTurn ? 0.7 : 1) * (target.turnedHard ? 0.75 : 1);
-  let hc = 0.18 * Math.exp(-range / 550) * evasion * clamp(target.engine, 0.3, 1);
+  const engine = clamp(target.engine != null ? target.engine : 1, 0.3, 1);
+  const speed = Math.max(0, target.maxSpeed * (target.throttle != null ? target.throttle : 1) * engine);
+  const evasion = (1.10 - 0.32 * clamp(speed / 18, 0, 1)) * (target.turnedHard ? 0.75 : 1);
+  let hc = 0.18 * Math.exp(-range / 550) * evasion;
   hc = clamp(hc, 0.01, 0.6);
 
   if (rnd() >= hc) {
@@ -1477,7 +1500,7 @@ if (typeof module !== "undefined" && module.exports) {
 }
 // ===== render.js =====
 // ===========================================================================
-//  render.js  — procedural top-down chart rendering for the Yalu simulator
+//  render.js  - procedural top-down chart rendering for the Yalu simulator
 //  Pure canvas drawing. No game logic. Reads ship state produced by engine.js.
 //  Ships are drawn from a DISPLAY POSE (dx/dy/dh) which ui.js eases toward the
 //  true pose each frame, so movement and turning animate smoothly.
@@ -1599,7 +1622,7 @@ function drawCompass(ctx, v) {
 }
 
 // ---- range rings, optionally shaded by a firing solution -------------------
-// solution (optional): { defeatRange, maxRange } — inside defeatRange your gun
+// solution (optional): { defeatRange, maxRange } - inside defeatRange your gun
 // defeats the target's belt (green band), beyond maxRange it cannot reach.
 function drawRangeRings(ctx, v, ship, solution) {
   const cx = wx(v, pX(ship)), cy = wy(v, pY(ship));
@@ -2204,9 +2227,15 @@ function drawEffects(ctx, v, effects) {
       ctx.globalAlpha = e.life; ctx.fillStyle = PALETTE.fireHot;
       ctx.beginPath(); ctx.arc(sx, sy, 2.5 + (1 - e.life) * (e.heavy ? 6 : 3), 0, Math.PI * 2); ctx.fill();
     } else if (e.type === "splash") {
-      const sx = wx(v, e.x), sy = wy(v, e.y);
-      ctx.globalAlpha = e.life; ctx.strokeStyle = PALETTE.splash; ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.arc(sx, sy, (1 - e.life) * 9 + 2, 0, Math.PI * 2); ctx.stroke();
+      const sx = wx(v, e.x), sy = wy(v, e.y), p = 1 - e.life;
+      const cal = Math.max(40, e.calibre || 120), h = Math.min(34, 9 + cal / 13);
+      ctx.globalAlpha = Math.min(1, e.life * 1.5);
+      ctx.strokeStyle = PALETTE.splash; ctx.lineWidth = Math.max(1, cal / 130);
+      ctx.beginPath(); ctx.moveTo(sx, sy); ctx.quadraticCurveTo(sx - 2, sy - h * (1 - p * 0.45), sx + Math.sin(p * 8) * 2, sy - h * e.life); ctx.stroke();
+      ctx.globalAlpha = e.life * 0.75; ctx.fillStyle = "rgba(235,244,241,0.72)";
+      ctx.beginPath(); ctx.ellipse(sx, sy - h * e.life * 0.55, 1.4 + cal / 180, Math.max(2, h * e.life * 0.22), 0, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = e.life * 0.8; ctx.strokeStyle = PALETTE.splash; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.ellipse(sx, sy, 3 + p * 13, 1.6 + p * 6, 0, 0, Math.PI * 2); ctx.stroke();
     } else if (e.type === "burst") {
       const sx = wx(v, e.x), sy = wy(v, e.y);
       ctx.globalAlpha = e.life; ctx.fillStyle = PALETTE.hit;
@@ -2221,6 +2250,16 @@ function drawEffects(ctx, v, effects) {
       const sx = wx(v, e.x), sy = wy(v, e.y);
       ctx.globalAlpha = e.life * 0.3; ctx.fillStyle = PALETTE.smoke;
       ctx.beginPath(); ctx.arc(sx, sy - (1 - e.life) * 12, 3 + (1 - e.life) * 9, 0, Math.PI * 2); ctx.fill();
+    } else if (e.type === "sinkHull") {
+      const sx = wx(v, e.x), sy = wy(v, e.y), p = 1 - e.life;
+      const scale = Math.abs(wx(v, e.x + 1) - wx(v, e.x));
+      const L = Math.max(8, e.length * scale), B = Math.max(2.5, e.beam * scale);
+      ctx.translate(sx, sy); ctx.rotate((180 - (e.heading || 0)) * Math.PI / 180);
+      if (e.mode === "capsize") { ctx.translate(B * p * 0.55, 0); ctx.scale(Math.max(0.08, 1 - p * 0.92), Math.max(0.45, 1 - p * 0.35)); }
+      else if (e.mode === "plunge") { ctx.translate(0, L * p * 0.22); ctx.scale(Math.max(0.18, 1 - p * 0.78), Math.max(0.28, 1 - p * 0.58)); }
+      else { ctx.scale(Math.max(0.35, 1 - p * 0.55), Math.max(0.35, 1 - p * 0.55)); }
+      ctx.globalAlpha = Math.max(0, e.life * 0.9); ctx.fillStyle = e.side === "Japan" ? "#8b9aa3" : e.side === "Russia" ? "#a7b1b8" : "#c39335";
+      hullPath(ctx, L, B); ctx.fill();
     } else if (e.type === "sink") {
       const sx = wx(v, e.x), sy = wy(v, e.y);
       ctx.globalAlpha = e.life * 0.7; ctx.strokeStyle = PALETTE.foam; ctx.lineWidth = 1.4;
@@ -2556,7 +2595,7 @@ function sideElevationPrims(ship, L) {
     }
   }
 
-  // ---- masts: full military rig — lower mast, fighting top, topmast, yards ----
+  // ---- masts: full military rig - lower mast, fighting top, topmast, yards ----
   const masts = sideMastsFor(id);
   const mastHeads = [];
   for (const m of masts) {
@@ -2881,7 +2920,7 @@ Object.assign(SHIP_SIDE, {
 });
 // ===== ui.js =====
 // ===========================================================================
-//  ui.js — game state, AI, turn loop, input, and DOM/canvas wiring
+//  ui.js - game state, AI, turn loop, input, and DOM/canvas wiring
 //  Depends (in-bundle globals) on data.js (GAME_DATA), engine.js, render.js.
 // ===========================================================================
 
@@ -2922,7 +2961,7 @@ const SIM_SPEEDS = [0.5, 2, 6];
 const SPEED_LABEL = ["0.5× slow", "2×", "6× fast"];
 
 // ===========================================================================
-//  SCENARIO CONFIGS — everything battle-specific lives here. The engine and
+//  SCENARIO CONFIGS - everything battle-specific lives here. The engine and
 //  renderer are shared; each scenario supplies its sides, flagships, captains,
 //  AI doctrine, deployment and prose. SCN points at the active one; the dicts
 //  below (CAPTAINS, FLAGSHIP_ID, …) are re-bound to it by setScenario(), so the
@@ -3241,7 +3280,7 @@ function setupScenario(playerSide, chineseFormationKey) {
   // two battle lines). Each scenario's deploy() places ships via the helpers below.
   SCN.deploy(place, playerSide, chineseFormationKey, proceduralFormation, F);
 
-  // any roster ship not in a block (safety) — drop in behind its side
+  // any roster ship not in a block (safety) - drop in behind its side
   for (const def of GAME_DATA.ships) {
     if (placed.has(def.id)) continue;
     const y = def.side === sideA() ? -600 : 2600;
@@ -3249,6 +3288,8 @@ function setupScenario(playerSide, chineseFormationKey) {
     game.ships.push(makeShip(def, def.side, { x, y }, def.side === sideA() ? 180 : 0));
     placed.add(def.id);
   }
+
+  rebuildShipIndex();
 
   // each gun starts effectively reloaded; ships snap onto the hex lattice
   for (const s of game.ships) {
@@ -3272,14 +3313,14 @@ function setupScenario(playerSide, chineseFormationKey) {
   game.turn = 1;
   game.exec = null;
 
-  // Squadrons are player-formed at run time (see formSquadron). Ships start ungrouped; a
-  // squadron chains its members into a line so followers hold station behind the flag, which
-  // reuses the same station-keeping machinery for every scenario.
+  // Historical divisions are the default command unit. The player can still detach,
+  // reform or disband them manually. The Chinese Yalu arc remains ungrouped.
   game.squadrons = [];
   game._squadSeq = 0;
   game._divLines = null;
   game.multiSel = false; game.pendingSel = []; game.menuMode = "ship"; game.selSquadId = null;
   for (const s of game.ships) { s._follow = null; s._inLine = false; s._manualThisTurn = false; }
+  autoFormHistoricalSquadrons();
 
   game.phase = "plan";              // plan first, then Execute resolves both sides at once
   game._lastT = (typeof performance !== "undefined" ? performance.now() : Date.now());
@@ -3289,7 +3330,8 @@ function setupScenario(playerSide, chineseFormationKey) {
 }
 
 // ---- helpers ---------------------------------------------------------------
-function shipById(id) { return game.ships.find((s) => s.id === id) || null; }
+function rebuildShipIndex() { game._shipById = new Map(game.ships.map((s) => [s.id, s])); }
+function shipById(id) { return (game._shipById && game._shipById.get(id)) || game.ships.find((s) => s.id === id) || null; }
 function aliveOnSide(side) { return game.ships.filter((s) => s.side === side && !s.out); }
 function deg2radL(d) { return d * Math.PI / 180; }
 
@@ -3345,7 +3387,9 @@ function scheduleSalvo(from, target, summary, delay) {
   // Anchor to the ships: the muzzle and shell resolve their positions at the instant they
   // fire (mid-move), so guns stay attached to ships that are steaming during resolution.
   game.effects.push({ type: "muzzle", fromId: from.id, toId: target.id, set: false, life: 1, fade: 5, heavy, delay });
-  game.effects.push({ type: "shell", fromId: from.id, toId: target.id, set: false, t: 0, dur: 0.45, hit, heavy, life: 1, delay: delay + 0.05 });
+  const splashCount = hit ? 0 : Math.max(1, Math.min(4, Math.round((summary.shots || 1) / Math.max(1, summary.shotsPerGun || 1))));
+  const spread = Math.max(35, Math.min(180, 38 + (1 - (summary.hitChance || 0.1)) * 120));
+  game.effects.push({ type: "shell", fromId: from.id, toId: target.id, set: false, t: 0, dur: 0.45, hit, heavy, calibre: summary.calibre || (heavy ? 250 : 120), splashCount, spread, life: 1, delay: delay + 0.05 });
 }
 function spawnSink(ship, delay) {
   delay = delay || 0;
@@ -3361,7 +3405,9 @@ function spawnSink(ship, delay) {
     if (game.cam.scale < act * 0.8) game._zoomGoal = act;
   }
   const sinkDelay = delay + (ship._magazine ? 0.55 : 0); // let the blast bloom before she settles
-  game.effects.push({ type: "sink", x: ship.x, y: ship.y, life: 1, fade: 1.1, delay: sinkDelay });
+  const mode = ship._magazine ? "plunge" : ship.flooding >= 70 ? "capsize" : ship.flooding >= 35 ? "plunge" : "settle";
+  game.effects.push({ type: "sinkHull", x: ship.x, y: ship.y, heading: ship.heading || 0, length: ship.length || 90, beam: ship.beam || 15, side: ship.side, mode, life: 1, fade: 0.40, delay: sinkDelay });
+  game.effects.push({ type: "sink", x: ship.x, y: ship.y, life: 1, fade: 0.55, delay: sinkDelay + 0.8 });
   for (let i = 0; i < 4; i++) game.effects.push({ type: "smoke", x: ship.x + (Math.random() - 0.5) * 60, y: ship.y + (Math.random() - 0.5) * 60, life: 1, fade: 0.7, delay: sinkDelay + i * 0.1 });
   // what she leaves behind: a spreading slick and scattered wreckage, lingering well after the foam subsides
   game.effects.push({ type: "slick", x: ship.x, y: ship.y, rot: (ship.heading || 0) * Math.PI / 180 + Math.PI / 2, life: 1, fade: 0.028, delay: sinkDelay + 0.5 });
@@ -3728,7 +3774,7 @@ function updateMorale() {
     const tookSevere = structLoss > 0.12 || crewLoss > 0.08;    // a real hammering, can cost the captain
     const ganged = game.ships.filter((e) => !e.out && e.side !== s.side && e.targetId === s.id).length;
 
-    // command casualties — rare, dramatic, only when a ship is being hammered
+    // command casualties - rare, dramatic, only when a ship is being hammered
     if (tookSevere) {
       const sev = structLoss * 1.6 + crewLoss * 2.2;
       if (s.captainAlive && Math.random() < clamp(sev * 0.06, 0, 0.03)) {
@@ -3950,6 +3996,11 @@ function makeViewCss() {
   return { w, h, camX: game.cam.x, camY: game.cam.y, scale: game.cam.scale, dpr: game.cam.dpr, time };
 }
 
+function shipInView(v, s, margin = 120) {
+  const x = wx(v, pX(s)), y = wy(v, pY(s));
+  return x >= -margin && x <= v.w + margin && y >= -margin && y <= v.h + margin;
+}
+
 function redraw() {
   if (!ctx) return;
   const dpr = game.cam.dpr;
@@ -3995,17 +4046,22 @@ function redraw() {
     drawTargetLine(ctx, v, s, t, onSel ? "rgba(228,76,62,0.52)" : "rgba(214,72,60,0.24)", onSel ? 1.7 : 1.1, onSel, [6, 6]);
   }
 
-  // ships: enemies first so friendlies/labels sit on top
+  // Ships outside the viewport are not rendered. This is immaterial at Yalu and
+  // Tsushima scale, but prevents rendering cost from growing with an eventual Jutland roster.
+  const visibleShips = game.ships.filter((s) => shipInView(v, s));
   const tgt = shipById(game.targetId);
   const _tSec = (typeof performance !== "undefined" ? performance.now() : Date.now()) / 1000;
-  for (const s of game.ships) drawShipSmoke(ctx, v, s, _tSec);   // coal smoke + battle fires under the hulls
-  for (const s of game.ships) {
+  for (const s of visibleShips) drawShipSmoke(ctx, v, s, _tSec);
+  for (const s of visibleShips) {
     let aimWorld = s._aimWorld;
     if (s.id === game.selectedId && selTargetValid) aimWorld = absBearing(s, selTarget);
+    const sq = squadronOf(s.id);
+    const important = s.id === game.selectedId || s.id === game.targetId || s.isFlagship || (sq && sq.leaderId === s.id);
+    const labelReadable = (s.length || 80) * v.scale >= 18;
     drawShip(ctx, v, s, {
       selected: s.id === game.selectedId,
       targeted: s.id === game.targetId && tgt && !tgt.out,
-      showLabel: game.show.labels,
+      showLabel: game.show.labels && (labelReadable || important),
       aimWorld,
     });
   }
@@ -4018,7 +4074,7 @@ function redraw() {
     ctx.save(); ctx.font = "600 9px ui-monospace, SFMono-Regular, Menlo, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
     for (const sq of game.squadrons) {
       for (const id of sq.members) {
-        const s = shipById(id); if (!s || s.out) continue;
+        const s = shipById(id); if (!s || s.out || !shipInView(v, s, 40)) continue;
         const r = Math.max(shipScreenLen(v, s) * 0.5, 9);
         const lx = wx(v, s.x) + r + 7, ly = wy(v, s.y) - r - 1;
         ctx.fillStyle = "rgba(8,22,26,0.82)"; ctx.beginPath(); ctx.arc(lx, ly, 6.4, 0, Math.PI * 2); ctx.fill();
@@ -4183,7 +4239,11 @@ function tickEffects(dt) {
           for (const sh of game.ships) { if (sh.out) continue; const d = Math.hypot(sh.x - e.x1, sh.y - e.y1); if (d < 80 && d < hd) { hd = d; hs = sh; } }
           if (hs) hs._hitFlash = e.heavy ? 0.34 : 0.2;
         } else {
-          spawned.push({ type: "splash", x: e.x1, y: e.y1, life: 1, fade: 3 });
+          const n = e.splashCount || 1;
+          for (let i = 0; i < n; i++) {
+            const a = Math.random() * Math.PI * 2, d = Math.random() * (e.spread || 90);
+            spawned.push({ type: "splash", x: e.x1 + Math.cos(a) * d, y: e.y1 + Math.sin(a) * d, life: 1, fade: 1.15, calibre: e.calibre || 120 });
+          }
         }
       }
     } else {
@@ -4275,7 +4335,7 @@ function launchTorpedo(s, T) {
   s.torpedoes.ready = false;
   s.torpedoes.cooldownLeft = 220;                        // slow reload between salvos
   // lead the target a little for a plausible intercept
-  const tspd = 14;                                       // m/s (~27 kn) — slow on the chart
+  const tspd = 14;                                       // m/s (~27 kn) - slow on the chart
   const dist = rangeBetween(s, T);
   const lead = Math.min(dist / tspd, 40);
   const aimX = T.x + Math.sin(T.heading * Math.PI / 180) * shipSpeedMps(T) * lead;
@@ -4286,7 +4346,7 @@ function launchTorpedo(s, T) {
 }
 
 function torpedoHit(target) {
-  // underwater hit bypasses the belt — even an ironclad floods hard
+  // underwater hit bypasses the belt - even an ironclad floods hard
   target.flooding = clamp(target.flooding + 32 + Math.random() * 22, 0, 100);
   target.structure -= target.structureMax * (0.10 + Math.random() * 0.06);
   target.engine = clamp(target.engine - 0.2, 0.1, 1);
@@ -4324,15 +4384,15 @@ function closestPointOnSeg(ax, ay, bx, by, px, py) {
 // a torpedo pass even when BOTH ships are moving; checking only the enemy's end point used
 // to miss those, which is why boats kept passing an enemy without ever firing.
 function segClosest(ax, ay, bx, by, cx, cy, dx, dy) {
-  let bestD = Infinity, p = { x: ax, y: ay }, q = { x: cx, y: cy };
-  const N = 12;
-  for (let i = 0; i <= N; i++) {
-    const px = ax + (bx - ax) * i / N, py = ay + (by - ay) * i / N;
-    const cp = closestPointOnSeg(cx, cy, dx, dy, px, py);
-    const d = Math.hypot(cp.x - px, cp.y - py);
-    if (d < bestD) { bestD = d; p = { x: px, y: py }; q = cp; }
-  }
-  return { d: bestD, p, q };
+  // Closest approach at the same instant along both movement tracks. Comparing any
+  // point on one full track with any point on the other creates false interceptions.
+  const rx = ax - cx, ry = ay - cy;
+  const vx = (bx - ax) - (dx - cx), vy = (by - ay) - (dy - cy);
+  const vv = vx * vx + vy * vy;
+  const t = vv > 1e-9 ? clamp(-(rx * vx + ry * vy) / vv, 0, 1) : 0;
+  const p = { x: ax + (bx - ax) * t, y: ay + (by - ay) * t };
+  const q = { x: cx + (dx - cx) * t, y: cy + (dy - cy) * t };
+  return { d: Math.hypot(q.x - p.x, q.y - p.y), p, q, t };
 }
 // At the start of resolution, a torpedo-armed ship whose track passes within range of an
 // enemy launches from the closest point of that track. It favours its chosen target if that
@@ -4365,7 +4425,10 @@ function resolveTorpedoes() {
     }
     if (!best) continue;
     const range = Math.hypot(bestAim.x - bestPt.x, bestAim.y - bestPt.y) || 1;
-    const evasion = (best.turnedHard ? 0.8 : 1) * clamp(best.engine != null ? best.engine : 1, 0.4, 1);
+    const engine = clamp(best.engine != null ? best.engine : 1, 0.35, 1);
+    const speed = Math.max(0, best.maxSpeed * (best.throttle != null ? best.throttle : 1) * engine);
+    const speedEvasion = 1.08 - 0.28 * clamp(speed / 18, 0, 1);   // fast targets are harder, crippled targets easier
+    const evasion = speedEvasion * (best.turnedHard ? 0.78 : 1);
     const hc = clamp(0.09 * Math.exp(-range / 450) * evasion, 0.01, 0.18);
     const willHit = Math.random() < hc;
     s.torpedoes.count -= 1;
@@ -4537,17 +4600,39 @@ function reconcileSquadrons() {
 }
 // Form a squadron from an ordered list of ship ids (first is the flag). Ships are pulled out
 // of any squadron they were in; squadrons that fall below two ships are dissolved.
-function formSquadron(ids) {
+function formSquadron(ids, name, autoFormed) {
   const members = ids.filter((id, i) => ids.indexOf(id) === i && shipById(id));
   if (members.length < 2) return null;
   for (const sq of game.squadrons) sq.members = sq.members.filter((id) => !members.includes(id));
   game.squadrons = game.squadrons.filter((sq) => sq.members.length >= 2);
   game.squadrons.forEach((sq) => { if (!sq.members.includes(sq.leaderId)) sq.leaderId = sq.members[0]; });
-  const sq = { id: ++game._squadSeq, members: members.slice(), leaderId: members[0] };
+  const sq = { id: ++game._squadSeq, members: members.slice(), leaderId: members[0], name: name || `Squadron ${game._squadSeq}`, autoFormed: !!autoFormed };
   game.squadrons.push(sq);
   rebuildSquadronLines();
   return sq;
 }
+function autoFormHistoricalSquadrons() {
+  const add = (ids, name) => formSquadron(ids.filter((id) => !!shipById(id)), name, true);
+  if (SCN.id === "tsushima" || SCN.id === "tsushima_approach") {
+    const groups = [
+      ["Russia", ["1st Armoured Division"], "1st Armoured Division"],
+      ["Russia", ["2nd Armoured Division", "2nd Division", "3rd Division"], "Older Battle Line"],
+      ["Russia", ["Cruiser Division"], "Cruiser Division"],
+      ["Japan", ["1st Division", "2nd Division"], "Togo's Battle Line"],
+      ["Japan", ["3rd Division", "4th Division", "6th Division"], "Scouting Cruisers"],
+    ];
+    for (const [side, divs, name] of groups) {
+      const ids = GAME_DATA.ships.filter((d) => d.side === side && divs.includes(d.division)).map((d) => d.id);
+      if (ids.length >= 2) add(ids, name);
+    }
+  } else if (SCN.id === "yalu") {
+    const block = GAME_DATA.formations && GAME_DATA.formations.japanese_opening_column;
+    const ids = block && block.ships ? block.ships.map((x) => x.id) : game.ships.filter((x) => x.side === "Japan").map((x) => x.id);
+    if (ids.length >= 2) add(ids, "Combined Fleet Line");
+  }
+  rebuildSquadronLines();
+}
+
 function disbandSquadron(id) {
   game.squadrons = game.squadrons.filter((sq) => sq.id !== id);
   rebuildSquadronLines();
@@ -4573,27 +4658,51 @@ function effectiveLeader(s) {
   }
   return null;
 }
-// set s.order to the reachable hex closest to its station behind `lead`, lined up on lead's heading
-function stationKeepOrder(s, lead) {
+// Score how much useful gun weight can bear from a candidate pose.
+function candidateArcFraction(s, target, x, y, heading) {
+  if (!target || target.out) return 1;
+  const pose = Object.assign({}, s, { x, y, heading });
+  let live = 0, bearing = 0;
+  for (const b of s.batteries) {
+    if (b.knockedOut) continue;
+    const w = Math.max(1, gunCalibre(b.gun) * (b.count || 1));
+    live += w;
+    if (rangeBetween(pose, target) <= maxEffectiveRange(b.gun) && batteryCanBear(pose, b, target)) bearing += w;
+  }
+  return live > 0 ? bearing / live : 1;
+}
+function reserveOrder(s, reserved) {
+  if (!reserved || !s || !s.order) return;
+  reserved.add(`${s.order.q},${s.order.r}`);
+}
+// Set s.order to a reachable station astern. Formation fit remains primary, but
+// collisions and avoidable arc masking are now expensive enough to change the choice.
+function stationKeepOrder(s, lead, reserved) {
   const lo = lead.order ? hexToWorld(lead.order.q, lead.order.r) : { x: lead.x, y: lead.y };
   const lh = lead.order ? lead.order.heading : lead.heading;
   const fx = Math.sin(lh * Math.PI / 180), fy = -Math.cos(lh * Math.PI / 180);
-  const px = lo.x - fx * STATION_M, py = lo.y - fy * STATION_M;     // a point STATION_M astern of the leader
+  const px = lo.x - fx * STATION_M, py = lo.y - fy * STATION_M;
+  const target = shipById(s.targetId) || shipById(lead.targetId);
   let best = null, bestScore = 1e18;
   for (const c of reachableHexes(s)) {
     const w = hexToWorld(c.q, c.r);
     const head = c.stay ? s.heading : c.heading;
     const dev = Math.abs(((head - lh + 540) % 360) - 180);
-    const score = Math.hypot(w.x - px, w.y - py) + dev * 3;          // mainly close the station, lightly prefer the line's heading
+    const occupied = reserved && reserved.has(`${c.q},${c.r}`) ? 1800 : 0;
+    const arcPenalty = (1 - candidateArcFraction(s, target, w.x, w.y, head)) * 520;
+    const score = Math.hypot(w.x - px, w.y - py) + dev * 3 + occupied + arcPenalty;
     if (score < bestScore) { bestScore = score; best = c; }
   }
   s.order = best ? { q: best.q, r: best.r, heading: best.stay ? lh : best.heading } : { q: s.hex.q, r: s.hex.r, heading: lh };
+  reserveOrder(s, reserved);
 }
 // Decide every ship's order for the turn, line by line (van first so each follower
 // sees its leader's fresh order). Vans and any ship the player ordered this turn steer
 // themselves; the rest hold station.
 function assignTsushimaOrders() {
   const handled = new Set();
+  const reserved = new Set();
+  for (const s of game.ships) if (!s.out && s.order && (!s._follow || s._manualThisTurn)) reserveOrder(s, reserved);
   for (const line of game._divLines) {
     for (const id of line) {
       const s = shipById(id);
@@ -4603,8 +4712,9 @@ function assignTsushimaOrders() {
       const lead = effectiveLeader(s);
       if (!lead || s._manualThisTurn) {                 // van, or detached by a direct order this turn
         if (s.side === game.playerSide) { if (!s.order) defaultOrder(s); } else chooseAIOrder(s);
+        reserveOrder(s, reserved);
       } else {
-        stationKeepOrder(s, lead);
+        stationKeepOrder(s, lead, reserved);
       }
     }
   }
@@ -4613,20 +4723,49 @@ function assignTsushimaOrders() {
     if (s._routing) fleeOrder(s);
     else if (s.side === game.playerSide) { if (!s.order) defaultOrder(s); }
     else chooseAIOrder(s);
+    reserveOrder(s, reserved);
   }
 }
 // Plan-phase preview: set the player's followers to their station-keeping order so their
 // projected course ghosts show while plotting the lead. Recomputed each frame; leaders'
 // orders come from the player, so the line's plan stays visible before committing.
 function previewStationKeeping() {
+  const reserved = new Set();
+  for (const s of game.ships) if (!s.out && s.order && (!s._follow || s._manualThisTurn)) reserveOrder(s, reserved);
   for (const line of game._divLines) {
     for (const id of line) {
       const s = shipById(id);
       if (!s || s.out || s.side !== game.playerSide) continue;
       if (!s._follow || s._manualThisTurn || s._routing) continue;
       const lead = effectiveLeader(s);
-      if (lead) stationKeepOrder(s, lead);
+      if (lead) stationKeepOrder(s, lead, reserved);
     }
+  }
+}
+
+
+function deconflictOrders() {
+  const ordered = game.ships.filter((s) => !s.out && s.order);
+  const priority = (s) => (s.side === game.playerSide ? 100 : 0) + (s._manualThisTurn ? 40 : 0) + (!s._follow ? 12 : 0);
+  ordered.sort((a, b) => priority(b) - priority(a));
+  const taken = new Set();
+  for (const s of ordered) {
+    const key = `${s.order.q},${s.order.r}`;
+    if (!taken.has(key)) { taken.add(key); continue; }
+    const intended = hexToWorld(s.order.q, s.order.r);
+    const intendedHeading = s.order.heading;
+    let best = null, bestScore = Infinity;
+    for (const c of reachableHexes(s)) {
+      const ck = `${c.q},${c.r}`;
+      if (taken.has(ck)) continue;
+      const w = hexToWorld(c.q, c.r);
+      const head = c.stay ? s.heading : c.heading;
+      const dev = Math.abs(((head - intendedHeading + 540) % 360) - 180);
+      const score = Math.hypot(w.x - intended.x, w.y - intended.y) + dev * 3;
+      if (score < bestScore) { bestScore = score; best = c; }
+    }
+    if (best) s.order = { q: best.q, r: best.r, heading: best.stay ? s.heading : best.heading };
+    taken.add(`${s.order.q},${s.order.r}`);
   }
 }
 
@@ -4664,6 +4803,7 @@ function startExecute() {
       else chooseAIOrder(s);
     }
   }
+  deconflictOrders();                                   // one destination hex per ship after all sides have planned
   // 2) record the animation endpoints
   for (const s of game.ships) {
     if (s.out) { s.order = null; s._ax1 = null; continue; }
@@ -4673,39 +4813,42 @@ function startExecute() {
   }
   game.exec = { t: 0, dur: 5.5, done: false };
   refillReadiness();                                // refill both sides' reload banks for this turn
-  resolveTorpedoes();                               // torpedo boats loose FIRST — they press the attack home before the gun line can shred them
+  resolveTorpedoes();                               // torpedo boats loose FIRST - they press the attack home before the gun line can shred them
   resolveFire();                                    // then the guns open up; salvos animate across the move
   game._keepSel = game.selectedId; game._keepTgt = game.targetId;   // restore after the move resolves
   game.selectedId = null; game.targetId = null; game.cardId = null; game.pending = null;
   syncTopBar(); syncPlayBtn(); syncPanel();
 }
+function movementPose(s, progress) {
+  if (s._ax1 == null) return { x: s.x, y: s.y, heading: s.heading };
+  const p = clamp(progress, 0, 1);
+  const ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+  const chord = Math.hypot(s._ax1 - s._ax0, s._ay1 - s._ay0);
+  if (chord < HEX_M * 0.3) {
+    const dh = ((s._ah1 - s._ah0 + 540) % 360) - 180;
+    return { x: s._ax0, y: s._ay0, heading: (s._ah0 + dh * ease + 360) % 360 };
+  }
+  const d = chord / 3;
+  const sh = s._ah0 * Math.PI / 180, eh = s._ah1 * Math.PI / 180;
+  const sdx = Math.sin(sh), sdy = -Math.cos(sh), edx = Math.sin(eh), edy = -Math.cos(eh);
+  const p0x = s._ax0, p0y = s._ay0, p3x = s._ax1, p3y = s._ay1;
+  const p1x = p0x + sdx * d, p1y = p0y + sdy * d;
+  const p2x = p3x - edx * d, p2y = p3y - edy * d;
+  const t = ease, mt = 1 - t;
+  const x = mt*mt*mt*p0x + 3*mt*mt*t*p1x + 3*mt*t*t*p2x + t*t*t*p3x;
+  const y = mt*mt*mt*p0y + 3*mt*mt*t*p1y + 3*mt*t*t*p2y + t*t*t*p3y;
+  const tx = 3*mt*mt*(p1x-p0x) + 6*mt*t*(p2x-p1x) + 3*t*t*(p3x-p2x);
+  const ty = 3*mt*mt*(p1y-p0y) + 6*mt*t*(p2y-p1y) + 3*t*t*(p3y-p2y);
+  const heading = tx*tx + ty*ty > 1e-6 ? ((Math.atan2(tx, -ty) * 180 / Math.PI) % 360 + 360) % 360 : s._ah1;
+  return { x, y, heading };
+}
 function stepExecute(dt) {
   const e = game.exec; if (!e) return;
   e.t += dt; const p = Math.min(1, e.t / e.dur);
-  const ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
   for (const s of game.ships) {
     if (s._ax1 == null) continue;
-    const chord = Math.hypot(s._ax1 - s._ax0, s._ay1 - s._ay0);
-    if (chord < HEX_M * 0.3) {                         // negligible way made good: pivot in place
-      s.x = s._ax0; s.y = s._ay0;
-      const dh = ((s._ah1 - s._ah0 + 540) % 360) - 180;
-      s.heading = (s._ah0 + dh * ease + 360) % 360;
-      continue;
-    }
-    // cubic Bezier tangent to the start heading and the ordered final heading: she
-    // leaves on her present course and curves onto the new one, not sliding sideways.
-    const d = chord / 3;
-    const sh = s._ah0 * Math.PI / 180, eh = s._ah1 * Math.PI / 180;
-    const sdx = Math.sin(sh), sdy = -Math.cos(sh), edx = Math.sin(eh), edy = -Math.cos(eh);
-    const p0x = s._ax0, p0y = s._ay0, p3x = s._ax1, p3y = s._ay1;
-    const p1x = p0x + sdx * d, p1y = p0y + sdy * d;
-    const p2x = p3x - edx * d, p2y = p3y - edy * d;
-    const t = ease, mt = 1 - t;
-    s.x = mt*mt*mt*p0x + 3*mt*mt*t*p1x + 3*mt*t*t*p2x + t*t*t*p3x;
-    s.y = mt*mt*mt*p0y + 3*mt*mt*t*p1y + 3*mt*t*t*p2y + t*t*t*p3y;
-    const tx = 3*mt*mt*(p1x-p0x) + 6*mt*t*(p2x-p1x) + 3*t*t*(p3x-p2x);
-    const ty = 3*mt*mt*(p1y-p0y) + 6*mt*t*(p2y-p1y) + 3*t*t*(p3y-p2y);
-    if (tx*tx + ty*ty > 1e-6) s.heading = ((Math.atan2(tx, -ty) * 180 / Math.PI) % 360 + 360) % 360;
+    const pose = movementPose(s, p);
+    s.x = pose.x; s.y = pose.y; s.heading = pose.heading;
   }
   if (p >= 1 && !e.done) { e.done = true; finishExecute(); }
 }
@@ -4746,7 +4889,8 @@ function finishExecute() {
   const newlyOut = game.ships.filter((s) => s.out && game._outAtTurnStart && !game._outAtTurnStart.has(s.id));
   if (newlyOut.length) {
     const mine = newlyOut.filter((s) => s.side === game.playerSide).length;
-    showToast(newlyOut.map((s) => s.name).join(" · ") + (newlyOut.length > 1 ? " are lost" : " is lost"), mine ? "bad" : "good");
+    const lossLine = newlyOut.map((s) => `${shipTypeGlyph(s)}${s.name}`).join(" · ") + (newlyOut.length > 1 ? " are lost" : " is lost");
+    showToast(lossLine, mine ? "bad" : "good", 3000, true);
   } else if (game._pHitsTurn != null) {
     showToast(game._pHitsTurn > 0 ? `Your line scores ${game._pHitsTurn} hit${game._pHitsTurn !== 1 ? "s" : ""}` : "Your salvos fall wide", game._pHitsTurn > 0 ? "good" : "");
   }
@@ -4781,6 +4925,27 @@ function bestBatteryTarget(s, b, primary) {
   }
   return best;
 }
+function bestBatteryTargetDuringMove(s, b, primary, progress) {
+  const shooterPose = movementPose(s, progress);
+  const shooter = Object.assign({}, s, shooterPose);
+  const test = (e) => {
+    if (!e || e.out || e.side === s.side) return null;
+    const targetPose = movementPose(e, progress);
+    const target = Object.assign({}, e, targetPose);
+    const range = rangeBetween(shooter, target);
+    if (range > maxEffectiveRange(b.gun) || !batteryCanBear(shooter, b, target)) return null;
+    if (!trainReachable(b, relativeBearing(shooter, target), GAME_TURN_SECONDS)) return null;
+    return { target: e, shooterPose, targetPose, range };
+  };
+  const chosen = test(primary);
+  if (chosen) return chosen;
+  let best = null;
+  for (const e of game.ships) {
+    const candidate = test(e);
+    if (candidate && (!best || candidate.range < best.range)) best = candidate;
+  }
+  return best;
+}
 
 // At very low crew a ship cannot work all her guns: survivors concentrate on the
 // heaviest battery and the lighter mounts fall silent. This is on top of the slower
@@ -4792,36 +4957,76 @@ function mannedBatteryCount(s) {
 }
 function resolveFire() {
   const dur = (game.exec && game.exec.dur) || 5.5;
-  let pHits = 0; const pTargets = new Set(); let pFired = false;   // collapse the player's own fire to one line
+  const queue = [];
+  const concentration = new Map();
+  for (const s of game.ships) if (!s.out && s.targetId) concentration.set(s.targetId, (concentration.get(s.targetId) || 0) + 1);
+
+  // Declare every eligible salvo before applying damage. Each battery evaluates range
+  // and bearing at its actual firing moment during the simultaneous movement phase.
   for (const s of game.ships) {
-    if (s.out || s._routing) continue;   // sunk or routed ships do not fire; the broken still fire, badly
+    if (s.out || s._routing) continue;
     let T = s.targetId ? shipById(s.targetId) : null;
-    if (!T || T.out || !canEngage(s, T)) T = aiChooseTarget(s);
+    if (!T || T.out) T = aiChooseTarget(s);
     if (!T) continue;
     s.targetId = T.id;
     const manned = new Set(s.batteries.filter((b) => !b.knockedOut).slice(0, mannedBatteryCount(s)));
-    const shipDelay = 0.2 + Math.random() * (dur * 0.55);     // this ship opens fire somewhere in the move
-    let bi = 0, shipHits = 0; const tgtNames = new Set();
+    const shipDelay = 0.2 + Math.random() * (dur * 0.55);
+    let bi = 0;
     for (const b of s.batteries) {
       if (b.knockedOut || !manned.has(b) || shotsReady(s, b) < 1) continue;
-      const tgt = bestBatteryTarget(s, b, T);                  // designated target if it bears, else a target of opportunity
-      if (!tgt) continue;
-      const res = fireBattery(s, b, tgt, game.turn);
-      if (res && !res.error) {
-        b.train = wrap180(relativeBearing(s, tgt));               // the mount is now trained where it fired
-        res.heavy = gunCalibre(b.gun) >= 200;
-        telShot(s, tgt, b.gun, res);                              // record shots/hits/damage/range for the report
-        const fireAt = shipDelay + bi * 0.06; bi++;
-        scheduleSalvo(s, tgt, res, fireAt);
-        shipHits += res.hits || 0; tgtNames.add(tgt.name);
-        if (tgt.out) {
-          tgt._ax1 = tgt.x; tgt._ay1 = tgt.y; tgt._ah1 = tgt.heading; // a stricken ship loses way
-          spawnSink(tgt, fireAt + 0.4);                              // sink shows as the killing salvo strikes
-          dispatch(`${tgt.name} is ${tgt.outReason}.`, "sink");
-        }
-      }
+      const fireAt = shipDelay + bi * 0.06;
+      const progress = clamp(fireAt / dur, 0, 1);
+      const firing = bestBatteryTargetDuringMove(s, b, T, progress);
+      if (!firing) continue;
+      bi++;
+      const tgt = firing.target;
+      const same = b.rangeTargetId === tgt.id;
+      if (!same) { b.rangeTargetId = tgt.id; b.rangeLevel = 0; }
+      let lvl = Math.max(0, Math.min(3, b.rangeLevel || 0));
+      if (s.turnedHard) lvl = Math.max(0, lvl - 1);
+      const assist = Math.min(0.08, Math.max(0, (concentration.get(tgt.id) || 1) - 1) * 0.025);
+      b._rangingFactor = [0.76, 0.90, 1.00, 1.08][lvl] + assist;
+      queue.push({ s, b, tgt, fireAt, shooterPose: firing.shooterPose, targetPose: firing.targetPose,
+        state: { crew: s.crew, morale: s.morale, fires: s.fires, captainHitTurns: s.captainHitTurns, turnedHard: s.turnedHard } });
     }
-    if (tgtNames.size && s.side === game.playerSide) { pFired = true; pHits += shipHits; tgtNames.forEach((n) => pTargets.add(n)); }
+  }
+
+  queue.sort((a, b) => a.fireAt - b.fireAt);
+  let pHits = 0; const pTargets = new Set(); let pFired = false;
+  const sunkAt = new Map();
+  for (const shot of queue) {
+    const { s, b, tgt, fireAt, state, shooterPose, targetPose } = shot;
+    const shooterOut = s.out, targetOut = tgt.out, targetReason = tgt.outReason, targetSunkTurn = tgt.sunkTurn;
+    const batteryKO = b.knockedOut;
+    const liveState = { crew: s.crew, morale: s.morale, fires: s.fires, captainHitTurns: s.captainHitTurns, turnedHard: s.turnedHard };
+    const liveShooterPose = { x: s.x, y: s.y, heading: s.heading };
+    const liveTargetPose = { x: tgt.x, y: tgt.y, heading: tgt.heading };
+    s.out = false; tgt.out = false; b.knockedOut = false;
+    Object.assign(s, state, shooterPose);
+    Object.assign(tgt, targetPose);
+    const res = fireBattery(s, b, tgt, game.turn);
+    const trainedBearing = wrap180(relativeBearing(s, tgt));
+    Object.assign(s, liveState, liveShooterPose); s.out = shooterOut; b.knockedOut = batteryKO || b.knockedOut;
+    Object.assign(tgt, liveTargetPose);
+    if (targetOut) { tgt.out = true; tgt.outReason = targetReason; tgt.sunkTurn = targetSunkTurn; }
+    if (res && !res.error) {
+      b.train = trainedBearing;
+      b.rangeLevel = Math.min(3, (b.rangeLevel || 0) + (res.hits > 0 ? 2 : 1));
+      res.heavy = gunCalibre(b.gun) >= 200;
+      res.calibre = gunCalibre(b.gun);
+      telShot(s, tgt, b.gun, res);
+      scheduleSalvo(s, tgt, res, fireAt);
+      if (s.side === game.playerSide) { pFired = true; pHits += res.hits || 0; pTargets.add(tgt.name); }
+      if (!targetOut && tgt.out && !sunkAt.has(tgt.id)) sunkAt.set(tgt.id, { at: fireAt + 0.4, pose: targetPose });
+    }
+    b._rangingFactor = null;
+  }
+
+  for (const [id, loss] of sunkAt) {
+    const tgt = shipById(id); if (!tgt) continue;
+    tgt._ax1 = loss.pose.x; tgt._ay1 = loss.pose.y; tgt._ah1 = loss.pose.heading;
+    spawnSink(tgt, loss.at);
+    dispatch(`${tgt.name} is ${tgt.outReason}.`, "sink");
   }
   if (pFired) {
     const n = pTargets.size;
@@ -5050,16 +5255,16 @@ function fmtClock(sec) {
 function syncPlayBtn() {
   if (typeof document === "undefined") return;
   const pb = document.getElementById("playBtn");
-  if (pb) pb.textContent = game.phase === "over" ? "·" : game.exec ? "Resolving…" : "End Turn ▶";
+  if (pb) pb.textContent = game.phase === "over" ? "·" : game.exec ? "Resolving…" : "End Turn";
   const sb = document.getElementById("speedBtn");
   if (sb) { sb.textContent = "Skip ▶▶"; sb.classList.toggle("off", !game.exec); }
 }
 // ---- turn headline toast ---------------------------------------------------------
-function showToast(text, cls, ms) {
+function showToast(text, cls, ms, allowHtml) {
   if (typeof document === "undefined") return;
   const el = document.getElementById("toast");
   if (!el) return;
-  el.textContent = text;
+  if (allowHtml) el.innerHTML = text; else el.textContent = text;
   el.className = "show" + (cls ? " " + cls : "");
   clearTimeout(el._t);
   el._t = setTimeout(() => { el.className = ""; }, ms || 2600);
@@ -5067,7 +5272,7 @@ function showToast(text, cls, ms) {
 
 function syncTopBar() {
   if (typeof document === "undefined") return;
-  const t = document.getElementById("turnNum"); if (t) t.textContent = "Turn " + (game.turn || 1);
+  const t = document.getElementById("turnNum"); if (t) t.textContent = String(game.turn || 1);
   const p = document.getElementById("phaseLabel");
   if (p) p.textContent = game.phase === "over" ? "Battle over" : game.exec ? "Resolving…" : "Plan · give orders";
   const cp = fleetPct(sideA()), jp = fleetPct(sideB());
@@ -5106,30 +5311,65 @@ function renderMultiSelectPanel(body) {
   const c = document.getElementById("sqCancel");
   if (c) c.addEventListener("click", () => { game.multiSel = false; game.pendingSel = []; setMultiSelBtn(); syncPanel(); });
 }
+function squadronCohesion(sq) {
+  const live = sq.members.map(shipById).filter((s) => s && !s.out);
+  const followers = live.filter((s) => s.id !== sq.leaderId && effectiveLeader(s));
+  if (!followers.length) return 100;
+  let total = 0;
+  for (const s of followers) {
+    const lead = effectiveLeader(s);
+    const d = lead ? rangeBetween(s, lead) : STATION_M * 2;
+    total += clamp(1 - Math.abs(d - STATION_M) / (STATION_M * 1.35), 0, 1);
+  }
+  return Math.round(100 * total / followers.length);
+}
+function squadronRangingLabel(sq, target) {
+  if (!target || target.out) return "local control";
+  const levels = [];
+  for (const id of sq.members) {
+    const s = shipById(id); if (!s || s.out) continue;
+    for (const b of s.batteries) if (!b.knockedOut && b.rangeTargetId === target.id) levels.push(b.rangeLevel || 0);
+  }
+  if (!levels.length) return "unranged";
+  const level = Math.max(0, Math.min(3, Math.round(levels.reduce((a, b) => a + b, 0) / levels.length)));
+  return ["unranged", "bracketing", "straddling", "on target"][level];
+}
 function renderSquadronPanel(body, sq) {
   const lead = shipById(sq.leaderId);
   const live = sq.members.map(shipById).filter((s) => s && !s.out);
   const docs = new Set(live.map((s) => s.doctrine || "auto"));
   const docLabel = docs.size > 1 ? "mixed" : ([...docs][0] || "auto");
   const tgt = lead ? shipById(lead.targetId) : null;
-  const memberRows = sq.members.map((id) => { const s = shipById(id); if (!s) return ""; return `<div class="sq-member${s.out ? " out" : ""}${id === sq.leaderId ? " flag" : ""}" data-ship="${id}">${id === sq.leaderId ? "\u26d1 " : ""}${s.name}${s.out ? " (lost)" : ""}</div>`; }).join("");
+  const cohesion = squadronCohesion(sq);
+  const ranging = squadronRangingLabel(sq, tgt);
+  const title = sq.name || `Squadron ${sq.id}`;
+  const memberRows = sq.members.map((id) => {
+    const s = shipById(id); if (!s) return "";
+    const condition = s.out ? "lost" : `${Math.round(100 * s.structure / s.structureMax)}%`;
+    return `<div class="sq-member${s.out ? " out" : ""}${id === sq.leaderId ? " flag" : ""}" data-ship="${id}"><span>${id === sq.leaderId ? "\u26d1 " : ""}${s.name}</span><span class="sq-member-state">${condition}</span></div>`;
+  }).join("");
   body.innerHTML = `<div class="sq-panel">
-      <div class="sq-title">Squadron ${sq.id} <span class="muted">\u00b7 ${live.length} ship${live.length === 1 ? "" : "s"}</span></div>
-      <div class="sq-flag">Flag: ${lead ? lead.name : "\u2014"}</div>
-      <div class="choose-label" style="margin-top:12px">Doctrine \u00b7 whole squadron</div>
+      <div class="sq-title"><button class="cyc" data-sqcyc="-1" title="Previous division">\u25c2</button>${title}<button class="cyc" data-sqcyc="1" title="Next division">\u25b8</button>${sq.autoFormed ? `<span class="squad-auto">historical division</span>` : ""}</div>
+      <div class="sq-flag">Flag: ${lead ? lead.name : "not available"} \u00b7 ${live.length}/${sq.members.length} ships</div>
+      <div class="sq-metrics">
+        <div><span>Cohesion</span><b>${cohesion}%</b></div>
+        <div><span>Fire control</span><b>${ranging}</b></div>
+      </div>
+      <div class="choose-label" style="margin-top:12px">Doctrine \u00b7 whole division</div>
       <div class="seg-row">
         <button class="seg-btn${docLabel === "auto" ? " active" : ""}" data-sqdoc="auto">Auto</button>
         <button class="seg-btn${docLabel === "AP" ? " active" : ""}" data-sqdoc="AP">AP</button>
         <button class="seg-btn${docLabel === "HE" ? " active" : ""}" data-sqdoc="HE">HE</button>
       </div>
-      <div class="sq-tgt">Target: ${tgt && !tgt.out ? tgt.name : "hold fire"} <span class="muted">\u00b7 tap an enemy to set</span></div>
-      <div class="sq-move muted">Tap a lit hex to steer the squadron \u2014 the flag leads, the rest hold station.</div>
+      <div class="sq-tgt">Target: ${tgt && !tgt.out ? tgt.name : "local control"} <span class="muted">\u00b7 tap an enemy to set</span></div>
+      <div class="sq-move muted">Tap a lit hex to steer the division. The flag leads and the rest hold station.</div>
       <div class="sq-members">${memberRows}</div>
       <div class="sq-actions"><button class="rail-btn" id="sqDisband">Disband</button></div>
-      <div class="muted sq-hint">First tap on a ship is individual orders; this is the second tap. Tap a member for its own orders (these override the squadron).</div>
+      <div class="muted sq-hint">Tap a member for individual orders. A direct ship order overrides station keeping for that turn.</div>
     </div>`;
   body.querySelectorAll("[data-sqdoc]").forEach((b) => b.addEventListener("click", () => { squadronSetDoctrine(sq, b.getAttribute("data-sqdoc")); syncPanel(); }));
-  body.querySelectorAll(".sq-member").forEach((b) => b.addEventListener("click", () => { const id = b.getAttribute("data-ship"); const s = shipById(id); if (s && !s.out) { game.selectedId = id; game.menuMode = "ship"; game.selSquadId = null; game.cardId = null; syncPanel(); } }));
+  body.querySelectorAll("[data-sqcyc]").forEach((b) => b.addEventListener("click", () => cycleSquadron(parseInt(b.getAttribute("data-sqcyc"), 10))));
+  body.querySelectorAll(".sq-member").forEach((b) => b.addEventListener("click", () => { const id = b.getAttribute("data-ship"); const s = shipById(id); if (s && !s.out) { game.selectedId = id; game.menuMode = "ship"; game.selSquadId = null; game.cardId = null; game._camGoal = { x: s.x, y: s.y }; syncPanel(); } }));
   const db = document.getElementById("sqDisband");
   if (db) db.addEventListener("click", () => { disbandSquadron(sq.id); game.selSquadId = null; game.menuMode = "ship"; game.selectedId = null; syncPanel(); });
 }
@@ -5186,6 +5426,7 @@ function syncPanel() {
           <span class="bat-name">${b.count}× ${cal}mm</span>
           ${status}
           ${(targetValid && canBear && !b.knockedOut) ? `<span class="auto-tag">firing</span>` : ``}
+          ${b.rangeTargetId ? `<span class="range-state">${["unranged","bracketing","straddling","on target"][Math.max(0, Math.min(3, b.rangeLevel || 0))]}</span>` : ``}
         </div>
         <div class="bat-sub">
           <span class="bat-gun">${b.gun.name}</span>
@@ -5243,13 +5484,13 @@ function syncPanel() {
           <span class="ship-type">${s.type}</span>
         </div>
         <div class="micro-spec">
-          <div><span>Class</span><b>${s.def.class || "—"}</b></div>
-          <div><span>Length</span><b>${dims.length ?? "—"} m</b></div>
-          <div><span>Disp</span><b>${shipTons(s) ? shipTons(s).toLocaleString() + " t" : "—"}</b></div>
+          <div><span>Class</span><b>${s.def.class || "-"}</b></div>
+          <div><span>Length</span><b>${dims.length ?? "-"} m</b></div>
+          <div><span>Disp</span><b>${shipTons(s) ? shipTons(s).toLocaleString() + " t" : "-"}</b></div>
         </div>
       </div>
       ${captLine ? `<div class="capt-line">${captLine}</div>` : ""}
-      ${squadronOf(s.id) ? `<div style="font-size:11px;color:#e8ca70;margin-top:4px">In Squadron ${squadronOf(s.id).id} · tap again for squadron orders</div>` : ""}
+      ${squadronOf(s.id) ? `<div style="font-size:11px;color:#e8ca70;margin-top:4px">In ${squadronOf(s.id).name || `Squadron ${squadronOf(s.id).id}`} · tap the map ship to return to division orders</div>` : ""}
       <div class="armour-line"><span class="k">Armour</span> ${armourSummary(s)}</div>
       <div class="dossier-elev"><canvas id="dossierElev" width="440" height="168" style="width:100%;height:auto;display:block"></canvas></div>
 
@@ -5309,6 +5550,20 @@ function cycleShip(dir) {
   const s = own[i];
   game.selectedId = s.id; game.menuMode = "ship"; game.cardId = null; game.selSquadId = null;
   game._camGoal = { x: s.x, y: s.y };
+  syncPanel();
+}
+function cycleSquadron(dir) {
+  const own = game.squadrons.filter((sq) => {
+    const lead = shipById(sq.leaderId);
+    return lead && !lead.out && lead.side === game.playerSide;
+  });
+  if (!own.length) return;
+  let i = own.findIndex((sq) => sq.id === game.selSquadId);
+  i = i < 0 ? 0 : (i + dir + own.length) % own.length;
+  const sq = own[i], lead = shipById(sq.leaderId);
+  game.selSquadId = sq.id; game.menuMode = "squad"; game.selectedId = lead.id; game.cardId = null;
+  game.targetId = lead.targetId || null;
+  game._camGoal = { x: lead.x, y: lead.y };
   syncPanel();
 }
 
@@ -5442,10 +5697,15 @@ function onPointerUp(e) {
           syncPanel();
         } else {
           const sq = squadronOf(ship.id);
-          if (game.selectedId === ship.id && sq) game.menuMode = (game.menuMode === "ship") ? "squad" : "ship";  // tap again on a squadron ship toggles to squadron orders
-          else { game.selectedId = ship.id; game.menuMode = "ship"; }                                            // first tap (or a new ship) shows the individual ship
-          game.selSquadId = sq ? sq.id : null;
-          game.targetId = ship.targetId || null; game.cardId = null;
+          if (sq) {
+            const lead = shipById(sq.leaderId) || ship;
+            game.selectedId = lead.id; game.menuMode = "squad"; game.selSquadId = sq.id;
+            game.targetId = lead.targetId || null;
+          } else {
+            game.selectedId = ship.id; game.menuMode = "ship"; game.selSquadId = null;
+            game.targetId = ship.targetId || null;
+          }
+          game.cardId = null;
           syncPanel();
         }
       } else if (ship && ship.side === game.enemySide && !game.multiSel) {                              // tap an enemy
@@ -5520,12 +5780,12 @@ function gunCatalogueHtml() {
     const g = guns[id];
     const cal = gunCalibre(g);
     const rl = g.reload_seconds_practical || {};
-    const reload = rl.min ? `${rl.min}–${rl.max}s` : "—";
+    const reload = rl.min ? `${rl.min}–${rl.max}s` : "-";
     const pen = (g.sourced_penetration && g.sourced_penetration[0])
       ? `${g.sourced_penetration[0].penetration_mm}mm @ ${g.sourced_penetration[0].range_m}m`
-      : "—";
+      : "-";
     rows += `<tr>
-      <td>${cal ? cal + "mm" : "—"}</td>
+      <td>${cal ? cal + "mm" : "-"}</td>
       <td>${g.name}</td>
       <td>${g.type || ""}</td>
       <td>${reload}</td>
@@ -5542,7 +5802,7 @@ function shipCardsHtml(side) {
   let html = "";
   for (const s of ships) {
     const d = s.dimensions_m || {};
-    const disp = s.displacement_lt ? (s.displacement_lt.normal || s.displacement_lt.deep_load || s.displacement_lt.gross_tons) : "—";
+    const disp = s.displacement_lt ? (s.displacement_lt.normal || s.displacement_lt.deep_load || s.displacement_lt.gross_tons) : "-";
     const arm = (() => {
       const tmp = makeShip(s, s.side, { x: 0, y: 0 }, 0);
       return armourSummary(tmp);
@@ -5555,7 +5815,7 @@ function shipCardsHtml(side) {
     html += `<div class="codex-card ${clsForSide(side)}">
       <div class="cc-name">${s.name}</div>
       <div class="cc-type">${s.type} · ${s.class || ""}</div>
-      <div class="cc-specs">${d.length ?? "—"}×${d.beam ?? "—"} m · ${disp} t · ${s.speed_kn ?? "—"} kn · crew ${s.complement ?? "—"}</div>
+      <div class="cc-specs">${d.length ?? "-"}×${d.beam ?? "-"} m · ${disp} t · ${s.speed_kn ?? "-"} kn · crew ${s.complement ?? "-"}</div>
       <div class="cc-arm"><b>Armour:</b> ${arm}</div>
       <div class="cc-guns"><b>Guns:</b> ${guns}${torp}</div>
     </div>`;
@@ -5588,9 +5848,9 @@ function renderShipCard(body, s) {
       <div class="card-section-h">Side elevation</div>
       <div class="shipcard-art"><canvas id="cardElev" width="520" height="220" style="width:100%;height:auto;display:block"></canvas></div>
       <div class="spec-grid">
-        <div><span class="k">Length</span><span class="val">${dims.length ?? "—"} m</span></div>
+        <div><span class="k">Length</span><span class="val">${dims.length ?? "-"} m</span></div>
         <div><span class="k">Speed</span><span class="val">${s.maxSpeed} kn</span></div>
-        <div><span class="k">Displacement</span><span class="val">${shipTons(s) ? shipTons(s).toLocaleString() + " t" : "—"}</span></div>
+        <div><span class="k">Displacement</span><span class="val">${shipTons(s) ? shipTons(s).toLocaleString() + " t" : "-"}</span></div>
       </div>
       <div class="armour-line"><span class="k">Armour</span> ${armourSummary(s)}</div>
       <div class="card-section-h">Armament</div>
@@ -5689,6 +5949,16 @@ function drawDossierProfile(s) {
   } catch (e) { /* a drawing edge case must never break the panel */ }
 }
 
+function shipTypeGlyph(s) {
+  const t = String((s.def && s.def.type) || s.type || "").toLowerCase();
+  let path = "M1 8 L4 5 L14 5 L17 8 L15 10 L3 10 Z";
+  if (t.includes("torpedo")) path = "M1 8 L15 5 L17 7 L15 9 Z";
+  else if (t.includes("battleship") || t.includes("ironclad")) path = "M1 7 L4 4 L7 4 L8 2 L11 2 L12 4 L15 4 L17 7 L15 10 L3 10 Z";
+  else if (t.includes("armoured") || t.includes("armored")) path = "M1 7 L4 4 L9 4 L10 2 L12 4 L16 5 L17 8 L15 10 L3 10 Z";
+  else if (t.includes("coastal")) path = "M2 6 L5 3 L13 3 L16 6 L15 10 L3 10 Z";
+  return `<span class="type-glyph" title="${(s.def && s.def.type) || s.type || "ship"}"><svg viewBox="0 0 18 12" aria-hidden="true"><path d="${path}" fill="currentColor"/></svg></span>`;
+}
+
 function buildRoster() {
   const body = document.getElementById("fleetBody");
   if (!body) return;
@@ -5707,11 +5977,11 @@ function buildRoster() {
       const state = s.out ? `<span class="nerve-broken">${s.outReason || "out of action"}</span>` : `<span class="${nerveCls}">${nerveTxt}</span>`;
       const barCol = frac > 0.5 ? "#79b07a" : frac > 0.25 ? "#c8a45c" : "#c0392b";
       const tgt = shipById(s.targetId), tgtValid = tgt && !tgt.out;
-      const tgtTxt = s.out ? "" : (tgtValid ? `▸ ${tgt.name}` : (side === game.playerSide ? "▸ no target" : "▸ —"));
+      const tgtTxt = s.out ? "" : (tgtValid ? `▸ ${tgt.name}` : (side === game.playerSide ? "▸ no target" : "▸ -"));
       const tgtCls = (!s.out && !tgtValid && side === game.playerSide) ? " none" : "";
       return `<div class="roster-row${s.out ? " out" : ""}" data-rosid="${s.id}">
         <span class="roster-name-cell">
-          <span class="roster-name ${clsForSide(side)}">${s.name}${flags.length ? ` <em class="roster-flag">${flags.join(" · ")}</em>` : ""}</span>
+          <span class="roster-name ${clsForSide(side)}">${shipTypeGlyph(s)}${s.name}${flags.length ? ` <em class="roster-flag">${flags.join(" · ")}</em>` : ""}</span>
           ${tgtTxt ? `<span class="roster-tgt${tgtCls}">${tgtTxt}</span>` : ""}
         </span>
         <span class="roster-state">${state}</span>
@@ -6004,7 +6274,7 @@ function fleetRosterHTML(side, label) {
     const c = shipCondition(s);
     const sil = shipSilhouetteURL(s, 66, 22);
     const img = sil ? `<img class="rr-sil" src="${sil}" alt="">` : `<span class="rr-sil"></span>`;
-    return `<div class="roster-row ${c.cls}">${img}<span class="rr-dot"></span><span class="rr-name">${s.name}</span><span class="rr-stat">${c.label}</span></div>`;
+    return `<div class="roster-row ${c.cls}">${img}<span class="rr-dot"></span><span class="rr-name">${shipTypeGlyph(s)}${s.name}</span><span class="rr-stat">${c.label}</span></div>`;
   }).join("");
   return `<div class="roster-col"><div class="roster-h"><span class="tag ${clsForSide(side)}">${label}</span></div>${rows}</div>`;
 }
@@ -6178,10 +6448,15 @@ function b64dec(s) { return decodeURIComponent(escape(atob(s))); }
 
 function serializeGame() {
   const sv = {
-    v: 1, scn: SCN.id, side: game.playerSide, turn: game.turn,
-    sel: game.selectedId || null, tgt: game.targetId || null,
+    v: 2, scn: SCN.id, side: game.playerSide, turn: game.turn,
+    sel: game.selectedId || null, tgt: game.targetId || null, menu: game.menuMode || "ship", sqsel: game.selSquadId || null,
+    squads: game.squadrons.map((sq) => ({ id: sq.id, m: sq.members.slice(), l: sq.leaderId, n: sq.name || null, a: sq.autoFormed ? 1 : 0 })),
     ships: game.ships.map((s) => {
       const o = { i: s.id, x: Math.round(s.x), y: Math.round(s.y), h: Math.round(s.heading), th: r2(s.throttle), st: Math.round(s.structure) };
+      if (s.order) o.ord = { q: s.order.q, r: s.order.r, h: Math.round(s.order.heading) };
+      if (s._manualThisTurn) o.ma = 1;
+      if ((s.doctrine || "auto") !== "auto") o.doc = s.doctrine;
+      if (s._routing) o.ro = 1;
       if (s.orderHeading != null) o.oh = Math.round(s.orderHeading);
       if (s.orderThrottle != null) o.ot = r2(s.orderThrottle);
       if (s.fires) o.fi = s.fires;
@@ -6197,7 +6472,7 @@ function serializeGame() {
       if (s.isFlagship) o.fs = 1;
       if (s.admiralAlive === false) o.aa = 0;
       if (s.ammoStores !== 1) o.am = r2(s.ammoStores);
-      o.b = s.batteries.map((b) => { const bb = { r: Math.round(b.readiness) }; if (b.knockedOut) bb.k = 1; if (b.loadedShell) bb.l = b.loadedShell; return bb; });
+      o.b = s.batteries.map((b) => { const bb = { r: Math.round(b.readiness) }; if (b.knockedOut) bb.k = 1; if (b.loadedShell) bb.l = b.loadedShell; if (b.train != null) bb.t = Math.round(b.train); if (b.rangeTargetId) bb.rt = b.rangeTargetId; if (b.rangeLevel) bb.rl = b.rangeLevel; return bb; });
       if (s.torpedoes) o.tp = { c: s.torpedoes.count, cd: s.torpedoes.cooldownLeft || 0 };
       return o;
     }),
@@ -6208,7 +6483,7 @@ function serializeGame() {
 function loadGameFromCode(code) {
   let sv;
   try { sv = JSON.parse(b64dec((code || "").trim())); } catch (e) { return { ok: false, err: "That code could not be read." }; }
-  if (!sv || sv.v !== 1 || !Array.isArray(sv.ships) || !SCENARIO_CONFIGS[sv.scn]) return { ok: false, err: "That is not a valid Echelon save." };
+  if (!sv || (sv.v !== 1 && sv.v !== 2) || !Array.isArray(sv.ships) || !SCENARIO_CONFIGS[sv.scn]) return { ok: false, err: "That is not a valid Echelon save." };
   setScenario(sv.scn);
   startGame(sv.side, "historical");            // builds the full roster + chrome; positions overwritten below
   const byId = {}; game.ships.forEach((s) => { byId[s.id] = s; });
@@ -6229,13 +6504,24 @@ function loadGameFromCode(code) {
     s.admiralAlive = (d.aa === 0) ? false : (s.isFlagship ? true : null);
     s.ammoStores = d.am != null ? d.am : 1;
     s.movedThisTurn = false; s.firedThisTurn = false; s.turnedHard = false;
-    s.order = null; s._plan = null; s._aimWorld = null;
-    if (Array.isArray(d.b)) d.b.forEach((bd, k) => { const b = s.batteries[k]; if (!b) return; if (bd.r != null) b.readiness = bd.r; b.knockedOut = !!bd.k; b.loadedShell = bd.l || null; b.shotsThisTurn = 0; });
+    s.order = d.ord ? { q: d.ord.q, r: d.ord.r, heading: d.ord.h } : null;
+    s._manualThisTurn = !!d.ma; s.doctrine = d.doc || "auto"; s._routing = !!d.ro;
+    s._plan = null; s._aimWorld = null;
+    if (Array.isArray(d.b)) d.b.forEach((bd, k) => { const b = s.batteries[k]; if (!b) return; if (bd.r != null) b.readiness = bd.r; b.knockedOut = !!bd.k; b.loadedShell = bd.l || null; if (bd.t != null) b.train = bd.t; b.rangeTargetId = bd.rt || null; b.rangeLevel = bd.rl || 0; b.shotsThisTurn = 0; });
     if (d.tp && s.torpedoes) { s.torpedoes.count = d.tp.c; s.torpedoes.cooldownLeft = d.tp.cd || 0; s.torpedoes.ready = (d.tp.cd || 0) <= 0; }
   }
+  if (sv.v >= 2 && Array.isArray(sv.squads)) {
+    game.squadrons = sv.squads.map((q) => ({ id: q.id, members: q.m || [], leaderId: q.l, name: q.n || `Squadron ${q.id}`, autoFormed: !!q.a }));
+    game._squadSeq = game.squadrons.reduce((m, q) => Math.max(m, q.id || 0), 0);
+    rebuildSquadronLines();
+  }
+  rebuildShipIndex();
   game.turn = sv.turn || 1;
   game.phase = "plan";                           // resume at the start of a planning phase
   game.selectedId = sv.sel || null; game.targetId = sv.tgt || null; game.cardId = null;
+  game.menuMode = sv.v >= 2 ? (sv.menu || "ship") : "ship";
+  game.selSquadId = sv.v >= 2 ? (sv.sqsel || null) : null;
+  if (game.menuMode === "squad" && !squadronById(game.selSquadId)) { game.menuMode = "ship"; game.selSquadId = null; }
   game.exec = null; game.busy = false;
   game.log = [];
   logLine(`Action restored: turn ${game.turn}. Tap a ship to give orders, then End Turn.`, "sys");
@@ -6276,7 +6562,7 @@ function startGame(playerSide, formationKey) {
 }
 
 function init() {
-  try { console.log("Echelon build 2026-06-23 08:27 UTC"); } catch (e) {}
+  try { console.log("Echelon build 2026-07-14 command and combat pass"); } catch (e) {}
   canvas = document.getElementById("chart");
   ctx = canvas.getContext("2d");
   // Stop the page or the host viewer from scrolling/zooming on canvas touches.
@@ -6334,8 +6620,7 @@ function init() {
   // desktop niceties: Space ends the turn, Esc closes the panel, [ and ] cycle your ships
   document.addEventListener("keydown", (ev) => {
     if (ev.target && /INPUT|TEXTAREA|SELECT/.test(ev.target.tagName)) return;
-    if (ev.code === "Space") { ev.preventDefault(); const pb = document.getElementById("playBtn"); if (pb && game.phase === "plan" && !game.exec) pb.click(); }
-    else if (ev.key === "Escape") { game.selectedId = null; game.cardId = null; game.selSquadId = null; syncPanel(); }
+    if (ev.key === "Escape") { game.selectedId = null; game.cardId = null; game.selSquadId = null; syncPanel(); }
     else if (ev.key === "[") cycleShip(-1);
     else if (ev.key === "]") cycleShip(1);
   });
