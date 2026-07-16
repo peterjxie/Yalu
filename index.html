@@ -319,7 +319,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 /* result */
 #resultScreen .overlay-card{max-width:600px;}
 .result-title{font-family:var(--serif);font-size:34px;margin:0 0 2px;text-align:center;}
-.result-title.win{color:var(--china);} .result-title.loss{color:var(--japan-red);} .result-title.draw{color:var(--bounce);}
+.result-title.win,.result-title.loss,.result-title.draw{color:var(--ink);}
 .result-sub{text-align:center;font-family:var(--mono);font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-dim);margin-bottom:20px;}
 .result-sub.compact{margin:14px 0 8px;}
 .result-bars{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
@@ -337,31 +337,33 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .result-roster .roster-row .rr-state{width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;flex:none;font-family:var(--mono);font-size:12px;font-weight:800;}
 .result-roster .roster-row .rr-sil{width:66px;height:22px;flex:none;object-fit:contain;opacity:.92;}
 .st-sunk .rr-sil,.st-out .rr-sil{opacity:.4;}
-.st-sunk .rr-state{background:#c0392b;color:#fff;} .st-sunk .rr-name{text-decoration:line-through;opacity:.60;}
-.st-out .rr-state{background:#7f4d2c;color:#fff;} .st-out .rr-name{text-decoration:line-through;opacity:.74;}
-.st-heavy .rr-state{background:#d76a55;color:#1d1110;}
-.st-dmg .rr-state{background:#e3c45c;color:#201a08;}
-.st-ok .rr-state{background:#79b07a;color:#08140a;}
+.st-sunk .rr-state,.st-out .rr-state,.st-heavy .rr-state,.st-dmg .rr-state,.st-ok .rr-state{background:rgba(232,221,199,.10);color:var(--ink-dim);border:1px solid rgba(232,221,199,.12);}
+.st-sunk .rr-name{text-decoration:line-through;opacity:.56;}
+.st-out .rr-name{text-decoration:line-through;opacity:.70;}
+.st-heavy .rr-state{background:rgba(232,221,199,.14);color:var(--ink);}
+.st-dmg .rr-state{background:rgba(232,221,199,.08);}
+.st-ok .rr-state{background:rgba(232,221,199,.04);}
 .result-tonnage{font-family:var(--mono);font-size:11px;color:var(--brass-dim);margin:2px 0 16px;}
 
 .loss-overview{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 10px;}
 .loss-card{border:1px solid rgba(200,164,92,.28);border-radius:8px;padding:10px;background:rgba(8,28,34,.58);}
 .loss-card-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-family:var(--mono);font-size:10px;color:var(--ink-dim);margin-bottom:8px;}
 .loss-card-head b{color:var(--ink);font-size:11px;}
+.loss-card-head .tag{color:var(--ink-dim)!important;background:transparent!important;border-color:rgba(232,221,199,.14)!important;}
 .loss-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;}
 .lm{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:43px;border-radius:6px;background:rgba(255,255,255,.035);}
 .lm b{font-family:var(--mono);font-size:17px;line-height:1;color:var(--ink);}
 .lm small{font-family:var(--mono);font-size:8px;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-dim);margin-top:4px;}
-.lm.sunk{border-bottom:2px solid #c0392b}.lm.out{border-bottom:2px solid #8a5a2b}.lm.cripple{border-bottom:2px solid #d76a55}.lm.ton{border-bottom:2px solid var(--brass)}
+.lm.sunk,.lm.out,.lm.cripple,.lm.ton{border-bottom:1px solid rgba(232,221,199,.18)}
 .material-line{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:0 0 12px;font-family:var(--mono);font-size:10px;color:var(--ink-dim);}
 .material-line span{padding:5px 8px;border:1px solid rgba(255,255,255,.08);border-radius:5px;background:rgba(255,255,255,.025);}
-.material-line b{color:var(--ink)} .material-line .net-good b{color:#9ed29f}.material-line .net-bad b{color:#e08070}
-.calculated-readings{margin:12px 0 14px;border:1px solid rgba(120,160,200,.30);border-radius:8px;background:rgba(60,100,130,.07);padding:10px 11px;}
-.cr-title{font-family:var(--mono);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:#9bb8d6;margin-bottom:7px;}
+.material-line b,.material-line .net-good b,.material-line .net-bad b{color:var(--ink)}
+.calculated-readings{margin:12px 0 14px;border:1px solid rgba(232,221,199,.14);border-radius:8px;background:rgba(232,221,199,.025);padding:10px 11px;}
+.cr-title{font-family:var(--mono);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;color:var(--brass-dim);margin-bottom:7px;}
 .cr-row{display:grid;grid-template-columns:126px 1fr;gap:9px;padding:6px 0;border-top:1px solid rgba(255,255,255,.055);font-size:11.5px;line-height:1.42;}
 .cr-row:first-of-type{border-top:none}.cr-row b{color:var(--ink)}.cr-row span{color:var(--ink-dim)}
 
-.gun-out{opacity:.55;} .gun-tag{color:#d76a55;font-size:10px;} .sys-bad{color:#d76a55;}.sys-warn{border-color:rgba(213,164,82,.35)!important}.sys-warn b{color:#e0b96d!important}.sys-critical{border-color:rgba(215,106,85,.45)!important;background:rgba(95,27,24,.26)!important}.sys-critical b{color:#e38672!important}
+.gun-out{opacity:.55;} .gun-tag{color:var(--ink-dim);font-size:10px;} .sys-bad{color:var(--ink-dim);}.sys-warn{border-color:rgba(232,221,199,.13)!important}.sys-warn b{color:var(--ink-dim)!important}.sys-critical{border-color:rgba(232,221,199,.18)!important;background:rgba(232,221,199,.035)!important}.sys-critical b{color:var(--ink)!important}
 .result-history p{font-size:12.5px;line-height:1.65;color:var(--ink-dim);margin:0 0 10px;}
 .result-compare{color:var(--brass)!important;font-style:italic;}
 .result-again{display:block;margin:18px auto 0;background:var(--brass);color:#1a1206;border:none;border-radius:6px;
@@ -406,10 +408,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .rv-row{display:flex;align-items:flex-start;gap:10px;font-size:12.5px;line-height:1.5;}
 .rv-tag{flex:none;font-family:var(--mono);font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:4px;font-weight:700;white-space:nowrap;}
 .rv-line{color:var(--ink-dim);}
-.rv-win{background:rgba(121,176,122,0.18);color:#9ed29f;border:1px solid rgba(121,176,122,0.5);}
-.rv-draw{background:rgba(200,164,92,0.16);color:var(--brass);border:1px solid rgba(200,164,92,0.45);}
-.rv-loss{background:rgba(192,57,43,0.16);color:#e08070;border:1px solid rgba(192,57,43,0.5);}
-.rv-strat{background:rgba(120,160,200,0.14);color:#9bb8d6;border:1px solid rgba(120,160,200,0.45);}
+.rv-win,.rv-draw,.rv-loss,.rv-strat{background:rgba(232,221,199,.045);color:var(--ink-dim);border:1px solid rgba(232,221,199,.16);}
+.rv-strat{color:var(--brass-dim);}
 .result-actions{text-align:center;margin-top:6px;}
 .result-logbtn{background:transparent;color:var(--brass);border:1px solid rgba(200,164,92,0.45);border-radius:6px;
   padding:9px 20px;font-family:var(--mono);font-size:11px;letter-spacing:1.2px;text-transform:uppercase;cursor:pointer;}
@@ -774,10 +774,8 @@ function basePen3000(gun) {
     const a = anchors[0];
     return a.penetration_mm * decay(3000, L) / decay(a.range_m, L);
   }
-  // Yalu coherence correction: the Matsushima-class 320 mm gun was enormous but
-  // exceptionally slow and did not give Japan a practical answer to the 356 mm
-  // ironclad belt. The generic calibre estimate otherwise makes it a belt-killer.
-  if (activeScenarioId() === "yalu" && gun.name === "32 cm Canet naval gun") return 275;
+  // Unsourced guns use the same calibre/type estimate. No weapon is hard-coded
+  // to penetrate or fail against a named opponent in order to reproduce an outcome.
   const cal = gunCalibre(gun);
   const t = (gun.type || "").toLowerCase();
   let center, lo, hi;
@@ -1012,7 +1010,10 @@ function executeMove(ship, desiredHeading, throttle) {
 }
 
 // ---------- gunnery resolution -----------------------------------------------
-const NATION_ACC = { Japan: 0.18, China: 0.19, Russia: 0.13 };
+// Per-shot gunnery baseline. These are historical training inputs, not balance knobs:
+// Japan had the better-drilled Yalu gun crews; China retained heavier individual weapons
+// but materially less live-fire practice. Deployment mode never changes these values.
+const NATION_ACC = { Japan: 0.18, China: 0.15, Russia: 0.13 };
 // Russia poorer than Japan: at Tsushima Japanese fire was markedly more effective (~9% of 12in hit)
 // while Russian gunnery, with worse rangefinding and tired crews after the voyage, told far less.
 // Ready ammunition stacked by the guns empties as a ship shoots through the long action.
@@ -1057,30 +1058,32 @@ function rollZone(target) {
   return "upper";
 }
 
-// Soft damage (fires, wrecked upperworks, spalling) cannot by itself sink a
-// sound hull below this fraction of max structure. Only belt-penetration,
-// waterline hull holing, and flooding (hard damage) take a ship lower.
+// Soft damage (fires, wrecked upperworks, spalling) cannot by itself destroy
+// reserve buoyancy. The floor is derived continuously from protection, not from
+// ship identity or the historical outcome of a battle.
+function protectionIndex(ship) {
+  const belt = zoneArmour(ship, "belt");
+  const deck = zoneArmour(ship, "deck");
+  return clamp(0.78 * (belt / 356) + 0.22 * (deck / 76), 0, 1);
+}
 function softFloorFrac(ship) {
+  if (activeScenarioId() === "yalu") return 0.04 + 0.11 * protectionIndex(ship);
   const belt = zoneArmour(ship, "belt");
-  if (belt >= 300) return 0.15;   // true ironclads (Dingyuan / Zhenyuan): gunfire leaves a wreck, rarely a sinking
-  if (belt >= 150) return 0.07;   // belted battleships: sustained or concentrated fire CAN sink them
-  return 0.04;                    // protected & unprotected cruisers, small craft
+  if (belt >= 300) return 0.15;
+  if (belt >= 150) return 0.07;
+  return 0.04;
 }
 
-// Reserve buoyancy ceiling. An armoured citadel limits how much water QF fire to
-// the unarmoured ends can let in: the ship floods, settles, but does not founder.
-// Only a hard waterline breach (heavy-gun belt penetration, torpedo, magazine)
-// can lift flooding past these caps toward 100.
+// Local openings in unarmoured ends flood compartments, but do not automatically
+// defeat an armoured citadel. The Yalu ceiling is a continuous protection/subdivision
+// proxy shared by every ship. Later scenarios retain their existing model for now.
 function maxFlood(ship) {
+  if (activeScenarioId() === "yalu") return 100 - 46 * protectionIndex(ship);
   const belt = zoneArmour(ship, "belt");
-  if (belt >= 300) return 40;     // ironclad citadel: end-flooding stays survivable
-  if (belt >= 150) return 70;     // belted ships: serious but not automatic loss
-  return 100;                     // unbelted hulls can be flooded to foundering
+  if (belt >= 300) return 40;
+  if (belt >= 150) return 70;
+  return 100;
 }
-
-// Apply flooding. Soft flooding (QF fire opening the unarmoured ends) is held
-// under the reserve-buoyancy ceiling; a hard breach (belt penetration, torpedo,
-// magazine) ignores the ceiling and can flood the hull all the way to foundering.
 function addFlood(ship, amount, hardBreach) {
   const ceiling = hardBreach ? 100 : maxFlood(ship);
   ship.flooding = clamp(ship.flooding + amount, 0, Math.max(ship.flooding, ceiling));
@@ -1287,7 +1290,12 @@ function resolveHit(from, battery, target, range) {
     const holeScale = clamp(cal / 200, 0.45, 1.7);
     const floodMul = dud ? 0.6 : 1;
     if (penetrated && zone === "sidehull" && rnd() < 0.42) addFlood(target, (6 + rnd() * 9) * holeScale * floodMul, true);
-    if (zone === "ends" && rnd() < (heShell ? 0.40 : 0.30)) addFlood(target, (5 + rnd() * 9) * holeScale * floodMul, true);
+    if (zone === "ends" && rnd() < (heShell ? 0.40 : 0.30)) {
+      // An end hit is a local compartment breach. Its effect is governed by the
+      // target's protection/subdivision profile; it is never promoted to a hard
+      // breach merely to force or prevent a particular historical result.
+      addFlood(target, (5 + rnd() * 9) * holeScale * floodMul, activeScenarioId() !== "yalu");
+    }
     if (zone === "belt" && belted) {
       if (activeScenarioId() === "yalu") {
         if (!heShell && penetrated && rnd() < 0.30) addFlood(target, (5 + rnd() * 8) * holeScale * floodMul, true);
@@ -1527,42 +1535,52 @@ function updateDamageControlState(s, dc) {
   s.damageControlState = dc >= 0.66 ? "effective" : dc >= 0.38 ? "strained" : "overwhelmed";
 }
 
-// Ongoing-damage tick (fires burn, flooding spreads). Call once per full turn.
+// Ongoing-damage tick. Fire degrades exposed fighting structure and crew; flooding
+// is a separate buoyancy/system state rather than a second hidden hull-damage pool.
+// The same equations apply to historical and skirmish deployments.
 function upkeepTick(ships, turn, log) {
   for (const s of ships) {
     if (s.out) continue;
     const yalu = activeScenarioId() === "yalu";
     const dc = yalu ? damageControlCapacity(s) : clamp(s.crew, 0.2, 1);
     updateDamageControlState(s, dc);
+
     if (s.fires > 0) {
-      const burn = s.fires * (s.structureMax * 0.006);
-      const floor = softFloorFrac(s) * s.structureMax;       // fire can't sink a sound hull
+      const burnRate = yalu ? 0.0050 : 0.0060;
+      const crewRate = yalu ? 0.008 : 0.010;
+      const burn = s.fires * (s.structureMax * burnRate);
+      const floor = softFloorFrac(s) * s.structureMax;
       s.structure = Math.min(s.structure, Math.max(s.structure - burn, floor));
-      s.crew = clamp(s.crew - 0.010 * s.fires, 0.2, 1);
+      s.crew = clamp(s.crew - crewRate * s.fires, 0.2, 1);
       let extinguished = 0;
-      const pExtinguish = yalu ? (0.16 + 0.36 * dc) : (0.50 * s.crew);
+      const pExtinguish = yalu ? (0.14 + 0.34 * dc) : (0.50 * s.crew);
       for (let i = 0; i < s.fires; i++) if (rnd() < pExtinguish) extinguished++;
       s.fires = Math.max(0, s.fires - extinguished);
     }
+
     if (s.flooding > 0) {
-      const erosion = s.flooding * (s.structureMax * 0.0012);
-      const belted = !isDeckProtected(s) && zoneArmour(s, "belt") >= 150;
-      if (belted) {
-        const floor = softFloorFrac(s) * s.structureMax;
-        s.structure = Math.min(s.structure, Math.max(s.structure - erosion, floor));
-      } else {
-        s.structure -= erosion;
-      }
+      // Flooding directly reduces propulsion and ultimately causes foundering. It
+      // does not also erase structure every tick; doing both double-counted the
+      // same water ingress and made concentrated end hits disproportionately lethal.
       if (yalu) {
-        const machineryErosion = 0.003 + 0.010 * (s.flooding / 100);
+        const machineryErosion = 0.0025 + 0.010 * (s.flooding / 100);
         s.engine = clamp(s.engine - machineryErosion, 0.1, s.engine);
-        const pumping = 0.8 + 3.0 * dc;
+        const pumping = 0.7 + 2.8 * dc;
         s.flooding = clamp(s.flooding - pumping, 0, 100);
       } else {
+        const erosion = s.flooding * (s.structureMax * 0.0012);
+        const belted = !isDeckProtected(s) && zoneArmour(s, "belt") >= 150;
+        if (belted) {
+          const floor = softFloorFrac(s) * s.structureMax;
+          s.structure = Math.min(s.structure, Math.max(s.structure - erosion, floor));
+        } else {
+          s.structure -= erosion;
+        }
         s.engine = clamp(s.engine - 0.01 * (s.flooding / 40), 0.1, s.engine);
         s.flooding = clamp(s.flooding - 3 * s.crew, 0, 100);
       }
     }
+
     if (yalu && s.fires === 0 && s.flooding < 45) {
       const engCeil = s.engineRepairCeiling == null ? 1 : s.engineRepairCeiling;
       const strCeil = s.steeringRepairCeiling == null ? 1 : s.steeringRepairCeiling;
@@ -1631,7 +1649,7 @@ if (typeof module !== "undefined" && module.exports) {
     bearingInArc, makeShip, rangeBetween, relativeBearing, batteryCanBear,
     maxTurnRate, moveDistance, executeMove, hitChance, rollZone, resolveHit,
     fireBattery, fireTorpedo, TORPEDO_RANGE, startTurnForSide, upkeepTick,
-    checkOutOfAction, sideStrength, softFloorFrac, maxFlood,
+    checkOutOfAction, sideStrength, protectionIndex, softFloorFrac, maxFlood, addFlood,
     NATION_ACC, chooseShell, apViability, shellDoctrine, NATION_DOCTRINE, SHELL_QUALITY, impactObliquity, descentAngle,
   };
 }
@@ -2243,18 +2261,18 @@ function drawShip(ctx, v, ship, opts) {
     const hullFrac = (ship.structureMax || 1) > 0 ? (ship.structure || 0) / ship.structureMax : 0;
     const crippled = !ship.out && (hullFrac < 0.5 || (ship.flooding || 0) > 20 || (ship.fires || 0) > 1);
     if (ship.out) {
-      const r = Math.max(8, Math.min(18, L * 0.48));
+      const r = Math.max(7, Math.min(16, L * 0.43));
       ctx.save(); ctx.translate(cx, cy);
-      ctx.globalAlpha = 0.92; ctx.strokeStyle = "rgba(222,82,67,0.95)"; ctx.lineWidth = 2.2; ctx.lineCap = "round";
-      ctx.beginPath(); ctx.moveTo(-r, -r * 0.72); ctx.lineTo(r, r * 0.72); ctx.moveTo(-r, r * 0.72); ctx.lineTo(r, -r * 0.72); ctx.stroke();
-      ctx.fillStyle = "rgba(8,18,21,0.84)"; ctx.fillRect(-9, -6, 18, 12);
-      ctx.fillStyle = "rgba(242,178,163,0.96)"; ctx.font = "700 8px ui-monospace, SFMono-Regular, Menlo, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("OUT", 0, 0);
+      // Status marks should remain legible without sitting on top of the ship art.
+      ctx.globalAlpha = 0.30; ctx.strokeStyle = "rgba(232,221,199,0.78)"; ctx.lineWidth = 1.25; ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(-r, -r * 0.66); ctx.lineTo(r, r * 0.66); ctx.moveTo(-r, r * 0.66); ctx.lineTo(r, -r * 0.66); ctx.stroke();
+      ctx.globalAlpha = 0.34; ctx.fillStyle = "rgba(232,221,199,0.92)"; ctx.font = "600 7px ui-monospace, SFMono-Regular, Menlo, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("OUT", 0, 0);
       ctx.restore();
     } else if (crippled) {
       const bx = cx + Math.max(7, B * 0.85), by = cy - Math.max(7, B * 0.85);
-      ctx.save(); ctx.globalAlpha = 0.92; ctx.fillStyle = "rgba(215,106,85,0.92)";
-      ctx.beginPath(); ctx.arc(bx, by, 5.5, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "#1d1110"; ctx.font = "800 9px ui-monospace, SFMono-Regular, Menlo, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("!", bx, by + 0.5); ctx.restore();
+      ctx.save(); ctx.globalAlpha = 0.28; ctx.fillStyle = "rgba(232,221,199,0.80)";
+      ctx.beginPath(); ctx.arc(bx, by, 4.5, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 0.42; ctx.fillStyle = "#07161a"; ctx.font = "700 8px ui-monospace, SFMono-Regular, Menlo, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("!", bx, by + 0.25); ctx.restore();
     }
   }
 
@@ -2373,17 +2391,17 @@ function drawEffects(ctx, v, effects) {
       // deliberately faint enough to suggest flight without becoming a phaser.
       const t = Math.max(0, Math.min(1, e.t || 0));
       const head = t;
-      const tail = Math.max(0, t - (e.heavy ? 0.20 : 0.15));
+      const tail = Math.max(0, t - (e.heavy ? 0.24 : 0.18));
       const xh = e.x0 + (e.x1 - e.x0) * head, yh = e.y0 + (e.y1 - e.y0) * head;
       const xt = e.x0 + (e.x1 - e.x0) * tail, yt = e.y0 + (e.y1 - e.y0) * tail;
       const visible = Math.sin(Math.PI * Math.min(1, t / 0.22)) * Math.sin(Math.PI * Math.min(1, (1 - t) / 0.12));
-      ctx.globalAlpha = (e.heavy ? 0.12 : 0.075) * Math.max(0, visible);
-      ctx.strokeStyle = e.heavy ? "rgba(255,222,176,0.82)" : "rgba(232,225,211,0.72)";
-      ctx.lineWidth = e.heavy ? 0.82 : 0.58;
+      ctx.globalAlpha = (e.heavy ? 0.24 : 0.15) * Math.max(0, visible);
+      ctx.strokeStyle = e.heavy ? "rgba(255,222,176,0.88)" : "rgba(236,230,218,0.80)";
+      ctx.lineWidth = e.heavy ? 1.02 : 0.72;
       ctx.beginPath(); ctx.moveTo(wx(v, xt), wy(v, yt)); ctx.lineTo(wx(v, xh), wy(v, yh)); ctx.stroke();
-      ctx.globalAlpha = (e.heavy ? 0.17 : 0.10) * Math.max(0, visible);
-      ctx.fillStyle = "rgba(246,240,228,0.72)";
-      ctx.beginPath(); ctx.arc(wx(v, xh), wy(v, yh), e.heavy ? 0.72 : 0.48, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = (e.heavy ? 0.27 : 0.17) * Math.max(0, visible);
+      ctx.fillStyle = "rgba(248,242,230,0.78)";
+      ctx.beginPath(); ctx.arc(wx(v, xh), wy(v, yh), e.heavy ? 0.82 : 0.56, 0, Math.PI * 2); ctx.fill();
     } else if (e.type === "muzzle") {
       const sx = wx(v, e.x), sy = wy(v, e.y);
       ctx.globalAlpha = e.life; ctx.fillStyle = PALETTE.fireHot;
@@ -3189,9 +3207,9 @@ const SCENARIO_CONFIGS = {
     brand: "Yalu River, 1894", subtitle: "Sino-Japanese Naval Action",
     sides: [
       { id: "China", label: "Beiyang Fleet", short: "Beiyang", cls: "china",
-        desc: "China. Two near-invulnerable ironclads, a fragile cruiser line, slow heavy guns. Hold the centre, let the belts soak fire." },
+        desc: "China. Two heavily armoured ironclads, a fragile cruiser line, slow heavy guns. Hold the centre and exploit the protection of the battle line." },
       { id: "Japan", label: "Combined Fleet", short: "Combined", cls: "japan",
-        desc: "Japan. Faster ships and a storm of quick-firing shells. You cannot crack the ironclads, so savage the cruisers instead." },
+        desc: "Japan. Faster ships and a storm of quick-firing shells. Most guns cannot defeat the ironclads’ main belts; damage exposed systems and destroy the cruiser line." },
     ],
     playerDefault: "China",
     sideLabel: { China: "Beiyang Fleet", Japan: "Combined Fleet" },
@@ -3214,7 +3232,7 @@ const SCENARIO_CONFIGS = {
     },
     ai: { Japan: { min: 2200, max: 3200, doctrine: "standoff_flank" } },        // others fall back to armour-based bands
     maxTurns: 20, maxSeconds: 5400,
-    intro: "Off the mouth of the Yalu, Japan's Combined Fleet, fast cruisers armed with quick-firing guns, met China's Beiyang Fleet and its two German ironclads, Dingyuan and Zhenyuan, whose 356 mm belts no Japanese shell could pierce. It became a contest between rate of fire and speed on one side, and heavy guns behind thick armour on the other.",
+    intro: "Off the mouth of the Yalu, Japan's Combined Fleet, fast cruisers armed with quick-firing guns, met China's Beiyang Fleet and its two German ironclads, Dingyuan and Zhenyuan, whose 356 mm belts resisted almost all Japanese gunfire under normal battle conditions. It became a contest between rate of fire and speed on one side, and heavy guns behind thick armour on the other.",
     deploy: function (place, playerSide, key, proc, F) {
       const PROC = { line_ahead: 1, line_abreast: 1, echelon: 1, double_column: 1, wedge: 1 };
       const k = key || "chinese_actual_opening_arc";
@@ -3618,7 +3636,7 @@ function scheduleSalvo(from, target, summary, delay) {
   game.effects.push({ type: "shell", fromId: from.id, toId: target.id, set: false, t: 0, dur: 0.45, hit, heavy, boiler, calibre: summary.calibre || (heavy ? 250 : 120), splashCount, spread, shotCount: Math.max(1, summary.shots || 1), life: 1, delay: delay + 0.05 });
 }
 function isSunkReason(reason) {
-  return reason === "sunk" || reason === "foundered" || reason === "settling, abandoned" || reason === "lost to a magazine explosion";
+  return reason === "sunk" || reason === "foundered" || reason === "lost to a magazine explosion";
 }
 function spawnSink(ship, delay) {
   delay = delay || 0;
@@ -4132,7 +4150,7 @@ function objectiveOutcome(side) {
   const nightfall = game.turn >= game.maxTurns;
   const chinaGone = aliveOnSide("China").length === 0;
   const japanGone = aliveOnSide("Japan").length === 0;
-  const sunkReason = (s) => s.outReason === "sunk" || s.outReason === "foundered" || s.outReason === "settling, abandoned" || s.outReason === "lost to a magazine explosion";
+  const sunkReason = (s) => s.outReason === "sunk" || s.outReason === "foundered" || s.outReason === "lost to a magazine explosion";
   const JP_MODERN = ["naniwa", "takachiho", "akitsushima", "itsukushima", "hashidate", "chiyoda"];
   const CN_CRUISERS = ["zhiyuan", "jingyuan_1886", "jingyuan_1887", "laiyuan", "jiyuan"];
   // value of an enemy ship put out of the fight, weighted by importance; a disabled ship counts for less than a sunk one
@@ -5272,11 +5290,14 @@ function deconflictOrders() {
 // and then fall silent.
 function refillReadiness() {
   for (const s of game.ships) {
+    // Reset telemetry for every hull, including ships already out of action.
+    // Previously those counters stayed frozen and their last salvo/damage was
+    // repeated in every later turn of the battle report.
+    s._turnShots = 0; s._turnHits = 0; s._turnDmg = 0; s._turnTaken = 0; s._turnHitsTaken = 0;
     if (s.out) continue;
     s._crewTurnStart = s.crew;                       // baseline for this turn's crew-loss cap
     s._structTurnStart = s.structure;                // baseline for this turn's structure loss (morale)
     s._hitThisTurn = false;                           // cleared now; set true by any hit during resolution
-    s._turnShots = 0; s._turnHits = 0; s._turnDmg = 0; s._turnTaken = 0; s._turnHitsTaken = 0;   // per-turn telemetry counters
     for (const b of s.batteries) {
       if (b.knockedOut) continue;
       const eff = reloadMid(b.gun) * (2 - s.crew);
