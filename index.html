@@ -53,13 +53,16 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 
 /* ---- ship panel: docked, compact (~1/4), the map reflows around it ---- */
 #panel{display:none;position:absolute;top:10px;right:10px;bottom:10px;width:clamp(278px,24vw,340px);z-index:12;
-  background:linear-gradient(180deg,rgba(24,56,66,.34),rgba(9,27,33,.42) 42%,rgba(5,17,21,.48));
-  -webkit-backdrop-filter:blur(26px) saturate(1.45) brightness(.86);backdrop-filter:blur(26px) saturate(1.45) brightness(.86);
-  border:1px solid rgba(232,221,199,.22);border-radius:14px;flex-direction:column;min-height:0;min-width:0;overflow:hidden;
-  box-shadow:0 20px 56px rgba(0,0,0,.38), inset 0 1px rgba(255,255,255,.12), inset 0 -1px rgba(255,255,255,.035);}
+  background:linear-gradient(180deg,rgba(19,54,64,.20),rgba(8,30,37,.24) 44%,rgba(4,18,23,.28));
+  -webkit-backdrop-filter:blur(18px) saturate(1.20) brightness(.98);backdrop-filter:blur(18px) saturate(1.20) brightness(.98);
+  border:1px solid rgba(232,221,199,.20);border-radius:14px;flex-direction:column;min-height:0;min-width:0;overflow:hidden;
+  box-shadow:0 16px 42px rgba(0,0,0,.25), inset 0 1px rgba(255,255,255,.10), inset 0 -1px rgba(255,255,255,.025);}
 #panel.expanded{display:flex;}
-.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:2px;text-transform:uppercase;
-  color:var(--brass-dim);padding:10px 14px 6px;border-bottom:1px solid rgba(232,221,199,.10);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0));}
+.panel-title{font-family:var(--mono);font-size:10px;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--brass-dim);padding:7px 9px;border-bottom:1px solid rgba(232,221,199,.09);background:rgba(4,18,23,.16);display:flex;align-items:center;justify-content:space-between;gap:8px;position:relative;z-index:2;}
+.panel-title span{flex:1;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.panel-head-btn{border:1px solid rgba(232,221,199,.16);background:rgba(5,24,30,.24);color:var(--ink-dim);border-radius:7px;padding:5px 8px;font-family:var(--mono);font-size:9px;letter-spacing:.7px;text-transform:uppercase;cursor:pointer;}
+.panel-head-btn:active{background:rgba(200,164,92,.13);color:var(--ink);}
 #panelBody{overflow-y:auto;overflow-x:hidden;padding:9px 10px 12px;flex:1 1 auto;-webkit-overflow-scrolling:touch;}
 .panel-hint p{font-size:13px;line-height:1.5;color:var(--ink-dim);margin:0 0 10px;}
 .panel-hint ul{margin:0 0 12px;padding-left:18px;}
@@ -186,8 +189,11 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   background:rgba(8,24,28,.94);border:1px solid var(--panel-edge);border-bottom:none;border-left:none;
   border-top-right-radius:8px;z-index:6;display:flex;flex-direction:column-reverse;}
 #logDrawer.open{width:min(440px,90vw);}
+.log-head{display:flex;align-items:center;gap:2px;}
 .log-handle{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--brass-dim);
-  padding:8px 12px;cursor:pointer;white-space:nowrap;}
+  padding:8px 12px;cursor:pointer;white-space:nowrap;flex:1;}
+.log-analysis{border:0;border-left:1px solid rgba(232,221,199,.10);background:transparent;color:var(--ink-dim);padding:8px 10px;font-family:var(--mono);font-size:9px;letter-spacing:.8px;text-transform:uppercase;cursor:pointer;}
+.log-analysis:active{color:var(--ink);background:rgba(200,164,92,.08);}
 #logDrawer.open .log-handle{border-top:1px solid #143b44;}
 #logList{display:none;overflow-y:auto;max-height:42vh;padding:8px 12px;font-family:var(--mono);font-size:11px;line-height:1.55;-webkit-overflow-scrolling:touch;}
 #logDrawer.open #logList{display:block;}
@@ -215,8 +221,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .obj.miss{opacity:.72;} .obj.miss .obj-mark{color:var(--japan-red);}
 .roster-list{display:flex;flex-direction:column;gap:2px;margin:0 0 16px;}
 .roster-row{display:grid;grid-template-columns:1fr auto 84px;align-items:center;gap:8px;padding:3px 0;font-family:var(--mono);font-size:11.5px;border-bottom:1px solid rgba(255,255,255,0.05);}
-.roster-row.out{opacity:.5;}
-.roster-name{color:var(--ink);} .roster-name.china{color:var(--china);} .roster-name.japan{color:var(--japan);}
+.roster-row.out{opacity:.48;color:var(--ink-dim);}.roster-row.out .roster-name{text-decoration:line-through;text-decoration-thickness:1px;text-decoration-color:rgba(159,176,172,.75);}
+.roster-name{color:var(--ink);} .roster-name.china{color:var(--china);} .roster-name.japan{color:var(--japan);}.out-state{color:var(--ink-dim);font-size:10px;white-space:nowrap;}
 .roster-name-cell{display:flex;flex-direction:column;gap:1px;min-width:0;}
 .roster-tgt{font-size:9.5px;color:var(--brass-dim);font-family:var(--mono);letter-spacing:.3px;}
 .roster-tgt.none{color:#d2706a;}
@@ -369,21 +375,26 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .result-again{display:block;margin:18px auto 0;background:var(--brass);color:#1a1206;border:none;border-radius:6px;
   padding:11px 26px;font-family:var(--mono);font-size:12px;letter-spacing:1.5px;font-weight:700;cursor:pointer;text-transform:uppercase;}
 
-/* ---- responsive: panel becomes bottom sheet ---- */
-@media (max-width:860px){
+/* ---- adaptive phone command pane: horizontal in portrait, vertical in landscape ---- */
+@media (max-width:960px){
   #main{flex-direction:column;}
-  #panel{top:auto;left:8px;right:8px;bottom:8px;width:auto;height:min(42vh,390px);max-height:none;border:1px solid rgba(232,221,199,.22);border-radius:14px;}
-  .panel-title{cursor:pointer;text-align:center;}
   #logDrawer{bottom:0;max-height:36%;}
   .strengths .sbar{min-width:84px;}
   .brand{font-size:14px;}
+}
+@media (max-width:960px) and (orientation:portrait){
+  #panel{top:auto;left:6px;right:6px;bottom:6px;width:auto;height:min(36vh,330px);max-height:none;border-radius:14px;}
+}
+@media (max-width:960px) and (orientation:landscape){
+  #panel{top:6px;right:6px;bottom:6px;left:auto;width:min(38vw,360px);height:auto;max-height:none;border-radius:14px;}
 }
 @media (max-width:560px){
   .codex-grid{grid-template-columns:1fr;}
   .loss-overview{grid-template-columns:1fr;}
   .cr-row{grid-template-columns:1fr;gap:2px;}
   .rail-btn.opt{display:none;}
-  .strengths{gap:8px;}
+  .strengths{gap:6px;}
+  .strengths .sbar{min-width:70px;}
 }
 .ctl-row{display:flex;align-items:center;gap:8px;margin:8px 0}
 .ctl-row .k{font-size:11px;color:var(--dim,#a9b3ad);min-width:46px}
@@ -401,7 +412,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .card-arm{margin:0;padding-left:18px;font-size:13px;line-height:1.6}
 .card-cond{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:13px}
 .card-cond>div{background:rgba(200,164,92,0.07);border-radius:5px;padding:6px 8px;text-align:center}.card-cond small{display:block;margin-top:2px;font-size:9px;line-height:1.25;color:var(--muted)}
-.card-out{color:#d76a55;font-size:14px;padding:6px 0}
+.card-out{color:var(--ink-dim);font-size:13px;padding:6px 0}.card-out b{display:block;text-decoration:line-through;text-decoration-color:rgba(159,176,172,.55);font-weight:600}.card-out small{display:block;margin-top:4px;font-size:10px;color:rgba(159,176,172,.72)}
 
 /* strategic / tactical verdict on the result screen */
 .result-verdict{margin:2px 0 18px;display:flex;flex-direction:column;gap:8px;}
@@ -424,12 +435,13 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .logmodal-btns{display:flex;gap:8px;}
 .logmodal-btns button{background:rgba(200,164,92,0.1);color:#e8ddc7;border:1px solid rgba(200,164,92,0.35);border-radius:5px;padding:6px 14px;font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;}
 .logmodal-btns button:hover{background:rgba(200,164,92,0.2);}
+.logmodal-btns button.active{background:rgba(200,164,92,.20);border-color:rgba(200,164,92,.60);color:var(--ink);}
 #logModalPre{margin:0;padding:14px 16px;overflow:auto;font-family:var(--mono);font-size:11px;line-height:1.5;color:#cfe0d8;white-space:pre;flex:1;}
 
 /* ---- admiralty chart chrome ---- */
 #topbar,#rail{box-shadow:inset 0 1px rgba(232,221,199,.06),inset 0 -1px rgba(200,164,92,.12);}
 #panel{box-shadow:0 20px 56px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.12),inset 0 -1px rgba(255,255,255,.035);}
-#panel.expanded::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.015) 26%,rgba(0,0,0,.04));opacity:.95;}
+#panel.expanded::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.008) 26%,rgba(0,0,0,.018));opacity:.72;}
 .overlay-card,.logmodal-card{border:1px solid var(--brass-dim);box-shadow:0 18px 60px rgba(0,0,0,.65),inset 0 0 0 1px rgba(232,221,199,.035);}
 .dossier-elev,.bat-row,.mode-choice,.theatre-choice,.opening-choice,.side-choice,.form-btn{box-shadow:inset 0 0 0 1px rgba(200,164,92,.035);}
 .type-glyph{display:inline-flex;width:18px;height:12px;vertical-align:-2px;margin-right:5px;opacity:.9;}
@@ -439,16 +451,18 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 
 
 /* compact glass command layer */
-.command-glass{position:relative;background:linear-gradient(145deg,rgba(16,52,62,.72),rgba(5,22,28,.62));border:1px solid rgba(200,164,92,.32);border-radius:12px;padding:9px;box-shadow:inset 0 1px rgba(255,255,255,.04),0 10px 28px rgba(0,0,0,.22)}
+.command-glass{position:relative;background:linear-gradient(145deg,rgba(16,52,62,.26),rgba(5,22,28,.22));border:1px solid rgba(200,164,92,.28);border-radius:12px;padding:9px;box-shadow:inset 0 1px rgba(255,255,255,.035),0 8px 22px rgba(0,0,0,.14)}
 .command-head{display:flex;align-items:center;gap:7px;min-width:0}.command-name,.command-head>div{min-width:0;flex:1}.command-title{font-family:var(--serif);font-size:18px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.command-sub{font-family:var(--mono);font-size:9px;color:var(--ink-dim);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .icon-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;padding:0;border-radius:8px;border:1px solid rgba(200,164,92,.28);background:rgba(7,29,36,.58);color:var(--ink);cursor:pointer;flex:none}.icon-btn:hover,.icon-btn:active{background:rgba(200,164,92,.15);border-color:rgba(200,164,92,.55)}.icon-btn svg,.rail-btn.icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.icon-btn.tiny{width:27px;height:27px;font-family:var(--mono);font-size:14px}.rail-aa{font-family:var(--serif);font-size:13px}
-.mini-profile{height:92px;overflow:hidden;margin:5px 0 4px;border-radius:8px;background:rgba(4,19,24,.35)}.system-status{margin-top:4px!important;opacity:.96}.status-strip,.battery-strip,.doctrine-icons,.helm-strip,.formation-strip{display:flex;align-items:center;gap:5px;margin-top:6px;flex-wrap:wrap}.status-chip{display:flex;align-items:center;gap:4px;padding:4px 6px;border-radius:8px;background:rgba(3,18,23,.52);border:1px solid rgba(255,255,255,.055);font-family:var(--mono);font-size:9px}.status-chip i{font-style:normal;color:var(--brass-dim)}.status-chip b{font-weight:600;color:var(--ink)}
-.target-chip{display:flex;align-items:center;gap:7px;margin-top:6px;padding:6px 8px;border-radius:9px;background:rgba(192,57,43,.09);border:1px solid rgba(192,57,43,.20);font-family:var(--mono);font-size:10px;white-space:nowrap;overflow:hidden}.target-chip svg{width:16px;height:16px;fill:none;stroke:#df8277;stroke-width:1.7;flex:none}.target-chip span{overflow:hidden;text-overflow:ellipsis}
-.helm-strip{justify-content:center}.helm-strip .icon-btn{flex:1;max-width:54px}.formation-strip{justify-content:center}.formation-strip .icon-btn{width:29px;height:28px}.formation-strip .icon-btn.active{background:rgba(47,127,214,.32);border-color:#7ab4ee;color:#eff7ff}.spacing-readout{font-family:var(--mono);font-size:9px;color:var(--ink-dim);min-width:42px;text-align:center}.text-icon{height:28px;min-width:31px;padding:0 7px;border-radius:8px;border:1px solid rgba(200,164,92,.25);background:rgba(6,25,31,.55);color:var(--ink-dim);font-family:var(--mono);font-size:10px;cursor:pointer}.text-icon.active{background:rgba(47,127,214,.32);border-color:#7ab4ee;color:#eff7ff}.doctrine-icons{justify-content:center}
-.battery-strip{justify-content:center}.battery-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 6px;border-radius:8px;background:rgba(5,23,29,.58);border:1px solid rgba(255,255,255,.07);font-family:var(--mono);font-size:9px;color:var(--ink-dim)}.battery-chip b{color:var(--ink);font-weight:600}.battery-chip small{font-size:8px;color:var(--brass-dim)}.battery-chip.bearing{border-color:rgba(111,207,115,.35)}.battery-chip.dead{opacity:.38}.battery-chip.torp{border-color:rgba(58,143,176,.42)}
+.mini-profile{height:92px;overflow:hidden;margin:5px 0 4px;border-radius:8px;background:rgba(4,19,24,.16)}.system-status{margin-top:4px!important;opacity:.96}.status-strip,.battery-strip,.doctrine-icons,.helm-strip,.formation-strip{display:flex;align-items:center;gap:5px;margin-top:6px;flex-wrap:wrap}.status-chip{display:flex;align-items:center;gap:4px;padding:4px 6px;border-radius:8px;background:rgba(3,18,23,.24);border:1px solid rgba(255,255,255,.055);font-family:var(--mono);font-size:9px}.status-chip i{font-style:normal;color:var(--brass-dim)}.status-chip b{font-weight:600;color:var(--ink)}
+.target-chip{display:flex;align-items:center;gap:7px;margin-top:6px;padding:6px 8px;border-radius:9px;background:rgba(192,57,43,.055);border:1px solid rgba(192,57,43,.17);font-family:var(--mono);font-size:10px;white-space:nowrap;overflow:hidden}.target-chip svg{width:16px;height:16px;fill:none;stroke:#df8277;stroke-width:1.7;flex:none}.target-chip span{overflow:hidden;text-overflow:ellipsis}
+.control-label{font-family:var(--mono);font-size:8.5px;letter-spacing:.9px;text-transform:uppercase;color:var(--brass-dim);margin:8px 0 2px;text-align:center;}
+.helm-strip{justify-content:center;flex-wrap:nowrap}.helm-choice,.formation-choice{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:0;padding:4px 3px;border-radius:8px;border:1px solid rgba(200,164,92,.25);background:rgba(6,25,31,.25);color:var(--ink);cursor:pointer;font-family:var(--mono)}.helm-choice{flex:1;max-width:66px;height:46px}.helm-choice svg,.formation-choice svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.helm-choice span,.formation-choice span{font-size:7.5px;line-height:1.05;color:var(--ink-dim);text-align:center;white-space:nowrap}.helm-choice:active,.formation-choice:active,.formation-choice.active{background:rgba(47,127,214,.23);border-color:#7ab4ee;color:#eff7ff}.formation-strip{justify-content:center;align-items:stretch}.formation-choice{width:62px;height:48px}.spacing-controls{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:5px}.spacing-readout{font-family:var(--mono);font-size:9px;color:var(--ink-dim);min-width:42px;text-align:center}.text-icon{height:28px;min-width:31px;padding:0 7px;border-radius:8px;border:1px solid rgba(200,164,92,.25);background:rgba(6,25,31,.28);color:var(--ink-dim);font-family:var(--mono);font-size:10px;cursor:pointer}.text-icon.active{background:rgba(47,127,214,.32);border-color:#7ab4ee;color:#eff7ff}.doctrine-icons{justify-content:center}
+.cycle-btn{height:27px;padding:0 7px;border-radius:8px;border:1px solid rgba(200,164,92,.24);background:rgba(7,29,36,.26);color:var(--ink-dim);font-family:var(--mono);font-size:8px;white-space:nowrap;cursor:pointer;flex:none}.cycle-btn:active{color:var(--ink);background:rgba(200,164,92,.12)}
+.battery-strip{justify-content:center}.battery-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 6px;border-radius:8px;background:rgba(5,23,29,.26);border:1px solid rgba(255,255,255,.07);font-family:var(--mono);font-size:9px;color:var(--ink-dim)}.battery-chip b{color:var(--ink);font-weight:600}.battery-chip small{font-size:8px;color:var(--brass-dim)}.battery-chip.bearing{border-color:rgba(111,207,115,.35)}.battery-chip.dead{opacity:.38}.battery-chip.torp{border-color:rgba(58,143,176,.42)}
 .help-pop{position:relative;flex:none}.help-pop summary{list-style:none}.help-pop summary::-webkit-details-marker{display:none}.help-pop>div{position:absolute;right:0;top:34px;z-index:20;width:230px;padding:9px 10px;border-radius:9px;background:rgba(5,22,28,.96);border:1px solid rgba(200,164,92,.38);box-shadow:0 12px 30px rgba(0,0,0,.5);font-size:11px;line-height:1.45;color:var(--ink-dim)}.inline-help{display:flex;justify-content:flex-end;margin-top:5px}.inline-help>div{bottom:34px;top:auto}.member-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px}.member-chip{display:flex;justify-content:space-between;gap:6px;align-items:center;min-width:0;padding:6px 7px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:rgba(5,23,29,.5);color:var(--ink);font-size:10px;cursor:pointer}.member-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.member-chip b{font-family:var(--mono);font-size:9px;color:var(--ink-dim)}.member-chip.flag{border-color:rgba(200,164,92,.42)}.member-chip.out{opacity:.38}.command-foot{display:flex;justify-content:flex-end;margin-top:7px}
-#rail{gap:5px;padding-left:8px;padding-right:8px}.rail-btn.icon{width:34px;height:32px;padding:0;justify-content:center}.rail-btn.icon svg{width:17px;height:17px}.rail-btn.icon span{pointer-events:none}
-@media(max-width:560px){#rail{overflow-x:auto}.rail-btn.icon{width:32px;min-width:32px}.member-grid{grid-template-columns:1fr 1fr}.command-glass{padding:8px}.mini-profile{height:82px}}
+#rail{gap:5px;padding-left:8px;padding-right:8px}.rail-btn.icon{width:34px;height:32px;padding:0;justify-content:center}.rail-btn.icon svg{width:17px;height:17px}.rail-btn.icon span{pointer-events:none}.rail-btn.fleet-access{display:inline-flex;align-items:center;gap:6px;min-width:72px;justify-content:center;border-color:rgba(200,164,92,.42);color:var(--ink)}.rail-btn.fleet-access svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7}.rail-btn.fleet-access span{font-family:var(--mono);font-size:9px;letter-spacing:.5px;text-transform:uppercase}
+@media(max-width:560px){#rail{overflow-x:auto}.rail-btn.icon{width:32px;min-width:32px}.rail-btn.fleet-access{min-width:68px}.member-grid{grid-template-columns:1fr 1fr}.command-glass{padding:8px}.mini-profile{height:72px}.helm-choice{height:43px}.helm-choice span,.formation-choice span{font-size:7px}.formation-choice{width:57px}}
 
 </style>
 </head>
@@ -468,13 +482,13 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
     <div id="chartWrap">
       <canvas id="chart"></canvas>
       <div id="logDrawer">
-        <div class="log-handle" id="logBtn">Signal log ▴</div>
+        <div class="log-head"><div class="log-handle" id="logBtn">Signal log ▴</div><button class="log-analysis" id="analysisBtn">Analysis</button></div>
         <div id="logList"></div>
       </div>
     </div>
 
     <div id="panel">
-      <div class="panel-title" id="panelTitle">✕ Close</div>
+      <div class="panel-title" id="panelTitle"><button class="panel-head-btn" id="panelFleetBtn">Fleet</button><span>Command pane</span><button class="panel-head-btn" id="panelCloseBtn">Close ×</button></div>
       <div id="panelBody"></div>
     </div>
   </div>
@@ -482,6 +496,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 
   <div id="rail">
     <button class="rail-btn" id="playBtn">End Turn</button>
+    <button class="rail-btn fleet-access" id="fleetBtn" aria-label="Fleet roster"><svg viewBox="0 0 24 24"><path d="M3 6h18M5 12h14M7 18h10"/></svg><span>Fleet</span></button>
     <button class="rail-btn icon" id="ffBtn" title="Continue to contact" aria-label="Continue to contact"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button>
     <button class="rail-btn icon" id="zoomBtn" title="Cycle zoom" aria-label="Cycle zoom"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="M15 15l6 6M7 10h6M10 7v6"/></svg></button>
     <button class="rail-btn icon" id="multiSelBtn" title="Form a squadron" aria-label="Form a squadron"><svg viewBox="0 0 24 24"><path d="M3 6h7M3 12h10M3 18h7M15 6h6M17 12h4M15 18h6"/></svg></button>
@@ -490,7 +505,6 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
     <button class="rail-btn icon toggle opt" id="arcsBtn" title="Firing arcs" aria-label="Firing arcs"><svg viewBox="0 0 24 24"><path d="M12 20V4M12 12L3 7M12 12l9-5"/></svg></button>
     <button class="rail-btn icon toggle opt" id="labelsBtn" title="Ship names" aria-label="Ship names"><span class="rail-aa">Aa</span></button>
     <button class="rail-btn icon opt" id="codexBtn" title="Codex" aria-label="Codex">?</button>
-    <button class="rail-btn icon opt" id="fleetBtn" title="Fleet roster" aria-label="Fleet roster"><svg viewBox="0 0 24 24"><path d="M3 6h18M5 12h14M7 18h10"/></svg></button>
     <button class="rail-btn icon opt" id="menuBtn" title="Menu" aria-label="Menu">⋯</button>
     <div class="rail-spacer"></div>
     <button class="rail-btn icon" id="recenterBtn" title="Re-centre" aria-label="Re-centre"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/></svg></button>
@@ -549,7 +563,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">build 2026-07-16 Yalu systems and ordnance pass</div>
+    <div class="build-stamp" id="buildStamp">build 2026-07-17 mobile command and analysis pass</div>
   </div>
 </div>
 
@@ -601,8 +615,10 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 <div id="logModal" onclick="if(event.target===this)closeLogModal()">
   <div class="logmodal-card">
     <div class="logmodal-head">
-      <h3>Battle Report</h3>
+      <h3 id="logModalTitle">Battle Report</h3>
       <div class="logmodal-btns">
+        <button id="logSummaryBtn" onclick="setLogMode('summary')">Summary</button>
+        <button id="logMechanicsBtn" onclick="setLogMode('mechanics')">Mechanics</button>
         <button id="logCopyBtn" onclick="copyReport()">Copy all</button>
         <button id="logDownloadBtn" onclick="downloadReport()">Download .txt</button>
         <button id="logCloseBtn" onclick="closeLogModal()">Close</button>
@@ -1427,6 +1443,8 @@ function fireBattery(from, battery, target, turn) {
   const totalShots = Math.max(1, Math.round(volleys * battery.count * fireVolumeFactor(from)));
 
   let hits = 0, shots = 0, totalDmg = 0, fires = 0, crits = [], pens = 0, ricochets = 0, bounces = 0;
+  let duds = 0, hardHits = 0, nearPens = 0, partials = 0, armourHits = 0, obliquitySum = 0;
+  const zones = {};
   const hc = hitChance(from, battery, target, range) * fireMoraleFactor(from);
   for (let i = 0; i < totalShots; i++) {
     shots++;
@@ -1434,6 +1452,12 @@ function fireBattery(from, battery, target, turn) {
       hits++;
       const ev = resolveHit(from, battery, target, range);
       totalDmg += ev.dmg;
+      zones[ev.zone || "unknown"] = (zones[ev.zone || "unknown"] || 0) + 1;
+      if (ev.dud) duds++;
+      if (ev.hard) hardHits++;
+      if (ev.nearPen) nearPens++;
+      if (ev.partial) partials++;
+      if ((ev.armour || 0) > 1) { armourHits++; obliquitySum += ev.obliquity || 0; }
       if (ev.fireSet) fires++;
       if (ev.crit && ev.crit !== "fire2") crits.push(ev.crit);
       if (ev.penetrated && ev.hard) pens++;                       // a telling penetration of a vital
@@ -1450,6 +1474,7 @@ function fireBattery(from, battery, target, turn) {
   return {
     range: Math.round(range), shots, hits, totalDmg: Math.round(totalDmg),
     shell: battery.loadedShell, fires, crits, pens, ricochets, bounces, hitChance: hc, penetration: Math.round(penAt(battery.gun, range)),
+    duds, hardHits, nearPens, partials, armourHits, meanObliquity: armourHits ? Math.round(obliquitySum / armourHits) : 0, zones,
     shotsPerGun: volleys,
   };
 }
@@ -2194,6 +2219,14 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim) {
   ctx.restore();
 }
 
+function renderedLossStatus(ship) {
+  const reason = (ship && ship.outReason) || "";
+  if (reason === "sunk" || reason === "foundered" || reason === "lost to a magazine explosion") return "TOTAL LOSS";
+  const frac = ship && ship.structureMax ? Math.max(0, ship.structure / ship.structureMax) : 0;
+  if (reason.includes("settling") || reason.includes("ablaze") || frac <= 0.08 || (ship.flooding || 0) >= 55 || (ship.fires || 0) >= 4) return "ABANDONED";
+  return "DISABLED";
+}
+
 function drawShip(ctx, v, ship, opts) {
   opts = opts || {};
   const px = pX(ship), py = pY(ship), ph = pH(ship);
@@ -2261,12 +2294,11 @@ function drawShip(ctx, v, ship, opts) {
     const hullFrac = (ship.structureMax || 1) > 0 ? (ship.structure || 0) / ship.structureMax : 0;
     const crippled = !ship.out && (hullFrac < 0.5 || (ship.flooding || 0) > 20 || (ship.fires || 0) > 1);
     if (ship.out) {
-      const r = Math.max(7, Math.min(16, L * 0.43));
+      const r = Math.max(8, Math.min(18, L * 0.48));
       ctx.save(); ctx.translate(cx, cy);
-      // Status marks should remain legible without sitting on top of the ship art.
-      ctx.globalAlpha = 0.30; ctx.strokeStyle = "rgba(232,221,199,0.78)"; ctx.lineWidth = 1.25; ctx.lineCap = "round";
-      ctx.beginPath(); ctx.moveTo(-r, -r * 0.66); ctx.lineTo(r, r * 0.66); ctx.moveTo(-r, r * 0.66); ctx.lineTo(r, -r * 0.66); ctx.stroke();
-      ctx.globalAlpha = 0.34; ctx.fillStyle = "rgba(232,221,199,0.92)"; ctx.font = "600 7px ui-monospace, SFMono-Regular, Menlo, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("OUT", 0, 0);
+      // A single low-contrast strike marks a ship removed from the fight without obscuring the chart.
+      ctx.globalAlpha = 0.24; ctx.strokeStyle = "rgba(185,196,194,0.82)"; ctx.lineWidth = 1.15; ctx.lineCap = "round";
+      ctx.beginPath(); ctx.moveTo(-r, r * 0.48); ctx.lineTo(r, -r * 0.48); ctx.stroke();
       ctx.restore();
     } else if (crippled) {
       const bx = cx + Math.max(7, B * 0.85), by = cy - Math.max(7, B * 0.85);
@@ -2336,8 +2368,13 @@ function drawShip(ctx, v, ship, opts) {
     const tw = ctx.measureText(label).width;
     ctx.fillStyle = "rgba(7,20,24,0.66)";
     ctx.fillRect(cx - tw / 2 - 4, cy - yoff - 9, tw + 8, 13);
-    ctx.fillStyle = ship.out ? PALETTE.parchmentDim : accent;
+    ctx.fillStyle = ship.out ? "rgba(159,176,172,0.58)" : accent;
     ctx.fillText(label, cx, cy - yoff + 1);
+    if (ship.out) {
+      ctx.globalAlpha = 0.62; ctx.strokeStyle = "rgba(159,176,172,0.72)"; ctx.lineWidth = 0.8;
+      ctx.beginPath(); ctx.moveTo(cx - tw / 2 - 1, cy - yoff - 2); ctx.lineTo(cx + tw / 2 + 1, cy - yoff - 2); ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
     if (!ship.out) {
       const frac = Math.max(0, ship.structure / ship.structureMax);
       const bw = Math.max(tw, 22);
@@ -2354,8 +2391,8 @@ function drawShip(ctx, v, ship, opts) {
         ctx.beginPath(); ctx.arc(cx - tw / 2 - 9, cy - yoff - 2.5, 2.6, 0, Math.PI * 2); ctx.fill();
       }
     } else {
-      ctx.font = "9px ui-monospace, monospace"; ctx.fillStyle = PALETTE.parchmentDim;
-      ctx.fillText(ship.outReason || "out of action", cx, cy - yoff + 12);
+      ctx.font = "8px ui-monospace, monospace"; ctx.fillStyle = "rgba(159,176,172,0.48)";
+      ctx.fillText(renderedLossStatus(ship), cx, cy - yoff + 12);
     }
     ctx.restore();
   }
@@ -3499,7 +3536,7 @@ function setupScenario(playerSide, chineseFormationKey) {
   game.selectedId = null;
   game.targetId = null; game.cardId = null;
   game.log = [];
-  game.tel = { turns: [], agg: {}, formationKey: chineseFormationKey || "chinese_actual_opening_arc" };   // battle telemetry for the post-action report
+  game.tel = { turns: [], agg: {}, salvos: [], torpedoes: [], formationKey: chineseFormationKey || "chinese_actual_opening_arc" };   // battle telemetry for the post-action report
   game.effects = [];
   game.playerSide = playerSide;
   game.enemySide = otherSide(playerSide);
@@ -3637,6 +3674,18 @@ function scheduleSalvo(from, target, summary, delay) {
 }
 function isSunkReason(reason) {
   return reason === "sunk" || reason === "foundered" || reason === "lost to a magazine explosion";
+}
+function lossDisposition(ship) {
+  if (!ship || !ship.out) return { key: "afloat", label: "afloat", short: "afloat", salvage: "operational status only" };
+  const reason = ship.outReason || "disabled";
+  if (isSunkReason(reason)) {
+    const why = reason === "lost to a magazine explosion" ? "magazine explosion" : reason;
+    return { key: "total", label: `total loss · ${why}`, short: "total loss", salvage: "not salvageable" };
+  }
+  const hull = clamp((ship.structure || 0) / (ship.structureMax || 1), 0, 1);
+  const doubtful = reason.includes("settling") || reason.includes("ablaze") || hull <= 0.08 || (ship.flooding || 0) >= 55 || (ship.fires || 0) >= 4;
+  if (doubtful) return { key: "abandoned", label: "abandoned wreck · doubtful salvage", short: "abandoned", salvage: "doubtful salvage" };
+  return { key: "disabled", label: "disabled afloat · potentially repairable", short: "disabled", salvage: "potentially repairable" };
 }
 function spawnSink(ship, delay) {
   delay = delay || 0;
@@ -3972,15 +4021,17 @@ function sideTons(side) { return game.ships.filter((s) => s.side === side).reduc
 function sideEffTons(side) { return game.ships.filter((s) => s.side === side).reduce((a, s) => a + shipTons(s) * shipEff(s), 0); }
 function tonnagePct(side) { const t = sideTons(side); return t > 0 ? sideEffTons(side) / t : 0; }
 function tonnageBreakdown(side) {
-  let sunk = 0, out = 0, crippled = 0;
-  let sunkCount = 0, outCount = 0, crippledCount = 0;
-  const sunkList = [], outList = [], crippledList = [];
+  let sunk = 0, out = 0, crippled = 0, abandoned = 0, repairable = 0;
+  let sunkCount = 0, outCount = 0, crippledCount = 0, abandonedCount = 0, disabledCount = 0;
+  const sunkList = [], outList = [], crippledList = [], abandonedList = [], disabledListAfloat = [];
   for (const s of game.ships) {
     if (s.side !== side) continue;
     const tons = shipTons(s);
     if (s.out) {
-      if (isSunkReason(s.outReason)) { sunk += tons; sunkCount++; sunkList.push(s.name); }
-      else { out += tons; outCount++; outList.push(s.name); }
+      const d = lossDisposition(s);
+      if (d.key === "total") { sunk += tons; sunkCount++; sunkList.push(s.name); }
+      else if (d.key === "abandoned") { out += tons; abandoned += tons; outCount++; abandonedCount++; outList.push(s.name); abandonedList.push(s.name); }
+      else { out += tons; repairable += tons; outCount++; disabledCount++; outList.push(s.name); disabledListAfloat.push(s.name); }
     } else if (shipCondition(s).cls === "st-heavy") {
       crippled += tons; crippledCount++; crippledList.push(s.name);
     }
@@ -3988,9 +4039,9 @@ function tonnageBreakdown(side) {
   const total = sideTons(side);
   const effectiveLost = Math.max(0, total - sideEffTons(side));
   return {
-    sunk: Math.round(sunk), out: Math.round(out), crippled: Math.round(crippled),
+    sunk: Math.round(sunk), out: Math.round(out), abandoned: Math.round(abandoned), repairable: Math.round(repairable), crippled: Math.round(crippled),
     disabled: Math.round(out + crippled), effectiveLost: Math.round(effectiveLost), total: Math.round(total),
-    sunkCount, outCount, crippledCount, sunkList, outList, crippledList,
+    sunkCount, outCount, abandonedCount, disabledCount, crippledCount, sunkList, outList, abandonedList, disabledListAfloat, crippledList,
     disabledList: outList.concat(crippledList.map((n) => n + " (crippled)")),
   };
 }
@@ -4124,7 +4175,7 @@ function genericObjectiveOutcome(side) {
   const objectives = [
     { label: "Enemy fighting strength broken (below 40%)", met: foe < 0.40 },
     { label: "Your fleet held together (above 50%)", met: own >= 0.50 && !ownGone },
-    { label: "Half the enemy line put out of action", met: foeLost >= Math.ceil(foeShips.length / 2) },
+    { label: "Half the enemy line removed from combat", met: foeLost >= Math.ceil(foeShips.length / 2) },
   ];
   let result, title;
   if (foeGone || (foe < 0.40 && own >= 0.55)) { result = "win"; title = own >= 0.75 ? "Decisive Victory" : "Victory"; }
@@ -4188,7 +4239,7 @@ function objectiveOutcome(side) {
   const chineseDamage = Math.min(75, chinaShips.reduce((a, s) => a + valCN(s), 0));
   const ownPenalty = japanShips.reduce((a, s) => a + valJP(s), 0);
   const objectives = [
-    { label: "Beiyang fleet broken (five or more out of action)", met: chinaLost >= 5 },
+    { label: "Beiyang fleet broken (five or more removed from combat)", met: chinaLost >= 5 },
     { label: "A Chinese ironclad sent under", met: ironcladsAlive < 2 },
     { label: "Fleet brought through without loss", met: japanLost === 0 },
   ];
@@ -4824,6 +4875,21 @@ function resolveTorpedoesLegacy() {
     logLine(`${s.name} launches torpedoes at ${best.name}.`, "");
   }
 }
+function telTorpedoLaunch(shooter, target, sol, failure, salvoIndex, salvoSize) {
+  if (!game.tel) game.tel = { turns: [], agg: {}, salvos: [], torpedoes: [] };
+  if (!game.tel.torpedoes) game.tel.torpedoes = [];
+  const id = `${game.turn}:${shooter.id}:${game.tel.torpedoes.length}`;
+  game.tel.torpedoes.push({ id, turn: game.turn, fromId: shooter.id, toId: target.id, range: Math.round(sol.runDist || 0),
+    launchFrac: sol.launchFrac || 0, flightSec: Math.round(sol.flightSec || 0), failure: failure || null, result: "running",
+    salvoIndex: salvoIndex + 1, salvoSize });
+  return id;
+}
+function telTorpedoResolve(t, result) {
+  if (!game.tel || !game.tel.torpedoes || !t || !t.telId) return;
+  const ev = game.tel.torpedoes.find((x) => x.id === t.telId);
+  if (ev) ev.result = result;
+}
+
 function resolveTorpedoes() {
   if (SCN.id !== "yalu") { resolveTorpedoesLegacy(); return; }
   for (const s of game.ships) {
@@ -4852,7 +4918,9 @@ function resolveTorpedoes() {
     game.effects.push({ type: "torpLaunch", x: best.from.x, y: best.from.y, hr: Math.atan2(best.aim.x - best.from.x, -(best.aim.y - best.from.y)), life: 1, fade: 2.1, delay: launchDelay });
     for (let i = 0; i < salvo; i++) {
       const failure = yaluTorpedoFailure(s.side);
-      game.torpedoes.push(makeYaluTorpedo(s, target, best, fan[i] || 0, failure));
+      const torp = makeYaluTorpedo(s, target, best, fan[i] || 0, failure);
+      torp.telId = telTorpedoLaunch(s, target, best, failure, i, salvo);
+      game.torpedoes.push(torp);
       const A = telAgg(s.id); A.torpFired += 1; if (failure) A.torpFailures = (A.torpFailures || 0) + 1;
     }
     logLine(`${s.name} launches ${salvo > 1 ? `a spread of ${salvo} torpedoes` : "a torpedo"} at ${target.name}.`, "");
@@ -4862,22 +4930,26 @@ function resolveTorpedoArrival(t, targetPose) {
   if (t.resolved) return;
   t.resolved = true; t.dead = true;
   const T = shipById(t.targetId);
-  if (!T || T.out) return;
+  if (!T || T.out) { telTorpedoResolve(t, "target unavailable"); return; }
   if (t.failure === "misrun") {
+    telTorpedoResolve(t, "misrun");
     game.effects.push({ type: "torpMiss", x: t.x, y: t.y, life: 1, fade: 0.9, dir: t.hr });
     return;
   }
   const pose = targetPose || { x: T.x, y: T.y, heading: T.heading };
   const intersects = torpedoIntersectsHull(t, pose, T);
   if (!intersects || t.failure === "depth") {
+    telTorpedoResolve(t, t.failure === "depth" ? "depth failure" : "miss");
     game.effects.push({ type: "torpMiss", x: t.x, y: t.y, life: 1, fade: 0.9, dir: t.hr });
     return;
   }
   if (t.failure === "dud") {
+    telTorpedoResolve(t, "dud");
     game.effects.push({ type: "torpDud", x: t.x, y: t.y, life: 1, fade: 1.0, dir: t.hr });
     logLine(`Torpedo strikes ${T.name} but fails to detonate.`, "muted");
     return;
   }
+  telTorpedoResolve(t, "hit");
   torpedoHit(T, { x: t.x, y: t.y });
   const A = t.sourceId ? telAgg(t.sourceId) : null; if (A) A.torpHit = (A.torpHit || 0) + 1;
   const D = telAgg(T.id); D.torpHitTaken = (D.torpHitTaken || 0) + 1;
@@ -5861,12 +5933,12 @@ function iconSvg(kind) {
   return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[kind] || paths.info}</svg>`;
 }
 function headingButtonsHtml(scope) {
-  return `<div class="helm-strip" data-helm-scope="${scope}">
-    <button class="icon-btn" data-hdg="-30" title="Hard to port" aria-label="Hard to port">${iconSvg("portHard")}</button>
-    <button class="icon-btn" data-hdg="-10" title="Ten degrees to port" aria-label="Ten degrees to port">${iconSvg("port")}</button>
-    <button class="icon-btn" data-hdg="0" title="Align with plotted course" aria-label="Align with plotted course">${iconSvg("straight")}</button>
-    <button class="icon-btn" data-hdg="10" title="Ten degrees to starboard" aria-label="Ten degrees to starboard">${iconSvg("starboard")}</button>
-    <button class="icon-btn" data-hdg="30" title="Hard to starboard" aria-label="Hard to starboard">${iconSvg("starboardHard")}</button>
+  return `<div class="control-label">Final heading after movement</div><div class="helm-strip" data-helm-scope="${scope}">
+    <button class="helm-choice" data-hdg="-30" aria-label="Turn final heading thirty degrees to port">${iconSvg("portHard")}<span>Port 30°</span></button>
+    <button class="helm-choice" data-hdg="-10" aria-label="Turn final heading ten degrees to port">${iconSvg("port")}<span>Port 10°</span></button>
+    <button class="helm-choice" data-hdg="0" aria-label="Align final heading with plotted course">${iconSvg("straight")}<span>Course</span></button>
+    <button class="helm-choice" data-hdg="10" aria-label="Turn final heading ten degrees to starboard">${iconSvg("starboard")}<span>Stbd 10°</span></button>
+    <button class="helm-choice" data-hdg="30" aria-label="Turn final heading thirty degrees to starboard">${iconSvg("starboardHard")}<span>Stbd 30°</span></button>
   </div>`;
 }
 function wireHeadingButtons(body, getShip) {
@@ -5889,19 +5961,20 @@ function renderSquadronPanel(body, sq) {
   }).join("");
   body.innerHTML = `<div class="command-glass squad-command">
       <div class="command-head">
-        <button class="icon-btn tiny" data-sqcyc="-1" title="Previous division" aria-label="Previous division">‹</button>
+        <button class="cycle-btn" data-sqcyc="-1" aria-label="Previous division">‹ Div</button>
         <div><div class="command-title">${title}</div><div class="command-sub">${live.length}/${sq.members.length} · cohesion ${squadronCohesion(sq)}%</div></div>
-        <button class="icon-btn tiny" data-sqcyc="1" title="Next division" aria-label="Next division">›</button>
-        <details class="help-pop"><summary class="icon-btn tiny" aria-label="Division help">?</summary><div>Tap a lit hex to move the division. The flagship leads. Tap a ship below for individual control.</div></details>
+        <button class="cycle-btn" data-sqcyc="1" aria-label="Next division">Div ›</button>
+        <details class="help-pop"><summary class="icon-btn tiny" aria-label="Division help">?</summary><div>Tap a lit hex to move the division. The flagship leads. Formation names are shown below. Tap a ship for individual control; Fleet opens the full roster.</div></details>
       </div>
       <div class="target-chip">${iconSvg("target")}<span>${tgt && !tgt.out ? tgt.name + " · " + Math.round(rangeBetween(lead, tgt)) + " m" : "Local targets"}</span></div>
+      <div class="control-label">Formation</div>
       <div class="formation-strip" aria-label="Formation">
-        <button class="icon-btn${(sq.formation||"line") === "line" ? " active" : ""}" data-form="line" title="Line ahead">${iconSvg("line")}</button>
-        <button class="icon-btn${sq.formation === "abreast" ? " active" : ""}" data-form="abreast" title="Line abreast">${iconSvg("abreast")}</button>
-        <button class="icon-btn${sq.formation === "echelon_port" ? " active" : ""}" data-form="echelon_port" title="Echelon to port">${iconSvg("echelonPort")}</button>
-        <button class="icon-btn${sq.formation === "echelon_starboard" ? " active" : ""}" data-form="echelon_starboard" title="Echelon to starboard">${iconSvg("echelonStarboard")}</button>
-        <button class="text-icon" data-space="-100" title="Close spacing">−</button><span class="spacing-readout">${Math.round(sq.spacing || STATION_M)} m</span><button class="text-icon" data-space="100" title="Open spacing">+</button>
+        <button class="formation-choice${(sq.formation||"line") === "line" ? " active" : ""}" data-form="line" aria-label="Line ahead">${iconSvg("line")}<span>Ahead</span></button>
+        <button class="formation-choice${sq.formation === "abreast" ? " active" : ""}" data-form="abreast" aria-label="Line abreast">${iconSvg("abreast")}<span>Abreast</span></button>
+        <button class="formation-choice${sq.formation === "echelon_port" ? " active" : ""}" data-form="echelon_port" aria-label="Echelon to port">${iconSvg("echelonPort")}<span>Port ech.</span></button>
+        <button class="formation-choice${sq.formation === "echelon_starboard" ? " active" : ""}" data-form="echelon_starboard" aria-label="Echelon to starboard">${iconSvg("echelonStarboard")}<span>Stbd ech.</span></button>
       </div>
+      <div class="spacing-controls"><button class="text-icon" data-space="-100" aria-label="Close formation spacing">−</button><span class="spacing-readout">Spacing ${Math.round(sq.spacing || STATION_M)} m</span><button class="text-icon" data-space="100" aria-label="Open formation spacing">+</button></div>
       ${headingButtonsHtml("squad")}
       <div class="doctrine-icons" aria-label="Shell doctrine">
         <button class="text-icon${live.every((s)=> (s.doctrine||"auto") === "auto") ? " active" : ""}" data-sqdoc="auto" title="Automatic shell selection">A</button>
@@ -5985,9 +6058,9 @@ function syncPanel() {
   const torpChip = s.torpedoes ? `<span class="battery-chip torp${s.torpedoes.count ? " bearing" : " dead"}" title="Torpedoes"><b>T</b><small>${s.torpedoes.count}</small></span>` : "";
   body.innerHTML = `<div class="command-glass ship-command">
       <div class="command-head">
-        ${s.side === game.playerSide ? `<button class="icon-btn tiny" data-cyc="-1" title="Previous ship" aria-label="Previous ship">‹</button>` : ""}
+        ${s.side === game.playerSide ? `<button class="cycle-btn" data-cyc="-1" aria-label="Previous ship">‹ Ship</button>` : ""}
         <div class="command-name"><div class="command-title ${clsForSide(s.side)}">${s.name}</div><div class="command-sub">${s.type} · ${hdg}° · ${speedNow} kn</div></div>
-        ${s.side === game.playerSide ? `<button class="icon-btn tiny" data-cyc="1" title="Next ship" aria-label="Next ship">›</button>` : ""}
+        ${s.side === game.playerSide ? `<button class="cycle-btn" data-cyc="1" aria-label="Next ship">Ship ›</button>` : ""}
         ${sq && s.side === game.playerSide ? `<button class="icon-btn tiny" id="openSquadBtn" title="Division control" aria-label="Division control">${iconSvg("squad")}</button><button class="icon-btn tiny" id="detachShipBtn" title="Detach ship" aria-label="Detach ship">${iconSvg("detach")}</button>` : ""}
         <button class="icon-btn tiny" id="viewCardBtn" title="Ship details" aria-label="Ship details">?</button>
       </div>
@@ -6013,7 +6086,7 @@ function syncPanel() {
         ${s.order ? `<button class="icon-btn" id="clearOrderBtn" title="Clear plotted course" aria-label="Clear plotted course">×</button>` : ""}
       </div>` : ""}
       <div class="battery-strip">${batChips}${torpChip}</div>
-      <details class="help-pop inline-help"><summary class="icon-btn tiny" aria-label="Control help">?</summary><div>Tap a lit hex for destination. Use the helm icons to set final heading independently, so batteries can be unmasked. Tap an enemy for a priority target.</div></details>
+      <details class="help-pop inline-help"><summary class="icon-btn tiny" aria-label="Control help">?</summary><div>Tap a lit hex for destination. Final-heading controls turn the ship after movement so batteries can be unmasked. Tap an enemy for a priority target. Double-tap an own ship, or tap Fleet below, for the full roster.</div></details>
     </div>`;
 
   body.querySelectorAll("[data-shell]").forEach((btn) => btn.addEventListener("click", () => { s.doctrine = btn.getAttribute("data-shell"); syncPanel(); }));
@@ -6097,6 +6170,7 @@ const pointers = new Map();
 let dragMode = null;        // "plot" | "pan" | null
 let dragStart = null;
 let pinchDist = 0;
+let lastOwnShipTap = { id: null, t: 0 };
 
 function eventCss(e) {
   const rect = canvas.getBoundingClientRect();
@@ -6177,7 +6251,12 @@ function onPointerUp(e) {
     if (dragStart.hitId) {
       const ship = shipById(dragStart.hitId);
       if (ship && ship.side === game.playerSide && !ship.out) {
-        if (game.multiSel) {                                               // multi-select: toggle into the forming squadron (first stays the flag)
+        const nowTap = (typeof performance !== "undefined" ? performance.now() : Date.now());
+        const doubleTap = !game.multiSel && lastOwnShipTap.id === ship.id && nowTap - lastOwnShipTap.t < 420;
+        lastOwnShipTap = { id: ship.id, t: nowTap };
+        if (doubleTap) {
+          openFleetRoster(ship.id);
+        } else if (game.multiSel) {                                               // multi-select: toggle into the forming squadron (first stays the flag)
           const i = game.pendingSel.indexOf(ship.id);
           if (i >= 0) game.pendingSel.splice(i, 1); else game.pendingSel.push(ship.id);
           syncPanel();
@@ -6311,7 +6390,7 @@ function renderShipCard(body, s) {
   const mach = machineryLabel(s), steer = steeringLabel(s), dc = dcLabel(s);
   const disabledGuns = s.batteries.filter((b) => b.knockedOut).reduce((n, b) => n + (b.count || 0), 0);
   const cond = s.out
-    ? `<div class="card-out">${s.outReason || "out of action"}</div>`
+    ? `<div class="card-out"><b>${lossDisposition(s).label}</b><small>Cause: ${s.outReason || "combat damage"}</small></div>`
     : `<div class="card-cond">
          <div>Hull ${Math.round(100 * s.structure / s.structureMax)}%</div>
          <div>Flooding ${Math.round(s.flooding)}%</div>
@@ -6442,6 +6521,16 @@ function shipTypeGlyph(s) {
   return `<span class="type-glyph" title="${(s.def && s.def.type) || s.type || "ship"}"><svg viewBox="0 0 18 12" aria-hidden="true"><path d="${path}" fill="currentColor"/></svg></span>`;
 }
 
+function openFleetRoster(focusId) {
+  buildRoster();
+  const ov = document.getElementById("fleetOverlay");
+  if (ov) ov.classList.add("show");
+  if (focusId) {
+    const row = document.querySelector(`[data-rosid="${focusId}"]`);
+    if (row && row.scrollIntoView) setTimeout(() => row.scrollIntoView({ block: "center" }), 0);
+  }
+}
+
 function buildRoster() {
   const body = document.getElementById("fleetBody");
   if (!body) return;
@@ -6457,7 +6546,7 @@ function buildRoster() {
       if (!s.captainAlive) flags.push("commander lost");
       if (s.isFlagship && s.admiralAlive === false) flags.push("flag struck");
       else if (s.isFlagship) flags.push("flag");
-      const state = s.out ? `<span class="nerve-broken">${s.outReason || "out of action"}</span>` : `<span class="${nerveCls}">${nerveTxt}</span>`;
+      const state = s.out ? (() => { const d = lossDisposition(s); const txt = d.key === "total" ? "total loss" : d.key === "abandoned" ? "abandoned · doubtful" : "disabled · repairable"; return `<span class="out-state">${txt}</span>`; })() : `<span class="${nerveCls}">${nerveTxt}</span>`;
       const barCol = frac > 0.5 ? "#79b07a" : frac > 0.25 ? "#c8a45c" : "#c0392b";
       const tgt = shipById(s.targetId), tgtValid = tgt && !tgt.out;
       const tgtTxt = s.out ? "" : (tgtValid ? `▸ ${tgt.name}` : (side === game.playerSide ? "▸ no target" : "▸ -"));
@@ -6477,9 +6566,9 @@ function buildRoster() {
     + sideBlock(sideA(), SCN.sides[0].label) + sideBlock(sideB(), SCN.sides[1].label);
   body.querySelectorAll("[data-rosid]").forEach((row) => row.addEventListener("click", () => {
     const s = shipById(row.getAttribute("data-rosid"));
-    if (!s || s.out) return;
-    game.selectedId = s.id; game.menuMode = "ship"; game.cardId = null; game.selSquadId = null;
-    game._camGoal = { x: s.x, y: s.y };
+    if (!s) return;
+    if (s.out) { game.cardId = s.id; game.selectedId = null; game.selSquadId = null; }
+    else { game.selectedId = s.id; game.menuMode = "ship"; game.cardId = null; game.selSquadId = null; game._camGoal = { x: s.x, y: s.y }; }
     const ov = document.getElementById("fleetOverlay"); if (ov) ov.classList.remove("show");
     syncPanel();
   }));
@@ -6512,7 +6601,7 @@ function lostShips(side) {
 //  Battle telemetry, post-action report, and the strategic/tactical verdict
 // ===========================================================================
 function telAgg(id) {
-  if (!game.tel) game.tel = { turns: [], agg: {} };
+  if (!game.tel) game.tel = { turns: [], agg: {}, salvos: [], torpedoes: [] };
   return (game.tel.agg[id] = game.tel.agg[id] || {
     shots: 0, hits: 0, dmgDealt: 0, dmgTaken: 0, hitsTaken: 0,
     heavyShots: 0, heavyHits: 0, rangeSum: 0, firesStarted: 0,
@@ -6524,6 +6613,15 @@ function telAgg(id) {
 function telShot(from, target, gun, res) {
   const A = telAgg(from.id), D = telAgg(target.id);
   const cal = gunCalibre(gun);
+  if (!game.tel.salvos) game.tel.salvos = [];
+  game.tel.salvos.push({
+    turn: game.turn, fromId: from.id, toId: target.id, calibre: Math.round(cal), gun: gun.name || "gun",
+    shell: res.shell || "AP", range: res.range || 0, shots: res.shots || 0, hits: res.hits || 0,
+    hitChance: res.hitChance || 0, damage: res.totalDmg || 0, penetration: res.penetration || 0,
+    pens: res.pens || 0, ricochets: res.ricochets || 0, bounces: res.bounces || 0, fires: res.fires || 0,
+    duds: res.duds || 0, hardHits: res.hardHits || 0, nearPens: res.nearPens || 0, partials: res.partials || 0,
+    meanObliquity: res.meanObliquity || 0, zones: res.zones || {}, crits: (res.crits || []).slice(),
+  });
   A.shots += res.shots; A.hits += res.hits; A.dmgDealt += res.totalDmg;
   A.rangeSum += res.range * res.shots; A.firesStarted += res.fires || 0;
   if (cal >= 240) { A.heavyShots += res.shots; A.heavyHits += res.hits; }
@@ -6547,11 +6645,12 @@ function telSnapshotTurn(mv) {
   const rec = { turn: game.turn, ships: [] };
   for (const s of game.ships) {
     const c = shipCondition(s);
+    const inert = !!(s.out && game._outAtTurnStart && game._outAtTurnStart.has(s.id));
     rec.ships.push({
       id: s.id, name: s.name, side: s.side,
-      hdg: Math.round(s.heading || 0), dist: Math.round((mv && mv[s.id]) || 0),
-      shots: s._turnShots || 0, hits: s._turnHits || 0, dmg: Math.round(s._turnDmg || 0),
-      taken: Math.round(s._turnTaken || 0), hitsTaken: s._turnHitsTaken || 0,
+      hdg: Math.round(s.heading || 0), dist: inert ? 0 : Math.round((mv && mv[s.id]) || 0),
+      shots: inert ? 0 : (s._turnShots || 0), hits: inert ? 0 : (s._turnHits || 0), dmg: inert ? 0 : Math.round(s._turnDmg || 0),
+      taken: inert ? 0 : Math.round(s._turnTaken || 0), hitsTaken: inert ? 0 : (s._turnHitsTaken || 0),
       targetId: s.targetId || null, fires: s.fires || 0, flood: Math.round(s.flooding || 0),
       engine: Math.round(100 * (s.engine == null ? 1 : s.engine)), steering: Math.round(100 * (s.steering == null ? 1 : s.steering)),
       damageControl: s.damageControlState || "ready", disabledGuns: s.batteries.filter((b) => b.knockedOut).reduce((n, b) => n + (b.count || 0), 0),
@@ -6669,7 +6768,7 @@ function calculatedReadings(outcome) {
   const net = theirs.effectiveLost - mine.effectiveLost;
   const readings = [];
   readings.push({ title: "Material exchange", text: `You inflicted ${theirs.effectiveLost.toLocaleString()} effective tons and suffered ${mine.effectiveLost.toLocaleString()}; net ${net >= 0 ? "+" : ""}${net.toLocaleString()} t. Fighting strength finished ${ownRet}% to ${foeRet}%.` });
-  readings.push({ title: "Hull states", text: `Enemy: ${theirs.sunkCount} sunk, ${theirs.outCount} out of action, ${theirs.crippledCount} crippled. Yours: ${mine.sunkCount} sunk, ${mine.outCount} out, ${mine.crippledCount} crippled.` });
+  readings.push({ title: "Hull states", text: `Enemy: ${theirs.sunkCount} total losses, ${theirs.abandonedCount} abandoned wrecks, ${theirs.disabledCount} disabled afloat, ${theirs.crippledCount} crippled. Yours: ${mine.sunkCount} total losses, ${mine.abandonedCount} abandoned, ${mine.disabledCount} disabled afloat, ${mine.crippledCount} crippled.` });
   const st = sideShellStats(me);
   if (st.apShots || st.heShots) {
     const parts = [];
@@ -6677,12 +6776,20 @@ function calculatedReadings(outcome) {
     if (st.heShots) parts.push(`HE ${st.heHits}/${st.heShots}, ${st.heFires} fires`);
     readings.push({ title: "Shell performance", text: parts.join(". ") + "." });
   }
+  const criticalSalvos = ((game.tel && game.tel.salvos) || []).filter((e) => e.crits && e.crits.length);
+  if (criticalSalvos.length) {
+    const counts = {};
+    for (const e of criticalSalvos) for (const c of e.crits) counts[c] = (counts[c] || 0) + 1;
+    const summary = Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([k,n]) => `${k} ×${n}`).join(", ");
+    const examples = criticalSalvos.slice(0, 4).map((e) => `${(shipById(e.toId)||{}).name || e.toId} (${e.calibre}mm ${e.shell}: ${e.crits.join("/")})`).join("; ");
+    readings.push({ title: "Critical events", text: `${summary}. ${examples}. These extra system or ammunition effects are not included fully in the simple direct-damage total.` });
+  }
   const ding = shipById("dingyuan"), zhen = shipById("zhenyuan"), matsu = shipById("matsushima");
   if (me === "China" && ding && zhen) {
-    const state = (s) => `${s.name} ${s.out ? s.outReason : Math.round(100 * s.structure / s.structureMax) + "% hull, " + Math.round(s.flooding || 0) + "% flood"}`;
+    const state = (s) => `${s.name} ${s.out ? lossDisposition(s).label : Math.round(100 * s.structure / s.structureMax) + "% hull, " + Math.round(s.flooding || 0) + "% flood"}`;
     readings.push({ title: "Fleet-in-being", text: `${state(ding)}; ${state(zhen)}. ${outcome.ironcladsAlive === 2 ? "Both deterrent hulls survive, but their condition determines whether this is a genuine strategic hold or only survival." : "The loss of an ironclad changes the strategic result more than several cruiser losses."}` });
   } else if (me === "Japan" && matsu) {
-    readings.push({ title: "Command result", text: `${matsu.name}: ${matsu.out ? matsu.outReason : Math.round(100 * matsu.structure / matsu.structureMax) + "% hull"}. China retained ${outcome.ironcladsAlive} ironclad${outcome.ironcladsAlive === 1 ? "" : "s"}; breaking cruisers without neutralising that core is a tactical success but an incomplete strategic one.` });
+    readings.push({ title: "Command result", text: `${matsu.name}: ${matsu.out ? lossDisposition(matsu).label : Math.round(100 * matsu.structure / matsu.structureMax) + "% hull"}. China retained ${outcome.ironcladsAlive} ironclad${outcome.ironcladsAlive === 1 ? "" : "s"}; breaking cruisers without neutralising that core is a tactical success but an incomplete strategic one.` });
   }
   const ownSys = sideSystemSummary(me), foeSys = sideSystemSummary(foe);
   if (ownSys.machinerySevere || ownSys.steeringSevere || ownSys.disabledGuns || foeSys.machinerySevere || foeSys.steeringSevere || foeSys.disabledGuns) {
@@ -6696,7 +6803,7 @@ function calculatedReadings(outcome) {
 
 function lossSummaryHTML(side, label) {
   const b = tonnageBreakdown(side), retained = Math.round(tonnagePct(side) * 100);
-  return `<div class="loss-card"><div class="loss-card-head"><span class="tag ${clsForSide(side)}">${label}</span><b>${retained}% effective</b></div><div class="loss-metrics"><span class="lm sunk"><b>${b.sunkCount}</b><small>sunk</small></span><span class="lm out"><b>${b.outCount}</b><small>out</small></span><span class="lm cripple"><b>${b.crippledCount}</b><small>crippled</small></span><span class="lm ton"><b>${b.effectiveLost.toLocaleString()}</b><small>t lost</small></span></div></div>`;
+  return `<div class="loss-card"><div class="loss-card-head"><span class="tag ${clsForSide(side)}">${label}</span><b>${retained}% effective</b></div><div class="loss-metrics"><span class="lm sunk"><b>${b.sunkCount}</b><small>total loss</small></span><span class="lm out"><b>${b.abandonedCount}</b><small>abandoned</small></span><span class="lm out"><b>${b.disabledCount}</b><small>disabled</small></span><span class="lm cripple"><b>${b.crippledCount}</b><small>crippled</small></span></div><div class="material-line"><span>Effective fighting tonnage lost <b>${b.effectiveLost.toLocaleString()} t</b></span></div></div>`;
 }
 
 function buildBattleReport() {
@@ -6714,7 +6821,7 @@ function buildBattleReport() {
   L.push(`Tactical:  ${wv.tacTag} - ${wv.tacLine}`);
   L.push(`Strategic: ${wv.stratTag} - ${wv.stratLine}`);
   L.push(`Fighting strength retained: ${la} ${Math.round(v.cp * 100)}%  -  ${lb} ${Math.round(v.jp * 100)}%`);
-  L.push(`Hull states: ${la} ${cb.sunkCount} sunk / ${cb.outCount} out / ${cb.crippledCount} crippled  -  ${lb} ${jb.sunkCount} sunk / ${jb.outCount} out / ${jb.crippledCount} crippled`);
+  L.push(`Hull states: ${la} ${cb.sunkCount} total loss / ${cb.abandonedCount} abandoned / ${cb.disabledCount} disabled afloat / ${cb.crippledCount} crippled  -  ${lb} ${jb.sunkCount} total loss / ${jb.abandonedCount} abandoned / ${jb.disabledCount} disabled afloat / ${jb.crippledCount} crippled`);
   const sa = sideSystemSummary(sideA()), sb = sideSystemSummary(sideB());
   L.push(`Systems: ${la} machinery ${sa.machinerySevere}, steering ${sa.steeringSevere}, guns disabled ${sa.disabledGuns}  -  ${lb} machinery ${sb.machinerySevere}, steering ${sb.steeringSevere}, guns disabled ${sb.disabledGuns}`);
   L.push(`Effective tonnage lost: ${la} ${cb.effectiveLost.toLocaleString()} t  -  ${lb} ${jb.effectiveLost.toLocaleString()} t`);
@@ -6760,12 +6867,67 @@ function buildBattleReport() {
   return L.join("\n");
 }
 
-function openLogModal() {
+function buildMechanicsReport() {
+  const tel = game.tel || { salvos: [], torpedoes: [] };
+  const salvos = tel.salvos || [];
+  const torps = tel.torpedoes || [];
+  const L = [];
+  const pct = (x) => `${(100 * (x || 0)).toFixed(1)}%`;
+  const shipName = (id) => { const x = shipById(id); return x ? x.name : id || "?"; };
+  const zonesText = (zones) => Object.entries(zones || {}).filter(([,n]) => n).sort((a,b)=>b[1]-a[1]).map(([z,n]) => `${z}:${n}`).join(", ") || "none";
+  L.push(`${SCN.title.toUpperCase()} - MECHANICS LEDGER`);
+  L.push(`Deployment mode changes formation and shell orders only. Armour, accuracy, damage, fire, flooding, systems, morale and loss thresholds use the shared combat model.`);
+  L.push(`Turns fought: ${game.turn - 1}`);
+  L.push("");
+  L.push("GUNNERY SALVOS");
+  if (!salvos.length) L.push("  No salvo telemetry recorded in this save.");
+  let lastTurn = null;
+  for (const e of salvos) {
+    if (e.turn !== lastTurn) { lastTurn = e.turn; L.push(`  --- TURN ${e.turn} ---`); }
+    let line = `    ${shipName(e.fromId)} ${e.calibre}mm ${e.shell} -> ${shipName(e.toId)} | ${e.range}m | P(hit) ${pct(e.hitChance)} | ${e.hits}/${e.shots} | dmg ${Math.round(e.damage || 0)}`;
+    if (e.shell === "AP") line += ` | pen ${e.penetration}mm | vital pens ${e.pens || 0} | ric ${e.ricochets || 0} | armour fail ${e.bounces || 0}`;
+    if (e.armourHits) line += ` | mean obliq ${e.meanObliquity || 0}°`;
+    if (e.duds) line += ` | duds ${e.duds}`;
+    if (e.fires) line += ` | fires ${e.fires}`;
+    if (e.crits && e.crits.length) line += ` | CRIT ${e.crits.join(", ")}`;
+    line += ` | zones ${zonesText(e.zones)}`;
+    L.push(line);
+  }
+  L.push("");
+  L.push("TORPEDO RUNS");
+  if (!torps.length) L.push("  No torpedo launches recorded.");
+  for (const e of torps) {
+    L.push(`  T${e.turn} ${shipName(e.fromId)} -> ${shipName(e.toId)} | fish ${e.salvoIndex || 1}/${e.salvoSize || 1} | run ${e.range || 0}m | flight ${e.flightSec || 0}s | ${e.result || e.failure || "unresolved"}${e.failure && e.result !== e.failure ? ` (weapon fault: ${e.failure})` : ""}`);
+  }
+  L.push("");
+  L.push("FINAL SYSTEM STATE");
+  for (const side of [sideA(), sideB()]) {
+    L.push(`  ${sideLabel(side).toUpperCase()}`);
+    for (const sh of game.ships.filter((x) => x.side === side)) {
+      const knocked = sh.batteries ? sh.batteries.filter((b) => b.knockedOut).reduce((n,b)=>n+(b.count||0),0) : 0;
+      const c = shipCondition(sh);
+      L.push(`    ${sh.name.padEnd(18)} hull ${String(Math.max(0, Math.round(100 * sh.structure / sh.structureMax))).padStart(3)}% | flood ${String(Math.round(sh.flooding || 0)).padStart(3)}% | fires ${sh.fires || 0} | machinery ${Math.round(100 * (sh.engine == null ? 1 : sh.engine))}% | steering ${Math.round(100 * (sh.steering == null ? 1 : sh.steering))}% | guns disabled ${knocked} | ${c.label}`);
+    }
+  }
+  return L.join("\n");
+}
+
+let currentLogMode = "summary";
+function setLogMode(mode) {
+  currentLogMode = mode === "mechanics" ? "mechanics" : "summary";
+  const pre = document.getElementById("logModalPre");
+  if (pre) pre.textContent = currentLogMode === "mechanics" ? buildMechanicsReport() : buildBattleReport();
+  const title = document.getElementById("logModalTitle"); if (title) title.textContent = currentLogMode === "mechanics" ? "Mechanics Ledger" : "Battle Report";
+  const sb = document.getElementById("logSummaryBtn"), mb = document.getElementById("logMechanicsBtn");
+  if (sb) sb.classList.toggle("active", currentLogMode === "summary");
+  if (mb) mb.classList.toggle("active", currentLogMode === "mechanics");
+}
+
+function openLogModal(mode) {
   if (typeof document === "undefined") return;
   const m = document.getElementById("logModal");
-  const pre = document.getElementById("logModalPre");
-  if (!m || !pre) return;
-  pre.textContent = buildBattleReport();
+  if (!m) return;
+  setLogMode(mode || "summary");
   m.classList.add("show");
 }
 function closeLogModal() { const m = document.getElementById("logModal"); if (m) m.classList.remove("show"); }
@@ -6794,7 +6956,7 @@ function downloadReport() {
     const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = `yalu-report-turn${game.turn - 1}.txt`;
+    a.href = url; a.download = `yalu-${currentLogMode === "mechanics" ? "mechanics" : "report"}-turn${game.turn - 1}.txt`;
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
     setTimeout(() => URL.revokeObjectURL(url), 1500);
   } catch (e) { /* download unsupported in this context */ }
@@ -6802,8 +6964,8 @@ function downloadReport() {
 
 function shipCondition(s) {
   if (s.out) {
-    const sunk = isSunkReason(s.outReason);
-    return { cls: sunk ? "st-sunk" : "st-out", glyph: sunk ? "✕" : "×", label: sunk ? (s.outReason || "sunk") : "out of action" };
+    const d = lossDisposition(s);
+    return { cls: d.key === "total" ? "st-sunk" : "st-out", glyph: d.key === "total" ? "✕" : "—", label: d.label, disposition: d };
   }
   const hull = s.structure / s.structureMax;
   const hp = Math.round(hull * 100);
@@ -6852,7 +7014,7 @@ function showResultGeneric(verdict, screen, body) {
   const enemyDisabled = enemyShips.filter((s) => s.out && !isSunk(s));
   const honours = [];
   if (enemySunk.length) honours.push(`Sank ${enemySunk.length} enemy ship${enemySunk.length > 1 ? "s" : ""}.`);
-  if (enemyDisabled.length) honours.push(`Put ${enemyDisabled.length} more out of action.`);
+  if (enemyDisabled.length) honours.push(`Disabled or forced the abandonment of ${enemyDisabled.length} more ship${enemyDisabled.length > 1 ? "s" : ""}.`);
   const enemyFlag = shipById(FLAGSHIP_ID[foe]);
   if (enemyFlag && (enemyFlag.out || enemyFlag.admiralAlive === false)) honours.push(`Crippled the enemy flagship ${enemyFlag.name}.`);
   const honoursBlock = honours.length ? `<div class="result-honours"><div class="honours-title">Honours</div>${honours.slice(0, 6).map((h) => `<div class="honour">★ ${h}</div>`).join("")}</div>` : "";
@@ -6874,7 +7036,7 @@ function showResultGeneric(verdict, screen, body) {
       ${fleetRosterHTML(A, la)}
       ${fleetRosterHTML(B, lb)}
     </div>
-    <div class="result-tonnage">${la} lost ${(cb.sunk + cb.disabled).toLocaleString()} t · ${lb} lost ${(jb.sunk + jb.disabled).toLocaleString()} t (sunk + out of action)</div>
+    <div class="result-tonnage">${la} lost ${(cb.sunk + cb.disabled).toLocaleString()} t · ${lb} lost ${(jb.sunk + jb.disabled).toLocaleString()} t (total loss + disabled fighting tonnage)</div>
     <div class="result-history"><p>${SCN.intro}</p></div>
     <div class="result-actions"><button id="resultLogBtn" class="result-logbtn">Battle log &amp; statistics</button></div>
   `;
@@ -6951,7 +7113,7 @@ function showResult(verdict) {
   if (me === "Japan" && (!live("dingyuan") || !live("zhenyuan"))) honours.push("Put a Chinese ironclad under, more than history allowed.");
   if (me === "China" && live("dingyuan") && live("zhenyuan")) honours.push("Both ironclads brought through unbroken.");
   if (enemySunk.length >= 1) honours.push(`Sank ${enemySunk.length} enemy ship${enemySunk.length > 1 ? "s" : ""}.`);
-  if (enemyDisabled.length >= 1) honours.push(`Put ${enemyDisabled.length} more out of action.`);
+  if (enemyDisabled.length >= 1) honours.push(`Disabled or forced the abandonment of ${enemyDisabled.length} more ship${enemyDisabled.length > 1 ? "s" : ""}.`);
   if (enemyBroke.length >= 3) honours.push(`Broke the enemy's nerve: ${enemyBroke.length} ships sheered off.`);
   if (myBroke.filter((s) => !s.out).length === 0 && myShips.some((s) => !s.out)) honours.push("Held the line, not one of your ships broke off and ran.");
   if (me === "Japan" && mySunk.length === 0) honours.push("Not a ship sunk.");
@@ -7206,7 +7368,7 @@ function init() {
   bind("zoomInBtn", () => { game.cam.scale = Math.min(4, game.cam.scale * 1.2); });
   bind("zoomOutBtn", () => { game.cam.scale = Math.max(0.012, game.cam.scale * 0.83); });
   bind("codexBtn", () => { buildCodex(); document.getElementById("codexOverlay").classList.add("show"); });
-  bind("fleetBtn", () => { buildRoster(); document.getElementById("fleetOverlay").classList.add("show"); });
+  bind("fleetBtn", () => openFleetRoster(game.selectedId));
   // battle menu (rail button) with save / load / restart / quit
   function openGameMenu() { const io = document.getElementById("gmIO"); if (io) io.style.display = "none"; const gm = document.getElementById("gameMenu"); if (gm) gm.classList.add("show"); }
   function showGmIO(label, value, actionLabel, onAction, msg) {
@@ -7257,12 +7419,9 @@ function init() {
   bind("codexClose", () => document.getElementById("codexOverlay").classList.remove("show"));
   bind("fleetClose", () => document.getElementById("fleetOverlay").classList.remove("show"));
   bind("logBtn", () => { const d = document.getElementById("logDrawer"); const open = d.classList.toggle("open"); const h = document.getElementById("logBtn"); if (h) h.textContent = open ? "Signal log  ▾" : "Signal log  ▴"; });
-
-  // tap the panel title/handle to close the card and deselect
-  const panelTitle = document.getElementById("panelTitle");
-  if (panelTitle) panelTitle.addEventListener("click", () => {
-    game.selectedId = null; game.targetId = null; game.cardId = null; syncPanel();
-  });
+  bind("analysisBtn", () => openLogModal("mechanics"));
+  bind("panelFleetBtn", () => openFleetRoster(game.selectedId));
+  bind("panelCloseBtn", () => { game.selectedId = null; game.targetId = null; game.cardId = null; game.selSquadId = null; syncPanel(); });
 
   // ---- start screen ----
   let chosenSide = SCN.playerDefault;
