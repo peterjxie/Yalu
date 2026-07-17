@@ -468,6 +468,73 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 #rail{gap:5px;padding-left:8px;padding-right:8px}.rail-btn.icon{width:34px;height:32px;padding:0;justify-content:center}.rail-btn.icon svg{width:17px;height:17px}.rail-btn.icon span{pointer-events:none}.rail-btn.fleet-access{display:inline-flex;align-items:center;gap:6px;min-width:72px;justify-content:center;border-color:rgba(200,164,92,.42);color:var(--ink)}.rail-btn.fleet-access svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7}.rail-btn.fleet-access span{font-family:var(--mono);font-size:9px;letter-spacing:.5px;text-transform:uppercase}
 @media(max-width:560px){#rail{overflow-x:auto}.rail-btn.icon{width:32px;min-width:32px}.rail-btn.fleet-access{min-width:68px}.member-grid{grid-template-columns:1fr 1fr}.command-glass{padding:8px}.mini-profile{height:72px}.helm-choice{height:43px}.helm-choice span,.formation-choice span{font-size:7px}.formation-choice{width:57px}}
 
+
+
+/* ---- compact glyph command pass ---- */
+#panel{
+  background:linear-gradient(180deg,rgba(7,28,34,.075),rgba(4,19,24,.045));
+  -webkit-backdrop-filter:blur(1.5px) saturate(1.04);backdrop-filter:blur(1.5px) saturate(1.04);
+}
+#panelBody{background:transparent}
+.command-glass{background:rgba(4,18,23,.055);box-shadow:inset 0 1px rgba(255,255,255,.025);}
+.panel-title{background:rgba(4,18,23,.075)}
+.status-chip,.system-chip,.battery-chip,.member-chip,.icon-btn,.text-icon,.helm-choice,.formation-choice,.cycle-btn{background:rgba(5,23,29,.10)}
+.status-chip svg,.system-chip svg,.glyph-head>svg{width:16px;height:16px;fill:none;stroke:var(--brass-dim);stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.status-chip b,.system-chip b{font-family:var(--mono);font-size:9px;font-weight:600;color:var(--ink)}
+.systems-strip{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:6px}
+.system-chip{display:inline-flex;align-items:center;gap:4px;height:29px;padding:4px 6px;border:1px solid rgba(255,255,255,.065);border-radius:8px}
+.system-chip.warn{border-color:rgba(215,197,152,.30)}.system-chip.critical{border-color:rgba(239,180,170,.38)}
+.glyph-head{display:flex;align-items:center;justify-content:space-between;min-height:28px}
+.helm-block,.formation-block{min-width:0}
+.helm-strip{margin-top:3px}
+.helm-choice{width:44px;max-width:44px;height:50px;padding:2px;flex:none;position:relative}
+.helm-choice small{position:absolute;right:3px;bottom:2px;font-family:var(--mono);font-size:7px;color:var(--ink-dim)}
+.heading-dia{width:30px!important;height:30px!important;overflow:visible}
+.heading-dia .track{fill:none;stroke:rgba(159,176,172,.34);stroke-width:1;stroke-dasharray:2 2}
+.heading-dia .ship{fill:rgba(232,221,199,.18);stroke:currentColor;stroke-width:1.4;stroke-linejoin:round}
+.helm-choice.active{background:rgba(47,127,214,.22);border-color:#7ab4ee;color:#eff7ff}
+.formation-block{padding:0 2px}.formation-strip{margin-top:3px}.formation-choice{width:48px;height:45px}
+.spacing-controls{margin-top:3px}.spacing-readout{min-width:38px}
+.cycle-btn.glyph-only{width:28px;padding:0;font-size:17px}
+.command-sub{font-size:8.5px}
+.panel-head-btn{min-width:32px;padding:5px 7px;font-size:13px;line-height:1}
+.compact-select{display:flex;align-items:center;gap:8px;min-height:0}
+.sq-select-head{display:flex;align-items:center;gap:6px;flex:none}.sq-select-head>svg{width:21px;height:21px;fill:none;stroke:var(--brass);stroke-width:1.6}.sq-select-head>b{font-family:var(--mono);font-size:14px}
+.compact-select .sq-members{display:flex;align-items:center;gap:5px;min-width:0;overflow-x:auto;flex:1}
+.compact-select .sq-member{display:flex;align-items:center;gap:5px;max-width:124px;min-width:76px;height:34px;padding:4px 7px;border-radius:8px;border:1px solid rgba(255,255,255,.08);background:rgba(5,23,29,.10);color:var(--ink-dim);font-family:var(--mono);font-size:9px}
+.compact-select .sq-member span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.compact-select .sq-member.flag{border-color:rgba(200,164,92,.42);color:var(--brass)}
+.sq-empty{width:42px;height:34px;display:flex;align-items:center;justify-content:center;opacity:.45}.sq-empty svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6}
+.compact-select .sq-actions{display:flex;gap:5px;flex:none}.glyph-action{width:34px;min-width:34px;height:34px;padding:0;font-size:16px}
+
+/* Landing page: names and choices first; explanations remain behind help/codex. */
+.tc-desc,.sc-desc,.mc-desc,.oc-desc,.start-blurb{display:none!important}
+.theatre-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.theatre-choice{padding:14px 13px}.theatre-choice .tc-name{font-size:19px}.theatre-choice .tc-date{margin:4px 0 0}
+.mode-choice,.side-choice,.opening-choice{padding:10px}.mode-choice .mc-name,.opening-choice .oc-name{font-size:15px}
+.form-btn span{display:none}.form-btn{padding:6px 3px}.form-dia{width:42px;height:42px}
+#startScreen .overlay-card{padding:18px 19px}.start-date{margin-bottom:11px}.choose-label{margin-top:8px}
+
+@media (max-width:960px) and (orientation:portrait){
+  #panel{left:5px;right:5px;bottom:5px;height:min(20dvh,168px);border-radius:13px;}
+  .panel-title{height:29px;min-height:29px;padding:3px 5px}
+  .panel-title span{display:none}.panel-title{justify-content:space-between}
+  #panelBody{overflow-x:auto;overflow-y:hidden;padding:5px 6px 7px;touch-action:pan-x;-webkit-overflow-scrolling:touch}
+  .command-glass{display:flex;align-items:center;gap:8px;min-width:max-content;height:100%;padding:6px;border-radius:10px}
+  .command-head{width:145px;flex:0 0 145px}.command-title{font-size:16px}
+  .mini-profile{display:none!important}
+  .status-strip,.systems-strip,.target-chip,.helm-block,.formation-block,.doctrine-icons,.battery-strip,.member-grid,.command-foot{flex:0 0 auto;margin-top:0}
+  .command-head{order:0}.formation-block{order:1}.helm-block{order:2}.systems-strip{order:3}.status-strip{order:4}.target-chip{order:5}.doctrine-icons{order:6}.battery-strip{order:7}.member-grid{order:8}.command-foot{order:9}
+  .status-strip,.systems-strip{max-width:220px;align-content:center}
+  .target-chip{width:145px}
+  .member-grid{display:flex;width:auto;max-width:330px;overflow-x:auto;gap:5px;margin-top:0}
+  .member-chip{width:118px;min-width:118px}
+  .command-foot{margin-top:0}
+  .inline-help{display:none}
+  .help-pop>div{position:fixed;left:12px;right:12px;bottom:calc(178px + env(safe-area-inset-bottom));top:auto;width:auto}
+  .theatre-choices{grid-template-columns:1fr}
+  #startScreen .overlay-card{max-height:94dvh;padding:12px 13px}.build-stamp{display:none}
+}
+
 </style>
 </head>
 <body>
@@ -492,7 +559,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
     </div>
 
     <div id="panel">
-      <div class="panel-title" id="panelTitle"><button class="panel-head-btn" id="panelFleetBtn">Fleet</button><span>Command pane</span><button class="panel-head-btn" id="panelCloseBtn">Close ×</button></div>
+      <div class="panel-title" id="panelTitle"><button class="panel-head-btn" id="panelFleetBtn" title="Fleet roster" aria-label="Fleet roster">☰</button><span>Command</span><button class="panel-head-btn" id="panelCloseBtn" title="Close command pane" aria-label="Close command pane">×</button></div>
       <div id="panelBody"></div>
     </div>
   </div>
@@ -503,7 +570,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
     <button class="rail-btn fleet-access" id="fleetBtn" aria-label="Fleet roster"><svg viewBox="0 0 24 24"><path d="M3 6h18M5 12h14M7 18h10"/></svg><span>Fleet</span></button>
     <button class="rail-btn icon" id="ffBtn" title="Continue to contact" aria-label="Continue to contact"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button>
     <button class="rail-btn icon" id="zoomBtn" title="Cycle zoom" aria-label="Cycle zoom"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="M15 15l6 6M7 10h6M10 7v6"/></svg></button>
-    <button class="rail-btn icon" id="multiSelBtn" title="Form a squadron" aria-label="Form a squadron"><svg viewBox="0 0 24 24"><path d="M3 6h7M3 12h10M3 18h7M15 6h6M17 12h4M15 18h6"/></svg></button>
+    <button class="rail-btn icon" id="multiSelBtn" title="Select ships for a squadron" aria-label="Select ships for a squadron"><svg viewBox="0 0 24 24"><path d="M3 6h7M3 12h10M3 18h7M15 6h6M17 12h4M15 18h6"/></svg></button>
     <button class="rail-btn icon" id="speedBtn" title="Skip resolution" aria-label="Skip resolution"><svg viewBox="0 0 24 24"><path d="M4 5l7 7-7 7M12 5l7 7-7 7"/></svg></button>
     <button class="rail-btn icon toggle" id="ringsBtn" title="Range rings" aria-label="Range rings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg></button>
     <button class="rail-btn icon toggle opt" id="arcsBtn" title="Firing arcs" aria-label="Firing arcs"><svg viewBox="0 0 24 24"><path d="M12 20V4M12 12L3 7M12 12l9-5"/></svg></button>
@@ -526,9 +593,9 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
       <div class="start-kicker">Echelon</div>
-      <div class="choose-label">Choose a theatre</div>
+      <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
-      <button class="start-load" id="startLoadBtn">Load a saved game</button>
+      <button class="start-load" id="startLoadBtn">Load</button>
       <div class="start-loadbox" id="startLoadBox" style="display:none">
         <textarea id="startLoadCode" spellcheck="false" autocomplete="off" placeholder="Paste a save code"></textarea>
         <div class="gm-io-row">
@@ -540,7 +607,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
     </div>
     <!-- 2. campaign setup for the chosen theatre -->
     <div id="setupPanel" style="display:none">
-      <button class="setup-back" id="setupBack">‹ Theatres</button>
+      <button class="setup-back" id="setupBack" aria-label="Back to theatres" title="Back">‹</button>
       <h1 class="start-title" id="startTitle">-</h1>
       <div class="start-date" id="startDate">-</div>
       <div id="openingRow" style="display:none">
@@ -552,7 +619,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <div class="choose-label">Mode</div>
       <div class="mode-choices">
         <div class="mode-choice active" data-mode="historical">
-          <div class="mc-name">Historical Battle</div>
+          <div class="mc-name">Historical</div>
           <div class="mc-desc">Historical deployment.</div>
         </div>
         <div class="mode-choice" data-mode="skirmish">
@@ -567,7 +634,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">build 2026-07-17 mobile command and analysis pass</div>
+    <div class="build-stamp" id="buildStamp">build 2026-07-18 portrait command pass</div>
   </div>
 </div>
 
@@ -1699,8 +1766,8 @@ if (typeof module !== "undefined" && module.exports) {
 //  Pure canvas drawing. No game logic. Reads ship state produced by engine.js.
 //  Ships are drawn from a DISPLAY POSE (dx/dy/dh) which ui.js eases toward the
 //  true pose each frame, so movement and turning animate smoothly.
-//  Orientation fix: with a north-up transform the hull must be rotated by
-//  (180 - heading), not heading, so the bow always points along travel.
+//  Canvas uses +y downward while game headings use 0° north and increase clockwise.
+//  Local -y bow geometry rotates by heading; local +x bow geometry rotates by heading - 90°.
 // ===========================================================================
 
 const PALETTE = {
@@ -1730,6 +1797,10 @@ function screenToWorld(v, sx, sy) {
 function pX(s) { return s.dx != null ? s.dx : s.x; }
 function pY(s) { return s.dy != null ? s.dy : s.y; }
 function pH(s) { return s.dh != null ? s.dh : s.heading; }
+function bowMinusYRotation(heading) { return (heading || 0) * Math.PI / 180; }
+function bowPlusXRotation(heading) { return ((heading || 0) - 90) * Math.PI / 180; }
+function rotateBowMinusY(ctx, heading) { ctx.rotate(bowMinusYRotation(heading)); }
+function rotateBowPlusX(ctx, heading) { ctx.rotate(bowPlusXRotation(heading)); }
 
 // ---- ship sprite cache (real top-down art, bow points +x) ------------------
 // Guarded so render.js still runs headless (node) where Image is undefined.
@@ -2263,7 +2334,7 @@ function drawShip(ctx, v, ship, opts) {
 
   // ---- wake + bow wave (bow at local -y, rotation 180 - heading) ----
   if (ship._hitFlash > 0) {                                   // white flash on the struck hull, fading fast
-    ctx.save(); ctx.translate(cx, cy); ctx.rotate((180 - ph) * Math.PI / 180);
+    ctx.save(); ctx.translate(cx, cy); rotateBowMinusY(ctx, ph);
     ctx.globalAlpha = Math.min(0.85, ship._hitFlash * 2.6);
     ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2;
     hullPath(ctx, L, B); ctx.stroke();
@@ -2279,7 +2350,7 @@ function drawShip(ctx, v, ship, opts) {
     ctx.restore();
   }
   if (moving) {
-    ctx.save(); ctx.translate(cx, cy); ctx.rotate((180 - ph) * Math.PI / 180);
+    ctx.save(); ctx.translate(cx, cy); rotateBowMinusY(ctx, ph);
     const wlen = Math.min(L * (0.5 + speed / 26), L * 1.8);   // a faint fan of hairlines astern, no filled wedge or bow wave
     const y0 = L * 0.45, lines = 5;
     ctx.lineWidth = 0.8;
@@ -2299,7 +2370,7 @@ function drawShip(ctx, v, ship, opts) {
   if (!ship._plan) ship._plan = buildShipPlan(ship);
   ctx.save();
   ctx.translate(cx, cy);
-  ctx.rotate(Math.atan2(Math.cos(hr), Math.sin(hr)));   // +x (bow) aligned with travel
+  rotateBowPlusX(ctx, ph);   // local +x bow aligned with game heading
   drawSchematic(ctx, L, B, ship._plan, ink, sacc, ship.out);
   ctx.restore();
 
@@ -2425,7 +2496,7 @@ function drawMoveGhost(ctx, v, ship, ghost) {
   const ratio = (ship.beam && ship.length) ? ship.beam / ship.length : 0.16;
   const B = Math.max(L * ratio, 6);
   ctx.translate(gx, gy);
-  ctx.rotate((180 - ghost.heading) * Math.PI / 180);
+  rotateBowMinusY(ctx, ghost.heading);
   hullPath(ctx, L, B);
   ctx.globalAlpha = 0.32; ctx.strokeStyle = PALETTE.brass; ctx.lineWidth = 1; ctx.stroke();
   ctx.restore();
@@ -2443,15 +2514,15 @@ function drawEffects(ctx, v, effects) {
       // deliberately faint enough to suggest flight without becoming a phaser.
       const t = Math.max(0, Math.min(1, e.t || 0));
       const head = t;
-      const tail = Math.max(0, t - (e.heavy ? 0.30 : 0.23));
+      const tail = Math.max(0, t - (e.heavy ? 0.34 : 0.27));
       const xh = e.x0 + (e.x1 - e.x0) * head, yh = e.y0 + (e.y1 - e.y0) * head;
       const xt = e.x0 + (e.x1 - e.x0) * tail, yt = e.y0 + (e.y1 - e.y0) * tail;
       const visible = Math.sin(Math.PI * Math.min(1, t / 0.22)) * Math.sin(Math.PI * Math.min(1, (1 - t) / 0.12));
-      ctx.globalAlpha = (e.heavy ? 0.38 : 0.25) * Math.max(0, visible);
+      ctx.globalAlpha = (e.heavy ? 0.46 : 0.32) * Math.max(0, visible);
       ctx.strokeStyle = e.heavy ? "rgba(255,222,176,0.88)" : "rgba(236,230,218,0.80)";
-      ctx.lineWidth = e.heavy ? 1.28 : 0.94;
+      ctx.lineWidth = e.heavy ? 1.42 : 1.06;
       ctx.beginPath(); ctx.moveTo(wx(v, xt), wy(v, yt)); ctx.lineTo(wx(v, xh), wy(v, yh)); ctx.stroke();
-      ctx.globalAlpha = (e.heavy ? 0.40 : 0.27) * Math.max(0, visible);
+      ctx.globalAlpha = (e.heavy ? 0.47 : 0.33) * Math.max(0, visible);
       ctx.fillStyle = "rgba(248,242,230,0.78)";
       ctx.beginPath(); ctx.arc(wx(v, xh), wy(v, yh), e.heavy ? 1.00 : 0.68, 0, Math.PI * 2); ctx.fill();
     } else if (e.type === "muzzle") {
@@ -2534,7 +2605,7 @@ function drawEffects(ctx, v, effects) {
       const sx = wx(v, e.x), sy = wy(v, e.y), p = 1 - e.life;
       const scale = Math.abs(wx(v, e.x + 1) - wx(v, e.x));
       const L = Math.max(8, e.length * scale), B = Math.max(2.5, e.beam * scale);
-      ctx.translate(sx, sy); ctx.rotate((180 - (e.heading || 0)) * Math.PI / 180);
+      ctx.translate(sx, sy); rotateBowMinusY(ctx, e.heading || 0);
       if (e.mode === "capsize") { ctx.translate(B * p * 0.55, 0); ctx.scale(Math.max(0.08, 1 - p * 0.92), Math.max(0.45, 1 - p * 0.35)); }
       else if (e.mode === "plunge") { ctx.translate(0, L * p * 0.22); ctx.scale(Math.max(0.18, 1 - p * 0.78), Math.max(0.28, 1 - p * 0.58)); }
       else { ctx.scale(Math.max(0.35, 1 - p * 0.55), Math.max(0.35, 1 - p * 0.55)); }
@@ -2955,7 +3026,7 @@ function drawSideSilhouette(ctx, ship, L, color) {
 
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
-    PALETTE, makeView, wx, wy, screenToWorld, pX, pY, pH, drawSea, drawCompass,
+    PALETTE, makeView, wx, wy, screenToWorld, pX, pY, pH, bowMinusYRotation, bowPlusXRotation, drawSea, drawCompass,
     drawRangeRings, drawFiringCones, fanPath, drawShip, drawMoveGhost, drawEffects, drawTorpedoes, shipScreenLen,
     drawClassIcon, shipClassTier, drawTargetLine,
     sideElevationPrims, drawSideElevation, drawSideSilhouette, SHIP_LAYOUT, SHIP_HULL,
@@ -4402,18 +4473,17 @@ function redraw() {
   drawTorpedoes(ctx, v, game.torpedoes);
   if (sel && !sel.out && selTargetValid && game.show.arcs) drawGunDots(ctx, v, sel, selTarget);
   drawEffects(ctx, v, game.effects);
-  // tiny squadron-number badges so you can tell at a glance which ships belong together
-  if (game.squadrons && game.squadrons.length) {
+  // Mark only the active squadron. Showing every badge looked like a fleet-wide selection.
+  const activeSq = game.menuMode === "squad" && game.selSquadId ? squadronById(game.selSquadId) : null;
+  if (activeSq) {
     ctx.save(); ctx.font = "600 9px ui-monospace, SFMono-Regular, Menlo, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle";
-    for (const sq of game.squadrons) {
-      for (const id of sq.members) {
-        const s = shipById(id); if (!s || s.out || !shipInView(v, s, 40)) continue;
-        const r = Math.max(shipScreenLen(v, s) * 0.5, 9);
-        const lx = wx(v, s.x) + r + 7, ly = wy(v, s.y) - r - 1;
-        ctx.fillStyle = "rgba(8,22,26,0.82)"; ctx.beginPath(); ctx.arc(lx, ly, 6.4, 0, Math.PI * 2); ctx.fill();
-        ctx.lineWidth = 1; ctx.strokeStyle = "rgba(240,210,120,0.6)"; ctx.stroke();
-        ctx.fillStyle = "rgba(240,210,120,0.97)"; ctx.fillText(String(sq.id), lx, ly + 0.5);
-      }
+    for (const id of activeSq.members) {
+      const s = shipById(id); if (!s || s.out || !shipInView(v, s, 40)) continue;
+      const r = Math.max(shipScreenLen(v, s) * 0.5, 9);
+      const lx = wx(v, s.x) + r + 7, ly = wy(v, s.y) - r - 1;
+      ctx.fillStyle = "rgba(8,22,26,0.68)"; ctx.beginPath(); ctx.arc(lx, ly, 6.4, 0, Math.PI * 2); ctx.fill();
+      ctx.lineWidth = 1; ctx.strokeStyle = "rgba(240,210,120,0.72)"; ctx.stroke();
+      ctx.fillStyle = "rgba(240,210,120,0.96)"; ctx.fillText(String(activeSq.id), lx, ly + 0.5);
     }
     ctx.restore();
   }
@@ -4424,34 +4494,32 @@ function redraw() {
 // the ship it is holding station behind, and a ring on each line's lead. Drawn under
 // the ships; self-gates on the line chains existing (Tsushima only).
 function drawFormationLines(ctx, v) {
-  if (game._divLines) {
-  ctx.save();
-  ctx.lineWidth = 1.2; ctx.lineCap = "round"; ctx.setLineDash([4, 5]);
-  for (const s of game.ships) {
-    if (s.out || !s._follow) continue;
-    const lead = shipById(s._follow);
-    if (!lead || lead.out) continue;
-    ctx.strokeStyle = (s.side === game.playerSide) ? "rgba(232,202,112,0.50)" : "rgba(158,174,188,0.36)";
-    ctx.beginPath();
-    ctx.moveTo(wx(v, s.x), wy(v, s.y));
-    ctx.lineTo(wx(v, lead.x), wy(v, lead.y));
-    ctx.stroke();
+  const activeSq = game.menuMode === "squad" && game.selSquadId ? squadronById(game.selSquadId) : null;
+  if (activeSq) {
+    const ids = new Set(activeSq.members);
+    ctx.save();
+    ctx.lineWidth = 1.35; ctx.lineCap = "round"; ctx.setLineDash([4, 5]);
+    for (const s of game.ships) {
+      if (s.out || !s._follow || !ids.has(s.id)) continue;
+      const lead = shipById(s._follow);
+      if (!lead || lead.out || !ids.has(lead.id)) continue;
+      ctx.strokeStyle = "rgba(232,202,112,0.62)";
+      ctx.beginPath(); ctx.moveTo(wx(v, s.x), wy(v, s.y)); ctx.lineTo(wx(v, lead.x), wy(v, lead.y)); ctx.stroke();
+    }
+    ctx.setLineDash([]);
+    const flag = shipById(activeSq.leaderId);
+    if (flag && !flag.out) {
+      const cx = wx(v, flag.x), cy = wy(v, flag.y), r = Math.max(8, flag.length * v.scale * 0.7);
+      ctx.strokeStyle = "rgba(240,210,120,0.92)"; ctx.lineWidth = 1.6;
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
+      const fy = cy - r - 13;
+      ctx.beginPath(); ctx.moveTo(cx, cy - r); ctx.lineTo(cx, fy); ctx.stroke();
+      ctx.fillStyle = "rgba(240,210,120,0.92)";
+      ctx.beginPath(); ctx.moveTo(cx, fy); ctx.lineTo(cx + 9, fy + 3); ctx.lineTo(cx, fy + 6); ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
   }
-  ctx.setLineDash([]);
-  for (const s of game.ships) {                          // mark each line's lead with a ring and a flag
-    if (s.out || !s._inLine || s._follow) continue;
-    const cx = wx(v, s.x), cy = wy(v, s.y), r = Math.max(8, s.length * v.scale * 0.7);
-    const col = (s.side === game.playerSide) ? "rgba(240,210,120,0.9)" : "rgba(180,196,210,0.85)";
-    ctx.strokeStyle = col; ctx.lineWidth = 1.6;
-    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
-    const fy = cy - r - 13;                               // a small pennant above the flag ship
-    ctx.beginPath(); ctx.moveTo(cx, cy - r); ctx.lineTo(cx, fy); ctx.stroke();
-    ctx.fillStyle = col;
-    ctx.beginPath(); ctx.moveTo(cx, fy); ctx.lineTo(cx + 9, fy + 3); ctx.lineTo(cx, fy + 6); ctx.closePath(); ctx.fill();
-  }
-  ctx.restore();
-  }
-  if (game.multiSel) {                                    // ring the ships being gathered into a new squadron
+  if (game.multiSel) {
     ctx.save(); ctx.lineWidth = 2;
     game.pendingSel.forEach((id, i) => {
       const s = shipById(id); if (!s || s.out) return;
@@ -5086,22 +5154,26 @@ function orderApproachHeading(s) {
   const dx = end.x - s.x, dy = end.y - s.y;
   return Math.hypot(dx, dy) < HEX_M * 0.3 ? s.heading : ((Math.atan2(dx, -dy) * 180 / Math.PI) % 360 + 360) % 360;
 }
-function setOrderHeading(s, wanted) {
-  if (!s || s.out || s.side !== game.playerSide || game.phase !== "plan") return false;
-  if (!s.order) defaultOrder(s);
+function constrainedOrderHeading(s, wanted) {
+  if (!s) return 0;
   const maxFromStart = turnAllowance(s);
   const approach = orderApproachHeading(s);
   let h = ((wanted % 360) + 360) % 360;
   let fromStart = wrap180(h - s.heading);
   fromStart = clamp(fromStart, -maxFromStart, maxFromStart);
   h = ((s.heading + fromStart) % 360 + 360) % 360;
-  const moved = s.order.q !== s.hex.q || s.order.r !== s.hex.r;
+  const moved = !!(s.order && s.hex && (s.order.q !== s.hex.q || s.order.r !== s.hex.r));
   if (moved) {
     let fromTrack = wrap180(h - approach);
     fromTrack = clamp(fromTrack, -70, 70);
     h = ((approach + fromTrack) % 360 + 360) % 360;
   }
-  s.order.heading = h;
+  return h;
+}
+function setOrderHeading(s, wanted) {
+  if (!s || s.out || s.side !== game.playerSide || game.phase !== "plan") return false;
+  if (!s.order) defaultOrder(s);
+  s.order.heading = constrainedOrderHeading(s, wanted);
   s._manualThisTurn = true;
   return true;
 }
@@ -5185,7 +5257,7 @@ function reconcileSquadrons() {
   game.squadrons = game.squadrons.filter((sq) => sq.members.some((id) => { const s = shipById(id); return s && !s.out; }));
   rebuildSquadronLines();
 }
-// Form a squadron from an ordered list of ship ids (first is the flag). Ships are pulled out
+// New squadron from an ordered list of ship ids (first is the flag). Ships are pulled out
 // of any squadron they were in; squadrons that fall below two ships are dissolved.
 function formSquadron(ids, name, autoFormed) {
   const members = ids.filter((id, i) => ids.indexOf(id) === i && shipById(id));
@@ -5902,28 +5974,40 @@ function setMultiSelBtn() {
   if (b) b.classList.toggle("active", !!game.multiSel);
 }
 function renderMultiSelectPanel(body) {
-  const rows = game.pendingSel.map((id, i) => { const s = shipById(id); if (!s) return ""; return `<div class="sq-member${i === 0 ? " flag" : ""}" data-pend="${id}">${i === 0 ? "\u26d1 " : (i + 1) + ". "}${s.name}${i === 0 ? " (flag)" : ""}</div>`; }).join("")
-    || `<div class="muted">Tap friendly ships to add them. The first you tap is the flag.</div>`;
-  body.innerHTML = `<div class="sq-panel">
-      <div class="sq-title">Form a squadron</div>
+  const rows = game.pendingSel.map((id, i) => {
+    const s = shipById(id); if (!s) return "";
+    return `<button class="sq-member${i === 0 ? " flag" : ""}" data-pend="${id}" title="${s.name}">${i === 0 ? "◆" : i + 1}<span>${s.name}</span></button>`;
+  }).join("") || `<div class="sq-empty">${iconSvg("squad")}</div>`;
+  body.innerHTML = `<div class="sq-panel compact-select">
+      <div class="sq-select-head">${iconSvg("squad")}<b>${game.pendingSel.length}</b>
+        <details class="help-pop"><summary class="icon-btn tiny" aria-label="Squadron selection help">?</summary><div>Double-tap the first ship. Tap other friendly ships to add or remove them. The diamond is the flagship. Tap the tick to create the squadron.</div></details>
+      </div>
       <div class="sq-members">${rows}</div>
       <div class="sq-actions">
-        <button class="rail-btn primary" id="sqForm"${game.pendingSel.length < 2 ? " disabled" : ""}>Form squadron</button>
-        <button class="rail-btn" id="sqCancel">Cancel</button>
+        <button class="rail-btn primary glyph-action" id="sqForm" aria-label="Create squadron" title="Create squadron"${game.pendingSel.length < 2 ? " disabled" : ""}>✓</button>
+        <button class="rail-btn glyph-action" id="sqCancel" aria-label="Cancel squadron selection" title="Cancel">×</button>
       </div>
-      <div class="muted sq-hint">Tapping a ship that is already in a squadron moves it into this one.</div>
     </div>`;
-  body.querySelectorAll("[data-pend]").forEach((b) => b.addEventListener("click", () => { const i = game.pendingSel.indexOf(b.getAttribute("data-pend")); if (i >= 0) game.pendingSel.splice(i, 1); syncPanel(); }));
+  body.querySelectorAll("[data-pend]").forEach((b) => b.addEventListener("click", () => {
+    const i = game.pendingSel.indexOf(b.getAttribute("data-pend"));
+    if (i >= 0) game.pendingSel.splice(i, 1);
+    syncPanel();
+  }));
   const f = document.getElementById("sqForm");
   if (f) f.addEventListener("click", () => {
     if (game.pendingSel.length < 2) return;
     const sq = formSquadron(game.pendingSel.slice());
     game.multiSel = false; game.pendingSel = [];
-    if (sq) { game.selSquadId = sq.id; game.selectedId = sq.leaderId; game.menuMode = "squad"; logLine(`Squadron ${sq.id} formed under ${shipById(sq.leaderId).name}.`, ""); }
+    if (sq) {
+      game.selSquadId = sq.id; game.selectedId = sq.leaderId; game.menuMode = "squad";
+      logLine(`Squadron ${sq.id} formed under ${shipById(sq.leaderId).name}.`, "");
+    }
     setMultiSelBtn(); syncPanel();
   });
   const c = document.getElementById("sqCancel");
-  if (c) c.addEventListener("click", () => { game.multiSel = false; game.pendingSel = []; setMultiSelBtn(); syncPanel(); });
+  if (c) c.addEventListener("click", () => {
+    game.multiSel = false; game.pendingSel = []; setMultiSelBtn(); syncPanel();
+  });
 }
 function squadronCohesion(sq) {
   const live = sq.members.map(shipById).filter((s) => s && !s.out);
@@ -5943,34 +6027,49 @@ function iconSvg(kind) {
     info: '<circle cx="12" cy="12" r="9"/><path d="M12 10v7M12 7h.01"/>',
     squad: '<path d="M4 6h7l2 2h7M4 12h7l2 0h7M4 18h7l2-2h7"/>',
     target: '<circle cx="12" cy="12" r="7"/><path d="M12 2v5M12 17v5M2 12h5M17 12h5"/>',
-    portHard: '<path d="M20 5H9a6 6 0 0 0-6 6v8M3 19l-3-4M3 19l4-3"/>',
-    port: '<path d="M18 5H9a5 5 0 0 0-5 5v8M4 18l-3-4M4 18l4-3"/>',
-    straight: '<path d="M12 21V4M12 4L7 9M12 4l5 5"/>',
-    starboard: '<path d="M6 5h9a5 5 0 0 1 5 5v8M20 18l-4-3M20 18l3-4"/>',
-    starboardHard: '<path d="M4 5h11a6 6 0 0 1 6 6v8M21 19l-4-3M21 19l3-4"/>',
     detach: '<path d="M4 7h8M4 12h6M4 17h8M14 12h7M18 8l4 4-4 4"/>',
     line: '<path d="M12 2l2 4-2 3-2-3zM12 8l2 4-2 3-2-3zM12 14l2 4-2 3-2-3z"/>',
     abreast: '<path d="M4 8l2 4-2 3-2-3zM12 8l2 4-2 3-2-3zM20 8l2 4-2 3-2-3z"/>',
     echelonPort: '<path d="M18 2l2 4-2 3-2-3zM12 8l2 4-2 3-2-3zM6 14l2 4-2 3-2-3z"/>',
     echelonStarboard: '<path d="M6 2l2 4-2 3-2-3zM12 8l2 4-2 3-2-3zM18 14l2 4-2 3-2-3z"/>',
+    hull: '<path d="M12 2l3 6-1.2 11H10.2L9 8z"/>',
+    flood: '<path d="M4 15c2-2 4-2 6 0s4 2 6 0 4-2 6 0M4 20c2-2 4-2 6 0s4 2 6 0 4-2 6 0"/>',
+    fire: '<path d="M13 2c1 4-3 5-1 8 1.5-1 3-2 4-4 3 4 4 7 2 11-1.2 2.5-3.4 4-6 4-4.4 0-7-2.8-7-6.5 0-3.2 2-5.8 5-8.5-.2 3 1 4 2 5 0-4 2-6 3-9z"/>',
+    crew: '<circle cx="12" cy="8" r="3"/><path d="M5 21c.5-5 3-8 7-8s6.5 3 7 8"/>',
+    morale: '<path d="M4 15h3l2-6 4 10 2-6h5"/>',
+    engine: '<circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M19 5l-3 3M8 16l-3 3"/>',
+    rudder: '<path d="M12 3v14M7 8h10M8 17c0 3 8 3 8 0"/>',
+    repair: '<path d="M14 5a4 4 0 0 0-5 5L3 16l5 5 6-6a4 4 0 0 0 5-5l-3 3-3-3z"/>',
+    guns: '<path d="M4 16h10l5-5M5 12h9M8 8h7"/>',
   };
   return `<svg viewBox="0 0 24 24" aria-hidden="true">${paths[kind] || paths.info}</svg>`;
 }
-function headingButtonsHtml(scope) {
-  const lead = scope === "squad" ? "The division flagship" : "The ship";
-  return `<div class="control-label-row"><div class="control-label">Heading at end of move</div><details class="help-pop control-help"><summary class="icon-btn tiny" aria-label="Heading control help">?</summary><div><b>Helm, not turrets.</b> These buttons set where ${lead.toLowerCase()} points after reaching the plotted hex. Port turns left, starboard turns right, and Course points along the movement path.</div></details></div><div class="helm-strip" data-helm-scope="${scope}">
-    <button class="helm-choice" data-hdg="-30" aria-label="Final ship heading thirty degrees to port">${iconSvg("portHard")}<span>Port 30°</span></button>
-    <button class="helm-choice" data-hdg="-10" aria-label="Final ship heading ten degrees to port">${iconSvg("port")}<span>Port 10°</span></button>
-    <button class="helm-choice" data-hdg="0" aria-label="Final ship heading follows plotted course">${iconSvg("straight")}<span>Follow course</span></button>
-    <button class="helm-choice" data-hdg="10" aria-label="Final ship heading ten degrees to starboard">${iconSvg("starboard")}<span>Stbd 10°</span></button>
-    <button class="helm-choice" data-hdg="30" aria-label="Final ship heading thirty degrees to starboard">${iconSvg("starboardHard")}<span>Stbd 30°</span></button>
-  </div>`;
+function headingDiagramSvg(offset) {
+  const rot = Number(offset) || 0;
+  return `<svg class="heading-dia" viewBox="0 0 32 32" aria-hidden="true"><path class="track" d="M16 29V3"/><g transform="rotate(${rot} 16 20)"><path class="ship" d="M16 7l3.4 7.2-1.2 12.2h-4.4l-1.2-12.2z"/></g></svg>`;
+}
+function headingButtonsHtml(scope, ship) {
+  const lead = scope === "squad" ? "squadron flagship" : "ship";
+  const approach = ship ? orderApproachHeading(ship) : 0;
+  const currentOffset = ship && ship.order ? wrap180(ship.order.heading - approach) : 0;
+  const candidates = [-30, -10, 0, 10, 30].map((requested) => {
+    const heading = ship ? constrainedOrderHeading(ship, approach + requested) : approach + requested;
+    return { requested, heading, offset: wrap180(heading - approach) };
+  });
+  const choices = [];
+  for (const c of candidates) {
+    if (!choices.some((x) => Math.abs(x.offset - c.offset) < 0.75)) choices.push(c);
+  }
+  const active = choices.reduce((best, c) => Math.abs(c.offset - currentOffset) < Math.abs(best.offset - currentOffset) ? c : best, choices[0]);
+  const label = (d) => Math.abs(d) < 0.5 ? "0" : `${d > 0 ? "+" : "−"}${Math.round(Math.abs(d))}`;
+  return `<div class="helm-block"><div class="glyph-head">${iconSvg("rudder")}<details class="help-pop control-help"><summary class="icon-btn tiny" aria-label="Final heading help">?</summary><div>The dotted line is the plotted track. Each ship glyph shows the actual bow at the end of the move. The small number is degrees from the track. Unavailable turns are not shown. This is helm, not turret control.</div></details></div><div class="helm-strip" data-helm-scope="${scope}">
+    ${choices.map((c) => `<button class="helm-choice${c === active ? " active" : ""}" data-heading="${c.heading.toFixed(4)}" aria-label="Final heading ${c.offset < -0.5 ? Math.round(Math.abs(c.offset)) + " degrees to port" : c.offset > 0.5 ? Math.round(c.offset) + " degrees to starboard" : "along plotted course"}">${headingDiagramSvg(c.offset)}<small>${label(c.offset)}</small></button>`).join("")}
+  </div></div>`;
 }
 function wireHeadingButtons(body, getShip) {
-  body.querySelectorAll("[data-hdg]").forEach((b) => b.addEventListener("click", () => {
+  body.querySelectorAll("[data-heading]").forEach((b) => b.addEventListener("click", () => {
     const s = getShip(); if (!s) return;
-    const d = parseInt(b.getAttribute("data-hdg"), 10);
-    if (d === 0) resetOrderHeading(s); else nudgeOrderHeading(s, d);
+    setOrderHeading(s, parseFloat(b.getAttribute("data-heading")));
     syncPanel();
   }));
 }
@@ -5986,28 +6085,29 @@ function renderSquadronPanel(body, sq) {
   }).join("");
   body.innerHTML = `<div class="command-glass squad-command">
       <div class="command-head">
-        <button class="cycle-btn" data-sqcyc="-1" aria-label="Previous division">‹ Div</button>
-        <div><div class="command-title">${title}</div><div class="command-sub">${live.length}/${sq.members.length} · cohesion ${squadronCohesion(sq)}%</div></div>
-        <button class="cycle-btn" data-sqcyc="1" aria-label="Next division">Div ›</button>
-        <details class="help-pop"><summary class="icon-btn tiny" aria-label="Division help">?</summary><div>Tap a lit hex to move the division. The flagship leads. The ship silhouettes below show the station layout from above. Tap a ship for individual control; Fleet opens the full roster.</div></details>
+        <button class="cycle-btn glyph-only" data-sqcyc="-1" aria-label="Previous squadron">‹</button>
+        <div><div class="command-title">${title}</div><div class="command-sub">${live.length}/${sq.members.length} · ${squadronCohesion(sq)}%</div></div>
+        <button class="cycle-btn glyph-only" data-sqcyc="1" aria-label="Next squadron">›</button>
+        <details class="help-pop"><summary class="icon-btn tiny" aria-label="Squadron help">?</summary><div>This panel commands only the ships listed here. Tap a lit hex to move them. Tap a member to return to individual control.</div></details>
       </div>
-      <div class="target-chip">${iconSvg("target")}<span>${tgt && !tgt.out ? tgt.name + " · " + Math.round(rangeBetween(lead, tgt)) + " m" : "Local targets"}</span></div>
-      <div class="control-label-row"><div class="control-label">Formation</div><details class="help-pop control-help"><summary class="icon-btn tiny" aria-label="Formation help">?</summary><div>The ship silhouettes are the station layout viewed from above. Tap the arrangement you want; the flagship leads and the other ships reform around it.</div></details></div>
-      <div class="formation-strip" aria-label="Formation">
-        <button class="formation-choice${(sq.formation||"line") === "line" ? " active" : ""}" data-form="line" aria-label="Ships in line ahead">${iconSvg("line")}</button>
-        <button class="formation-choice${sq.formation === "abreast" ? " active" : ""}" data-form="abreast" aria-label="Ships side by side">${iconSvg("abreast")}</button>
-        <button class="formation-choice${sq.formation === "echelon_port" ? " active" : ""}" data-form="echelon_port" aria-label="Ships diagonally to port">${iconSvg("echelonPort")}</button>
-        <button class="formation-choice${sq.formation === "echelon_starboard" ? " active" : ""}" data-form="echelon_starboard" aria-label="Ships diagonally to starboard">${iconSvg("echelonStarboard")}</button>
+      <div class="target-chip">${iconSvg("target")}<span>${tgt && !tgt.out ? tgt.name + " · " + Math.round(rangeBetween(lead, tgt)) + " m" : "—"}</span></div>
+      <div class="formation-block"><div class="glyph-head">${iconSvg("squad")}<details class="help-pop control-help"><summary class="icon-btn tiny" aria-label="Formation help">?</summary><div>The ship silhouettes are the station layout viewed from above. The first silhouette is the flagship.</div></details></div>
+        <div class="formation-strip" aria-label="Formation">
+          <button class="formation-choice${(sq.formation||"line") === "line" ? " active" : ""}" data-form="line" aria-label="Ships in line ahead">${iconSvg("line")}</button>
+          <button class="formation-choice${sq.formation === "abreast" ? " active" : ""}" data-form="abreast" aria-label="Ships side by side">${iconSvg("abreast")}</button>
+          <button class="formation-choice${sq.formation === "echelon_port" ? " active" : ""}" data-form="echelon_port" aria-label="Ships diagonally to port">${iconSvg("echelonPort")}</button>
+          <button class="formation-choice${sq.formation === "echelon_starboard" ? " active" : ""}" data-form="echelon_starboard" aria-label="Ships diagonally to starboard">${iconSvg("echelonStarboard")}</button>
+        </div>
+        <div class="spacing-controls"><button class="text-icon" data-space="-100" aria-label="Close formation spacing">−</button><span class="spacing-readout">${Math.round(sq.spacing || STATION_M)}m</span><button class="text-icon" data-space="100" aria-label="Open formation spacing">+</button></div>
       </div>
-      <div class="spacing-controls"><button class="text-icon" data-space="-100" aria-label="Close formation spacing">−</button><span class="spacing-readout">Spacing ${Math.round(sq.spacing || STATION_M)} m</span><button class="text-icon" data-space="100" aria-label="Open formation spacing">+</button></div>
-      ${headingButtonsHtml("squad")}
+      ${headingButtonsHtml("squad", lead)}
       <div class="doctrine-icons" aria-label="Shell doctrine">
         <button class="text-icon${live.every((s)=> (s.doctrine||"auto") === "auto") ? " active" : ""}" data-sqdoc="auto" title="Automatic shell selection">A</button>
         <button class="text-icon${live.every((s)=> s.doctrine === "AP") ? " active" : ""}" data-sqdoc="AP" title="Armour-piercing shells">AP</button>
         <button class="text-icon${live.every((s)=> s.doctrine === "HE") ? " active" : ""}" data-sqdoc="HE" title="High-explosive shells">HE</button>
       </div>
       <div class="member-grid">${members}</div>
-      <div class="command-foot"><button class="icon-btn" id="sqDisband" title="Disband division" aria-label="Disband division">${iconSvg("detach")}</button></div>
+      <div class="command-foot"><button class="icon-btn" id="sqDisband" title="Disband squadron" aria-label="Disband squadron">${iconSvg("detach")}</button></div>
     </div>`;
   body.querySelectorAll("[data-sqdoc]").forEach((b) => b.addEventListener("click", () => { squadronSetDoctrine(sq, b.getAttribute("data-sqdoc")); syncPanel(); }));
   body.querySelectorAll("[data-form]").forEach((b) => b.addEventListener("click", () => { squadronSetFormation(sq, b.getAttribute("data-form")); syncPanel(); }));
@@ -6081,32 +6181,33 @@ function syncPanel() {
     return `<span class="battery-chip${cls}" title="${title}"><b>${cal}</b><small>${b.knockedOut ? "X" : ready || "·"}</small></span>`;
   }).join("");
   const torpChip = s.torpedoes ? `<span class="battery-chip torp${s.torpedoes.count ? " bearing" : " dead"}" title="Torpedoes"><b>T</b><small>${s.torpedoes.count}</small></span>` : "";
-  const gunSystems = systemsBreakdown(s).map((g) => `<span class="system-gun${g.live < g.total ? " damaged" : ""}"><b>${g.label}</b><span>${g.live}/${g.total}</span></span>`).join("") || `<span class="system-gun"><b>Main guns</b><span>none</span></span>`;
+  const gunGroups = systemsBreakdown(s);
+  const gunLive = gunGroups.reduce((n, g) => n + g.live, 0), gunTotal = gunGroups.reduce((n, g) => n + g.total, 0);
   body.innerHTML = `<div class="command-glass ship-command">
       <div class="command-head">
-        ${s.side === game.playerSide ? `<button class="cycle-btn" data-cyc="-1" aria-label="Previous ship">‹ Ship</button>` : ""}
-        <div class="command-name"><div class="command-title ${clsForSide(s.side)}">${s.name}</div><div class="command-sub">${s.type} · ${hdg}° · ${speedNow} kn</div></div>
-        ${s.side === game.playerSide ? `<button class="cycle-btn" data-cyc="1" aria-label="Next ship">Ship ›</button>` : ""}
-        ${sq && s.side === game.playerSide ? `<button class="icon-btn tiny" id="openSquadBtn" title="Division control" aria-label="Division control">${iconSvg("squad")}</button><button class="icon-btn tiny" id="detachShipBtn" title="Detach ship" aria-label="Detach ship">${iconSvg("detach")}</button>` : ""}
+        ${s.side === game.playerSide ? `<button class="cycle-btn glyph-only" data-cyc="-1" aria-label="Previous ship">‹</button>` : ""}
+        <div class="command-name"><div class="command-title ${clsForSide(s.side)}">${s.name}</div><div class="command-sub">${hdg}° · ${speedNow} kn</div></div>
+        ${s.side === game.playerSide ? `<button class="cycle-btn glyph-only" data-cyc="1" aria-label="Next ship">›</button>` : ""}
+        ${sq && s.side === game.playerSide ? `<button class="icon-btn tiny" id="openSquadBtn" title="Squadron control" aria-label="Squadron control">${iconSvg("squad")}</button><button class="icon-btn tiny" id="detachShipBtn" title="Detach ship" aria-label="Detach ship">${iconSvg("detach")}</button>` : ""}
         <button class="icon-btn tiny" id="viewCardBtn" title="Ship details" aria-label="Ship details">?</button>
       </div>
       <div class="mini-profile"><canvas id="dossierElev" width="440" height="140" style="width:100%;height:auto;display:block"></canvas></div>
-      <div class="status-strip">
-        <span class="status-chip" title="Hull"><i>H</i><b>${hull}%</b></span>
-        <span class="status-chip" title="Flooding"><i>W</i><b>${Math.round(s.flooding)}%</b></span>
-        <span class="status-chip" title="Fires"><i>F</i><b>${s.fires}</b></span>
-        <span class="status-chip" title="Crew"><i>C</i><b>${Math.round(100*s.crew)}%</b></span>
-        <span class="status-chip ${nerve[1]}" title="Nerve"><i>N</i><b>${nerve[0]}</b></span>
+      <div class="status-strip" aria-label="Hull condition">
+        <span class="status-chip" title="Hull">${iconSvg("hull")}<b>${hull}</b></span>
+        <span class="status-chip" title="Flooding">${iconSvg("flood")}<b>${Math.round(s.flooding)}</b></span>
+        <span class="status-chip" title="Fires">${iconSvg("fire")}<b>${s.fires}</b></span>
+        <span class="status-chip" title="Crew">${iconSvg("crew")}<b>${Math.round(100*s.crew)}</b></span>
+        <span class="status-chip ${nerve[1]}" title="Morale">${iconSvg("morale")}<b>${Math.round(s.morale == null ? 100 : s.morale)}</b></span>
       </div>
-      <section class="systems-readout" aria-label="Ship systems">
-        <div class="systems-head"><span>Systems</span><details class="help-pop control-help"><summary class="icon-btn tiny" aria-label="Systems help">?</summary><div>Machinery governs speed, steering governs turn rate, and damage control governs pumping, fire-fighting and limited battle repairs. Gun figures show mounts still working.</div></details></div>
-        <div class="system-line${mach.pct < 65 ? " critical" : mach.pct < 90 ? " warn" : ""}"><span>Machinery</span><b>${mach.pct}% · ${mach.name}${mach.extra}</b></div>
-        <div class="system-line${steer.pct < 60 ? " critical" : steer.pct < 90 ? " warn" : ""}"><span>Steering</span><b>${steer.pct}% · ${steer.name}</b></div>
-        <div class="system-line${dc.bad ? " critical" : dc.warn ? " warn" : ""}"><span>Damage control</span><b>${dc.name} · ${dc.pct}%</b></div>
-        <div class="system-guns">${gunSystems}</div>
+      <section class="systems-strip" aria-label="Ship systems">
+        <span class="system-chip${mach.pct < 65 ? " critical" : mach.pct < 90 ? " warn" : ""}" title="Machinery">${iconSvg("engine")}<b>${mach.pct}</b></span>
+        <span class="system-chip${steer.pct < 60 ? " critical" : steer.pct < 90 ? " warn" : ""}" title="Steering">${iconSvg("rudder")}<b>${steer.pct}</b></span>
+        <span class="system-chip${dc.bad ? " critical" : dc.warn ? " warn" : ""}" title="Damage control">${iconSvg("repair")}<b>${dc.pct}</b></span>
+        <span class="system-chip${gunLive < gunTotal ? " warn" : ""}" title="Working gun mounts">${iconSvg("guns")}<b>${gunLive}/${gunTotal}</b></span>
+        <details class="help-pop control-help"><summary class="icon-btn tiny" aria-label="Systems help">?</summary><div>Hull, water, fire, crew and morale are shown first. Below: machinery, steering, damage control and working gun mounts. Numbers are percentages except fire count and gun mounts.</div></details>
       </section>
       <div class="target-chip">${iconSvg("target")}<span>${tgtText}</span></div>
-      ${s.side === game.playerSide ? headingButtonsHtml("ship") : ""}
+      ${s.side === game.playerSide ? headingButtonsHtml("ship", s) : ""}
       ${s.side === game.playerSide ? `<div class="doctrine-icons" aria-label="Shell doctrine">
         <button class="text-icon${(s.doctrine||"auto") === "auto" ? " active" : ""}" data-shell="auto" title="Automatic shell selection">A</button>
         <button class="text-icon${s.doctrine === "AP" ? " active" : ""}" data-shell="AP" title="Armour-piercing shells">AP</button>
@@ -6114,7 +6215,7 @@ function syncPanel() {
         ${s.order ? `<button class="icon-btn" id="clearOrderBtn" title="Clear plotted course" aria-label="Clear plotted course">×</button>` : ""}
       </div>` : ""}
       <div class="battery-strip">${batChips}${torpChip}</div>
-      <details class="help-pop inline-help"><summary class="icon-btn tiny" aria-label="Control help">?</summary><div>Tap a lit hex for destination. Final-heading controls turn the ship after movement so batteries can be unmasked. Tap an enemy for a priority target. Double-tap a grouped ship for division control. Double-tap an ungrouped ship to begin forming a group. Fleet opens the full roster.</div></details>
+      <details class="help-pop inline-help"><summary class="icon-btn tiny" aria-label="Control help">?</summary><div>Tap a lit hex for destination. Final-heading controls turn the ship after movement so batteries can be unmasked. Tap an enemy for a priority target. Double-tap a ship to begin an exact squadron selection. Tap the squadron glyph on a grouped ship to command its existing squadron. Fleet opens the full roster.</div></details>
     </div>`;
 
   body.querySelectorAll("[data-shell]").forEach((btn) => btn.addEventListener("click", () => { s.doctrine = btn.getAttribute("data-shell"); syncPanel(); }));
@@ -6283,18 +6384,12 @@ function onPointerUp(e) {
         const doubleTap = !game.multiSel && lastOwnShipTap.id === ship.id && nowTap - lastOwnShipTap.t < 420;
         lastOwnShipTap = { id: ship.id, t: nowTap };
         if (doubleTap) {
-          const sq = squadronOf(ship.id);
-          if (sq) {
-            game.multiSel = false; game.pendingSel = []; setMultiSelBtn();
-            game.menuMode = "squad"; game.selSquadId = sq.id; game.selectedId = sq.leaderId;
-            game.targetId = shipById(sq.leaderId).targetId || null; game.cardId = null;
-            showToast(`${sq.name || `Division ${sq.id}`} selected`);
-            syncPanel();
-          } else {
-            game.multiSel = true; game.pendingSel = [ship.id]; game.selectedId = null;
-            game.selSquadId = null; game.menuMode = "ship"; game.cardId = null;
-            setMultiSelBtn(); syncPanel(); showToast("Group selection started");
-          }
+          // A double-tap starts an exact, player-defined selection with this ship only.
+          // It never expands to an existing historical squadron or to the whole fleet.
+          game.multiSel = true; game.pendingSel = [ship.id]; setMultiSelBtn();
+          game.selectedId = null; game.menuMode = "ship"; game.selSquadId = null;
+          game.targetId = null; game.cardId = null;
+          syncPanel(); showToast("1 selected");
         } else if (game.multiSel) {                                               // multi-select: toggle into the forming squadron (first stays the flag)
           const i = game.pendingSel.indexOf(ship.id);
           if (i >= 0) game.pendingSel.splice(i, 1); else game.pendingSel.push(ship.id);
@@ -7429,9 +7524,14 @@ function init() {
   }
   bind("menuBtn", openGameMenu);
   bind("multiSelBtn", () => {
-    game.multiSel = !game.multiSel;
-    game.pendingSel = [];
-    if (game.multiSel) { game.selectedId = null; game.selSquadId = null; game.menuMode = "ship"; game.cardId = null; }
+    const selected = shipById(game.selectedId);
+    if (game.multiSel) {
+      game.multiSel = false; game.pendingSel = [];
+    } else {
+      game.multiSel = true;
+      game.pendingSel = selected && selected.side === game.playerSide && !selected.out ? [selected.id] : [];
+      game.selectedId = null; game.selSquadId = null; game.menuMode = "ship"; game.cardId = null;
+    }
     setMultiSelBtn(); syncPanel();
   });
   bind("gmResume", () => ohOv("gameMenu"));
