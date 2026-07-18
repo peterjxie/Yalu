@@ -12,6 +12,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
+<meta name="application-version" content="0.50" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
 <title>Echelon · Naval Action</title>
@@ -253,7 +254,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .start-blurb-foot{margin:18px 0 0;}
 .side-choices{display:flex;gap:10px;margin-bottom:18px;}
 .scenario-choices{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
-.start-kicker{font-family:var(--mono);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--brass);text-align:center;margin-bottom:16px;}
+.start-kicker{font-family:var(--mono);font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--brass);text-align:center;margin-bottom:16px;}.version-tag{font-size:8px;letter-spacing:1px;color:var(--ink-dim);vertical-align:1px}
 .theatre-choices{display:flex;flex-direction:column;gap:12px;margin-bottom:16px;}
 .theatre-choice{background:#0a242b;border:1px solid #1c4651;border-radius:8px;padding:18px 16px;cursor:pointer;text-align:left;}
 .theatre-choice:hover{border-color:#2f6f80;background:#0c2a32;}
@@ -464,7 +465,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 
 .cycle-btn{height:27px;padding:0 7px;border-radius:8px;border:1px solid rgba(200,164,92,.24);background:rgba(7,29,36,.26);color:var(--ink-dim);font-family:var(--mono);font-size:8px;white-space:nowrap;cursor:pointer;flex:none}.cycle-btn:active{color:var(--ink);background:rgba(200,164,92,.12)}
 .battery-strip{justify-content:center}.battery-chip{display:inline-flex;align-items:center;gap:4px;padding:4px 6px;border-radius:8px;background:rgba(5,23,29,.26);border:1px solid rgba(255,255,255,.07);font-family:var(--mono);font-size:9px;color:var(--ink-dim)}.battery-chip b{color:var(--ink);font-weight:600}.battery-chip small{font-size:8px;color:var(--brass-dim)}.battery-chip.bearing{border-color:rgba(111,207,115,.35)}.battery-chip.dead{opacity:.38}.battery-chip.torp{border-color:rgba(58,143,176,.42)}
-.help-pop{position:relative;flex:none}.help-pop summary{list-style:none}.help-pop summary::-webkit-details-marker{display:none}.help-pop>div{position:absolute;right:0;top:34px;z-index:20;width:230px;padding:9px 10px;border-radius:9px;background:rgba(5,22,28,.96);border:1px solid rgba(200,164,92,.38);box-shadow:0 12px 30px rgba(0,0,0,.5);font-size:11px;line-height:1.45;color:var(--ink-dim)}.inline-help{display:flex;justify-content:flex-end;margin-top:5px}.inline-help>div{bottom:34px;top:auto}.member-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px}.member-chip{display:flex;justify-content:space-between;gap:6px;align-items:center;min-width:0;padding:6px 7px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:rgba(5,23,29,.5);color:var(--ink);font-size:10px;cursor:pointer}.member-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.member-chip b{font-family:var(--mono);font-size:9px;color:var(--ink-dim)}.member-chip.flag{border-color:rgba(200,164,92,.42)}.member-chip.out{opacity:.38}.command-foot{display:flex;justify-content:flex-end;margin-top:7px}
+.help-pop{position:relative;flex:none}.help-pop summary{list-style:none}.help-pop summary::-webkit-details-marker{display:none}.help-pop>div{position:absolute;right:0;top:34px;z-index:20;width:210px;max-width:calc(100vw - 24px);max-height:min(42vh,240px);overflow:auto;padding:8px 9px;border-radius:9px;background:rgba(5,22,28,.97);border:1px solid rgba(200,164,92,.38);box-shadow:0 12px 30px rgba(0,0,0,.5);font-size:10.5px;line-height:1.4;color:var(--ink-dim)}.inline-help{display:flex;justify-content:flex-end;margin-top:5px}.inline-help>div{bottom:34px;top:auto}.member-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:7px}.member-chip{display:flex;justify-content:space-between;gap:6px;align-items:center;min-width:0;padding:6px 7px;border-radius:8px;border:1px solid rgba(255,255,255,.07);background:rgba(5,23,29,.5);color:var(--ink);font-size:10px;cursor:pointer}.member-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.member-chip b{font-family:var(--mono);font-size:9px;color:var(--ink-dim)}.member-chip.flag{border-color:rgba(200,164,92,.42)}.member-chip.out{opacity:.38}.command-foot{display:flex;justify-content:flex-end;margin-top:7px}
 #rail{gap:5px;padding-left:8px;padding-right:8px}.rail-btn.icon{width:34px;height:32px;padding:0;justify-content:center}.rail-btn.icon svg{width:17px;height:17px}.rail-btn.icon span{pointer-events:none}.rail-btn.fleet-access{display:inline-flex;align-items:center;gap:6px;min-width:72px;justify-content:center;border-color:rgba(200,164,92,.42);color:var(--ink)}.rail-btn.fleet-access svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7}.rail-btn.fleet-access span{font-family:var(--mono);font-size:9px;letter-spacing:.5px;text-transform:uppercase}
 @media(max-width:560px){#rail{overflow-x:auto}.rail-btn.icon{width:32px;min-width:32px}.rail-btn.fleet-access{min-width:68px}.member-grid{grid-template-columns:1fr 1fr}.command-glass{padding:8px}.mini-profile{height:72px}.helm-choice{height:43px}.helm-choice span,.formation-choice span{font-size:7px}.formation-choice{width:57px}}
 
@@ -484,6 +485,12 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .systems-strip{display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:6px}
 .system-chip{display:inline-flex;align-items:center;gap:4px;height:29px;padding:4px 6px;border:1px solid rgba(255,255,255,.065);border-radius:8px}
 .system-chip.warn{border-color:rgba(215,197,152,.30)}.system-chip.critical{border-color:rgba(239,180,170,.38)}
+.metric-pop{position:relative;flex:none}.metric-pop summary{list-style:none}.metric-pop summary::-webkit-details-marker{display:none}
+.metric-chip{display:inline-flex;align-items:center;gap:4px;height:29px;padding:4px 6px;border:1px solid rgba(255,255,255,.065);border-radius:8px;background:rgba(5,23,29,.10);cursor:pointer;color:var(--ink)}
+.metric-chip svg{width:16px;height:16px;fill:none;stroke:var(--brass-dim);stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}.metric-chip b{font-family:var(--mono);font-size:9px;font-weight:600}
+.metric-pop.warn .metric-chip{border-color:rgba(215,197,152,.30)}.metric-pop.critical .metric-chip{border-color:rgba(239,180,170,.38)}
+.metric-pop>div{position:absolute;left:0;top:34px;z-index:30;width:max-content;min-width:140px;max-width:210px;padding:8px 9px;border-radius:8px;background:rgba(5,22,28,.97);border:1px solid rgba(200,164,92,.38);box-shadow:0 12px 30px rgba(0,0,0,.5);font-size:10.5px;line-height:1.35;color:var(--ink-dim)}
+.metric-pop>div strong{display:block;color:var(--ink);font-family:var(--mono);font-size:9px;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}.metric-pop>div span{display:block}
 .glyph-head{display:flex;align-items:center;justify-content:space-between;min-height:28px}
 .helm-block,.formation-block{min-width:0}
 .helm-strip{margin-top:3px}
@@ -506,8 +513,11 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .sq-empty{width:42px;height:34px;display:flex;align-items:center;justify-content:center;opacity:.45}.sq-empty svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6}
 .compact-select .sq-actions{display:flex;gap:5px;flex:none}.glyph-action{width:34px;min-width:34px;height:34px;padding:0;font-size:16px}
 
-/* Landing page: names and choices first; explanations remain behind help/codex. */
-.tc-desc,.sc-desc,.mc-desc,.oc-desc,.start-blurb{display:none!important}
+/* Landing page: enough operational context without returning to a wall of prose. */
+.sc-desc,.oc-desc{display:none!important}
+.tc-desc,.mc-desc,.start-blurb{display:block}
+.tc-desc{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;margin-top:6px}
+.start-blurb{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden;margin:9px 0 13px}
 .theatre-choices{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .theatre-choice{padding:14px 13px}.theatre-choice .tc-name{font-size:19px}.theatre-choice .tc-date{margin:4px 0 0}
 .mode-choice,.side-choice,.opening-choice{padding:10px}.mode-choice .mc-name,.opening-choice .oc-name{font-size:15px}
@@ -530,8 +540,9 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   .member-chip{width:118px;min-width:118px}
   .command-foot{margin-top:0}
   .inline-help{display:none}
-  .help-pop>div{position:fixed;left:12px;right:12px;bottom:calc(178px + env(safe-area-inset-bottom));top:auto;width:auto}
+  .help-pop>div,.metric-pop>div{position:fixed;left:12px;right:12px;bottom:calc(178px + env(safe-area-inset-bottom));top:auto;width:auto;max-width:none;max-height:30vh;overflow:auto}
   .theatre-choices{grid-template-columns:1fr}
+  .tc-desc{-webkit-line-clamp:2}.start-blurb{-webkit-line-clamp:2}
   #startScreen .overlay-card{max-height:94dvh;padding:12px 13px}.build-stamp{display:none}
 }
 
@@ -570,7 +581,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
     <button class="rail-btn fleet-access" id="fleetBtn" aria-label="Fleet roster"><svg viewBox="0 0 24 24"><path d="M3 6h18M5 12h14M7 18h10"/></svg><span>Fleet</span></button>
     <button class="rail-btn icon" id="ffBtn" title="Continue to contact" aria-label="Continue to contact"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button>
     <button class="rail-btn icon" id="zoomBtn" title="Cycle zoom" aria-label="Cycle zoom"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="M15 15l6 6M7 10h6M10 7v6"/></svg></button>
-    <button class="rail-btn icon" id="multiSelBtn" title="Select ships for a squadron" aria-label="Select ships for a squadron"><svg viewBox="0 0 24 24"><path d="M3 6h7M3 12h10M3 18h7M15 6h6M17 12h4M15 18h6"/></svg></button>
+    <button class="rail-btn icon" id="multiSelBtn" title="Form squadron" aria-label="Form squadron"><svg viewBox="0 0 24 24"><path d="M3 6h7M3 12h10M3 18h7M15 6h6M17 12h4M15 18h6"/></svg></button>
     <button class="rail-btn icon" id="speedBtn" title="Skip resolution" aria-label="Skip resolution"><svg viewBox="0 0 24 24"><path d="M4 5l7 7-7 7M12 5l7 7-7 7"/></svg></button>
     <button class="rail-btn icon toggle" id="ringsBtn" title="Range rings" aria-label="Range rings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg></button>
     <button class="rail-btn icon toggle opt" id="arcsBtn" title="Firing arcs" aria-label="Firing arcs"><svg viewBox="0 0 24 24"><path d="M12 20V4M12 12L3 7M12 12l9-5"/></svg></button>
@@ -592,7 +603,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon</div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.50</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -634,7 +645,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">build 2026-07-18 portrait command pass</div>
+    <div class="build-stamp" id="buildStamp">v0.50 · command and movement pass</div>
   </div>
 </div>
 
@@ -3280,6 +3291,9 @@ Object.assign(SHIP_SIDE, {
 //  Depends (in-bundle globals) on data.js (GAME_DATA), engine.js, render.js.
 // ===========================================================================
 
+// ---- build identity -------------------------------------------------------
+const ECHELON_VERSION = "0.50";
+
 // ---- module-global game state ---------------------------------------------
 const game = {
   ships: [],
@@ -5527,12 +5541,51 @@ function movementPose(s, progress) {
   const heading = tx*tx + ty*ty > 1e-6 ? ((Math.atan2(tx, -ty) * 180 / Math.PI) % 360 + 360) % 360 : s._ah1;
   return { x, y, heading };
 }
+// Display-only course: never used for hit, torpedo or range calculations.
+function displayMovementPose(s, progress) {
+  if (s._ax1 == null) return { x: s.x, y: s.y, heading: s.heading };
+  const p = clamp(progress, 0, 1);
+  const chordX = s._ax1 - s._ax0, chordY = s._ay1 - s._ay0;
+  const chord = Math.hypot(chordX, chordY);
+  const finalTurnStart = 0.84;                         // the plotted course is completed before the final helm settles
+  if (chord < HEX_M * 0.3) {
+    const dh = wrap180(s._ah1 - s._ah0);
+    const ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+    return { x: s._ax0, y: s._ay0, heading: (s._ah0 + dh * ease + 360) % 360 };
+  }
+
+  // During translation the bow follows the actual tangent of the track. The former
+  // curve used the post-move heading as its end tangent, which could pull the hull
+  // laterally into the destination and make it look as though it were sliding sideways.
+  const approach = ((Math.atan2(chordX, -chordY) * 180 / Math.PI) % 360 + 360) % 360;
+  if (p >= finalTurnStart) {
+    const u0 = (p - finalTurnStart) / (1 - finalTurnStart);
+    const u = u0 < 0.5 ? 2 * u0 * u0 : 1 - Math.pow(-2 * u0 + 2, 2) / 2;
+    const dh = wrap180(s._ah1 - approach);
+    return { x: s._ax1, y: s._ay1, heading: (approach + dh * u + 360) % 360 };
+  }
+
+  const raw = p / finalTurnStart;
+  const t = raw < 0.5 ? 2 * raw * raw : 1 - Math.pow(-2 * raw + 2, 2) / 2;
+  const mt = 1 - t;
+  const sh = s._ah0 * Math.PI / 180, ah = approach * Math.PI / 180;
+  const d = Math.min(chord * 0.34, Math.max(HEX_M * 0.35, chord * 0.22));
+  const p0x = s._ax0, p0y = s._ay0, p3x = s._ax1, p3y = s._ay1;
+  const p1x = p0x + Math.sin(sh) * d, p1y = p0y - Math.cos(sh) * d;
+  const p2x = p3x - Math.sin(ah) * d, p2y = p3y + Math.cos(ah) * d;
+  const x = mt*mt*mt*p0x + 3*mt*mt*t*p1x + 3*mt*t*t*p2x + t*t*t*p3x;
+  const y = mt*mt*mt*p0y + 3*mt*mt*t*p1y + 3*mt*t*t*p2y + t*t*t*p3y;
+  const tx = 3*mt*mt*(p1x-p0x) + 6*mt*t*(p2x-p1x) + 3*t*t*(p3x-p2x);
+  const ty = 3*mt*mt*(p1y-p0y) + 6*mt*t*(p2y-p1y) + 3*t*t*(p3y-p2y);
+  const heading = tx*tx + ty*ty > 1e-7 ? ((Math.atan2(tx, -ty) * 180 / Math.PI) % 360 + 360) % 360 : approach;
+  return { x, y, heading };
+}
 function stepExecute(dt) {
   const e = game.exec; if (!e) return;
   e.t += dt; const p = Math.min(1, e.t / e.dur);
   for (const s of game.ships) {
     if (s._ax1 == null) continue;
-    const pose = movementPose(s, p);
+    const pose = displayMovementPose(s, p);
     s.x = pose.x; s.y = pose.y; s.heading = pose.heading;
   }
   if (p >= 1 && !e.done) { e.done = true; finishExecute(); }
@@ -5980,7 +6033,7 @@ function renderMultiSelectPanel(body) {
   }).join("") || `<div class="sq-empty">${iconSvg("squad")}</div>`;
   body.innerHTML = `<div class="sq-panel compact-select">
       <div class="sq-select-head">${iconSvg("squad")}<b>${game.pendingSel.length}</b>
-        <details class="help-pop"><summary class="icon-btn tiny" aria-label="Squadron selection help">?</summary><div>Double-tap the first ship. Tap other friendly ships to add or remove them. The diamond is the flagship. Tap the tick to create the squadron.</div></details>
+        <details class="help-pop"><summary class="icon-btn tiny" aria-label="Squadron selection help">?</summary><div>Tap ships to add or remove them. The first selected ship is the flagship. ✓ creates the squadron.</div></details>
       </div>
       <div class="sq-members">${rows}</div>
       <div class="sq-actions">
@@ -5997,7 +6050,7 @@ function renderMultiSelectPanel(body) {
   if (f) f.addEventListener("click", () => {
     if (game.pendingSel.length < 2) return;
     const sq = formSquadron(game.pendingSel.slice());
-    game.multiSel = false; game.pendingSel = [];
+    game.multiSel = false; game.pendingSel = []; lastSelectionToggle = { id: null, t: 0 };
     if (sq) {
       game.selSquadId = sq.id; game.selectedId = sq.leaderId; game.menuMode = "squad";
       logLine(`Squadron ${sq.id} formed under ${shipById(sq.leaderId).name}.`, "");
@@ -6006,7 +6059,7 @@ function renderMultiSelectPanel(body) {
   });
   const c = document.getElementById("sqCancel");
   if (c) c.addEventListener("click", () => {
-    game.multiSel = false; game.pendingSel = []; setMultiSelBtn(); syncPanel();
+    game.multiSel = false; game.pendingSel = []; lastSelectionToggle = { id: null, t: 0 }; setMultiSelBtn(); syncPanel();
   });
 }
 function squadronCohesion(sq) {
@@ -6062,7 +6115,7 @@ function headingButtonsHtml(scope, ship) {
   }
   const active = choices.reduce((best, c) => Math.abs(c.offset - currentOffset) < Math.abs(best.offset - currentOffset) ? c : best, choices[0]);
   const label = (d) => Math.abs(d) < 0.5 ? "0" : `${d > 0 ? "+" : "−"}${Math.round(Math.abs(d))}`;
-  return `<div class="helm-block"><div class="glyph-head">${iconSvg("rudder")}<details class="help-pop control-help"><summary class="icon-btn tiny" aria-label="Final heading help">?</summary><div>The dotted line is the plotted track. Each ship glyph shows the actual bow at the end of the move. The small number is degrees from the track. Unavailable turns are not shown. This is helm, not turret control.</div></details></div><div class="helm-strip" data-helm-scope="${scope}">
+  return `<div class="helm-block"><div class="glyph-head">${iconSvg("rudder")}<details class="help-pop control-help"><summary class="icon-btn tiny" aria-label="Final heading help">?</summary><div>Dotted line: plotted course. Ship: final bow. Number: degrees port or starboard after arrival.</div></details></div><div class="helm-strip" data-helm-scope="${scope}">
     ${choices.map((c) => `<button class="helm-choice${c === active ? " active" : ""}" data-heading="${c.heading.toFixed(4)}" aria-label="Final heading ${c.offset < -0.5 ? Math.round(Math.abs(c.offset)) + " degrees to port" : c.offset > 0.5 ? Math.round(c.offset) + " degrees to starboard" : "along plotted course"}">${headingDiagramSvg(c.offset)}<small>${label(c.offset)}</small></button>`).join("")}
   </div></div>`;
 }
@@ -6136,6 +6189,15 @@ function dcLabel(s) {
   const name = state === "effective" || state === "ready" ? "Effective" : state === "strained" ? "Strained" : "Overwhelmed";
   return { pct, name, bad: state === "overwhelmed", warn: state === "strained" };
 }
+function metricDetail(kind, cls, icon, value, title, detail) {
+  return `<details class="metric-pop ${cls || ""}" data-metric="${kind}"><summary class="metric-chip" aria-label="${title}">${iconSvg(icon)}<b>${value}</b></summary><div><strong>${title}</strong><span>${detail}</span></div></details>`;
+}
+function wireMetricDetails(body) {
+  body.querySelectorAll("details.metric-pop").forEach((d) => d.addEventListener("toggle", () => {
+    if (!d.open) return;
+    body.querySelectorAll("details.metric-pop[open]").forEach((other) => { if (other !== d) other.open = false; });
+  }));
+}
 
 function syncPanel() {
   if (typeof document === "undefined") return;
@@ -6189,22 +6251,21 @@ function syncPanel() {
         <div class="command-name"><div class="command-title ${clsForSide(s.side)}">${s.name}</div><div class="command-sub">${hdg}° · ${speedNow} kn</div></div>
         ${s.side === game.playerSide ? `<button class="cycle-btn glyph-only" data-cyc="1" aria-label="Next ship">›</button>` : ""}
         ${sq && s.side === game.playerSide ? `<button class="icon-btn tiny" id="openSquadBtn" title="Squadron control" aria-label="Squadron control">${iconSvg("squad")}</button><button class="icon-btn tiny" id="detachShipBtn" title="Detach ship" aria-label="Detach ship">${iconSvg("detach")}</button>` : ""}
-        <button class="icon-btn tiny" id="viewCardBtn" title="Ship details" aria-label="Ship details">?</button>
+        <button class="icon-btn tiny" id="viewCardBtn" title="Ship dossier" aria-label="Ship dossier">i</button>
       </div>
       <div class="mini-profile"><canvas id="dossierElev" width="440" height="140" style="width:100%;height:auto;display:block"></canvas></div>
       <div class="status-strip" aria-label="Hull condition">
-        <span class="status-chip" title="Hull">${iconSvg("hull")}<b>${hull}</b></span>
-        <span class="status-chip" title="Flooding">${iconSvg("flood")}<b>${Math.round(s.flooding)}</b></span>
-        <span class="status-chip" title="Fires">${iconSvg("fire")}<b>${s.fires}</b></span>
-        <span class="status-chip" title="Crew">${iconSvg("crew")}<b>${Math.round(100*s.crew)}</b></span>
-        <span class="status-chip ${nerve[1]}" title="Morale">${iconSvg("morale")}<b>${Math.round(s.morale == null ? 100 : s.morale)}</b></span>
+        ${metricDetail("hull", "", "hull", hull, "Hull", `${hull}% structural strength`)}
+        ${metricDetail("flood", s.flooding >= 35 ? "critical" : s.flooding >= 15 ? "warn" : "", "flood", Math.round(s.flooding), "Flooding", `${Math.round(s.flooding)}% flooding`)}
+        ${metricDetail("fire", s.fires >= 3 ? "critical" : s.fires ? "warn" : "", "fire", s.fires, "Fire", `${s.fires} active fire${s.fires === 1 ? "" : "s"}`)}
+        ${metricDetail("crew", s.crew < .6 ? "critical" : s.crew < .85 ? "warn" : "", "crew", Math.round(100*s.crew), "Crew", `${Math.round(100*s.crew)}% effective`)}
+        ${metricDetail("morale", nerve[1], "morale", Math.round(s.morale == null ? 100 : s.morale), "Morale", `${nerve[0]} · ${Math.round(s.morale == null ? 100 : s.morale)}%`)}
       </div>
       <section class="systems-strip" aria-label="Ship systems">
-        <span class="system-chip${mach.pct < 65 ? " critical" : mach.pct < 90 ? " warn" : ""}" title="Machinery">${iconSvg("engine")}<b>${mach.pct}</b></span>
-        <span class="system-chip${steer.pct < 60 ? " critical" : steer.pct < 90 ? " warn" : ""}" title="Steering">${iconSvg("rudder")}<b>${steer.pct}</b></span>
-        <span class="system-chip${dc.bad ? " critical" : dc.warn ? " warn" : ""}" title="Damage control">${iconSvg("repair")}<b>${dc.pct}</b></span>
-        <span class="system-chip${gunLive < gunTotal ? " warn" : ""}" title="Working gun mounts">${iconSvg("guns")}<b>${gunLive}/${gunTotal}</b></span>
-        <details class="help-pop control-help"><summary class="icon-btn tiny" aria-label="Systems help">?</summary><div>Hull, water, fire, crew and morale are shown first. Below: machinery, steering, damage control and working gun mounts. Numbers are percentages except fire count and gun mounts.</div></details>
+        ${metricDetail("engine", mach.pct < 65 ? "critical" : mach.pct < 90 ? "warn" : "", "engine", mach.pct, "Machinery", `${mach.name} · ${mach.pct}%${mach.extra}`)}
+        ${metricDetail("rudder", steer.pct < 60 ? "critical" : steer.pct < 90 ? "warn" : "", "rudder", steer.pct, "Steering", `${steer.name} · ${steer.pct}%`)}
+        ${metricDetail("repair", dc.bad ? "critical" : dc.warn ? "warn" : "", "repair", dc.pct, "Damage control", `${dc.name} · ${dc.pct}%`)}
+        ${metricDetail("guns", gunLive < gunTotal ? "warn" : "", "guns", `${gunLive}/${gunTotal}`, "Main guns", gunGroups.length ? gunGroups.map((g) => `${g.label} ${g.live}/${g.total}`).join(" · ") : "No main battery mounts")}
       </section>
       <div class="target-chip">${iconSvg("target")}<span>${tgtText}</span></div>
       ${s.side === game.playerSide ? headingButtonsHtml("ship", s) : ""}
@@ -6215,7 +6276,6 @@ function syncPanel() {
         ${s.order ? `<button class="icon-btn" id="clearOrderBtn" title="Clear plotted course" aria-label="Clear plotted course">×</button>` : ""}
       </div>` : ""}
       <div class="battery-strip">${batChips}${torpChip}</div>
-      <details class="help-pop inline-help"><summary class="icon-btn tiny" aria-label="Control help">?</summary><div>Tap a lit hex for destination. Final-heading controls turn the ship after movement so batteries can be unmasked. Tap an enemy for a priority target. Double-tap a ship to begin an exact squadron selection. Tap the squadron glyph on a grouped ship to command its existing squadron. Fleet opens the full roster.</div></details>
     </div>`;
 
   body.querySelectorAll("[data-shell]").forEach((btn) => btn.addEventListener("click", () => { s.doctrine = btn.getAttribute("data-shell"); syncPanel(); }));
@@ -6225,6 +6285,7 @@ function syncPanel() {
   body.querySelectorAll("[data-cyc]").forEach((btn) => btn.addEventListener("click", (ev) => { ev.stopPropagation(); cycleShip(parseInt(btn.getAttribute("data-cyc"), 10)); }));
   const co = document.getElementById("clearOrderBtn"); if (co) co.addEventListener("click", () => { s.order = null; syncPanel(); });
   wireHeadingButtons(body, () => s);
+  wireMetricDetails(body);
   drawDossierProfile(s);
 }
 
@@ -6298,8 +6359,8 @@ function playerTorpedo() {
 const pointers = new Map();
 let dragMode = null;        // "plot" | "pan" | null
 let dragStart = null;
+let lastSelectionToggle = { id: null, t: 0 };      // suppress an accidental second tap while composing a squadron
 let pinchDist = 0;
-let lastOwnShipTap = { id: null, t: 0 };
 
 function eventCss(e) {
   const rect = canvas.getBoundingClientRect();
@@ -6328,7 +6389,7 @@ function onPointerDown(e) {
 
   const p = eventCss(e);
   const hit = pickShip(p.x, p.y);
-  dragStart = { ...p, moved: false, reTap: !!(hit && hit.id === game.selectedId), hitId: hit ? hit.id : null };
+  dragStart = { ...p, moved: false, hitId: hit ? hit.id : null };
   dragMode = "press";                 // undecided: a drag becomes a pan, a clean tap acts on release
 }
 
@@ -6380,20 +6441,14 @@ function onPointerUp(e) {
     if (dragStart.hitId) {
       const ship = shipById(dragStart.hitId);
       if (ship && ship.side === game.playerSide && !ship.out) {
-        const nowTap = (typeof performance !== "undefined" ? performance.now() : Date.now());
-        const doubleTap = !game.multiSel && lastOwnShipTap.id === ship.id && nowTap - lastOwnShipTap.t < 420;
-        lastOwnShipTap = { id: ship.id, t: nowTap };
-        if (doubleTap) {
-          // A double-tap starts an exact, player-defined selection with this ship only.
-          // It never expands to an existing historical squadron or to the whole fleet.
-          game.multiSel = true; game.pendingSel = [ship.id]; setMultiSelBtn();
-          game.selectedId = null; game.menuMode = "ship"; game.selSquadId = null;
-          game.targetId = null; game.cardId = null;
-          syncPanel(); showToast("1 selected");
-        } else if (game.multiSel) {                                               // multi-select: toggle into the forming squadron (first stays the flag)
-          const i = game.pendingSel.indexOf(ship.id);
-          if (i >= 0) game.pendingSel.splice(i, 1); else game.pendingSel.push(ship.id);
-          syncPanel();
+        if (game.multiSel) {                                                     // explicit squadron-selection mode: each deliberate tap toggles one ship
+          const now = (typeof performance !== "undefined" ? performance.now() : Date.now());
+          if (!(lastSelectionToggle.id === ship.id && now - lastSelectionToggle.t < 320)) {
+            const i = game.pendingSel.indexOf(ship.id);
+            if (i >= 0) game.pendingSel.splice(i, 1); else game.pendingSel.push(ship.id);
+            lastSelectionToggle = { id: ship.id, t: now };
+            syncPanel();
+          }
         } else {
           game.selectedId = ship.id; game.menuMode = "ship"; game.selSquadId = null;
           game.targetId = ship.targetId || null;
@@ -6427,7 +6482,7 @@ function onPointerUp(e) {
   }
   if (dragMode === "pinch" && pointers.size === 1) {
     const pt = pointers.values().next().value;                 // pinch ended, one finger remains:
-    dragStart = { x: pt.x, y: pt.y, moved: true, hitId: null, reTap: false };  // continue as a pan
+    dragStart = { x: pt.x, y: pt.y, moved: true, hitId: null };  // continue as a pan
     dragMode = "pan";
   } else if (pointers.size < 2 && dragMode === "pinch") {
     dragMode = null;
@@ -7433,13 +7488,13 @@ function startGame(playerSide, formationKey) {
   syncTopBar();
   syncPlayBtn();
   syncPanel();
-  logLine("Tap a ship to select it, tap a lit hex to set its course, tap an enemy to target. Then End Turn.", "sys");
+  logLine("Tap a ship, plot a lit hex, select an enemy, then End Turn. Use the squadron glyph in the rail to form a group.", "sys");
   const start = document.getElementById("startScreen");
   if (start) start.classList.remove("show");
 }
 
 function init() {
-  try { console.log("Echelon build 2026-07-17 mobile command and mechanics audit"); } catch (e) {}
+  try { console.log(`Echelon v${ECHELON_VERSION}`); } catch (e) {}
   canvas = document.getElementById("chart");
   ctx = canvas.getContext("2d");
   // Stop the page or the host viewer from scrolling/zooming on canvas touches.
@@ -7526,11 +7581,13 @@ function init() {
   bind("multiSelBtn", () => {
     const selected = shipById(game.selectedId);
     if (game.multiSel) {
-      game.multiSel = false; game.pendingSel = [];
+      game.multiSel = false; game.pendingSel = []; lastSelectionToggle = { id: null, t: 0 };
+      showToast("Squadron selection cancelled");
     } else {
-      game.multiSel = true;
+      game.multiSel = true; lastSelectionToggle = { id: null, t: 0 };
       game.pendingSel = selected && selected.side === game.playerSide && !selected.out ? [selected.id] : [];
       game.selectedId = null; game.selSquadId = null; game.menuMode = "ship"; game.cardId = null;
+      showToast(game.pendingSel.length ? "Tap more ships · ✓ to form" : "Tap ships · ✓ to form");
     }
     setMultiSelBtn(); syncPanel();
   });
