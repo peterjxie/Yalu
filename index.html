@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.53" />
+<meta name="application-version" content="0.54" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
 <title>Echelon · Naval Action</title>
@@ -546,6 +546,11 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   #startScreen .overlay-card{max-height:94dvh;padding:12px 13px}.build-stamp{display:none}
 }
 
+
+.loss-names{display:flex;flex-direction:column;gap:3px;margin:8px 0 2px;padding-top:7px;border-top:1px solid rgba(232,221,199,.08)}
+.loss-name{font-family:var(--mono);font-size:9px;line-height:1.35;color:var(--ink-dim)}.loss-name b{color:var(--ink);font-weight:650}.loss-name.total,.loss-name.abandoned{color:#c98d82}.loss-name.disabled{color:#d0b46d}
+.squad-access{min-width:94px!important}.squadron-card{max-width:480px}.squad-picker-note,.squad-picker-empty{font-size:12px;color:var(--ink-dim);margin:0 0 12px}.squad-pick{width:100%;display:grid;grid-template-columns:34px 1fr 18px;align-items:center;gap:8px;text-align:left;border:1px solid rgba(200,164,92,.22);background:rgba(8,28,34,.42);color:var(--ink);border-radius:8px;padding:10px;margin:0 0 7px}.squad-pick:hover,.squad-pick:active{border-color:rgba(200,164,92,.6);background:rgba(16,48,57,.58)}.squad-pick-icon svg{width:26px;height:22px}.squad-pick b{display:block;font-size:12px}.squad-pick small{display:block;color:var(--ink-dim);font-family:var(--mono);font-size:9px;margin-top:3px}.squad-pick-arrow{font-size:24px;color:var(--brass)}.squad-new{margin-top:12px;width:100%}
+@media(max-width:560px){.squad-access{min-width:88px!important}.squad-access span{font-size:8px!important}}
 </style>
 </head>
 <body>
@@ -578,10 +583,10 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 
   <div id="rail">
     <button class="rail-btn" id="playBtn">End Turn</button>
-    <button class="rail-btn fleet-access" id="fleetBtn" aria-label="Fleet roster"><svg viewBox="0 0 24 24"><path d="M3 6h18M5 12h14M7 18h10"/></svg><span>Fleet</span></button>
+    <button class="rail-btn fleet-access" id="fleetBtn" aria-label="Ship roster" title="Ship roster"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16"/><circle cx="7" cy="5" r="1"/><circle cx="7" cy="12" r="1"/><circle cx="7" cy="19" r="1"/></svg><span>Ships</span></button>
     <button class="rail-btn icon" id="ffBtn" title="Continue to contact" aria-label="Continue to contact"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button>
     <button class="rail-btn icon" id="zoomBtn" title="Cycle zoom" aria-label="Cycle zoom"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="M15 15l6 6M7 10h6M10 7v6"/></svg></button>
-    <button class="rail-btn icon" id="multiSelBtn" title="Form squadron" aria-label="Form squadron"><svg viewBox="0 0 24 24"><path d="M3 6h7M3 12h10M3 18h7M15 6h6M17 12h4M15 18h6"/></svg></button>
+    <button class="rail-btn fleet-access squad-access" id="multiSelBtn" title="Squadrons" aria-label="Squadrons"><svg viewBox="0 0 24 24"><path d="M3 6l3-2h6l2 2-2 2H6zM8 12l3-2h6l2 2-2 2h-6zM3 18l3-2h6l2 2-2 2H6z"/></svg><span>Squadrons</span></button>
     <button class="rail-btn icon" id="speedBtn" title="Skip resolution" aria-label="Skip resolution"><svg viewBox="0 0 24 24"><path d="M4 5l7 7-7 7M12 5l7 7-7 7"/></svg></button>
     <button class="rail-btn icon toggle" id="ringsBtn" title="Range rings" aria-label="Range rings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg></button>
     <button class="rail-btn icon toggle opt" id="arcsBtn" title="Firing arcs" aria-label="Firing arcs"><svg viewBox="0 0 24 24"><path d="M12 20V4M12 12L3 7M12 12l9-5"/></svg></button>
@@ -603,7 +608,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v0.53</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.54</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -645,7 +650,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v0.53 · movement restoration</div>
+    <div class="build-stamp" id="buildStamp">v0.54 · command and outcome pass</div>
   </div>
 </div>
 
@@ -662,6 +667,14 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <button class="overlay-close" id="fleetClose">×</button>
     <div id="fleetBody"></div>
+  </div>
+</div>
+
+<!-- squadron picker -->
+<div class="overlay" id="squadronOverlay">
+  <div class="overlay-card squadron-card">
+    <button class="overlay-close" id="squadronClose">×</button>
+    <div id="squadronBody"></div>
   </div>
 </div>
 
@@ -1858,20 +1871,34 @@ function drawSea(ctx, v) {
     }
     ctx.restore();
   }
-  const step = 1000;
+  const major = 1000, minor = 250;
   const left = screenToWorld(v, 0, v.h).x, right = screenToWorld(v, v.w, 0).x;
   const top = screenToWorld(v, 0, 0).y, bot = screenToWorld(v, 0, v.h).y;
-  ctx.lineWidth = 1;
-  for (let gx = Math.floor(left / 500) * 500; gx <= right; gx += 500) {
-    const sx = wx(v, gx);
-    ctx.strokeStyle = (gx % step === 0) ? PALETTE.grid : PALETTE.gridFaint;
+  ctx.save();
+  for (let gx = Math.floor(left / minor) * minor; gx <= right; gx += minor) {
+    const sx = wx(v, gx), isMajor = gx % major === 0, isHalf = gx % 500 === 0;
+    ctx.strokeStyle = isMajor ? "rgba(45,94,105,.46)" : isHalf ? "rgba(31,74,84,.25)" : "rgba(28,66,75,.12)";
+    ctx.lineWidth = isMajor ? 0.9 : 0.55;
     ctx.beginPath(); ctx.moveTo(sx, 0); ctx.lineTo(sx, v.h); ctx.stroke();
   }
-  for (let gy = Math.floor(bot / 500) * 500; gy <= top; gy += 500) {
-    const sy = wy(v, gy);
-    ctx.strokeStyle = (gy % step === 0) ? PALETTE.grid : PALETTE.gridFaint;
+  for (let gy = Math.floor(bot / minor) * minor; gy <= top; gy += minor) {
+    const sy = wy(v, gy), isMajor = gy % major === 0, isHalf = gy % 500 === 0;
+    ctx.strokeStyle = isMajor ? "rgba(45,94,105,.46)" : isHalf ? "rgba(31,74,84,.25)" : "rgba(28,66,75,.12)";
+    ctx.lineWidth = isMajor ? 0.9 : 0.55;
     ctx.beginPath(); ctx.moveTo(0, sy); ctx.lineTo(v.w, sy); ctx.stroke();
   }
+  // Small chart crosses at kilometre intersections make the sea read as a plotted
+  // naval chart without competing with ships or weapon effects.
+  if (v.scale > 0.025) {
+    ctx.strokeStyle = "rgba(200,164,92,.18)"; ctx.lineWidth = 0.7;
+    for (let gx = Math.floor(left / major) * major; gx <= right; gx += major) {
+      for (let gy = Math.floor(bot / major) * major; gy <= top; gy += major) {
+        const sx = wx(v, gx), sy = wy(v, gy), r = 3;
+        ctx.beginPath(); ctx.moveTo(sx-r, sy); ctx.lineTo(sx+r, sy); ctx.moveTo(sx, sy-r); ctx.lineTo(sx, sy+r); ctx.stroke();
+      }
+    }
+  }
+  ctx.restore();
   // soft vignette pulls the eye to the action
   const vg = ctx.createRadialGradient(v.w / 2, v.h / 2, Math.min(v.w, v.h) * 0.42, v.w / 2, v.h / 2, Math.max(v.w, v.h) * 0.78);
   vg.addColorStop(0, "rgba(0,0,0,0)"); vg.addColorStop(1, "rgba(2,10,13,0.34)");
@@ -4329,24 +4356,34 @@ function objectiveOutcome(side) {
       { label: matsuDown ? "Enemy flagship crippled" : "Drew blood (sink a ship or cripple the flag)", met: matsuDown || japanLost >= 1 },
     ];
     const enemyDamage = Math.min(70, japanShips.reduce((a, s) => a + valJP(s), 0) + (matsuDown && !matsuOut ? 8 : 0));
+    const own = tonnagePct("China"), foe = tonnagePct("Japan");
+    const ownLoss = tonnageBreakdown("China").effectiveLost;
+    const foeLoss = tonnageBreakdown("Japan").effectiveLost;
+    const netExchange = foeLoss - ownLoss;
     const ironcladFactor = ironcladsAlive === 2 ? 20 : ironcladsAlive === 1 ? 6 : -12;
-    const score = clamp(Math.round(ironcladFactor + (5 - chinaLost) * 3 + (nightfall && !chinaGone ? 5 : 0) + enemyDamage), 0, 100);
+    const score = clamp(Math.round(ironcladFactor + (5 - chinaLost) * 3 + (nightfall && !chinaGone ? 5 : 0) + enemyDamage + (own - foe) * 45 + netExchange / 1200), 0, 100);
     let result, title;
-    if (ironcladsAlive === 0 || chinaGone) {
-      result = "loss"; title = "Crushing Defeat";        // the heart of the fleet is gone
-    } else if (ironcladsAlive === 1) {
-      // an ironclad lost: a win is off the table, and only gutting the enemy earns a draw
-      if (enemyDamage >= 40) { result = "draw"; title = "A Bloody Draw"; }
-      else { result = "loss"; title = score >= 30 ? "Costly Defeat" : "Crushing Defeat"; }
+    // Ironclad survival remains strategically important, but no longer overrides the
+    // actual battle state. A Beiyang force that destroys the Japanese fighting core,
+    // retains more effective strength and wins the material exchange has won the action.
+    if (chinaGone || own < 0.18) {
+      result = "loss"; title = "Crushing Defeat";
+    } else if (japanGone || (foe < 0.35 && own >= 0.40)) {
+      result = "win"; title = ironcladsAlive === 2 ? "Decisive Victory" : "Costly Victory";
+    } else if (own >= foe + 0.04 && netExchange > 0 && enemyDamage >= 38) {
+      result = "win"; title = ironcladsAlive === 2 ? "Honourable Victory" : "Costly Victory";
+    } else if (own >= foe && netExchange >= 0 && enemyDamage >= 28) {
+      result = "win"; title = "Defensive Victory";
+    } else if (Math.abs(own - foe) <= 0.08 && Math.abs(netExchange) <= 4500) {
+      result = "draw"; title = "A Bloody Draw";
+    } else if (ironcladsAlive === 0 && enemyDamage < 32) {
+      result = "loss"; title = "Crushing Defeat";
+    } else if (own < foe - 0.12 || netExchange < -7000) {
+      result = "loss"; title = "Costly Defeat";
     } else {
-      // both ironclads brought through: necessary, but only making the enemy pay turns it into a win
-      if (score >= 70) { result = "win"; title = "Decisive Victory"; }
-      else if (score >= 54) { result = "win"; title = "Honourable Victory"; }
-      else if (score >= 40) { result = "draw"; title = "A Bloody Draw"; }
-      else if (score >= 22) { result = "loss"; title = "Costly Defeat"; }
-      else { result = "loss"; title = "Crushing Defeat"; }
+      result = "draw"; title = "Indecisive Action";
     }
-    return { side, result, won: result === "win", title, score, objectives, enemyDamage, ironcladsAlive, chinaLost, japanLost };
+    return { side, result, won: result === "win", title, score, objectives, enemyDamage, ironcladsAlive, chinaLost, japanLost, own, foe, netExchange };
   }
 
   const chineseDamage = Math.min(75, chinaShips.reduce((a, s) => a + valCN(s), 0));
@@ -6677,6 +6714,43 @@ function shipTypeGlyph(s) {
   return `<span class="type-glyph" title="${(s.def && s.def.type) || s.type || "ship"}"><svg viewBox="0 0 18 12" aria-hidden="true"><path d="${path}" fill="currentColor"/></svg></span>`;
 }
 
+
+function beginSquadronSelection() {
+  const selected = shipById(game.selectedId);
+  game.multiSel = true;
+  lastSelectionToggle = { id: null, t: 0 };
+  game.pendingSel = selected && selected.side === game.playerSide && !selected.out ? [selected.id] : [];
+  game.selectedId = null; game.selSquadId = null; game.menuMode = "ship"; game.cardId = null;
+  const ov = document.getElementById("squadronOverlay"); if (ov) ov.classList.remove("show");
+  showToast(game.pendingSel.length ? "Tap more ships · ✓ to form" : "Tap ships · ✓ to form");
+  setMultiSelBtn(); syncPanel();
+}
+
+function openSquadronPicker() {
+  const body = document.getElementById("squadronBody"), ov = document.getElementById("squadronOverlay");
+  if (!body || !ov) { beginSquadronSelection(); return; }
+  const own = game.squadrons.filter((sq) => {
+    const lead = shipById(sq.leaderId);
+    return lead && !lead.out && lead.side === game.playerSide;
+  });
+  const rows = own.map((sq) => {
+    const live = sq.members.map(shipById).filter((x) => x && !x.out);
+    const lead = shipById(sq.leaderId);
+    return `<button class="squad-pick" data-sqid="${sq.id}"><span class="squad-pick-icon">${iconSvg("squad")}</span><span><b>${sq.name || `Squadron ${sq.id}`}</b><small>${live.length}/${sq.members.length} ships · flagship ${lead ? lead.name : "lost"}</small></span><span class="squad-pick-arrow">›</span></button>`;
+  }).join("");
+  body.innerHTML = `<h3 class="codex-h">Squadrons</h3><p class="squad-picker-note">Select an existing squadron, or form a new one.</p>${rows || `<div class="squad-picker-empty">No squadrons formed.</div>`}<button class="gm-btn squad-new" id="squadNewBtn">＋ Form new squadron</button>`;
+  body.querySelectorAll("[data-sqid]").forEach((b) => b.addEventListener("click", () => {
+    const sq = squadronById(parseInt(b.getAttribute("data-sqid"), 10));
+    if (!sq) return;
+    const lead = shipById(sq.leaderId); if (!lead) return;
+    game.multiSel = false; game.pendingSel = []; game.selSquadId = sq.id; game.menuMode = "squad"; game.selectedId = lead.id; game.cardId = null;
+    game.targetId = lead.targetId || null; game._camGoal = { x: lead.x, y: lead.y };
+    ov.classList.remove("show"); setMultiSelBtn(); syncPanel();
+  }));
+  const nb = document.getElementById("squadNewBtn"); if (nb) nb.addEventListener("click", beginSquadronSelection);
+  ov.classList.add("show");
+}
+
 function openFleetRoster(focusId) {
   buildRoster();
   const ov = document.getElementById("fleetOverlay");
@@ -6839,17 +6913,28 @@ function warVerdict(outcome) {
   let tacLine, stratTag, stratLine;
   if (me === "China") {
     const ic = outcome.ironcladsAlive, cl = outcome.chinaLost, ed = outcome.enemyDamage || 0;
-    tacLine = outcome.result === "win" ? "you held the field and the Combined Fleet paid a price it never paid in 1894."
-      : outcome.result === "draw" ? "neither fleet broke; both drew off bloodied at nightfall."
-      : "the fleet was driven from the field.";
-    if (ic === 0) { stratTag = "Disaster"; stratLine = "with both battleships gone the Beiyang Fleet is finished as a deterrent. Japan takes uncontested command of the Yellow Sea and the landings proceed."; }
-    else if (ic === 1) {
-      if (ed >= 45) { stratTag = "Trade"; stratLine = "a battleship lost, but the Combined Fleet gutted with it. Japan's command of the sea is no longer assured and the naval war reopens."; }
-      else { stratTag = "Setback"; stratLine = "losing a battleship halves the fleet's striking core; Japan presses toward command of the sea, as it did historically."; }
+    const own = outcome.own != null ? outcome.own : tonnagePct("China");
+    const foe = outcome.foe != null ? outcome.foe : tonnagePct("Japan");
+    const net = outcome.netExchange != null ? outcome.netExchange : tonnageBreakdown("Japan").effectiveLost - tonnageBreakdown("China").effectiveLost;
+    tacLine = outcome.result === "win" ? "the Beiyang Fleet finishes the action stronger, having broken more of the Combined Fleet than it lost."
+      : outcome.result === "draw" ? "neither fleet can claim command; both draw off bloodied at nightfall."
+      : "the Beiyang Fleet has suffered the worse operational result and yields the initiative.";
+    const japanMauled = foe <= 0.45 || (ed >= 45 && net > 0);
+    if (japanMauled && own >= foe - 0.03) {
+      stratTag = ic === 2 ? "Advantage" : "Campaign in doubt";
+      stratLine = ic === 0
+        ? "the ironclads are lost, but the Japanese cruiser force is shattered and cannot claim command of the Yellow Sea. The invasion timetable and the political case for continuing the war are both reopened."
+        : "the Combined Fleet is too badly damaged to secure command of the Yellow Sea. China retains a fleet-in-being and the Korean campaign remains in doubt.";
+    } else if (ic === 0) {
+      stratTag = "Disaster";
+      stratLine = "both battleships are gone without equivalent destruction of the Japanese fighting core. The Beiyang Fleet ceases to deter and Japan can press for command of the Yellow Sea.";
+    } else if (ic === 1) {
+      if (ed >= 38 || net > 2500) { stratTag = "Contested"; stratLine = "one battleship is lost, but Japanese losses prevent immediate command of the sea. Repair, reinforcement and political will will decide the campaign."; }
+      else { stratTag = "Setback"; stratLine = "losing a battleship weakens the fleet-in-being while Japan retains enough strength to press the campaign."; }
     } else {
-      if (ed >= 50) { stratTag = "Gain"; stratLine = "both battleships intact and the enemy fleet mauled. Japan must refit before it can move; the invasion timetable slips and the sea stays contested."; }
-      else if (cl <= 2) { stratTag = "Hold"; stratLine = "the fleet comes through largely whole and stays a fleet-in-being. Japan cannot yet command the Yellow Sea unopposed."; }
-      else { stratTag = "Erosion"; stratLine = "the battleships survive but the cruiser screen is spent. The fleet slips toward coast defence and cedes the open sea, as the real Beiyang Fleet did after the Yalu."; }
+      if (ed >= 42 || net > 3500) { stratTag = "Advantage"; stratLine = "both battleships survive and the Japanese fighting core is mauled. Japan must refit before moving troops under naval cover, while China can reinforce and modernise."; }
+      else if (cl <= 2) { stratTag = "Hold"; stratLine = "the fleet comes through largely whole and remains a fleet-in-being. Command of the Yellow Sea stays contested."; }
+      else { stratTag = "Erosion"; stratLine = "the battleships survive, but the cruiser screen is badly spent. China retains deterrent value but risks being confined to coast defence."; }
     }
   } else {
     const cl = outcome.chinaLost, jl = outcome.japanLost, ic = outcome.ironcladsAlive, cd = outcome.chineseDamage || 0;
@@ -6962,7 +7047,11 @@ function calculatedReadings(outcome) {
 
 function lossSummaryHTML(side, label) {
   const b = tonnageBreakdown(side), retained = Math.round(tonnagePct(side) * 100);
-  return `<div class="loss-card"><div class="loss-card-head"><span class="tag ${clsForSide(side)}">${label}</span><b>${retained}% effective</b></div><div class="loss-metrics"><span class="lm sunk"><b>${b.sunkCount}</b><small>total loss</small></span><span class="lm out"><b>${b.abandonedCount}</b><small>abandoned</small></span><span class="lm out"><b>${b.disabledCount}</b><small>disabled</small></span><span class="lm cripple"><b>${b.crippledCount}</b><small>crippled</small></span></div><div class="material-line"><span>Effective fighting tonnage lost <b>${b.effectiveLost.toLocaleString()} t</b></span></div></div>`;
+  const removed = game.ships.filter((s) => s.side === side && s.out);
+  const names = removed.length
+    ? `<div class="loss-names">${removed.map((s) => `<span class="loss-name ${shipCondition(s).cls}"><b>${s.name}</b> · ${shipCondition(s).label}</span>`).join("")}</div>`
+    : `<div class="loss-names"><span class="loss-name intact">No ships removed from combat</span></div>`;
+  return `<div class="loss-card"><div class="loss-card-head"><span class="tag ${clsForSide(side)}">${label}</span><b>${retained}% effective</b></div><div class="loss-metrics"><span class="lm sunk"><b>${b.sunkCount}</b><small>total loss</small></span><span class="lm out"><b>${b.abandonedCount}</b><small>abandoned</small></span><span class="lm out"><b>${b.disabledCount}</b><small>disabled</small></span><span class="lm cripple"><b>${b.crippledCount}</b><small>crippled</small></span></div>${names}<div class="material-line"><span>Effective fighting tonnage lost <b>${b.effectiveLost.toLocaleString()} t</b></span></div></div>`;
 }
 
 function buildBattleReport() {
@@ -7437,7 +7526,7 @@ function restartBattle() {
 }
 
 function quitToMenu() {
-  ["codexOverlay", "fleetOverlay", "resultScreen", "gameMenu"].forEach(ohOv);
+  ["codexOverlay", "fleetOverlay", "squadronOverlay", "resultScreen", "gameMenu"].forEach(ohOv);
   const ss = document.getElementById("startScreen"); if (ss) ss.classList.add("show");
   game.started = false; game.running = false; game.exec = null; game.busy = false; game.phase = "playing";
 }
@@ -7546,17 +7635,13 @@ function init() {
   }
   bind("menuBtn", openGameMenu);
   bind("multiSelBtn", () => {
-    const selected = shipById(game.selectedId);
     if (game.multiSel) {
       game.multiSel = false; game.pendingSel = []; lastSelectionToggle = { id: null, t: 0 };
-      showToast("Squadron selection cancelled");
+      showToast("Squadron selection cancelled"); setMultiSelBtn(); syncPanel();
     } else {
-      game.multiSel = true; lastSelectionToggle = { id: null, t: 0 };
-      game.pendingSel = selected && selected.side === game.playerSide && !selected.out ? [selected.id] : [];
-      game.selectedId = null; game.selSquadId = null; game.menuMode = "ship"; game.cardId = null;
-      showToast(game.pendingSel.length ? "Tap more ships · ✓ to form" : "Tap ships · ✓ to form");
+      const ownSquads = game.squadrons.filter((sq) => { const lead = shipById(sq.leaderId); return lead && !lead.out && lead.side === game.playerSide; });
+      if (ownSquads.length) openSquadronPicker(); else beginSquadronSelection();
     }
-    setMultiSelBtn(); syncPanel();
   });
   bind("gmResume", () => ohOv("gameMenu"));
   bind("gmRestart", () => { if (typeof confirm === "function" && !confirm("Restart this battle from the opening? Current progress will be lost.")) return; restartBattle(); });
@@ -7584,6 +7669,7 @@ function init() {
   });
   bind("codexClose", () => document.getElementById("codexOverlay").classList.remove("show"));
   bind("fleetClose", () => document.getElementById("fleetOverlay").classList.remove("show"));
+  bind("squadronClose", () => document.getElementById("squadronOverlay").classList.remove("show"));
   bind("logBtn", () => { const d = document.getElementById("logDrawer"); const open = d.classList.toggle("open"); const h = document.getElementById("logBtn"); if (h) h.textContent = open ? "Signal log  ▾" : "Signal log  ▴"; });
   bind("analysisBtn", () => openLogModal("mechanics"));
   bind("panelFleetBtn", () => openFleetRoster(game.selectedId));
