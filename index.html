@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.52" />
+<meta name="application-version" content="0.53" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
 <title>Echelon · Naval Action</title>
@@ -603,7 +603,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v0.52</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.53</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -645,7 +645,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v0.52 · visibility pass</div>
+    <div class="build-stamp" id="buildStamp">v0.53 · movement restoration</div>
   </div>
 </div>
 
@@ -1777,9 +1777,9 @@ if (typeof module !== "undefined" && module.exports) {
 //  Pure canvas drawing. No game logic. Reads ship state produced by engine.js.
 //  Ships are drawn from a DISPLAY POSE (dx/dy/dh) which ui.js eases toward the
 //  true pose each frame, so movement and turning animate smoothly.
-//  Engine headings use 0° toward world -y. Because world y is inverted onto canvas,
-//  ship artwork must be rotated 180° from the engine heading to travel bow-first.
-//  Local -y bow geometry rotates by visual heading; local +x bow geometry by visual heading - 90°.
+//  Engine headings use 0° toward world -y, while the canvas inverts world y.
+//  The original display mapping is therefore 180° - heading for local -y bows
+//  and 90° - heading for local +x bows.
 // ===========================================================================
 
 const PALETTE = {
@@ -1809,11 +1809,10 @@ function screenToWorld(v, sx, sy) {
 function pX(s) { return s.dx != null ? s.dx : s.x; }
 function pY(s) { return s.dy != null ? s.dy : s.y; }
 function pH(s) { return s.dh != null ? s.dh : s.heading; }
-function bowMinusYRotation(heading) { return (heading || 0) * Math.PI / 180; }
-function bowPlusXRotation(heading) { return ((heading || 0) - 90) * Math.PI / 180; }
+function bowMinusYRotation(heading) { return (180 - (heading || 0)) * Math.PI / 180; }
+function bowPlusXRotation(heading) { return (90 - (heading || 0)) * Math.PI / 180; }
 function rotateBowMinusY(ctx, heading) { ctx.rotate(bowMinusYRotation(heading)); }
 function rotateBowPlusX(ctx, heading) { ctx.rotate(bowPlusXRotation(heading)); }
-function visualShipHeading(heading) { return ((heading || 0) + 180) % 360; }
 
 // ---- ship sprite cache (real top-down art, bow points +x) ------------------
 // Guarded so render.js still runs headless (node) where Image is undefined.
@@ -2328,7 +2327,7 @@ function renderedLossStatus(ship) {
 
 function drawShip(ctx, v, ship, opts) {
   opts = opts || {};
-  const px = pX(ship), py = pY(ship), ph = pH(ship), vh = visualShipHeading(ph);
+  const px = pX(ship), py = pY(ship), ph = pH(ship);
   const cx = wx(v, px), cy = wy(v, py);
   const ratio = (ship.beam && ship.length) ? ship.beam / ship.length : 0.16;
   const L = Math.max(ship.length * v.scale, 9);     // TRUE scale (no uniform clamp)
@@ -2347,7 +2346,7 @@ function drawShip(ctx, v, ship, opts) {
 
   // ---- wake + bow wave (bow at local -y, rotation 180 - heading) ----
   if (ship._hitFlash > 0) {                                   // white flash on the struck hull, fading fast
-    ctx.save(); ctx.translate(cx, cy); rotateBowMinusY(ctx, vh);
+    ctx.save(); ctx.translate(cx, cy); rotateBowMinusY(ctx, ph);
     ctx.globalAlpha = Math.min(0.85, ship._hitFlash * 2.6);
     ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 2;
     hullPath(ctx, L, B); ctx.stroke();
@@ -2363,7 +2362,7 @@ function drawShip(ctx, v, ship, opts) {
     ctx.restore();
   }
   if (moving) {
-    ctx.save(); ctx.translate(cx, cy); rotateBowMinusY(ctx, vh);
+    ctx.save(); ctx.translate(cx, cy); rotateBowMinusY(ctx, ph);
     const wlen = Math.min(L * (0.5 + speed / 26), L * 1.8);   // a faint fan of hairlines astern, no filled wedge or bow wave
     const y0 = L * 0.45, lines = 5;
     ctx.lineWidth = 0.8;
@@ -2383,7 +2382,7 @@ function drawShip(ctx, v, ship, opts) {
   if (!ship._plan) ship._plan = buildShipPlan(ship);
   ctx.save();
   ctx.translate(cx, cy);
-  rotateBowPlusX(ctx, vh);   // local +x bow aligned with actual screen-space travel
+  rotateBowPlusX(ctx, ph);   // local +x bow aligned with screen-space travel
   drawSchematic(ctx, L, B, ship._plan, ink, sacc, ship.out);
   ctx.restore();
 
@@ -2509,7 +2508,7 @@ function drawMoveGhost(ctx, v, ship, ghost) {
   const ratio = (ship.beam && ship.length) ? ship.beam / ship.length : 0.16;
   const B = Math.max(L * ratio, 6);
   ctx.translate(gx, gy);
-  rotateBowMinusY(ctx, visualShipHeading(ghost.heading));
+  rotateBowMinusY(ctx, ghost.heading);
   hullPath(ctx, L, B);
   ctx.globalAlpha = 0.32; ctx.strokeStyle = PALETTE.brass; ctx.lineWidth = 1; ctx.stroke();
   ctx.restore();
@@ -3299,7 +3298,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "0.51";
+const ECHELON_VERSION = "0.53";
 
 // ---- module-global game state ---------------------------------------------
 const game = {
@@ -5548,51 +5547,12 @@ function movementPose(s, progress) {
   const heading = tx*tx + ty*ty > 1e-6 ? ((Math.atan2(tx, -ty) * 180 / Math.PI) % 360 + 360) % 360 : s._ah1;
   return { x, y, heading };
 }
-// Display-only course: never used for hit, torpedo or range calculations.
-function displayMovementPose(s, progress) {
-  if (s._ax1 == null) return { x: s.x, y: s.y, heading: s.heading };
-  const p = clamp(progress, 0, 1);
-  const chordX = s._ax1 - s._ax0, chordY = s._ay1 - s._ay0;
-  const chord = Math.hypot(chordX, chordY);
-  const finalTurnStart = 0.84;                         // the plotted course is completed before the final helm settles
-  if (chord < HEX_M * 0.3) {
-    const dh = wrap180(s._ah1 - s._ah0);
-    const ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
-    return { x: s._ax0, y: s._ay0, heading: (s._ah0 + dh * ease + 360) % 360 };
-  }
-
-  // During translation the bow follows the actual tangent of the track. The former
-  // curve used the post-move heading as its end tangent, which could pull the hull
-  // laterally into the destination and make it look as though it were sliding sideways.
-  const approach = ((Math.atan2(chordX, -chordY) * 180 / Math.PI) % 360 + 360) % 360;
-  if (p >= finalTurnStart) {
-    const u0 = (p - finalTurnStart) / (1 - finalTurnStart);
-    const u = u0 < 0.5 ? 2 * u0 * u0 : 1 - Math.pow(-2 * u0 + 2, 2) / 2;
-    const dh = wrap180(s._ah1 - approach);
-    return { x: s._ax1, y: s._ay1, heading: (approach + dh * u + 360) % 360 };
-  }
-
-  const raw = p / finalTurnStart;
-  const t = raw < 0.5 ? 2 * raw * raw : 1 - Math.pow(-2 * raw + 2, 2) / 2;
-  const mt = 1 - t;
-  const sh = s._ah0 * Math.PI / 180, ah = approach * Math.PI / 180;
-  const d = Math.min(chord * 0.34, Math.max(HEX_M * 0.35, chord * 0.22));
-  const p0x = s._ax0, p0y = s._ay0, p3x = s._ax1, p3y = s._ay1;
-  const p1x = p0x + Math.sin(sh) * d, p1y = p0y - Math.cos(sh) * d;
-  const p2x = p3x - Math.sin(ah) * d, p2y = p3y + Math.cos(ah) * d;
-  const x = mt*mt*mt*p0x + 3*mt*mt*t*p1x + 3*mt*t*t*p2x + t*t*t*p3x;
-  const y = mt*mt*mt*p0y + 3*mt*mt*t*p1y + 3*mt*t*t*p2y + t*t*t*p3y;
-  const tx = 3*mt*mt*(p1x-p0x) + 6*mt*t*(p2x-p1x) + 3*t*t*(p3x-p2x);
-  const ty = 3*mt*mt*(p1y-p0y) + 6*mt*t*(p2y-p1y) + 3*t*t*(p3y-p2y);
-  const heading = tx*tx + ty*ty > 1e-7 ? ((Math.atan2(tx, -ty) * 180 / Math.PI) % 360 + 360) % 360 : approach;
-  return { x, y, heading };
-}
 function stepExecute(dt) {
   const e = game.exec; if (!e) return;
   e.t += dt; const p = Math.min(1, e.t / e.dur);
   for (const s of game.ships) {
     if (s._ax1 == null) continue;
-    const pose = displayMovementPose(s, p);
+    const pose = movementPose(s, p);
     s.x = pose.x; s.y = pose.y; s.heading = pose.heading;
   }
   if (p >= 1 && !e.done) { e.done = true; finishExecute(); }
