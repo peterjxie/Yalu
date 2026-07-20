@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.61" />
+<meta name="application-version" content="0.62" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
 <title>Echelon · Naval Action</title>
@@ -668,7 +668,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v0.61</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.62</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -710,7 +710,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v0.61 · squadron control pass</div>
+    <div class="build-stamp" id="buildStamp">v0.62 · trajectory refinement</div>
   </div>
 </div>
 
@@ -2609,26 +2609,28 @@ function drawEffects(ctx, v, effects) {
     if (e.delay && e.delay > 0) continue;
     ctx.save();
     if (e.type === "shell") {
-      // One representative ballistic trace per salvo: only the last fraction of the path,
-      // deliberately faint enough to suggest flight without becoming a phaser.
+      // A brief, hairline tracer rather than a continuous beam. Slower playback keeps
+      // it legible without the broad double-stroke used in v0.60-v0.61.
       const t = Math.max(0, Math.min(1, e.t || 0));
       const head = t;
-      const tail = Math.max(0, t - (e.heavy ? 0.62 : 0.52));
+      const tail = Math.max(0, t - (e.heavy ? 0.24 : 0.18));
       const xh = e.x0 + (e.x1 - e.x0) * head, yh = e.y0 + (e.y1 - e.y0) * head;
       const xt = e.x0 + (e.x1 - e.x0) * tail, yt = e.y0 + (e.y1 - e.y0) * tail;
       const visible = Math.sin(Math.PI * Math.min(1, t / 0.10)) * Math.sin(Math.PI * Math.min(1, (1 - t) / 0.06));
-      const vis = Math.max(0.18, visible);
-      ctx.globalAlpha = (e.heavy ? 0.46 : 0.34) * vis;
-      ctx.strokeStyle = e.heavy ? "rgba(255,205,126,0.94)" : "rgba(245,235,213,0.88)";
-      ctx.lineWidth = e.heavy ? 4.4 : 3.3;
+      const vis = Math.max(0.14, visible);
+      // Very faint underlay prevents disappearance on bright phone panels, but the
+      // visible core is less than half the previous width.
+      ctx.globalAlpha = (e.heavy ? 0.18 : 0.12) * vis;
+      ctx.strokeStyle = e.heavy ? "rgba(255,205,126,0.82)" : "rgba(245,235,213,0.72)";
+      ctx.lineWidth = e.heavy ? 1.8 : 1.2;
       ctx.beginPath(); ctx.moveTo(wx(v, xt), wy(v, yt)); ctx.lineTo(wx(v, xh), wy(v, yh)); ctx.stroke();
-      ctx.globalAlpha = (e.heavy ? 0.98 : 0.82) * vis;
-      ctx.strokeStyle = e.heavy ? "rgba(255,235,196,1)" : "rgba(255,249,237,0.98)";
-      ctx.lineWidth = e.heavy ? 2.15 : 1.65;
+      ctx.globalAlpha = (e.heavy ? 0.72 : 0.54) * vis;
+      ctx.strokeStyle = e.heavy ? "rgba(255,235,196,0.96)" : "rgba(255,249,237,0.90)";
+      ctx.lineWidth = e.heavy ? 0.85 : 0.62;
       ctx.beginPath(); ctx.moveTo(wx(v, xt), wy(v, yt)); ctx.lineTo(wx(v, xh), wy(v, yh)); ctx.stroke();
-      ctx.globalAlpha = (e.heavy ? 0.95 : 0.78) * vis;
-      ctx.fillStyle = "rgba(255,252,244,1)";
-      ctx.beginPath(); ctx.arc(wx(v, xh), wy(v, yh), e.heavy ? 1.65 : 1.20, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = (e.heavy ? 0.82 : 0.62) * vis;
+      ctx.fillStyle = "rgba(255,252,244,0.96)";
+      ctx.beginPath(); ctx.arc(wx(v, xh), wy(v, yh), e.heavy ? 1.05 : 0.72, 0, Math.PI * 2); ctx.fill();
     } else if (e.type === "muzzle") {
       const sx = wx(v, e.x), sy = wy(v, e.y);
       ctx.globalAlpha = e.life; ctx.fillStyle = PALETTE.fireHot;
@@ -3385,7 +3387,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "0.61";
+const ECHELON_VERSION = "0.62";
 
 // ---- module-global game state ---------------------------------------------
 const game = {
@@ -4711,11 +4713,21 @@ function moveCurvePose(x0, y0, h0, x1, y1, h1, progress) {
     const dh = ((h1 - h0 + 540) % 360) - 180;
     return { x: x0, y: y0, heading: (h0 + dh * ease + 360) % 360 };
   }
-  const d = chord / 3;
+  // The old equal one-third handles let a sharply different final heading pull the
+  // whole track sideways, producing a kite-shaped ghost even though the waypoint was
+  // unchanged. Keep both endpoint tangents, but shorten each handle as it diverges
+  // from the direct course. The final-heading handle is deliberately shorter because
+  // it represents the ship settling onto its ordered bow close to the waypoint.
+  const dx = x1 - x0, dy = y1 - y0;
+  const approach = ((Math.atan2(dx, -dy) * 180 / Math.PI) % 360 + 360) % 360;
+  const dev0 = Math.abs(((h0 - approach + 540) % 360) - 180) * Math.PI / 180;
+  const dev1 = Math.abs(((h1 - approach + 540) % 360) - 180) * Math.PI / 180;
+  const startHandle = chord * (0.10 + 0.20 * Math.max(0, Math.cos(dev0)));
+  const endHandle = chord * (0.04 + 0.16 * Math.max(0, Math.cos(dev1)));
   const sh = h0 * Math.PI / 180, eh = h1 * Math.PI / 180;
   const sdx = Math.sin(sh), sdy = -Math.cos(sh), edx = Math.sin(eh), edy = -Math.cos(eh);
-  const p1x = x0 + sdx * d, p1y = y0 + sdy * d;
-  const p2x = x1 - edx * d, p2y = y1 - edy * d;
+  const p1x = x0 + sdx * startHandle, p1y = y0 + sdy * startHandle;
+  const p2x = x1 - edx * endHandle, p2y = y1 - edy * endHandle;
   const t = ease, mt = 1 - t;
   const x = mt*mt*mt*x0 + 3*mt*mt*t*p1x + 3*mt*t*t*p2x + t*t*t*x1;
   const y = mt*mt*mt*y0 + 3*mt*mt*t*p1y + 3*mt*t*t*p2y + t*t*t*y1;
@@ -4745,6 +4757,14 @@ function drawOrderGhost(ctx, v, s, highlight) {
   }
   ctx.stroke(); ctx.setLineDash([]);
   const x1 = wx(v, end.x), y1 = wy(v, end.y);
+  // Fixed waypoint cross: altering the ordered final heading may reshape the last
+  // metres of the curve, but it must never make the destination appear to move.
+  const mark = highlight ? 4.5 : 3.2;
+  ctx.globalAlpha = 0.82 * a;
+  ctx.strokeStyle = "rgba(190,228,251,0.96)";
+  ctx.lineWidth = highlight ? 1.25 : 0.9;
+  ctx.beginPath(); ctx.arc(x1, y1, mark, 0, Math.PI * 2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x1 - mark - 2, y1); ctx.lineTo(x1 + mark + 2, y1); ctx.moveTo(x1, y1 - mark - 2); ctx.lineTo(x1, y1 + mark + 2); ctx.stroke();
   const L = shipScreenLen(v, s), B = Math.max(3, L * (s.beam / s.length));
   ctx.translate(x1, y1); rotateBowMinusY(ctx, end.heading);
   ctx.globalAlpha = 0.40 * a;
