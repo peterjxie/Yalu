@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.55" />
+<meta name="application-version" content="0.60" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
 <title>Echelon · Naval Action</title>
@@ -454,7 +454,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 /* compact glass command layer */
 .command-glass{position:relative;background:linear-gradient(145deg,rgba(16,52,62,.060),rgba(5,22,28,.045));border:1px solid rgba(200,164,92,.28);border-radius:12px;padding:9px;box-shadow:inset 0 1px rgba(255,255,255,.035),0 8px 22px rgba(0,0,0,.14)}
 .command-head{display:flex;align-items:center;gap:7px;min-width:0}.command-name,.command-head>div{min-width:0;flex:1}.command-title{font-family:var(--serif);font-size:18px;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.command-sub{font-family:var(--mono);font-size:9px;color:var(--ink-dim);margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;padding:0;border-radius:8px;border:1px solid rgba(200,164,92,.28);background:rgba(7,29,36,.58);color:var(--ink);cursor:pointer;flex:none}.icon-btn:hover,.icon-btn:active{background:rgba(200,164,92,.15);border-color:rgba(200,164,92,.55)}.icon-btn svg,.rail-btn.icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.icon-btn.tiny{width:27px;height:27px;font-family:var(--mono);font-size:14px}.rail-aa{font-family:var(--serif);font-size:13px}
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:32px;height:30px;padding:0;border-radius:8px;border:1px solid rgba(200,164,92,.28);background:rgba(7,29,36,.58);color:var(--ink);cursor:pointer;flex:none}.icon-btn:hover,.icon-btn:active{background:rgba(200,164,92,.15);border-color:rgba(200,164,92,.55)}.icon-btn svg,.rail-btn.icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.icon-btn.tiny{width:27px;height:27px;font-family:var(--mono);font-size:14px}.rail-aa{font-family:var(--serif);font-size:13px}.rail-speed{font-family:var(--mono);font-size:10px;font-weight:700;letter-spacing:-.3px;white-space:nowrap}
 .mini-profile{height:92px;overflow:hidden;margin:5px 0 4px;border-radius:8px;background:rgba(4,19,24,.16)}.system-status{margin-top:4px!important;opacity:.96}.status-strip,.battery-strip,.doctrine-icons,.helm-strip,.formation-strip{display:flex;align-items:center;gap:5px;margin-top:6px;flex-wrap:wrap}.status-chip{display:flex;align-items:center;gap:4px;padding:4px 6px;border-radius:8px;background:rgba(3,18,23,.24);border:1px solid rgba(255,255,255,.055);font-family:var(--mono);font-size:9px}.status-chip i{font-style:normal;color:var(--brass-dim)}.status-chip b{font-weight:600;color:var(--ink)}
 .target-chip{display:flex;align-items:center;gap:7px;margin-top:6px;padding:6px 8px;border-radius:9px;background:rgba(192,57,43,.055);border:1px solid rgba(192,57,43,.17);font-family:var(--mono);font-size:10px;white-space:nowrap;overflow:hidden}.target-chip svg{width:16px;height:16px;fill:none;stroke:#df8277;stroke-width:1.7;flex:none}.target-chip span{overflow:hidden;text-overflow:ellipsis}
 .control-label{font-family:var(--mono);font-size:8.5px;letter-spacing:.9px;text-transform:uppercase;color:var(--brass-dim);margin:8px 0 2px;text-align:center;}
@@ -549,8 +549,9 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 
 .loss-names{display:flex;flex-direction:column;gap:3px;margin:8px 0 2px;padding-top:7px;border-top:1px solid rgba(232,221,199,.08)}
 .loss-name{font-family:var(--mono);font-size:9px;line-height:1.35;color:var(--ink-dim)}.loss-name b{color:var(--ink);font-weight:650}.loss-name.total,.loss-name.abandoned{color:#c98d82}.loss-name.disabled{color:#d0b46d}
-.squad-access{min-width:38px!important;width:38px!important;padding:0!important}.squad-access span{display:none!important}.squad-access svg{width:20px!important;height:20px!important}.squadron-chips{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:none;gap:7px;z-index:18;pointer-events:none}.squadron-chips.show{display:flex}.squad-chip{pointer-events:auto;min-width:34px;height:30px;padding:0 10px;border-radius:16px;border:1px solid rgba(200,164,92,.45);background:rgba(5,22,28,.72);color:var(--ink);font-family:var(--mono);font-weight:700;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.3);backdrop-filter:blur(2px)}.squad-chip.active{border-color:var(--brass);color:var(--brass);background:rgba(20,45,48,.9);box-shadow:0 0 0 1px rgba(200,164,92,.22),0 2px 10px rgba(0,0,0,.38)}@media(max-width:560px){.squadron-chips{bottom:8px;gap:6px}.squad-chip{min-width:32px;height:28px;padding:0 9px}}.squadron-card{max-width:480px}.squad-picker-note,.squad-picker-empty{font-size:12px;color:var(--ink-dim);margin:0 0 12px}.squad-pick{width:100%;display:grid;grid-template-columns:34px 1fr 18px;align-items:center;gap:8px;text-align:left;border:1px solid rgba(200,164,92,.22);background:rgba(8,28,34,.42);color:var(--ink);border-radius:8px;padding:10px;margin:0 0 7px}.squad-pick:hover,.squad-pick:active{border-color:rgba(200,164,92,.6);background:rgba(16,48,57,.58)}.squad-pick-icon svg{width:26px;height:22px}.squad-pick b{display:block;font-size:12px}.squad-pick small{display:block;color:var(--ink-dim);font-family:var(--mono);font-size:9px;margin-top:3px}.squad-pick-arrow{font-size:24px;color:var(--brass)}.squad-new{margin-top:12px;width:100%}
-@media(max-width:560px){.squad-access{min-width:88px!important}.squad-access span{font-size:8px!important}}
+.squad-access{min-width:38px!important;width:38px!important;padding:0!important}.squad-access span{display:none!important}.squad-access svg{width:20px!important;height:20px!important}.squadron-chips{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:none;gap:7px;z-index:18;pointer-events:none;transition:bottom .16s ease}.squadron-chips.show{display:flex}.squad-chip{pointer-events:auto;min-width:34px;height:30px;padding:0 10px;border-radius:16px;border:1px solid rgba(200,164,92,.45);background:rgba(5,22,28,.72);color:var(--ink);font-family:var(--mono);font-weight:700;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.3);backdrop-filter:blur(2px)}.squad-chip.active{border-color:var(--brass);color:var(--brass);background:rgba(20,45,48,.9);box-shadow:0 0 0 1px rgba(200,164,92,.22),0 2px 10px rgba(0,0,0,.38)}@media(max-width:560px){.squadron-chips{bottom:8px;gap:6px}.squad-chip{min-width:32px;height:28px;padding:0 9px}}.squadron-card{max-width:480px}.squad-picker-note,.squad-picker-empty{font-size:12px;color:var(--ink-dim);margin:0 0 12px}.squad-pick{width:100%;display:grid;grid-template-columns:34px 1fr 18px;align-items:center;gap:8px;text-align:left;border:1px solid rgba(200,164,92,.22);background:rgba(8,28,34,.42);color:var(--ink);border-radius:8px;padding:10px;margin:0 0 7px}.squad-pick:hover,.squad-pick:active{border-color:rgba(200,164,92,.6);background:rgba(16,48,57,.58)}.squad-pick-icon svg{width:26px;height:22px}.squad-pick b{display:block;font-size:12px}.squad-pick small{display:block;color:var(--ink-dim);font-family:var(--mono);font-size:9px;margin-top:3px}.squad-pick-arrow{font-size:24px;color:var(--brass)}.squad-new{margin-top:12px;width:100%}
+@media(max-width:560px){.squad-access{min-width:38px!important;width:38px!important}.squad-access span{display:none!important}}
+@media (max-width:960px) and (orientation:portrait){#main:has(#panel.expanded) .squadron-chips{bottom:calc(min(20dvh,168px) + 18px)}}
 </style>
 </head>
 <body>
@@ -588,7 +589,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
     <button class="rail-btn icon" id="ffBtn" title="Continue to contact" aria-label="Continue to contact"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></svg></button>
     <button class="rail-btn icon" id="zoomBtn" title="Cycle zoom" aria-label="Cycle zoom"><svg viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="M15 15l6 6M7 10h6M10 7v6"/></svg></button>
     <button class="rail-btn fleet-access squad-access" id="multiSelBtn" title="Form squadron" aria-label="Form squadron"><svg viewBox="0 0 24 24"><path d="M3 6l3-2h6l2 2-2 2H6zM8 12l3-2h6l2 2-2 2h-6zM3 18l3-2h6l2 2-2 2H6z"/></svg></button>
-    <button class="rail-btn icon" id="speedBtn" title="Skip resolution" aria-label="Skip resolution"><svg viewBox="0 0 24 24"><path d="M4 5l7 7-7 7M12 5l7 7-7 7"/></svg></button>
+    <button class="rail-btn icon" id="speedBtn" title="Resolution playback speed" aria-label="Resolution playback speed"><span class="rail-speed" id="resolutionSpeedLabel">⅔×</span></button>
     <button class="rail-btn icon toggle" id="ringsBtn" title="Range rings" aria-label="Range rings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="8"/></svg></button>
     <button class="rail-btn icon toggle opt" id="arcsBtn" title="Firing arcs" aria-label="Firing arcs"><svg viewBox="0 0 24 24"><path d="M12 20V4M12 12L3 7M12 12l9-5"/></svg></button>
     <button class="rail-btn icon toggle opt" id="labelsBtn" title="Ship names" aria-label="Ship names"><span class="rail-aa">Aa</span></button>
@@ -609,7 +610,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v0.55</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.60</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -641,7 +642,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
         </div>
         <div class="mode-choice" data-mode="skirmish">
           <div class="mc-name">Skirmish</div>
-          <div class="mc-desc">Choose your own formation.</div>
+          <div class="mc-desc">Opposing fleets on equal bearing. Choose the shared formation.</div>
         </div>
       </div>
       <div id="skirmishOptions" style="display:none">
@@ -651,7 +652,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v0.55 · squadron chip pass</div>
+    <div class="build-stamp" id="buildStamp">v0.60 · Tsushima systems pass</div>
   </div>
 </div>
 
@@ -763,7 +764,7 @@ const SHIP_SPRITE_DIMS = {"akagi": [304, 50], "akitsushima": [549, 80], "chaoyon
 if (typeof module !== "undefined" && module.exports) { module.exports = { SHIP_SPRITES, SHIP_SPRITE_DIMS }; }
 // ===== engine.js =====
 // ============================================================================
-//  engine.js  -  Yalu naval combat engine (pure logic, no DOM)
+//  engine.js  -  shared naval combat engine (pure logic, no DOM)
 //  Models: ballistics, calibre-vs-armour penetration, reload-banded gunnery,
 //  zone-based damage, fire / flooding / crew / engine criticals.
 // ============================================================================
@@ -775,6 +776,7 @@ const KN_TO_M_PER_TURN = 1852 / 3600 * TURN_SECONDS;   // knots -> metres per 60
 const clamp = (x, lo, hi) => Math.max(lo, Math.min(hi, x));
 const rnd = () => Math.random();
 function activeScenarioId() { return (typeof SCN !== "undefined" && SCN && SCN.id) ? SCN.id : null; }
+function usesRefinedDamageModel() { return ["yalu", "tsushima", "tsushima_approach"].includes(activeScenarioId()); }
 const deg2rad = d => d * Math.PI / 180;
 const rad2deg = r => r * 180 / Math.PI;
 
@@ -1179,7 +1181,7 @@ function protectionIndex(ship) {
   return clamp(0.78 * (belt / 356) + 0.22 * (deck / 76), 0, 1);
 }
 function softFloorFrac(ship) {
-  if (activeScenarioId() === "yalu") return 0.04 + 0.11 * protectionIndex(ship);
+  if (usesRefinedDamageModel()) return 0.04 + 0.11 * protectionIndex(ship);
   const belt = zoneArmour(ship, "belt");
   if (belt >= 300) return 0.15;
   if (belt >= 150) return 0.07;
@@ -1190,7 +1192,7 @@ function softFloorFrac(ship) {
 // defeat an armoured citadel. The Yalu ceiling is a continuous protection/subdivision
 // proxy shared by every ship. Later scenarios retain their existing model for now.
 function maxFlood(ship) {
-  if (activeScenarioId() === "yalu") return 100 - 46 * protectionIndex(ship);
+  if (usesRefinedDamageModel()) return 100 - 46 * protectionIndex(ship);
   const belt = zoneArmour(ship, "belt");
   if (belt >= 300) return 40;
   if (belt >= 150) return 70;
@@ -1222,7 +1224,7 @@ function chooseShell(from, gun, target, range) {
   if (d === "AP" || d === "HE") return d;
   const belted = !isDeckProtected(target);
   const belt = zoneArmour(target, "belt");
-  if (activeScenarioId() === "yalu") {
+  if (usesRefinedDamageModel()) {
     if (!belted || belt <= 1) return "HE";
     const v = apViability(from, gun, target, range);
     return (v.ratio >= 1.04 && v.obliquity < 52) ? "AP" : "HE";
@@ -1300,7 +1302,7 @@ function resolveHit(from, battery, target, range) {
       const pPen = 1 / (1 + Math.exp(-(ratio - 1) / 0.05));             // ballistic-limit probability band (zone of mixed results)
       penetrated = rnd() < pPen;
       partial = penetrated && ratio < 1.12;
-      nearPen = activeScenarioId() === "yalu" && !penetrated && ratio >= 0.86;
+      nearPen = usesRefinedDamageModel() && !penetrated && ratio >= 0.86;
     }
   }
 
@@ -1406,10 +1408,10 @@ function resolveHit(from, battery, target, range) {
       // An end hit is a local compartment breach. Its effect is governed by the
       // target's protection/subdivision profile; it is never promoted to a hard
       // breach merely to force or prevent a particular historical result.
-      addFlood(target, (5 + rnd() * 9) * holeScale * floodMul, activeScenarioId() !== "yalu");
+      addFlood(target, (5 + rnd() * 9) * holeScale * floodMul, !usesRefinedDamageModel());
     }
     if (zone === "belt" && belted) {
-      if (activeScenarioId() === "yalu") {
+      if (usesRefinedDamageModel()) {
         if (!heShell && penetrated && rnd() < 0.30) addFlood(target, (5 + rnd() * 8) * holeScale * floodMul, true);
         else if (heShell && rnd() < 0.12) addFlood(target, (2 + rnd() * 4) * holeScale * floodMul, false);
         else if (!heShell && !penetrated && !ricochet && rnd() < 0.06) addFlood(target, (1 + rnd() * 3) * holeScale * floodMul, false);
@@ -1446,7 +1448,7 @@ function resolveHit(from, battery, target, range) {
     target.engine = clamp(target.engine - loss, 0.15, 1);
     target.machineryHits = (target.machineryHits || 0) + 1;
     target.engineRepairCeiling = Math.min(target.engineRepairCeiling == null ? 1 : target.engineRepairCeiling, target.engine + loss * 0.45);
-    if (activeScenarioId() === "yalu" && cal >= 150 && penetrated && rnd() < 0.24) {
+    if (usesRefinedDamageModel() && cal >= 150 && penetrated && rnd() < 0.24) {
       crit = "boiler";
       target.boilerHits = (target.boilerHits || 0) + 1;
       target.engine = clamp(target.engine - (0.08 + rnd() * 0.10), 0.12, 1);
@@ -1507,7 +1509,7 @@ function shellToLoad(from, battery, target, range) {
   const ideal = chooseShell(from, battery.gun, target, range);
   const loaded = battery.loadedShell;
   if (!loaded || loaded === ideal) return ideal;
-  if (activeScenarioId() === "yalu") {
+  if (usesRefinedDamageModel()) {
     const v = apViability(from, battery.gun, target, range);
     if (loaded === "AP") return (v.ratio >= 0.90 && v.obliquity < 60) ? "AP" : "HE";
     return (v.ratio >= 1.13 && v.obliquity < 48) ? "AP" : "HE";
@@ -1663,19 +1665,19 @@ function updateDamageControlState(s, dc) {
 function upkeepTick(ships, turn, log) {
   for (const s of ships) {
     if (s.out) continue;
-    const yalu = activeScenarioId() === "yalu";
-    const dc = yalu ? damageControlCapacity(s) : clamp(s.crew, 0.2, 1);
+    const refined = usesRefinedDamageModel();
+    const dc = refined ? damageControlCapacity(s) : clamp(s.crew, 0.2, 1);
     updateDamageControlState(s, dc);
 
     if (s.fires > 0) {
-      const burnRate = yalu ? 0.0050 : 0.0060;
-      const crewRate = yalu ? 0.008 : 0.010;
+      const burnRate = refined ? 0.0050 : 0.0060;
+      const crewRate = refined ? 0.008 : 0.010;
       const burn = s.fires * (s.structureMax * burnRate);
       const floor = softFloorFrac(s) * s.structureMax;
       s.structure = Math.min(s.structure, Math.max(s.structure - burn, floor));
       s.crew = clamp(s.crew - crewRate * s.fires, 0.2, 1);
       let extinguished = 0;
-      const pExtinguish = yalu ? (0.14 + 0.34 * dc) : (0.50 * s.crew);
+      const pExtinguish = refined ? (0.14 + 0.34 * dc) : (0.50 * s.crew);
       for (let i = 0; i < s.fires; i++) if (rnd() < pExtinguish) extinguished++;
       s.fires = Math.max(0, s.fires - extinguished);
     }
@@ -1684,7 +1686,7 @@ function upkeepTick(ships, turn, log) {
       // Flooding directly reduces propulsion and ultimately causes foundering. It
       // does not also erase structure every tick; doing both double-counted the
       // same water ingress and made concentrated end hits disproportionately lethal.
-      if (yalu) {
+      if (refined) {
         const machineryErosion = 0.0025 + 0.010 * (s.flooding / 100);
         s.engine = clamp(s.engine - machineryErosion, 0.1, s.engine);
         const pumping = 0.7 + 2.8 * dc;
@@ -1703,7 +1705,7 @@ function upkeepTick(ships, turn, log) {
       }
     }
 
-    if (yalu && s.fires === 0 && s.flooding < 45) {
+    if (refined && s.fires === 0 && s.flooding < 45) {
       const engCeil = s.engineRepairCeiling == null ? 1 : s.engineRepairCeiling;
       const strCeil = s.steeringRepairCeiling == null ? 1 : s.steeringRepairCeiling;
       if (s.engine < engCeil && rnd() < 0.24 * dc) s.engine = Math.min(engCeil, s.engine + 0.025 + 0.025 * dc);
@@ -1716,7 +1718,7 @@ function upkeepTick(ships, turn, log) {
 function checkOutOfAction(s, turn) {
   if (s.out) return;
   const frac = s.structure / s.structureMax;
-  if (activeScenarioId() === "yalu") {
+  if (usesRefinedDamageModel()) {
     const liveGuns = s.batteries ? s.batteries.filter((b) => !b.knockedOut).reduce((n, b) => n + (b.count || 0), 0) : 1;
     const totalGuns = s.batteries ? s.batteries.reduce((n, b) => n + (b.count || 0), 0) || 1 : 1;
     const gunFrac = liveGuns / totalGuns;
@@ -1726,7 +1728,7 @@ function checkOutOfAction(s, turn) {
     // Physical loss and fighting disablement are separate. A burning ship is not
     // removed merely because fires exist: it must founder, suffer structural collapse,
     // be abandoned while settling/burnt out, or lose the ability to fight. These tests
-    // are shared by every Yalu hull and do not depend on deployment or ship identity.
+    // are shared by every hull and do not depend on deployment or ship identity.
     if (s._magazine) {
       s.out = true; s.structure = 0; s.sunkTurn = turn; s.outReason = "destroyed by magazine explosion";
     } else if (s.flooding >= 85) {
@@ -1782,7 +1784,7 @@ if (typeof module !== "undefined" && module.exports) {
     maxTurnRate, moveDistance, executeMove, hitChance, rollZone, resolveHit,
     fireBattery, fireTorpedo, TORPEDO_RANGE, startTurnForSide, upkeepTick,
     checkOutOfAction, sideStrength, protectionIndex, softFloorFrac, maxFlood, addFlood,
-    NATION_ACC, chooseShell, apViability, shellDoctrine, NATION_DOCTRINE, SHELL_QUALITY, impactObliquity, descentAngle,
+    NATION_ACC, chooseShell, apViability, shellDoctrine, NATION_DOCTRINE, SHELL_QUALITY, impactObliquity, descentAngle, usesRefinedDamageModel,
   };
 }
 // ===== render.js =====
@@ -2414,9 +2416,8 @@ function drawShip(ctx, v, ship, opts) {
   drawSchematic(ctx, L, B, ship._plan, ink, sacc, ship.out);
   ctx.restore();
 
-  // Yalu status marks: sunk/out ships are decisively crossed off; crippled ships
-  // carry an amber warning badge while they remain in the fight.
-  if (typeof SCN !== "undefined" && SCN.id === "yalu") {
+  // Shared status marks: out ships are crossed off; crippled ships carry a warning badge.
+  {
     const hullFrac = (ship.structureMax || 1) > 0 ? (ship.structure || 0) / ship.structureMax : 0;
     const crippled = !ship.out && (hullFrac < 0.5 || (ship.flooding || 0) > 20 || (ship.fires || 0) > 1);
     if (ship.out) {
@@ -2430,7 +2431,7 @@ function drawShip(ctx, v, ship, opts) {
       const bx = cx + Math.max(7, B * 0.85), by = cy - Math.max(7, B * 0.85);
       ctx.save(); ctx.globalAlpha = 0.28; ctx.fillStyle = "rgba(232,221,199,0.80)";
       ctx.beginPath(); ctx.arc(bx, by, 4.5, 0, Math.PI * 2); ctx.fill();
-      ctx.globalAlpha = 0.42; ctx.fillStyle = "#07161a"; ctx.font = "700 8px ui-monospace, SFMono-Regular, Menlo, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("!", bx, by + 0.25); ctx.restore();
+      ctx.globalAlpha = 0.58; ctx.fillStyle = "#07161a"; ctx.font = "700 8px ui-monospace, SFMono-Regular, Menlo, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "middle"; ctx.fillText("!", bx, by + 0.25); ctx.restore();
     }
   }
 
@@ -2554,22 +2555,22 @@ function drawEffects(ctx, v, effects) {
       // deliberately faint enough to suggest flight without becoming a phaser.
       const t = Math.max(0, Math.min(1, e.t || 0));
       const head = t;
-      const tail = Math.max(0, t - (e.heavy ? 0.43 : 0.35));
+      const tail = Math.max(0, t - (e.heavy ? 0.62 : 0.52));
       const xh = e.x0 + (e.x1 - e.x0) * head, yh = e.y0 + (e.y1 - e.y0) * head;
       const xt = e.x0 + (e.x1 - e.x0) * tail, yt = e.y0 + (e.y1 - e.y0) * tail;
-      const visible = Math.sin(Math.PI * Math.min(1, t / 0.18)) * Math.sin(Math.PI * Math.min(1, (1 - t) / 0.09));
-      const vis = Math.max(0, visible);
-      ctx.globalAlpha = (e.heavy ? 0.28 : 0.20) * vis;
-      ctx.strokeStyle = e.heavy ? "rgba(255,218,156,0.86)" : "rgba(240,235,224,0.76)";
-      ctx.lineWidth = e.heavy ? 3.4 : 2.5;
+      const visible = Math.sin(Math.PI * Math.min(1, t / 0.10)) * Math.sin(Math.PI * Math.min(1, (1 - t) / 0.06));
+      const vis = Math.max(0.18, visible);
+      ctx.globalAlpha = (e.heavy ? 0.46 : 0.34) * vis;
+      ctx.strokeStyle = e.heavy ? "rgba(255,205,126,0.94)" : "rgba(245,235,213,0.88)";
+      ctx.lineWidth = e.heavy ? 4.4 : 3.3;
       ctx.beginPath(); ctx.moveTo(wx(v, xt), wy(v, yt)); ctx.lineTo(wx(v, xh), wy(v, yh)); ctx.stroke();
-      ctx.globalAlpha = (e.heavy ? 0.82 : 0.63) * vis;
-      ctx.strokeStyle = e.heavy ? "rgba(255,228,184,0.96)" : "rgba(247,242,232,0.90)";
-      ctx.lineWidth = e.heavy ? 1.85 : 1.35;
+      ctx.globalAlpha = (e.heavy ? 0.98 : 0.82) * vis;
+      ctx.strokeStyle = e.heavy ? "rgba(255,235,196,1)" : "rgba(255,249,237,0.98)";
+      ctx.lineWidth = e.heavy ? 2.15 : 1.65;
       ctx.beginPath(); ctx.moveTo(wx(v, xt), wy(v, yt)); ctx.lineTo(wx(v, xh), wy(v, yh)); ctx.stroke();
-      ctx.globalAlpha = (e.heavy ? 0.78 : 0.58) * vis;
-      ctx.fillStyle = "rgba(252,247,236,0.94)";
-      ctx.beginPath(); ctx.arc(wx(v, xh), wy(v, yh), e.heavy ? 1.35 : 0.95, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = (e.heavy ? 0.95 : 0.78) * vis;
+      ctx.fillStyle = "rgba(255,252,244,1)";
+      ctx.beginPath(); ctx.arc(wx(v, xh), wy(v, yh), e.heavy ? 1.65 : 1.20, 0, Math.PI * 2); ctx.fill();
     } else if (e.type === "muzzle") {
       const sx = wx(v, e.x), sy = wy(v, e.y);
       ctx.globalAlpha = e.life; ctx.fillStyle = PALETTE.fireHot;
@@ -2781,20 +2782,20 @@ function drawTorpedoes(ctx, v, torpedoes) {
     if (tr.length > 1) {
       for (let i = 1; i < tr.length; i++) {
         const q = i / tr.length;
-        const a = (0.10 + q * 0.46) * (t.dead ? t.life : 1);
+        const a = (0.16 + q * 0.58) * (t.dead ? t.life : 1);
         ctx.strokeStyle = `rgba(196,230,238,${a.toFixed(3)})`;
-        ctx.lineWidth = 1.28;
+        ctx.lineWidth = 1.55;
         ctx.beginPath(); ctx.moveTo(wx(v, tr[i - 1].x), wy(v, tr[i - 1].y)); ctx.lineTo(wx(v, tr[i].x), wy(v, tr[i].y)); ctx.stroke();
       }
     }
     if (!t.dead) {
       const hx = wx(v, t.x), hy = wy(v, t.y);
-      ctx.globalAlpha = 0.72;
+      ctx.globalAlpha = 0.88;
       ctx.fillStyle = "rgba(235,246,248,0.72)";
-      ctx.beginPath(); ctx.arc(hx, hy, 1.25, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(hx, hy, 1.55, 0, Math.PI * 2); ctx.fill();
       ctx.globalAlpha = 0.42;
       ctx.strokeStyle = "rgba(216,239,244,0.82)"; ctx.lineWidth = 1.05;
-      ctx.beginPath(); ctx.arc(hx, hy, 2.6, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.arc(hx, hy, 3.15, 0, Math.PI * 2); ctx.stroke();
     }
     ctx.restore();
   }
@@ -3326,7 +3327,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "0.53";
+const ECHELON_VERSION = "0.60";
 
 // ---- module-global game state ---------------------------------------------
 const game = {
@@ -3352,10 +3353,12 @@ const game = {
   squadrons: [],            // player-formed squadrons (set up per battle; defined here so the render loop is safe before any battle)
   _squadSeq: 0,
   _divLines: null,
+  _squadronBlueprint: null, // command organisation retained when restarting the same battle
   multiSel: false,
   pendingSel: [],
   menuMode: "ship",
   selSquadId: null,
+  playbackRate: 2 / 3,       // visual resolution speed only; tactical time and mechanics are unchanged
 };
 // sim-seconds advanced per real second at each speed setting (ultra-low default)
 const SIM_SPEEDS = [0.5, 2, 6];
@@ -3449,14 +3452,10 @@ const SCENARIO_CONFIGS = {
         })) };
       }
       if (PROC[key]) {
-        place(proc(playerSide, key));                       // player's fleet in the chosen formation
-        if (playerSide === "Russia") {                      // enemy Combined Fleet, crossing
-          place(column(1460, 5356, 293, G.Japan[0], 500));
-          place(column(2950, 6550, 293, G.Japan[1], 450));
-        } else {                                            // enemy Russian line
-          place(column(0, 0, 23, G.Russia[0], 500));
-          place(column(1700, -1350, 23, G.Russia[1], 470));
-        }
+        // Fair skirmish: both complete fleets use the same selected formation on
+        // reciprocal headings. No side spends opening turns undoing a scripted T.
+        place(proc(playerSide, key));
+        place(proc(otherSide(playerSide), key));
       } else {
         place(column(0, 0, 23, G.Russia[0], 500));            // Suvorov leads the battle line, NNE
         place(column(1460, 5356, 293, G.Japan[0], 500));      // Mikasa's line crossing the T
@@ -3508,8 +3507,10 @@ SCENARIO_CONFIGS.tsushima_approach = Object.assign({}, SCENARIO_CONFIGS.tsushima
       place(doubleColumn(4700, 7500, 255, G.Japan[1], 430, 520));  // scouting cruiser divisions, ahead of the line
     };
     if (PROC[key]) {
+      // The skirmish opening is shared with the Crossing scenario: equal bearing,
+      // equal formation choice, opposing headings. Historical approach stays intact.
       place(proc(playerSide, key));
-      if (playerSide === "Russia") placeJapanese(); else placeRussian();
+      place(proc(otherSide(playerSide), key));
     } else {
       placeRussian(); placeJapanese();
     }
@@ -3617,8 +3618,10 @@ function centerOut(arr) {
 // into the world by that heading, so it orients correctly whatever way the line is pointing.
 const SKIRMISH_ANCHOR = {
   yalu:              { A: { cx: 150, cy: 150, hdg: 180 }, B: { cx: -160, cy: 1480, hdg: 0 } },
-  tsushima:          { A: { cx: 0, cy: 0, hdg: 23 },      B: { cx: 1460, cy: 5356, hdg: 293 } },
-  tsushima_approach: { A: { cx: 500, cy: 0, hdg: 23 },    B: { cx: 4100, cy: 6600, hdg: 268 } },
+  // Tsushima skirmishes are a fair meeting engagement. Both fleets begin in the
+  // chosen formation on reciprocal headings, rather than inheriting the historical T.
+  tsushima:          { A: { cx: 0, cy: 1700, hdg: 0 },    B: { cx: 0, cy: -1700, hdg: 180 } },
+  tsushima_approach: { A: { cx: 0, cy: 1700, hdg: 0 },    B: { cx: 0, cy: -1700, hdg: 180 } },
 };
 function proceduralFormation(side, type) {
   const roster = GAME_DATA.ships.filter((s) => s.side === side).map((s) => s.id);  // dataset order: heavies first
@@ -3735,6 +3738,7 @@ function setupScenario(playerSide, chineseFormationKey) {
   game.multiSel = false; game.pendingSel = []; game.menuMode = "ship"; game.selSquadId = null;
   for (const s of game.ships) { s._follow = null; s._inLine = false; s._manualThisTurn = false; }
   autoFormHistoricalSquadrons();
+  rememberSquadronOrganisation();
 
   game.phase = "plan";              // plan first, then Execute resolves both sides at once
   game._lastT = (typeof performance !== "undefined" ? performance.now() : Date.now());
@@ -3830,9 +3834,9 @@ function lossDisposition(ship) {
 }
 function spawnSink(ship, delay) {
   delay = delay || 0;
-  // At Yalu, an out-of-action ship may still be afloat. Leave wrecked and burning
-  // ships on the chart with an OUT mark; only actual sinkings get a sinking animation.
-  if (SCN.id === "yalu" && !isSunkReason(ship.outReason)) {
+  // An out-of-action ship may still be afloat. Leave disabled, settling and abandoned
+  // ships on the chart with an OUT mark; only physical sinkings get a sinking animation.
+  if (!isSunkReason(ship.outReason)) {
     game.effects.push({ type: "gunsmoke", x: ship.x, y: ship.y, wx: 0.25, wy: -0.15, life: 1, fade: 0.08, delay });
     return;
   }
@@ -4447,6 +4451,14 @@ function fitCamera() {
   game.cam.x = (minX + maxX) / 2;
   game.cam.y = (minY + maxY) / 2;
   const { w, h } = cssSize();
+  const skirmish = game._lastStart && game._lastStart.form && game._lastStart.form !== "historical";
+  if (skirmish && (SCN.id === "tsushima" || SCN.id === "tsushima_approach")) {
+    // Frame the opposing vanguards, not the full kilometres of line astern. This
+    // opens on the engagement while leaving the rear divisions available by pan.
+    game.cam.x = 0; game.cam.y = 0;
+    game.cam.scale = Math.min(0.16, Math.max(0.055, Math.min(w, h) / 4300));
+    return;
+  }
   // Frame the engagement, not the whole 5 km of frontage: keep the fleet separation
   // in view but cap the width so ships stay readable and keep their relative sizes.
   // The player pans to reach the flanks.
@@ -4591,12 +4603,14 @@ function drawFormationLines(ctx, v) {
 }
 
 // faint dots over the hexes this ship may move to this turn (the turning cone)
-// torpedo reach: a ring at the ship's planned end position (1000 m). Torpedoes loose
-// automatically at any enemy whose path falls inside it, so this shows where to close to.
+// Torpedo reach at the planned end position. The ring shows the practical run
+// against an active target; a crippled target can be engaged farther in 1905.
 function drawTorpedoRange(ctx, v, s) {
   if (!s.torpedoes || (s.torpedoes.count || 0) <= 0) return;
+  const profile = torpedoProfileForScenario();
+  const practicalRange = profile ? profile.activeRun : TORPEDO_RANGE;
   const c0 = s.order ? hexToWorld(s.order.q, s.order.r) : { x: s.x, y: s.y };
-  const cx = wx(v, c0.x), cy = wy(v, c0.y), rr = TORPEDO_RANGE * v.scale;
+  const cx = wx(v, c0.x), cy = wy(v, c0.y), rr = practicalRange * v.scale;
   if (rr < 6) return;
   const ready = s.torpedoes.ready && (s.torpedoes.cooldownLeft || 0) <= 0;
   ctx.save();
@@ -4629,43 +4643,68 @@ function drawReachable(ctx, v, s) {
   }
   ctx.restore();
 }
-// dashed track + a ghost silhouette where the ship ends the turn, tagged with its name
-function drawOrderGhost(ctx, v, s, highlight) {
-  const w = hexToWorld(s.order.q, s.order.r);
-  const sx0 = wx(v, s.x), sy0 = wy(v, s.y), sx1 = wx(v, w.x), sy1 = wy(v, w.y);
-  const a = highlight ? 1 : 0.6;
-  ctx.save();
-  ctx.strokeStyle = `rgba(120,200,255,${(0.75 * a).toFixed(2)})`; ctx.lineWidth = highlight ? 1.8 : 1.3; ctx.setLineDash([5, 4]);
-  ctx.beginPath(); ctx.moveTo(sx0, sy0); ctx.lineTo(sx1, sy1); ctx.stroke();
-  ctx.setLineDash([]);
-  const L = shipScreenLen(v, s), B = L * (s.beam / s.length);
-  if (!s._plan) s._plan = buildShipPlan(s);
-  const hr = s.order.heading * Math.PI / 180;
-  ctx.translate(sx1, sy1);
-  ctx.rotate(Math.atan2(Math.cos(hr), Math.sin(hr)));
-  ctx.globalAlpha = 0.55 * a;
-  drawSchematic(ctx, L, B, s._plan, "rgba(150,205,245,0.95)",
-    { fill: "rgba(120,200,255,0.08)", deck: "rgba(120,200,255,0.12)", mount: "rgba(120,200,255,0.2)" }, false);
-  ctx.restore();
-  if (highlight) {
-    const ah = s.order.heading * Math.PI / 180;
-    const ax = Math.sin(ah), ay = -Math.cos(ah), len = Math.max(28, L * 1.25);
-    ctx.save(); ctx.strokeStyle = "rgba(180,225,255,0.95)"; ctx.fillStyle = ctx.strokeStyle; ctx.lineWidth = 1.6;
-    ctx.beginPath(); ctx.moveTo(sx1, sy1); ctx.lineTo(sx1 + ax * len, sy1 + ay * len); ctx.stroke();
-    const tx = sx1 + ax * len, ty = sy1 + ay * len, px = -ay, py = ax;
-    ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(tx - ax * 7 + px * 4, ty - ay * 7 + py * 4); ctx.lineTo(tx - ax * 7 - px * 4, ty - ay * 7 - py * 4); ctx.closePath(); ctx.fill(); ctx.restore();
+// Planned and executing movement use the same cubic track. This prevents the old
+// straight chord from implying that a ship will slide sideways to its waypoint.
+function moveCurvePose(x0, y0, h0, x1, y1, h1, progress) {
+  const p = clamp(progress, 0, 1);
+  const ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
+  const chord = Math.hypot(x1 - x0, y1 - y0);
+  if (chord < HEX_M * 0.3) {
+    const dh = ((h1 - h0 + 540) % 360) - 180;
+    return { x: x0, y: y0, heading: (h0 + dh * ease + 360) % 360 };
   }
-  // name tag so it is obvious which ship is bound where
+  const d = chord / 3;
+  const sh = h0 * Math.PI / 180, eh = h1 * Math.PI / 180;
+  const sdx = Math.sin(sh), sdy = -Math.cos(sh), edx = Math.sin(eh), edy = -Math.cos(eh);
+  const p1x = x0 + sdx * d, p1y = y0 + sdy * d;
+  const p2x = x1 - edx * d, p2y = y1 - edy * d;
+  const t = ease, mt = 1 - t;
+  const x = mt*mt*mt*x0 + 3*mt*mt*t*p1x + 3*mt*t*t*p2x + t*t*t*x1;
+  const y = mt*mt*mt*y0 + 3*mt*mt*t*p1y + 3*mt*t*t*p2y + t*t*t*y1;
+  const tx = 3*mt*mt*(p1x-x0) + 6*mt*t*(p2x-p1x) + 3*t*t*(x1-p2x);
+  const ty = 3*mt*mt*(p1y-y0) + 6*mt*t*(p2y-p1y) + 3*t*t*(y1-p2y);
+  const heading = tx*tx + ty*ty > 1e-6 ? ((Math.atan2(tx, -ty) * 180 / Math.PI) % 360 + 360) % 360 : h1;
+  return { x, y, heading };
+}
+function plannedMovePose(s, progress) {
+  if (!s.order) return { x: s.x, y: s.y, heading: s.heading };
+  const w = hexToWorld(s.order.q, s.order.r);
+  return moveCurvePose(s.x, s.y, s.heading, w.x, w.y, s.order.heading, progress);
+}
+// Curved plotted track plus a restrained endpoint hull. Names are shown only for
+// the actively selected order so a whole fleet does not become a field of duplicates.
+function drawOrderGhost(ctx, v, s, highlight) {
+  const end = plannedMovePose(s, 1);
+  const a = highlight ? 1 : 0.48;
   ctx.save();
-  ctx.font = "600 10px ui-monospace, SF Mono, monospace";
-  ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
-  const label = s.name.replace(/\s*\(.*\)/, "");
-  const tw = ctx.measureText(label).width;
-  ctx.globalAlpha = a;
-  ctx.fillStyle = "rgba(7,20,24,0.6)";
-  ctx.fillRect(sx1 - tw / 2 - 3, sy1 - Math.max(L * 0.55, 9) - 10, tw + 6, 12);
-  ctx.fillStyle = "rgba(170,215,255,0.95)";
-  ctx.fillText(label, sx1, sy1 - Math.max(L * 0.55, 9) - 1);
+  ctx.strokeStyle = `rgba(120,200,255,${(0.72 * a).toFixed(2)})`;
+  ctx.lineWidth = highlight ? 1.8 : 1.15;
+  ctx.setLineDash(highlight ? [6, 4] : [4, 5]);
+  ctx.beginPath();
+  for (let i = 0; i <= 18; i++) {
+    const pt = plannedMovePose(s, i / 18), x = wx(v, pt.x), y = wy(v, pt.y);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke(); ctx.setLineDash([]);
+  const x1 = wx(v, end.x), y1 = wy(v, end.y);
+  const L = shipScreenLen(v, s), B = Math.max(3, L * (s.beam / s.length));
+  ctx.translate(x1, y1); rotateBowMinusY(ctx, end.heading);
+  ctx.globalAlpha = 0.40 * a;
+  hullPath(ctx, L, B);
+  ctx.strokeStyle = "rgba(160,218,252,0.96)"; ctx.lineWidth = highlight ? 1.5 : 1;
+  ctx.stroke();
+  ctx.restore();
+  if (!highlight) return;
+  const ah = end.heading * Math.PI / 180;
+  const ax = Math.sin(ah), ay = -Math.cos(ah), len = Math.max(24, L * 1.05);
+  ctx.save(); ctx.strokeStyle = "rgba(180,225,255,0.92)"; ctx.fillStyle = ctx.strokeStyle; ctx.lineWidth = 1.4;
+  ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x1 + ax * len, y1 + ay * len); ctx.stroke();
+  const tx = x1 + ax * len, ty = y1 + ay * len, px = -ay, py = ax;
+  ctx.beginPath(); ctx.moveTo(tx, ty); ctx.lineTo(tx - ax * 7 + px * 4, ty - ay * 7 + py * 4); ctx.lineTo(tx - ax * 7 - px * 4, ty - ay * 7 - py * 4); ctx.closePath(); ctx.fill();
+  ctx.font = "600 10px ui-monospace, SF Mono, monospace"; ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+  const label = s.name.replace(/\s*\(.*\)/, ""), tw = ctx.measureText(label).width;
+  ctx.fillStyle = "rgba(7,20,24,0.58)"; ctx.fillRect(x1 - tw / 2 - 3, y1 - Math.max(L * 0.55, 9) - 10, tw + 6, 12);
+  ctx.fillStyle = "rgba(170,215,255,0.96)"; ctx.fillText(label, x1, y1 - Math.max(L * 0.55, 9) - 1);
   ctx.restore();
 }
 
@@ -4693,7 +4732,7 @@ function tickEffects(dt) {
         const dx = x1 - x0, dy = y1 - y0;
         e.x0 = x0; e.y0 = y0; e.x1 = x1; e.y1 = y1;
         e.dir = Math.atan2(dy, dx);
-        e.dur = Math.max(0.25, Math.min(0.7, 0.22 + Math.hypot(dx, dy) / 12000));
+        e.dur = Math.max(0.46, Math.min(1.15, 0.38 + Math.hypot(dx, dy) / 9000));
       }
       e.set = true;
     }
@@ -4823,12 +4862,13 @@ function launchTorpedo(s, T) {
   logLine(`${s.name} launches torpedoes at ${T.name}.`, "");
 }
 
-function torpedoHit(target, impact) {
+function torpedoHit(target, impact, period) {
   // Underwater blast: severe flooding and machinery shock, but not an automatic capital-ship kill.
+  const modern = period === "1905";
   const oldEngine = target.engine;
-  target.flooding = clamp(target.flooding + 32 + Math.random() * 22, 0, 100);
-  target.structure -= target.structureMax * (0.10 + Math.random() * 0.06);
-  target.engine = clamp(target.engine - (0.18 + Math.random() * 0.08), 0.1, 1);
+  target.flooding = clamp(target.flooding + (modern ? 36 : 32) + Math.random() * (modern ? 25 : 22), 0, 100);
+  target.structure -= target.structureMax * ((modern ? 0.12 : 0.10) + Math.random() * (modern ? 0.07 : 0.06));
+  target.engine = clamp(target.engine - ((modern ? 0.21 : 0.18) + Math.random() * (modern ? 0.10 : 0.08)), 0.1, 1);
   target.machineryHits = (target.machineryHits || 0) + 1;
   target.engineRepairCeiling = Math.min(target.engineRepairCeiling == null ? 1 : target.engineRepairCeiling,
     target.engine + Math.max(0, oldEngine - target.engine) * 0.32);
@@ -4896,8 +4936,31 @@ function torpedoAimSpreadDeg(shooter, target, range) {
 function torpedoJitterDeg(spreadDeg) {
   return ((Math.random() + Math.random() + Math.random()) - 1.5) * spreadDeg;
 }
-function yaluTorpedoFailure(side) {
+function torpedoProfileForScenario() {
+  if (SCN.id === "yalu") return {
+    id: "1894", speedMps: 13.6, activeRun: 760, crippledRun: 760, cooldown: 260,
+    maxSalvo: 2, closeSpreadRun: 540,
+  };
+  if (SCN.id === "tsushima" || SCN.id === "tsushima_approach") return {
+    id: "1905", speedMps: 15.2, activeRun: 850, crippledRun: 1200, cooldown: 360,
+    maxSalvo: 1, closeSpreadRun: 0,
+  };
+  return null;
+}
+function periodTorpedoFailure(side, period) {
   const u = Math.random();
+  if (period === "1905") {
+    if (side === "Russia") {
+      if (u < 0.05) return "misrun";
+      if (u < 0.12) return "depth";
+      if (u < 0.20) return "dud";
+    } else {
+      if (u < 0.03) return "misrun";
+      if (u < 0.08) return "depth";
+      if (u < 0.13) return "dud";
+    }
+    return null;
+  }
   if (side === "China") {
     if (u < 0.11) return "misrun";
     if (u < 0.25) return "depth";
@@ -4909,6 +4972,7 @@ function yaluTorpedoFailure(side) {
   }
   return null;
 }
+function yaluTorpedoFailure(side) { return periodTorpedoFailure(side, "1894"); }
 function torpedoInterceptAt(shooter, target, launchFrac, speedMps, maxRun) {
   const from = movementPose(shooter, launchFrac);
   const rb = Math.abs(((relativeBearing(from, movementPose(target, launchFrac)) + 540) % 360) - 180);
@@ -4936,17 +5000,28 @@ function torpedoInterceptAt(shooter, target, launchFrac, speedMps, maxRun) {
   }
   return null;
 }
-function bestYaluTorpedoSolution(shooter, target) {
-  const speedMps = 13.6;                                   // about 26.5 kn
-  const maxRun = 760;                                      // useful 1894 battle run, not nominal endurance
+function targetTorpedoRunLimit(target, profile) {
+  const speedFrac = clamp((target.maxSpeed || 1) * (target.throttle == null ? 1 : target.throttle) / Math.max(1, target.maxSpeed || 1), 0, 1);
+  const crippled = target.out || target.engine < 0.48 || target.steering < 0.50 || speedFrac < 0.36;
+  return crippled ? profile.crippledRun : profile.activeRun;
+}
+function bestPeriodTorpedoSolution(shooter, target, profile) {
+  if (!profile) return null;
+  const maxRun = targetTorpedoRunLimit(target, profile);
   let best = null;
   for (let f = 0.04; f <= 0.78; f += 0.05) {
-    const sol = torpedoInterceptAt(shooter, target, f, speedMps, maxRun);
+    const sol = torpedoInterceptAt(shooter, target, f, profile.speedMps, maxRun);
     if (!sol) continue;
     const score = sol.runDist + f * 65;
-    if (!best || score < best.score) best = Object.assign({ score, speedMps, maxRun }, sol);
+    if (!best || score < best.score) best = Object.assign({ score, speedMps: profile.speedMps, maxRun, period: profile.id }, sol);
   }
   return best;
+}
+function bestYaluTorpedoSolution(shooter, target) {
+  return bestPeriodTorpedoSolution(shooter, target, { id: "1894", speedMps: 13.6, activeRun: 760, crippledRun: 760 });
+}
+function bestTsushimaTorpedoSolution(shooter, target) {
+  return bestPeriodTorpedoSolution(shooter, target, { id: "1905", speedMps: 15.2, activeRun: 850, crippledRun: 1200 });
 }
 function torpedoIntersectsHull(t, targetPose, target) {
   if (!targetPose || !target) return false;
@@ -4960,7 +5035,7 @@ function torpedoIntersectsHull(t, targetPose, target) {
   const halfB = Math.max(3.5, (target.beam || 10) * 0.60);
   return (along * along) / (halfL * halfL) + (across * across) / (halfB * halfB) <= 1;
 }
-function makeYaluTorpedo(shooter, target, sol, fanDeg, failure) {
+function makePeriodTorpedo(shooter, target, sol, fanDeg, failure, profile) {
   // Even a correct geometric lead was vulnerable to range, speed and helm-estimation error.
   // Apply that uncertainty along the target's course before the smaller angular tube error.
   const leadBandSec = 14 + sol.runDist / 42;
@@ -4986,8 +5061,11 @@ function makeYaluTorpedo(shooter, target, sol, fanDeg, failure) {
     x: startX, y: startY, startX, startY, hr, travelled: 0, runDist,
     launchFrac: sol.launchFrac, arrivalFrac: sol.launchFrac + (runDist / sol.speedMps) / GAME_TURN_SECONDS,
     delay: sol.launchFrac * dur, travelDur: Math.max(0.24, (runDist / sol.speedMps) / GAME_TURN_SECONDS * dur),
-    failure, resolved: false, dead: false, trail: [], life: 1,
+    failure, period: (profile && profile.id) || sol.period || "1894", resolved: false, dead: false, trail: [], life: 1,
   };
+}
+function makeYaluTorpedo(shooter, target, sol, fanDeg, failure) {
+  return makePeriodTorpedo(shooter, target, sol, fanDeg, failure, { id: "1894" });
 }
 function resolveTorpedoesLegacy() {
   for (const s of game.ships) {
@@ -5039,34 +5117,35 @@ function telTorpedoResolve(t, result) {
 }
 
 function resolveTorpedoes() {
-  if (SCN.id !== "yalu") { resolveTorpedoesLegacy(); return; }
+  const profile = torpedoProfileForScenario();
+  if (!profile) { resolveTorpedoesLegacy(); return; }
   for (const s of game.ships) {
     if (s.out || !s.torpedoes || (s.torpedoes.count || 0) <= 0) continue;
     if ((s.torpedoes.cooldownLeft || 0) > 0) { s.torpedoes.cooldownLeft = Math.max(0, s.torpedoes.cooldownLeft - GAME_TURN_SECONDS); continue; }
     let best = null, target = null;
     const ordered = s.targetId ? shipById(s.targetId) : null;
     if (ordered && !ordered.out && ordered.side !== s.side) {
-      const sol = bestYaluTorpedoSolution(s, ordered);
+      const sol = bestPeriodTorpedoSolution(s, ordered, profile);
       if (sol) { best = sol; target = ordered; }
     }
     if (!best) {
       for (const e of game.ships) {
         if (e.out || e.side === s.side) continue;
-        const sol = bestYaluTorpedoSolution(s, e);
+        const sol = bestPeriodTorpedoSolution(s, e, profile);
         if (sol && (!best || sol.score < best.score)) { best = sol; target = e; }
       }
     }
     if (!best || !target) continue;
-    const salvo = Math.min(s.torpedoes.count, best.runDist <= 540 ? 2 : 1);
+    const salvo = Math.min(s.torpedoes.count, profile.maxSalvo, profile.maxSalvo > 1 && best.runDist <= profile.closeSpreadRun ? 2 : 1);
     const fan = salvo === 2 ? [-0.75, 0.75] : [0];
     s.torpedoes.count -= salvo;
-    s.torpedoes.cooldownLeft = 260;
+    s.torpedoes.cooldownLeft = profile.cooldown;
     if (s.torpedoes.count <= 0) s.torpedoes.ready = false;
     const launchDelay = best.launchFrac * ((game.exec && game.exec.dur) || 5.5);
     game.effects.push({ type: "torpLaunch", x: best.from.x, y: best.from.y, hr: Math.atan2(best.aim.x - best.from.x, -(best.aim.y - best.from.y)), life: 1, fade: 2.1, delay: launchDelay });
     for (let i = 0; i < salvo; i++) {
-      const failure = yaluTorpedoFailure(s.side);
-      const torp = makeYaluTorpedo(s, target, best, fan[i] || 0, failure);
+      const failure = periodTorpedoFailure(s.side, profile.id);
+      const torp = makePeriodTorpedo(s, target, best, fan[i] || 0, failure, profile);
       torp.telId = telTorpedoLaunch(s, target, best, failure, i, salvo);
       game.torpedoes.push(torp);
       const A = telAgg(s.id); A.torpFired += 1; if (failure) A.torpFailures = (A.torpFailures || 0) + 1;
@@ -5074,6 +5153,7 @@ function resolveTorpedoes() {
     logLine(`${s.name} launches ${salvo > 1 ? `a spread of ${salvo} torpedoes` : "a torpedo"} at ${target.name}.`, "");
   }
 }
+
 function resolveTorpedoArrival(t, targetPose) {
   if (t.resolved) return;
   t.resolved = true; t.dead = true;
@@ -5098,7 +5178,7 @@ function resolveTorpedoArrival(t, targetPose) {
     return;
   }
   telTorpedoResolve(t, "hit");
-  torpedoHit(T, { x: t.x, y: t.y });
+  torpedoHit(T, { x: t.x, y: t.y }, t.period);
   const A = t.sourceId ? telAgg(t.sourceId) : null; if (A) A.torpHit = (A.torpHit || 0) + 1;
   const D = telAgg(T.id); D.torpHitTaken = (D.torpHitTaken || 0) + 1;
 }
@@ -5291,6 +5371,42 @@ function orderedSpeedKn(s) {
 // ===========================================================================
 function squadronOf(id) { return game.squadrons.find((sq) => sq.members.includes(id)) || null; }
 function squadronById(id) { return game.squadrons.find((sq) => sq.id === id) || null; }
+
+// Squadron organisation is a command preference, not battle damage. Keep a clean
+// blueprint so Restart can reset the action without silently deleting the player's groups.
+function snapshotSquadronOrganisation() {
+  return game.squadrons.map((sq) => ({
+    id: sq.id, members: sq.members.slice(), leaderId: sq.leaderId,
+    name: sq.name || `Squadron ${sq.id}`, autoFormed: !!sq.autoFormed,
+    formation: sq.formation || "line", spacing: sq.spacing || STATION_M,
+  }));
+}
+function rememberSquadronOrganisation() {
+  game._squadronBlueprint = snapshotSquadronOrganisation();
+}
+function restoreSquadronOrganisation(blueprint) {
+  if (!Array.isArray(blueprint)) return;
+  const restored = [];
+  let maxId = 0;
+  for (const q of blueprint) {
+    const members = (q.members || []).filter((id, i, all) => all.indexOf(id) === i && (() => {
+      const s = shipById(id); return s && s.side === game.playerSide;
+    })());
+    if (members.length < 2) continue;
+    const id = Number.isFinite(q.id) ? q.id : maxId + 1;
+    maxId = Math.max(maxId, id);
+    restored.push({
+      id, members, leaderId: members.includes(q.leaderId) ? q.leaderId : members[0],
+      name: q.name || `Squadron ${id}`, autoFormed: !!q.autoFormed,
+      formation: q.formation || "line", spacing: clamp(q.spacing || STATION_M, 250, 900),
+    });
+  }
+  game.squadrons = restored;
+  game._squadSeq = maxId;
+  game.selSquadId = null;
+  game.menuMode = "ship";
+  rebuildSquadronLines();
+}
 // Build the station-keeping lines from the squadrons: flag leads, the rest fall in astern.
 function rebuildSquadronLines() {
   for (const s of game.ships) { s._follow = null; s._inLine = false; }
@@ -5359,6 +5475,7 @@ function autoFormHistoricalSquadrons() {
 function disbandSquadron(id) {
   game.squadrons = game.squadrons.filter((sq) => sq.id !== id);
   rebuildSquadronLines();
+  rememberSquadronOrganisation();
 }
 function detachShipFromSquadron(shipId) {
   const sq = squadronOf(shipId); if (!sq) return;
@@ -5367,9 +5484,10 @@ function detachShipFromSquadron(shipId) {
   if (sq.leaderId === shipId) sq.leaderId = sq.members[0] || null;
   if (sq.members.length < 2) game.squadrons = game.squadrons.filter((q) => q.id !== sq.id);
   rebuildSquadronLines();
+  rememberSquadronOrganisation();
 }
-function squadronSetFormation(sq, formation) { if (sq) { sq.formation = formation || "line"; rebuildSquadronLines(); } }
-function squadronAdjustSpacing(sq, delta) { if (sq) sq.spacing = clamp((sq.spacing || STATION_M) + delta, 250, 900); }
+function squadronSetFormation(sq, formation) { if (sq) { sq.formation = formation || "line"; rebuildSquadronLines(); rememberSquadronOrganisation(); } }
+function squadronAdjustSpacing(sq, delta) { if (sq) { sq.spacing = clamp((sq.spacing || STATION_M) + delta, 250, 900); rememberSquadronOrganisation(); } }
 // Squadron orders write to every member; individuals are overridden because last write wins.
 function squadronSetDoctrine(sq, d) { for (const id of sq.members) { const s = shipById(id); if (s) s.doctrine = d; } }
 function squadronSetTarget(sq, tid) { for (const id of sq.members) { const s = shipById(id); if (s && !s.out) s.targetId = tid; } }
@@ -5564,27 +5682,9 @@ function startExecute() {
 }
 function movementPose(s, progress) {
   if (s._ax1 == null) return { x: s.x, y: s.y, heading: s.heading };
-  const p = clamp(progress, 0, 1);
-  const ease = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2;
-  const chord = Math.hypot(s._ax1 - s._ax0, s._ay1 - s._ay0);
-  if (chord < HEX_M * 0.3) {
-    const dh = ((s._ah1 - s._ah0 + 540) % 360) - 180;
-    return { x: s._ax0, y: s._ay0, heading: (s._ah0 + dh * ease + 360) % 360 };
-  }
-  const d = chord / 3;
-  const sh = s._ah0 * Math.PI / 180, eh = s._ah1 * Math.PI / 180;
-  const sdx = Math.sin(sh), sdy = -Math.cos(sh), edx = Math.sin(eh), edy = -Math.cos(eh);
-  const p0x = s._ax0, p0y = s._ay0, p3x = s._ax1, p3y = s._ay1;
-  const p1x = p0x + sdx * d, p1y = p0y + sdy * d;
-  const p2x = p3x - edx * d, p2y = p3y - edy * d;
-  const t = ease, mt = 1 - t;
-  const x = mt*mt*mt*p0x + 3*mt*mt*t*p1x + 3*mt*t*t*p2x + t*t*t*p3x;
-  const y = mt*mt*mt*p0y + 3*mt*mt*t*p1y + 3*mt*t*t*p2y + t*t*t*p3y;
-  const tx = 3*mt*mt*(p1x-p0x) + 6*mt*t*(p2x-p1x) + 3*t*t*(p3x-p2x);
-  const ty = 3*mt*mt*(p1y-p0y) + 6*mt*t*(p2y-p1y) + 3*t*t*(p3y-p2y);
-  const heading = tx*tx + ty*ty > 1e-6 ? ((Math.atan2(tx, -ty) * 180 / Math.PI) % 360 + 360) % 360 : s._ah1;
-  return { x, y, heading };
+  return moveCurvePose(s._ax0, s._ay0, s._ah0, s._ax1, s._ay1, s._ah1, progress);
 }
+
 function stepExecute(dt) {
   const e = game.exec; if (!e) return;
   e.t += dt; const p = Math.min(1, e.t / e.dur);
@@ -5786,9 +5886,10 @@ function loop(nowArg) {
   if (!(dt > 0)) dt = 0.016;
   if (dt > 0.1) dt = 0.1;
   try {
-    if (game.exec) stepExecute(dt);
-    if (game.effects.length) tickEffects(dt);
-    if (game.torpedoes.length) advanceTorpedoes(dt);
+    const visualDt = game.exec ? resolutionDt(dt) : dt;
+    if (game.exec) stepExecute(visualDt);
+    if (game.effects.length) tickEffects(visualDt);
+    if (game.torpedoes.length) advanceTorpedoes(visualDt);
     if (game._camGoal) {
       const g = game._camGoal, k = 1 - Math.pow(0.0018, dt);
       game.cam.x += (g.x - game.cam.x) * k; game.cam.y += (g.y - game.cam.y) * k;
@@ -5996,12 +6097,27 @@ function fmtClock(sec) {
   const m = Math.floor(sec / 60), s = Math.floor(sec % 60);
   return `${m}:${s < 10 ? "0" : ""}${s}`;
 }
+const EXEC_PLAYBACK_RATES = [0.5, 2 / 3, 1];
+function playbackRateLabel(rate) {
+  if (Math.abs(rate - 0.5) < 0.01) return "½×";
+  if (Math.abs(rate - 2 / 3) < 0.01) return "⅔×";
+  return "1×";
+}
+function resolutionDt(dt) { return dt * (game.playbackRate || 1); }
+function cyclePlaybackRate() {
+  const cur = game.playbackRate || 2 / 3;
+  let i = EXEC_PLAYBACK_RATES.findIndex((r) => Math.abs(r - cur) < 0.01);
+  game.playbackRate = EXEC_PLAYBACK_RATES[(i + 1 + EXEC_PLAYBACK_RATES.length) % EXEC_PLAYBACK_RATES.length];
+  syncPlayBtn(); showToast(`Resolution ${playbackRateLabel(game.playbackRate)}`);
+}
 function syncPlayBtn() {
   if (typeof document === "undefined") return;
   const pb = document.getElementById("playBtn");
   if (pb) pb.textContent = game.phase === "over" ? "·" : game.exec ? "Resolving" : "End Turn";
   const sb = document.getElementById("speedBtn");
-  if (sb) sb.classList.toggle("off", !game.exec);
+  const sl = document.getElementById("resolutionSpeedLabel");
+  if (sl) sl.textContent = playbackRateLabel(game.playbackRate || 2 / 3);
+  if (sb) { sb.classList.remove("off"); sb.title = "Resolution playback speed"; }
 }
 // ---- turn headline toast ---------------------------------------------------------
 function showToast(text, cls, ms, allowHtml) {
@@ -6057,6 +6173,7 @@ function renderMultiSelectPanel(body) {
     const sq = formSquadron(game.pendingSel.slice());
     game.multiSel = false; game.pendingSel = []; lastSelectionToggle = { id: null, t: 0 };
     if (sq) {
+      rememberSquadronOrganisation();
       game.selSquadId = sq.id; game.selectedId = sq.leaderId; game.menuMode = "squad";
       logLine(`Squadron ${sq.id} formed under ${shipById(sq.leaderId).name}.`, "");
     }
@@ -7525,6 +7642,7 @@ function loadGameFromCode(code) {
     game.squadrons = sv.squads.map((q) => ({ id: q.id, members: q.m || [], leaderId: q.l, name: q.n || `Squadron ${q.id}`, autoFormed: !!q.a, formation: q.f || "line", spacing: q.sp || STATION_M }));
     game._squadSeq = game.squadrons.reduce((m, q) => Math.max(m, q.id || 0), 0);
     rebuildSquadronLines();
+    rememberSquadronOrganisation();
   }
   rebuildShipIndex();
   game.turn = sv.turn || 1;
@@ -7543,9 +7661,15 @@ function loadGameFromCode(code) {
 
 function restartBattle() {
   const ls = game._lastStart;
+  const squadronBlueprint = Array.isArray(game._squadronBlueprint)
+    ? game._squadronBlueprint.map((q) => ({ ...q, members: q.members.slice() }))
+    : snapshotSquadronOrganisation();
   ohOv("gameMenu"); ohOv("resultScreen");
   if (ls && SCENARIO_CONFIGS[ls.scn]) { setScenario(ls.scn); startGame(ls.side, ls.form); }
   else { startGame(game.playerSide || SCN.playerDefault, "historical"); }
+  restoreSquadronOrganisation(squadronBlueprint);
+  rememberSquadronOrganisation();
+  syncPanel();
 }
 
 function quitToMenu() {
@@ -7606,7 +7730,7 @@ function init() {
   // action rail
   const bind = (id, fn) => { const el = document.getElementById(id); if (el) el.addEventListener("click", fn); };
   bind("playBtn", () => startExecute());
-  bind("speedBtn", () => skipExecute());
+  bind("speedBtn", () => cyclePlaybackRate());
   bind("ringsBtn", (e) => { game.show.rings = !game.show.rings; e.currentTarget.classList.toggle("off", !game.show.rings); });
   bind("labelsBtn", (e) => { game.show.labels = !game.show.labels; e.currentTarget.classList.toggle("off", !game.show.labels); });
   bind("arcsBtn", (e) => { game.show.arcs = !game.show.arcs; e.currentTarget.classList.toggle("off", !game.show.arcs); });
