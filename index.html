@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.60" />
+<meta name="application-version" content="0.61" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
 <title>Echelon · Naval Action</title>
@@ -552,6 +552,64 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .squad-access{min-width:38px!important;width:38px!important;padding:0!important}.squad-access span{display:none!important}.squad-access svg{width:20px!important;height:20px!important}.squadron-chips{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:none;gap:7px;z-index:18;pointer-events:none;transition:bottom .16s ease}.squadron-chips.show{display:flex}.squad-chip{pointer-events:auto;min-width:34px;height:30px;padding:0 10px;border-radius:16px;border:1px solid rgba(200,164,92,.45);background:rgba(5,22,28,.72);color:var(--ink);font-family:var(--mono);font-weight:700;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.3);backdrop-filter:blur(2px)}.squad-chip.active{border-color:var(--brass);color:var(--brass);background:rgba(20,45,48,.9);box-shadow:0 0 0 1px rgba(200,164,92,.22),0 2px 10px rgba(0,0,0,.38)}@media(max-width:560px){.squadron-chips{bottom:8px;gap:6px}.squad-chip{min-width:32px;height:28px;padding:0 9px}}.squadron-card{max-width:480px}.squad-picker-note,.squad-picker-empty{font-size:12px;color:var(--ink-dim);margin:0 0 12px}.squad-pick{width:100%;display:grid;grid-template-columns:34px 1fr 18px;align-items:center;gap:8px;text-align:left;border:1px solid rgba(200,164,92,.22);background:rgba(8,28,34,.42);color:var(--ink);border-radius:8px;padding:10px;margin:0 0 7px}.squad-pick:hover,.squad-pick:active{border-color:rgba(200,164,92,.6);background:rgba(16,48,57,.58)}.squad-pick-icon svg{width:26px;height:22px}.squad-pick b{display:block;font-size:12px}.squad-pick small{display:block;color:var(--ink-dim);font-family:var(--mono);font-size:9px;margin-top:3px}.squad-pick-arrow{font-size:24px;color:var(--brass)}.squad-new{margin-top:12px;width:100%}
 @media(max-width:560px){.squad-access{min-width:38px!important;width:38px!important}.squad-access span{display:none!important}}
 @media (max-width:960px) and (orientation:portrait){#main:has(#panel.expanded) .squadron-chips{bottom:calc(min(20dvh,168px) + 18px)}}
+
+/* v0.61 portrait command layout: fixed priorities rather than one chaotic strip.
+   Landscape retains the existing vertical command pane unchanged. */
+@media (max-width:960px) and (orientation:portrait){
+  #panel{left:5px;right:5px;bottom:5px;height:min(26dvh,218px);max-height:218px;border-radius:13px}
+  #panelBody{overflow:hidden;padding:5px 6px 7px;touch-action:manipulation}
+  .command-glass{width:100%;min-width:0;height:100%;padding:5px 6px;gap:5px 7px;overflow:hidden}
+
+  .squad-command{display:grid;grid-template-columns:minmax(0,1fr) 104px;grid-template-rows:30px 63px 67px;grid-template-areas:"head head" "formation doctrine" "helm helm";align-items:stretch}
+  .ship-command{display:grid;grid-template-columns:minmax(0,1fr) 104px;grid-template-rows:30px 67px 52px;grid-template-areas:"head head" "helm doctrine" "status status";align-items:stretch}
+
+  .command-head{grid-area:head;width:auto!important;min-width:0!important;display:flex;align-items:center;height:30px;padding:0 2px;gap:5px;border-bottom:1px solid rgba(200,164,92,.12)}
+  .command-head .command-name,.command-head>div:not(.help-pop){min-width:0;flex:1}
+  .command-title{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .command-sub{font-size:8px;white-space:nowrap}
+  .command-head .cycle-btn{width:25px;height:25px;min-width:25px}
+  .command-head .icon-btn.tiny{width:25px;height:25px;min-width:25px;padding:0}
+
+  .squad-command .formation-block{grid-area:formation;display:grid;grid-template-columns:minmax(0,1fr) 74px;align-items:center;gap:5px;padding:0;margin:0;min-width:0}
+  .squad-command .formation-block .glyph-head{display:none}
+  .squad-command .formation-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin:0;align-items:center}
+  .squad-command .formation-choice{width:auto;min-width:0;height:49px;padding:2px}
+  .squad-command .formation-choice svg{width:25px;height:25px}
+  .squad-command .spacing-controls{display:grid;grid-template-columns:22px 1fr 22px;gap:2px;align-items:center;margin:0}
+  .squad-command .spacing-controls .text-icon{width:22px;min-width:22px;height:28px;padding:0}
+  .squad-command .spacing-readout{min-width:0;font-size:8px}
+
+  .helm-block{grid-area:helm;display:flex;align-items:center;min-width:0;margin:0!important;padding:0}
+  .helm-block .glyph-head{display:none}
+  .helm-strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;width:100%;margin:0}
+  .helm-choice{width:auto!important;max-width:none!important;height:61px;padding:1px}
+  .heading-dia{width:32px!important;height:32px!important}
+  .helm-choice small{right:4px;bottom:2px;font-size:8px}
+
+  .doctrine-icons{grid-area:doctrine;display:grid!important;grid-template-columns:repeat(3,1fr);grid-template-rows:14px 1fr;gap:3px;margin:0!important;align-items:stretch;justify-content:stretch}
+  .doctrine-icons::before{content:"SHELL";grid-column:1/-1;align-self:center;text-align:center;font-family:var(--mono);font-size:7px;letter-spacing:1px;color:var(--brass-dim)}
+  .doctrine-icons .text-icon{width:auto;min-width:0;height:42px;padding:0 3px;font-size:9px}
+  .doctrine-icons .icon-btn{width:28px;min-width:28px;height:42px;padding:0}
+
+  .ship-command .status-strip{grid-area:status;display:flex!important;flex-wrap:nowrap;gap:4px;max-width:none;width:100%;margin:0;overflow-x:auto;align-items:center}
+  .ship-command .status-strip .metric-chip{height:31px;padding:3px 5px}
+  .ship-command .status-strip .metric-chip svg{width:14px;height:14px}
+
+  .squad-command .target-chip,.squad-command .member-grid,.squad-command .command-foot,
+  .ship-command .systems-strip,.ship-command .target-chip,.ship-command .battery-strip,
+  .mini-profile{display:none!important}
+
+  .compact-select{display:grid;grid-template-columns:44px minmax(0,1fr) 76px;align-items:center;width:100%;height:100%;gap:6px}
+  .compact-select .sq-members{width:100%;overflow-x:auto}
+  .compact-select .sq-member{min-width:92px;max-width:126px}
+  .compact-select .sq-member small{margin-left:auto;color:var(--brass);font-size:8px}
+  .compact-select .sq-actions{justify-content:flex-end}
+
+  .help-pop>div,.metric-pop>div{bottom:calc(min(26dvh,218px) + 13px + env(safe-area-inset-bottom))}
+  #main #chartWrap.command-open .squadron-chips{bottom:calc(min(26dvh,218px) + 28px)!important}
+  #chartWrap:not(.command-open) .squadron-chips{bottom:12px}
+  .squadron-chips{z-index:20;max-width:calc(100% - 20px);overflow-x:auto;justify-content:flex-start;padding:2px 3px;transform:translateX(-50%)}
+}
 </style>
 </head>
 <body>
@@ -610,7 +668,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v0.60</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.61</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -652,7 +710,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v0.60 · Tsushima systems pass</div>
+    <div class="build-stamp" id="buildStamp">v0.61 · squadron control pass</div>
   </div>
 </div>
 
@@ -3327,7 +3385,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "0.60";
+const ECHELON_VERSION = "0.61";
 
 // ---- module-global game state ---------------------------------------------
 const game = {
@@ -4553,7 +4611,7 @@ function redraw() {
       const lx = wx(v, s.x) + r + 7, ly = wy(v, s.y) - r - 1;
       ctx.fillStyle = "rgba(8,22,26,0.68)"; ctx.beginPath(); ctx.arc(lx, ly, 6.4, 0, Math.PI * 2); ctx.fill();
       ctx.lineWidth = 1; ctx.strokeStyle = "rgba(240,210,120,0.72)"; ctx.stroke();
-      ctx.fillStyle = "rgba(240,210,120,0.96)"; ctx.fillText(String(activeSq.id), lx, ly + 0.5);
+      ctx.fillStyle = "rgba(240,210,120,0.96)"; ctx.fillText(String(squadronDisplayNumber(activeSq)), lx, ly + 0.5);
     }
     ctx.restore();
   }
@@ -5371,6 +5429,16 @@ function orderedSpeedKn(s) {
 // ===========================================================================
 function squadronOf(id) { return game.squadrons.find((sq) => sq.members.includes(id)) || null; }
 function squadronById(id) { return game.squadrons.find((sq) => sq.id === id) || null; }
+function playerSquadrons() {
+  return game.squadrons.filter((sq) => {
+    const lead = shipById(sq.leaderId);
+    return lead && !lead.out && lead.side === game.playerSide && sq.members.some((id) => { const x = shipById(id); return x && !x.out; });
+  });
+}
+function squadronDisplayNumber(sq) {
+  const i = playerSquadrons().findIndex((q) => q.id === (sq && sq.id));
+  return i >= 0 ? i + 1 : (sq ? sq.id : "");
+}
 
 // Squadron organisation is a command preference, not battle damage. Keep a clean
 // blueprint so Restart can reset the action without silently deleting the player's groups.
@@ -5434,7 +5502,12 @@ function reconcileSquadrons() {
 // New squadron from an ordered list of ship ids (first is the flag). Ships are pulled out
 // of any squadron they were in; squadrons that fall below two ships are dissolved.
 function formSquadron(ids, name, autoFormed) {
-  const members = ids.filter((id, i) => ids.indexOf(id) === i && shipById(id));
+  // A ship changes squadron only when it was deliberately included in this exact
+  // selection. Never inherit the currently inspected ship or any hidden group state.
+  const members = ids.filter((id, i) => ids.indexOf(id) === i && (() => {
+    const s = shipById(id);
+    return s && !s.out && s.side === game.playerSide;
+  })());
   if (members.length < 2) return null;
   for (const sq of game.squadrons) sq.members = sq.members.filter((id) => !members.includes(id));
   game.squadrons = game.squadrons.filter((sq) => sq.members.length >= 2);
@@ -6150,11 +6223,13 @@ function setMultiSelBtn() {
 function renderMultiSelectPanel(body) {
   const rows = game.pendingSel.map((id, i) => {
     const s = shipById(id); if (!s) return "";
-    return `<button class="sq-member${i === 0 ? " flag" : ""}" data-pend="${id}" title="${s.name}">${i === 0 ? "◆" : i + 1}<span>${s.name}</span></button>`;
+    const previous = squadronOf(id);
+    const transfer = previous ? `<small>S${squadronDisplayNumber(previous)}</small>` : "";
+    return `<button class="sq-member${i === 0 ? " flag" : ""}" data-pend="${id}" title="${s.name}${previous ? ` · transfer from Squadron ${squadronDisplayNumber(previous)}` : ""}">${i === 0 ? "◆" : i + 1}<span>${s.name}</span>${transfer}</button>`;
   }).join("") || `<div class="sq-empty">${iconSvg("squad")}</div>`;
   body.innerHTML = `<div class="sq-panel compact-select">
       <div class="sq-select-head">${iconSvg("squad")}<b>${game.pendingSel.length}</b>
-        <details class="help-pop"><summary class="icon-btn tiny" aria-label="Squadron selection help">?</summary><div>Tap ships to add or remove them. The first selected ship is the flagship. ✓ creates the squadron.</div></details>
+        <details class="help-pop"><summary class="icon-btn tiny" aria-label="Squadron selection help">?</summary><div>Selection starts empty. Tap only the ships to include. The first selected ship is the flagship. Ships already assigned transfer only when you tap them. ✓ creates the squadron.</div></details>
       </div>
       <div class="sq-members">${rows}</div>
       <div class="sq-actions">
@@ -6321,6 +6396,12 @@ function wireMetricDetails(body) {
   }));
 }
 
+function setPanelExpanded(panel, expanded) {
+  panel.classList.toggle("expanded", !!expanded);
+  const chart = document.getElementById("chartWrap");
+  if (chart) chart.classList.toggle("command-open", !!expanded);
+}
+
 function syncPanel() {
   if (typeof document === "undefined") return;
   const body = document.getElementById("panelBody");
@@ -6330,18 +6411,18 @@ function syncPanel() {
 
   // a tapped ship (own or enemy) shows its info card in this same docked panel
   const card = shipById(game.cardId);
-  if (card) { renderShipCard(body, card); panel.classList.add("expanded"); resizeCanvas(); return; }
+  if (card) { renderShipCard(body, card); setPanelExpanded(panel, true); resizeCanvas(); return; }
 
-  if (game.multiSel) { renderMultiSelectPanel(body); panel.classList.add("expanded"); resizeCanvas(); return; }
+  if (game.multiSel) { renderMultiSelectPanel(body); setPanelExpanded(panel, true); resizeCanvas(); return; }
   if (game.menuMode === "squad" && game.selSquadId) {
     const sq = squadronById(game.selSquadId);
-    if (sq && sq.members.some((id) => { const x = shipById(id); return x && !x.out; })) { renderSquadronPanel(body, sq); panel.classList.add("expanded"); resizeCanvas(); return; }
+    if (sq && sq.members.some((id) => { const x = shipById(id); return x && !x.out; })) { renderSquadronPanel(body, sq); setPanelExpanded(panel, true); resizeCanvas(); return; }
     game.selSquadId = null; game.menuMode = "ship";
   }
 
   const s = shipById(game.selectedId);
-  if (!s || s.out) { panel.classList.remove("expanded"); resizeCanvas(); return; }
-  panel.classList.add("expanded"); resizeCanvas();
+  if (!s || s.out) { setPanelExpanded(panel, false); resizeCanvas(); return; }
+  setPanelExpanded(panel, true); resizeCanvas();
 
   const t = shipById(game.targetId);
   const targetValid = t && !t.out && t.side !== s.side;
@@ -6568,7 +6649,12 @@ function onPointerUp(e) {
           const now = (typeof performance !== "undefined" ? performance.now() : Date.now());
           if (!(lastSelectionToggle.id === ship.id && now - lastSelectionToggle.t < 320)) {
             const i = game.pendingSel.indexOf(ship.id);
-            if (i >= 0) game.pendingSel.splice(i, 1); else game.pendingSel.push(ship.id);
+            if (i >= 0) game.pendingSel.splice(i, 1);
+            else {
+              game.pendingSel.push(ship.id);
+              const prior = squadronOf(ship.id);
+              if (prior) showToast(`${ship.name}: transfer from Squadron ${squadronDisplayNumber(prior)} if confirmed`, "", 1800);
+            }
             lastSelectionToggle = { id: ship.id, t: now };
             syncPanel();
           }
@@ -6838,10 +6924,7 @@ function renderSquadronChips() {
   if (typeof document === "undefined") return;
   const host = document.getElementById("squadronChips");
   if (!host) return;
-  const own = game.squadrons.filter((sq) => {
-    const lead = shipById(sq.leaderId);
-    return lead && !lead.out && lead.side === game.playerSide && sq.members.some((id) => { const x = shipById(id); return x && !x.out; });
-  });
+  const own = playerSquadrons();
   host.innerHTML = own.map((sq, i) => `<button class="squad-chip${game.menuMode === "squad" && game.selSquadId === sq.id ? " active" : ""}" data-squad-chip="${sq.id}" aria-label="Select squadron ${i + 1}" title="Select ${sq.name || `Squadron ${i + 1}`}">${i + 1}</button>`).join("");
   host.classList.toggle("show", own.length > 0 && game.started && game.phase !== "over");
   host.querySelectorAll("[data-squad-chip]").forEach((b) => b.addEventListener("click", () => {
@@ -6856,13 +6939,15 @@ function renderSquadronChips() {
 }
 
 function beginSquadronSelection() {
-  const selected = shipById(game.selectedId);
+  // Creation is deliberately blank. Previously the currently inspected ship was
+  // silently seeded into pendingSel, which could steal an apparently unrelated ship
+  // from an existing squadron when the new group was confirmed.
   game.multiSel = true;
   lastSelectionToggle = { id: null, t: 0 };
-  game.pendingSel = selected && selected.side === game.playerSide && !selected.out ? [selected.id] : [];
+  game.pendingSel = [];
   game.selectedId = null; game.selSquadId = null; game.menuMode = "ship"; game.cardId = null;
   const ov = document.getElementById("squadronOverlay"); if (ov) ov.classList.remove("show");
-  showToast(game.pendingSel.length ? "Tap more ships · ✓ to form" : "Tap ships · ✓ to form");
+  showToast("Tap ships · ✓ to form");
   setMultiSelBtn(); syncPanel();
 }
 
