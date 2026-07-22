@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.62" />
+<meta name="application-version" content="0.63" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
 <title>Echelon · Naval Action</title>
@@ -338,18 +338,29 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .result-roster{display:flex;gap:14px;margin:6px 0 4px;flex-wrap:wrap;}
 .roster-col{flex:1;min-width:220px;}
 .roster-h{margin-bottom:5px;}
-.result-roster .roster-row{display:flex;align-items:center;gap:7px;font-size:11.5px;padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.045);}
-.result-roster .roster-row .rr-name{flex:1;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.result-roster .roster-row .rr-stat{font-family:var(--mono);font-size:10px;color:var(--ink-dim);white-space:nowrap;}
-.result-roster .roster-row .rr-state{width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;flex:none;font-family:var(--mono);font-size:12px;font-weight:800;}
-.result-roster .roster-row .rr-sil{width:66px;height:22px;flex:none;object-fit:contain;opacity:.92;}
-.st-sunk .rr-sil,.st-out .rr-sil{opacity:.4;}
+.result-roster .roster-row{display:grid;grid-template-columns:66px 17px 28px minmax(112px,1fr) minmax(110px,180px);align-items:center;gap:7px;font-size:11.5px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.045);}
+.result-roster .roster-row .rr-name{min-width:0;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.result-roster .roster-row .rr-stat{min-width:0;font-family:var(--mono);font-size:10px;line-height:1.25;color:var(--ink-dim);white-space:normal;overflow-wrap:anywhere;text-align:right;}
+.result-roster .roster-row .rr-state{width:17px;height:17px;display:inline-flex;align-items:center;justify-content:center;border-radius:4px;font-family:var(--mono);font-size:12px;font-weight:800;}
+.result-roster .roster-row .rr-sil{width:66px;height:22px;object-fit:contain;opacity:.92;}
+.rr-class-chip{width:26px;height:18px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(232,221,199,.14);border-radius:5px;background:rgba(232,221,199,.045);color:var(--ink);}
+.rr-class-chip .type-glyph{margin:0;width:18px;height:12px;opacity:.95}.rr-class-chip .type-glyph svg{width:18px;height:12px}
+.st-sunk .rr-sil,.permanent-loss .rr-sil{opacity:.28;filter:grayscale(1);}
+.st-sunk .rr-class-chip,.permanent-loss .rr-class-chip{opacity:.38;filter:grayscale(1);}
 .st-sunk .rr-state,.st-out .rr-state,.st-heavy .rr-state,.st-dmg .rr-state,.st-ok .rr-state{background:rgba(232,221,199,.10);color:var(--ink-dim);border:1px solid rgba(232,221,199,.12);}
-.st-sunk .rr-name{text-decoration:line-through;opacity:.56;}
-.st-out .rr-name{text-decoration:line-through;opacity:.70;}
+.st-sunk .rr-name,.permanent-loss .rr-name{text-decoration:line-through;opacity:.56;}
+.st-out:not(.permanent-loss) .rr-name{opacity:.86;}
 .st-heavy .rr-state{background:rgba(232,221,199,.14);color:var(--ink);}
 .st-dmg .rr-state{background:rgba(232,221,199,.08);}
 .st-ok .rr-state{background:rgba(232,221,199,.04);}
+@media(max-width:620px){
+  .result-roster .roster-row{grid-template-columns:58px 17px 28px minmax(0,1fr);grid-template-areas:"sil state class name" "sil state class stat";align-items:center;column-gap:6px;row-gap:1px;padding:5px 0;}
+  .result-roster .roster-row .rr-sil{grid-area:sil;width:58px;height:22px}
+  .result-roster .roster-row .rr-state{grid-area:state}
+  .result-roster .roster-row .rr-class-chip{grid-area:class}
+  .result-roster .roster-row .rr-name{grid-area:name;display:block;min-width:0}
+  .result-roster .roster-row .rr-stat{grid-area:stat;text-align:left;white-space:normal;font-size:9.5px}
+}
 .result-tonnage{font-family:var(--mono);font-size:11px;color:var(--brass-dim);margin:2px 0 16px;}
 
 .loss-overview{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 0 10px;}
@@ -547,11 +558,16 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 }
 
 
-.loss-names{display:flex;flex-direction:column;gap:3px;margin:8px 0 2px;padding-top:7px;border-top:1px solid rgba(232,221,199,.08)}
-.loss-name{font-family:var(--mono);font-size:9px;line-height:1.35;color:var(--ink-dim)}.loss-name b{color:var(--ink);font-weight:650}.loss-name.total,.loss-name.abandoned{color:#c98d82}.loss-name.disabled{color:#d0b46d}
+.loss-names{display:flex;flex-direction:column;gap:4px;margin:8px 0 2px;padding-top:7px;border-top:1px solid rgba(232,221,199,.08)}
+.loss-name{display:grid;grid-template-columns:27px minmax(78px,1fr) minmax(100px,1.35fr);align-items:center;gap:6px;font-family:var(--mono);font-size:9px;line-height:1.3;color:var(--ink-dim)}
+.loss-name b{min-width:0;color:var(--ink);font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.loss-name .loss-status{min-width:0;white-space:normal;overflow-wrap:anywhere}.loss-class-chip{width:25px;height:17px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(232,221,199,.14);border-radius:5px;background:rgba(232,221,199,.04);color:var(--ink)}.loss-class-chip .type-glyph{margin:0;width:18px;height:12px}.loss-name.permanent .loss-class-chip{opacity:.35;filter:grayscale(1)}.loss-name.permanent b{text-decoration:line-through;opacity:.66}.loss-name.st-out,.loss-name.st-sunk{color:#c98d82}.loss-name.st-heavy{color:#d0b46d}
 .squad-access{min-width:38px!important;width:38px!important;padding:0!important}.squad-access span{display:none!important}.squad-access svg{width:20px!important;height:20px!important}.squadron-chips{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:none;gap:7px;z-index:18;pointer-events:none;transition:bottom .16s ease}.squadron-chips.show{display:flex}.squad-chip{pointer-events:auto;min-width:34px;height:30px;padding:0 10px;border-radius:16px;border:1px solid rgba(200,164,92,.45);background:rgba(5,22,28,.72);color:var(--ink);font-family:var(--mono);font-weight:700;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.3);backdrop-filter:blur(2px)}.squad-chip.active{border-color:var(--brass);color:var(--brass);background:rgba(20,45,48,.9);box-shadow:0 0 0 1px rgba(200,164,92,.22),0 2px 10px rgba(0,0,0,.38)}@media(max-width:560px){.squadron-chips{bottom:8px;gap:6px}.squad-chip{min-width:32px;height:28px;padding:0 9px}}.squadron-card{max-width:480px}.squad-picker-note,.squad-picker-empty{font-size:12px;color:var(--ink-dim);margin:0 0 12px}.squad-pick{width:100%;display:grid;grid-template-columns:34px 1fr 18px;align-items:center;gap:8px;text-align:left;border:1px solid rgba(200,164,92,.22);background:rgba(8,28,34,.42);color:var(--ink);border-radius:8px;padding:10px;margin:0 0 7px}.squad-pick:hover,.squad-pick:active{border-color:rgba(200,164,92,.6);background:rgba(16,48,57,.58)}.squad-pick-icon svg{width:26px;height:22px}.squad-pick b{display:block;font-size:12px}.squad-pick small{display:block;color:var(--ink-dim);font-family:var(--mono);font-size:9px;margin-top:3px}.squad-pick-arrow{font-size:24px;color:var(--brass)}.squad-new{margin-top:12px;width:100%}
 @media(max-width:560px){.squad-access{min-width:38px!important;width:38px!important}.squad-access span{display:none!important}}
 @media (max-width:960px) and (orientation:portrait){#main:has(#panel.expanded) .squadron-chips{bottom:calc(min(20dvh,168px) + 18px)}}
+@media (max-width:960px) and (orientation:landscape){
+  #chartWrap .squadron-chips{left:auto;right:12px;bottom:12px;transform:none;max-width:calc(100% - 24px);justify-content:flex-end;overflow-x:auto;padding:2px 3px;z-index:20}
+  #chartWrap.command-open .squadron-chips{right:calc(min(38vw,360px) + 18px);max-width:calc(62vw - 34px)}
+}
 
 /* v0.61 portrait command layout: fixed priorities rather than one chaotic strip.
    Landscape retains the existing vertical command pane unchanged. */
@@ -668,7 +684,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v0.62</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.63</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -710,7 +726,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v0.62 · trajectory refinement</div>
+    <div class="build-stamp" id="buildStamp">v0.63 · report and command polish</div>
   </div>
 </div>
 
@@ -2613,24 +2629,24 @@ function drawEffects(ctx, v, effects) {
       // it legible without the broad double-stroke used in v0.60-v0.61.
       const t = Math.max(0, Math.min(1, e.t || 0));
       const head = t;
-      const tail = Math.max(0, t - (e.heavy ? 0.24 : 0.18));
+      const tail = Math.max(0, t - (e.heavy ? 0.15 : 0.10));
       const xh = e.x0 + (e.x1 - e.x0) * head, yh = e.y0 + (e.y1 - e.y0) * head;
       const xt = e.x0 + (e.x1 - e.x0) * tail, yt = e.y0 + (e.y1 - e.y0) * tail;
       const visible = Math.sin(Math.PI * Math.min(1, t / 0.10)) * Math.sin(Math.PI * Math.min(1, (1 - t) / 0.06));
-      const vis = Math.max(0.14, visible);
-      // Very faint underlay prevents disappearance on bright phone panels, but the
-      // visible core is less than half the previous width.
-      ctx.globalAlpha = (e.heavy ? 0.18 : 0.12) * vis;
-      ctx.strokeStyle = e.heavy ? "rgba(255,205,126,0.82)" : "rgba(245,235,213,0.72)";
-      ctx.lineWidth = e.heavy ? 1.8 : 1.2;
+      const vis = Math.max(0.10, visible);
+      // Keep only a narrow, transient streak. The previous phone-readable underlay
+      // still read as a continuous stream when many batteries fired together.
+      ctx.globalAlpha = (e.heavy ? 0.09 : 0.045) * vis;
+      ctx.strokeStyle = e.heavy ? "rgba(255,205,126,0.74)" : "rgba(245,235,213,0.60)";
+      ctx.lineWidth = e.heavy ? 1.05 : 0.68;
       ctx.beginPath(); ctx.moveTo(wx(v, xt), wy(v, yt)); ctx.lineTo(wx(v, xh), wy(v, yh)); ctx.stroke();
-      ctx.globalAlpha = (e.heavy ? 0.72 : 0.54) * vis;
-      ctx.strokeStyle = e.heavy ? "rgba(255,235,196,0.96)" : "rgba(255,249,237,0.90)";
-      ctx.lineWidth = e.heavy ? 0.85 : 0.62;
+      ctx.globalAlpha = (e.heavy ? 0.52 : 0.36) * vis;
+      ctx.strokeStyle = e.heavy ? "rgba(255,235,196,0.92)" : "rgba(255,249,237,0.82)";
+      ctx.lineWidth = e.heavy ? 0.54 : 0.38;
       ctx.beginPath(); ctx.moveTo(wx(v, xt), wy(v, yt)); ctx.lineTo(wx(v, xh), wy(v, yh)); ctx.stroke();
-      ctx.globalAlpha = (e.heavy ? 0.82 : 0.62) * vis;
-      ctx.fillStyle = "rgba(255,252,244,0.96)";
-      ctx.beginPath(); ctx.arc(wx(v, xh), wy(v, yh), e.heavy ? 1.05 : 0.72, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = (e.heavy ? 0.62 : 0.42) * vis;
+      ctx.fillStyle = "rgba(255,252,244,0.92)";
+      ctx.beginPath(); ctx.arc(wx(v, xh), wy(v, yh), e.heavy ? 0.72 : 0.46, 0, Math.PI * 2); ctx.fill();
     } else if (e.type === "muzzle") {
       const sx = wx(v, e.x), sy = wy(v, e.y);
       ctx.globalAlpha = e.life; ctx.fillStyle = PALETTE.fireHot;
@@ -7174,8 +7190,14 @@ function warVerdict(outcome) {
       stratTag = "Disaster";
       stratLine = "both battleships are gone without equivalent destruction of the Japanese fighting core. The Beiyang Fleet ceases to deter and Japan can press for command of the Yellow Sea.";
     } else if (ic === 1) {
-      if (ed >= 38 || net > 2500) { stratTag = "Contested"; stratLine = "one battleship is lost, but Japanese losses prevent immediate command of the sea. Repair, reinforcement and political will will decide the campaign."; }
-      else { stratTag = "Setback"; stratLine = "losing a battleship weakens the fleet-in-being while Japan retains enough strength to press the campaign."; }
+      const closeContest = own >= foe - 0.05 && net >= -1500 && (foe <= 0.70 || ed >= 28);
+      if (closeContest || ed >= 38 || net > 2500) {
+        stratTag = "Campaign contested";
+        stratLine = "one battleship is lost, but the Combined Fleet is too badly damaged to secure command of the Yellow Sea. Repair, reinforcement and political will will decide the campaign.";
+      } else {
+        stratTag = "Setback";
+        stratLine = "losing a battleship weakens the fleet-in-being while Japan retains enough operational strength to press the campaign.";
+      }
     } else {
       if (ed >= 42 || net > 3500) { stratTag = "Advantage"; stratLine = "both battleships survive and the Japanese fighting core is mauled. Japan must refit before moving troops under naval cover, while China can reinforce and modernise."; }
       else if (cl <= 2) { stratTag = "Hold"; stratLine = "the fleet comes through largely whole and remains a fleet-in-being. Command of the Yellow Sea stays contested."; }
@@ -7241,12 +7263,18 @@ function tacticalNotes() {
 
 function sideSystemSummary(side) {
   const ships = game.ships.filter((s) => s.side === side);
+  const afloat = ships.filter((s) => !s.out);
+  const avg = (fn) => afloat.length ? Math.round(100 * afloat.reduce((n, sh) => n + fn(sh), 0) / afloat.length) : 0;
   return {
-    machinerySevere: ships.filter((s) => !s.out && s.engine < 0.65).length,
-    steeringSevere: ships.filter((s) => !s.out && s.steering < 0.60).length,
+    machineryAffected: afloat.filter((s) => (s.engine == null ? 1 : s.engine) < 0.90).length,
+    machinerySevere: afloat.filter((s) => (s.engine == null ? 1 : s.engine) < 0.65).length,
+    steeringAffected: afloat.filter((s) => (s.steering == null ? 1 : s.steering) < 0.90).length,
+    steeringSevere: afloat.filter((s) => (s.steering == null ? 1 : s.steering) < 0.60).length,
+    avgMachinery: avg((s) => s.engine == null ? 1 : s.engine),
+    avgSteering: avg((s) => s.steering == null ? 1 : s.steering),
     boilerCasualties: ships.reduce((n, s) => n + (s.boilerHits || 0), 0),
     disabledGuns: ships.reduce((n, s) => n + s.batteries.filter((b) => b.knockedOut).reduce((m, b) => m + (b.count || 0), 0), 0),
-    dcOverwhelmed: ships.filter((s) => !s.out && s.damageControlState === "overwhelmed").length,
+    dcOverwhelmed: afloat.filter((s) => s.damageControlState === "overwhelmed").length,
   };
 }
 
@@ -7267,11 +7295,17 @@ function calculatedReadings(outcome) {
   }
   const criticalSalvos = ((game.tel && game.tel.salvos) || []).filter((e) => e.crits && e.crits.length);
   if (criticalSalvos.length) {
-    const counts = {};
-    for (const e of criticalSalvos) for (const c of e.crits) counts[c] = (counts[c] || 0) + 1;
+    const counts = {}, byShip = {};
+    for (const e of criticalSalvos) {
+      const nm = (shipById(e.toId) || {}).name || e.toId;
+      for (const c of e.crits) {
+        counts[c] = (counts[c] || 0) + 1;
+        (byShip[nm] = byShip[nm] || []).push(`${e.calibre}mm ${e.shell}: ${c}`);
+      }
+    }
     const summary = Object.entries(counts).sort((a,b)=>b[1]-a[1]).map(([k,n]) => `${k} ×${n}`).join(", ");
-    const examples = criticalSalvos.slice(0, 4).map((e) => `${(shipById(e.toId)||{}).name || e.toId} (${e.calibre}mm ${e.shell}: ${e.crits.join("/")})`).join("; ");
-    readings.push({ title: "Critical events", text: `${summary}. ${examples}. These extra system or ammunition effects are not included fully in the simple direct-damage total.` });
+    const details = Object.entries(byShip).map(([nm, ev]) => `${nm} (${ev.join("; ")})`).join("; ");
+    readings.push({ title: "Critical events", text: `${summary}. ${details}. These extra system or ammunition effects are not included fully in the simple direct-damage total.` });
   }
   const ding = shipById("dingyuan"), zhen = shipById("zhenyuan"), matsu = shipById("matsushima");
   if (me === "China" && ding && zhen) {
@@ -7281,22 +7315,29 @@ function calculatedReadings(outcome) {
     readings.push({ title: "Command result", text: `${matsu.name}: ${matsu.out ? lossDisposition(matsu).label : Math.round(100 * matsu.structure / matsu.structureMax) + "% hull"}. China retained ${outcome.ironcladsAlive} ironclad${outcome.ironcladsAlive === 1 ? "" : "s"}; breaking cruisers without neutralising that core is a tactical success but an incomplete strategic one.` });
   }
   const ownSys = sideSystemSummary(me), foeSys = sideSystemSummary(foe);
-  if (ownSys.machinerySevere || ownSys.steeringSevere || ownSys.disabledGuns || foeSys.machinerySevere || foeSys.steeringSevere || foeSys.disabledGuns) {
-    readings.push({ title: "Systems damage", text: `Enemy afloat: ${foeSys.machinerySevere} with severe machinery damage, ${foeSys.steeringSevere} with badly impaired steering, ${foeSys.disabledGuns} guns disabled${foeSys.boilerCasualties ? `, ${foeSys.boilerCasualties} boiler casualties` : ""}. Yours: ${ownSys.machinerySevere}, ${ownSys.steeringSevere}, and ${ownSys.disabledGuns} respectively${ownSys.dcOverwhelmed ? `; damage control overwhelmed aboard ${ownSys.dcOverwhelmed}` : ""}.` });
+  if (ownSys.machineryAffected || ownSys.steeringAffected || ownSys.disabledGuns || foeSys.machineryAffected || foeSys.steeringAffected || foeSys.disabledGuns) {
+    readings.push({ title: "Systems damage", text: `Enemy afloat: ${foeSys.machineryAffected} machinery-impaired (${foeSys.machinerySevere} severe, ${foeSys.avgMachinery}% mean), ${foeSys.steeringAffected} steering-impaired (${foeSys.steeringSevere} severe, ${foeSys.avgSteering}% mean), ${foeSys.disabledGuns} guns disabled${foeSys.boilerCasualties ? `, ${foeSys.boilerCasualties} boiler casualties` : ""}. Yours: ${ownSys.machineryAffected}, ${ownSys.steeringAffected}, and ${ownSys.disabledGuns} respectively${ownSys.dcOverwhelmed ? `; damage control overwhelmed aboard ${ownSys.dcOverwhelmed}` : ""}.` });
   }
-  if (st.torpFired) readings.push({ title: "Torpedo attack", text: `${st.torpHit} hit from ${st.torpFired} fish; ${st.torpFailures || 0} failed through misrun, depth keeping or exploder failure before tactical evasion is counted.` });
-  if (theirs.sunkCount === 0 && (theirs.outCount + theirs.crippledCount) >= 2) readings.push({ title: "Nature of the victory", text: "Most enemy loss was disablement rather than sinking. The battle line was degraded even though few hulls went under." });
+  const foeTorp = sideShellStats(foe);
+  if (st.torpFired || foeTorp.torpFired) readings.push({ title: "Torpedo action", text: `Yours: ${st.torpHit}/${st.torpFired} hits${st.torpFailures ? `, ${st.torpFailures} weapon failures` : ""}. Enemy: ${foeTorp.torpHit}/${foeTorp.torpFired} hits${foeTorp.torpFailures ? `, ${foeTorp.torpFailures} weapon failures` : ""}.` });
+  if (theirs.sunkCount === 0 && (theirs.outCount + theirs.crippledCount) >= 2) readings.push({ title: outcome.result === "win" ? "Nature of the victory" : outcome.result === "draw" ? "Nature of the action" : "Nature of the defeat", text: "Most enemy loss was disablement rather than sinking. The battle line was degraded even though few hulls went under." });
   else if (theirs.sunkCount >= 2 && net < 0) readings.push({ title: "Cost of the sinkings", text: "You sank more visible hulls but lost more effective tonnage overall; the spectacular result was not the better exchange." });
   return readings.slice(0, 6);
 }
 
 function lossSummaryHTML(side, label) {
   const b = tonnageBreakdown(side), retained = Math.round(tonnagePct(side) * 100);
-  const removed = game.ships.filter((s) => s.side === side && s.out);
-  const names = removed.length
-    ? `<div class="loss-names">${removed.map((s) => `<span class="loss-name ${shipCondition(s).cls}"><b>${s.name}</b> · ${shipCondition(s).label}</span>`).join("")}</div>`
-    : `<div class="loss-names"><span class="loss-name intact">No ships removed from combat</span></div>`;
-  return `<div class="loss-card"><div class="loss-card-head"><span class="tag ${clsForSide(side)}">${label}</span><b>${retained}% effective</b></div><div class="loss-metrics"><span class="lm sunk"><b>${b.sunkCount}</b><small>total loss</small></span><span class="lm out"><b>${b.abandonedCount}</b><small>abandoned</small></span><span class="lm out"><b>${b.disabledCount}</b><small>disabled</small></span><span class="lm cripple"><b>${b.crippledCount}</b><small>crippled</small></span></div>${names}<div class="material-line"><span>Effective fighting tonnage lost <b>${b.effectiveLost.toLocaleString()} t</b></span></div></div>`;
+  const affected = game.ships.filter((s) => s.side === side && (s.out || shipCondition(s).cls === "st-heavy"));
+  const rank = (s) => s.out ? (lossDisposition(s).key === "total" ? 0 : lossDisposition(s).key === "abandoned" ? 1 : 2) : 3;
+  affected.sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
+  const names = affected.length
+    ? `<div class="loss-names">${affected.map((s) => {
+        const c = shipCondition(s), permanent = s.out && ["total", "abandoned"].includes(lossDisposition(s).key);
+        return `<span class="loss-name ${c.cls}${permanent ? " permanent" : ""}"><span class="loss-class-chip">${shipTypeGlyph(s)}</span><b title="${s.name}">${s.name}</b><span class="loss-status">${c.label}</span></span>`;
+      }).join("")}</div>`
+    : `<div class="loss-names"><span class="loss-name intact"><span></span><b>No losses</b><span class="loss-status">No ships removed or crippled</span></span></div>`;
+  const permanent = b.sunkCount + b.abandonedCount;
+  return `<div class="loss-card"><div class="loss-card-head"><span class="tag ${clsForSide(side)}">${label}</span><b>${retained}% effective</b></div><div class="loss-metrics"><span class="lm sunk"><b>${b.sunkCount}</b><small>destroyed</small></span><span class="lm out"><b>${b.abandonedCount}</b><small>abandoned</small></span><span class="lm out"><b>${b.disabledCount}</b><small>disabled</small></span><span class="lm cripple"><b>${b.crippledCount}</b><small>crippled</small></span></div>${names}<div class="material-line"><span>Practical permanent losses <b>${permanent}</b></span><span>Effective fighting tonnage lost <b>${b.effectiveLost.toLocaleString()} t</b></span></div></div>`;
 }
 
 function buildBattleReport() {
@@ -7314,9 +7355,10 @@ function buildBattleReport() {
   L.push(`Tactical:  ${wv.tacTag} - ${wv.tacLine}`);
   L.push(`Strategic: ${wv.stratTag} - ${wv.stratLine}`);
   L.push(`Fighting strength retained: ${la} ${Math.round(v.cp * 100)}%  -  ${lb} ${Math.round(v.jp * 100)}%`);
-  L.push(`Hull states: ${la} ${cb.sunkCount} total loss / ${cb.abandonedCount} abandoned / ${cb.disabledCount} disabled afloat / ${cb.crippledCount} crippled  -  ${lb} ${jb.sunkCount} total loss / ${jb.abandonedCount} abandoned / ${jb.disabledCount} disabled afloat / ${jb.crippledCount} crippled`);
+  L.push(`Hull states: ${la} ${cb.sunkCount} destroyed / ${cb.abandonedCount} abandoned wreck / ${cb.disabledCount} disabled afloat / ${cb.crippledCount} crippled  -  ${lb} ${jb.sunkCount} destroyed / ${jb.abandonedCount} abandoned wreck / ${jb.disabledCount} disabled afloat / ${jb.crippledCount} crippled`);
+  L.push(`Practical permanent losses: ${la} ${cb.sunkCount + cb.abandonedCount}  -  ${lb} ${jb.sunkCount + jb.abandonedCount}`);
   const sa = sideSystemSummary(sideA()), sb = sideSystemSummary(sideB());
-  L.push(`Systems: ${la} machinery ${sa.machinerySevere}, steering ${sa.steeringSevere}, guns disabled ${sa.disabledGuns}  -  ${lb} machinery ${sb.machinerySevere}, steering ${sb.steeringSevere}, guns disabled ${sb.disabledGuns}`);
+  L.push(`Systems: ${la} machinery ${sa.machineryAffected} affected (${sa.machinerySevere} severe, ${sa.avgMachinery}% mean), steering ${sa.steeringAffected} affected (${sa.steeringSevere} severe, ${sa.avgSteering}% mean), guns disabled ${sa.disabledGuns}  -  ${lb} machinery ${sb.machineryAffected} affected (${sb.machinerySevere} severe, ${sb.avgMachinery}% mean), steering ${sb.steeringAffected} affected (${sb.steeringSevere} severe, ${sb.avgSteering}% mean), guns disabled ${sb.disabledGuns}`);
   L.push(`Effective tonnage lost: ${la} ${cb.effectiveLost.toLocaleString()} t  -  ${lb} ${jb.effectiveLost.toLocaleString()} t`);
   L.push("");
   L.push("CALCULATED READINGS");
@@ -7488,7 +7530,8 @@ function fleetRosterHTML(side, label) {
     const c = shipCondition(s);
     const sil = shipSilhouetteURL(s, 66, 22);
     const img = sil ? `<img class="rr-sil" src="${sil}" alt="">` : `<span class="rr-sil"></span>`;
-    return `<div class="roster-row ${c.cls}">${img}<span class="rr-state">${c.glyph || "•"}</span><span class="rr-name">${shipTypeGlyph(s)}${s.name}</span><span class="rr-stat">${c.label}</span></div>`;
+    const permanent = s.out && ["total", "abandoned"].includes(lossDisposition(s).key);
+    return `<div class="roster-row ${c.cls}${permanent ? " permanent-loss" : ""}">${img}<span class="rr-state">${c.glyph || "•"}</span><span class="rr-class-chip">${shipTypeGlyph(s)}</span><span class="rr-name" title="${s.name}">${s.name}</span><span class="rr-stat">${c.label}</span></div>`;
   }).join("");
   return `<div class="roster-col"><div class="roster-h"><span class="tag ${clsForSide(side)}">${label}</span></div>${rows}</div>`;
 }
@@ -7513,23 +7556,32 @@ function showResultGeneric(verdict, screen, body) {
   const honoursBlock = honours.length ? `<div class="result-honours"><div class="honours-title">Honours</div>${honours.slice(0, 6).map((h) => `<div class="honour">★ ${h}</div>`).join("")}</div>` : "";
   const objBlock = `<div class="result-objectives"><div class="obj-aim">Your charge: break the enemy line and bring your fleet through</div>${outcome.objectives.map((o) => `<div class="obj ${o.met ? "met" : "miss"}"><span class="obj-mark">${o.met ? "✓" : "✗"}</span> ${o.label}</div>`).join("")}</div>`;
   const verdictBlock = `<div class="result-verdict"><div class="rv-row"><span class="rv-tag rv-${outcome.result}">Tactical · ${wv.tacTag}</span><span class="rv-line">${wv.tacLine}</span></div><div class="rv-row"><span class="rv-tag rv-strat">Strategic · ${wv.stratTag}</span><span class="rv-line">${wv.stratLine}</span></div></div>`;
+  const readings = calculatedReadings(outcome);
+  const readingBlock = readings.length ? `<div class="calculated-readings"><div class="cr-title">Calculated battle reading</div>${readings.map((r) => `<div class="cr-row"><b>${r.title}</b><span>${r.text}</span></div>`).join("")}</div>` : "";
+  const inflicted = (me === A ? jb : cb).effectiveLost;
+  const suffered = (me === A ? cb : jb).effectiveLost;
+  const net = inflicted - suffered;
+  const materialLine = `<div class="material-line"><span>You inflicted <b>${inflicted.toLocaleString()} t</b></span><span>You lost <b>${suffered.toLocaleString()} t</b></span><span class="${net >= 0 ? "net-good" : "net-bad"}">Net <b>${net >= 0 ? "+" : ""}${net.toLocaleString()} t</b></span></div>`;
   body.innerHTML = `
     <h2 class="result-title ${outcome.result}">${outcome.title}</h2>
     <p class="result-sub">${verdict.reason.charAt(0).toUpperCase() + verdict.reason.slice(1)} · turn ${game.turn}</p>
     ${objBlock}
     ${verdictBlock}
-    <p class="result-sub">Fighting tonnage retained</p>
+    <p class="result-sub compact">Material result</p>
+    <div class="loss-overview">${lossSummaryHTML(A, la)}${lossSummaryHTML(B, lb)}</div>
+    ${materialLine}
+    <p class="result-sub compact">Fighting tonnage retained</p>
     <div class="result-bars">
       <div class="rb"><span class="tag ${SCN.sides[0].cls}">${la}</span> ${bar(verdict.cp, "#d8a13a")} <span>${Math.round(verdict.cp * 100)}%</span></div>
       <div class="rb"><span class="tag ${SCN.sides[1].cls}">${lb}</span> ${bar(verdict.jp, "#c0392b")} <span>${Math.round(verdict.jp * 100)}%</span></div>
     </div>
     ${honoursBlock}
-    <p class="result-sub">Fleet condition</p>
+    ${readingBlock}
+    <p class="result-sub compact">Fleet condition</p>
     <div class="result-roster">
       ${fleetRosterHTML(A, la)}
       ${fleetRosterHTML(B, lb)}
     </div>
-    <div class="result-tonnage">${la} lost ${(cb.sunk + cb.disabled).toLocaleString()} t · ${lb} lost ${(jb.sunk + jb.disabled).toLocaleString()} t (total loss + disabled fighting tonnage)</div>
     <div class="result-history"><p>${SCN.intro}</p></div>
     <div class="result-actions"><button id="resultLogBtn" class="result-logbtn">Battle log &amp; statistics</button></div>
   `;
