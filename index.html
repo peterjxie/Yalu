@@ -12,7 +12,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.63" />
+<meta name="application-version" content="0.64" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
 <title>Echelon · Naval Action</title>
@@ -346,7 +346,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .rr-class-chip{width:26px;height:18px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(232,221,199,.14);border-radius:5px;background:rgba(232,221,199,.045);color:var(--ink);}
 .rr-class-chip .type-glyph{margin:0;width:18px;height:12px;opacity:.95}.rr-class-chip .type-glyph svg{width:18px;height:12px}
 .st-sunk .rr-sil,.permanent-loss .rr-sil{opacity:.28;filter:grayscale(1);}
-.st-sunk .rr-class-chip,.permanent-loss .rr-class-chip{opacity:.38;filter:grayscale(1);}
+.st-sunk .rr-class-chip,.permanent-loss .rr-class-chip{position:relative;opacity:.38;filter:grayscale(1);}
+.st-sunk .rr-class-chip::after,.permanent-loss .rr-class-chip::after{content:"";position:absolute;left:2px;right:2px;top:50%;height:1.5px;background:currentColor;transform:rotate(-27deg);transform-origin:center}
 .st-sunk .rr-state,.st-out .rr-state,.st-heavy .rr-state,.st-dmg .rr-state,.st-ok .rr-state{background:rgba(232,221,199,.10);color:var(--ink-dim);border:1px solid rgba(232,221,199,.12);}
 .st-sunk .rr-name,.permanent-loss .rr-name{text-decoration:line-through;opacity:.56;}
 .st-out:not(.permanent-loss) .rr-name{opacity:.86;}
@@ -560,13 +561,22 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 
 .loss-names{display:flex;flex-direction:column;gap:4px;margin:8px 0 2px;padding-top:7px;border-top:1px solid rgba(232,221,199,.08)}
 .loss-name{display:grid;grid-template-columns:27px minmax(78px,1fr) minmax(100px,1.35fr);align-items:center;gap:6px;font-family:var(--mono);font-size:9px;line-height:1.3;color:var(--ink-dim)}
-.loss-name b{min-width:0;color:var(--ink);font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.loss-name .loss-status{min-width:0;white-space:normal;overflow-wrap:anywhere}.loss-class-chip{width:25px;height:17px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(232,221,199,.14);border-radius:5px;background:rgba(232,221,199,.04);color:var(--ink)}.loss-class-chip .type-glyph{margin:0;width:18px;height:12px}.loss-name.permanent .loss-class-chip{opacity:.35;filter:grayscale(1)}.loss-name.permanent b{text-decoration:line-through;opacity:.66}.loss-name.st-out,.loss-name.st-sunk{color:#c98d82}.loss-name.st-heavy{color:#d0b46d}
+.loss-name b{min-width:0;color:var(--ink);font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.loss-name .loss-status{min-width:0;white-space:normal;overflow-wrap:anywhere}.loss-class-chip{width:25px;height:17px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(232,221,199,.14);border-radius:5px;background:rgba(232,221,199,.04);color:var(--ink)}.loss-class-chip .type-glyph{margin:0;width:18px;height:12px}.loss-name.permanent .loss-class-chip{position:relative;opacity:.35;filter:grayscale(1)}.loss-name.permanent .loss-class-chip::after{content:"";position:absolute;left:1px;right:1px;top:50%;height:1.5px;background:currentColor;transform:rotate(-27deg);transform-origin:center}.loss-name.permanent b{text-decoration:line-through;opacity:.66}.loss-name.st-out,.loss-name.st-sunk{color:#c98d82}.loss-name.st-heavy{color:#d0b46d}
 .squad-access{min-width:38px!important;width:38px!important;padding:0!important}.squad-access span{display:none!important}.squad-access svg{width:20px!important;height:20px!important}.squadron-chips{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:none;gap:7px;z-index:18;pointer-events:none;transition:bottom .16s ease}.squadron-chips.show{display:flex}.squad-chip{pointer-events:auto;min-width:34px;height:30px;padding:0 10px;border-radius:16px;border:1px solid rgba(200,164,92,.45);background:rgba(5,22,28,.72);color:var(--ink);font-family:var(--mono);font-weight:700;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.3);backdrop-filter:blur(2px)}.squad-chip.active{border-color:var(--brass);color:var(--brass);background:rgba(20,45,48,.9);box-shadow:0 0 0 1px rgba(200,164,92,.22),0 2px 10px rgba(0,0,0,.38)}@media(max-width:560px){.squadron-chips{bottom:8px;gap:6px}.squad-chip{min-width:32px;height:28px;padding:0 9px}}.squadron-card{max-width:480px}.squad-picker-note,.squad-picker-empty{font-size:12px;color:var(--ink-dim);margin:0 0 12px}.squad-pick{width:100%;display:grid;grid-template-columns:34px 1fr 18px;align-items:center;gap:8px;text-align:left;border:1px solid rgba(200,164,92,.22);background:rgba(8,28,34,.42);color:var(--ink);border-radius:8px;padding:10px;margin:0 0 7px}.squad-pick:hover,.squad-pick:active{border-color:rgba(200,164,92,.6);background:rgba(16,48,57,.58)}.squad-pick-icon svg{width:26px;height:22px}.squad-pick b{display:block;font-size:12px}.squad-pick small{display:block;color:var(--ink-dim);font-family:var(--mono);font-size:9px;margin-top:3px}.squad-pick-arrow{font-size:24px;color:var(--brass)}.squad-new{margin-top:12px;width:100%}
 @media(max-width:560px){.squad-access{min-width:38px!important;width:38px!important}.squad-access span{display:none!important}}
 @media (max-width:960px) and (orientation:portrait){#main:has(#panel.expanded) .squadron-chips{bottom:calc(min(20dvh,168px) + 18px)}}
 @media (max-width:960px) and (orientation:landscape){
-  #chartWrap .squadron-chips{left:auto;right:12px;bottom:12px;transform:none;max-width:calc(100% - 24px);justify-content:flex-end;overflow-x:auto;padding:2px 3px;z-index:20}
-  #chartWrap.command-open .squadron-chips{right:calc(min(38vw,360px) + 18px);max-width:calc(62vw - 34px)}
+  /* Landscape shortcuts live at the chart's upper-left, clear of both the right
+     command pane and the lower signal log. Keeping an explicit top/left anchor
+     avoids the former bottom-bar overlap and makes the chips reliably visible. */
+  #chartWrap .squadron-chips,
+  #chartWrap.command-open .squadron-chips{
+    display:none;left:12px;right:auto;top:12px;bottom:auto;transform:none;
+    max-width:calc(62vw - 24px);justify-content:flex-start;overflow-x:auto;
+    padding:2px 3px;z-index:24
+  }
+  #chartWrap .squadron-chips.show,
+  #chartWrap.command-open .squadron-chips.show{display:flex}
 }
 
 /* v0.61 portrait command layout: fixed priorities rather than one chaotic strip.
@@ -684,7 +694,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v0.63</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.64</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -726,7 +736,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v0.63 · report and command polish</div>
+    <div class="build-stamp" id="buildStamp">v0.64 · abandonment fate and landscape squadrons</div>
   </div>
 </div>
 
@@ -1733,12 +1743,82 @@ function updateDamageControlState(s, dc) {
   s.damageControlState = dc >= 0.66 ? "effective" : dc >= 0.38 ? "strained" : "overwhelmed";
 }
 
+function isFinalPhysicalLossReason(reason) {
+  return reason === "sunk" || reason === "foundered" || reason === "foundered after abandonment"
+    || reason === "sunk after structural collapse" || reason === "scuttled after abandonment"
+    || reason === "burnt out and sank" || reason === "wrecked beyond repair"
+    || reason === "destroyed by magazine explosion" || reason === "lost to a magazine explosion";
+}
+function isAbandonedReason(reason) {
+  return reason === "settling, abandoned" || reason === "burnt out, abandoned" || reason === "ablaze, out of action";
+}
+function markAbandoned(s, turn, reason) {
+  s.out = true;
+  s.sunkTurn = turn;
+  s.outReason = reason;
+  s._abandonedTurn = turn;
+  s._postOutTicks = 0;
+}
+
+// Once a crew abandons a hull, combat removal and physical fate remain separate.
+// The ship no longer fights or pumps effectively, but water and fire continue to act.
+// A badly settling hull may founder; an isolated crew may scuttle to prevent capture.
+function updateOutOfActionFate(s, ships, turn, log) {
+  if (!s.out || !isAbandonedReason(s.outReason) || isFinalPhysicalLossReason(s.outReason)) return;
+  s._postOutTicks = (s._postOutTicks || 0) + 1;
+  if (s._abandonedTurn == null) s._abandonedTurn = s.sunkTurn || turn;
+
+  const frac = clamp((s.structure || 0) / (s.structureMax || 1), 0, 1);
+  const fireLoad = Math.max(0, s.fires || 0);
+  const settling = s.outReason === "settling, abandoned" || (s.flooding || 0) >= 55;
+
+  // No organised pumping remains. Existing breaches continue to admit water and
+  // severe fire progressively destroys watertight integrity.
+  let ingress = 0;
+  if (settling) ingress += 3.2 + 4.2 * (1 - frac);
+  if (fireLoad >= 3) ingress += 0.8 + 0.55 * fireLoad;
+  if ((s.structure || 0) <= 0) ingress += 1.8;
+  if (ingress > 0) s.flooding = clamp((s.flooding || 0) + ingress, 0, 100);
+
+  if (fireLoad > 0 && (s.structure || 0) > 0) {
+    const burn = fireLoad * (s.structureMax || 1) * 0.0028;
+    s.structure = Math.max(0, s.structure - burn);
+    s.crew = clamp((s.crew || 0.2) - 0.0025 * fireLoad, 0.05, 1);
+  }
+  s.engine = clamp((s.engine == null ? 1 : s.engine) - 0.008 - (s.flooding || 0) / 9000, 0.05, 1);
+
+  if ((s.flooding || 0) >= 85 || ((s.structure || 0) <= 0 && (s.flooding || 0) >= 55)) {
+    s.flooding = Math.max(85, s.flooding || 0);
+    s.outReason = fireLoad >= 4 ? "burnt out and sank" : "foundered after abandonment";
+    s.sunkTurn = turn;
+    return;
+  }
+
+  // Scuttling is possible, not automatic. It requires surviving crew, time to act,
+  // and a credible risk of capture without nearby friendly support.
+  if (s._postOutTicks >= 2 && (s.crew || 0) >= 0.18) {
+    let nearestEnemy = Infinity, nearestFriend = Infinity;
+    for (const other of ships) {
+      if (!other || other.id === s.id || other.out) continue;
+      const d = Math.hypot((other.x || 0) - (s.x || 0), (other.y || 0) - (s.y || 0));
+      if (other.side === s.side) nearestFriend = Math.min(nearestFriend, d);
+      else nearestEnemy = Math.min(nearestEnemy, d);
+    }
+    const captureRisk = nearestEnemy <= 1600 && nearestEnemy + 250 < nearestFriend;
+    if (captureRisk && rnd() < 0.16) {
+      s.flooding = 100;
+      s.outReason = "scuttled after abandonment";
+      s.sunkTurn = turn;
+    }
+  }
+}
+
 // Ongoing-damage tick. Fire degrades exposed fighting structure and crew; flooding
 // is a separate buoyancy/system state rather than a second hidden hull-damage pool.
 // The same equations apply to historical and skirmish deployments.
 function upkeepTick(ships, turn, log) {
   for (const s of ships) {
-    if (s.out) continue;
+    if (s.out) { updateOutOfActionFate(s, ships, turn, log); continue; }
     const refined = usesRefinedDamageModel();
     const dc = refined ? damageControlCapacity(s) : clamp(s.crew, 0.2, 1);
     updateDamageControlState(s, dc);
@@ -1813,9 +1893,9 @@ function checkOutOfAction(s, turn) {
       else if (s.fires >= 4) s.outReason = "burnt out, abandoned";
       else s.outReason = "wrecked beyond repair";
     } else if (frac < 0.28 && s.flooding >= 55) {
-      s.out = true; s.sunkTurn = turn; s.outReason = "settling, abandoned";
+      markAbandoned(s, turn, "settling, abandoned");
     } else if (fireCollapse) {
-      s.out = true; s.sunkTurn = turn; s.outReason = "burnt out, abandoned";
+      markAbandoned(s, turn, "burnt out, abandoned");
     } else if (frac < 0.12 || combatCollapse) {
       s.out = true; s.sunkTurn = turn; s.outReason = "disabled afloat";
     }
@@ -1856,7 +1936,7 @@ if (typeof module !== "undefined" && module.exports) {
     basePen3000, penAt, reloadSeconds, reloadMid, maxEffectiveRange, mountArc,
     bearingInArc, makeShip, rangeBetween, relativeBearing, batteryCanBear,
     maxTurnRate, moveDistance, executeMove, hitChance, rollZone, resolveHit,
-    fireBattery, fireTorpedo, TORPEDO_RANGE, startTurnForSide, upkeepTick,
+    fireBattery, fireTorpedo, TORPEDO_RANGE, startTurnForSide, upkeepTick, updateOutOfActionFate,
     checkOutOfAction, sideStrength, protectionIndex, softFloorFrac, maxFlood, addFlood,
     NATION_ACC, chooseShell, apViability, shellDoctrine, NATION_DOCTRINE, SHELL_QUALITY, impactObliquity, descentAngle, usesRefinedDamageModel,
   };
@@ -3887,9 +3967,11 @@ function scheduleSalvo(from, target, summary, delay) {
   game.effects.push({ type: "shell", fromId: from.id, toId: target.id, set: false, t: 0, dur: 0.45, hit, heavy, boiler, calibre: summary.calibre || (heavy ? 250 : 120), splashCount, spread, shotCount: Math.max(1, summary.shots || 1), life: 1, delay: delay + 0.05 });
 }
 function isSunkReason(reason) {
-  return reason === "sunk" || reason === "foundered" || reason === "sunk after structural collapse"
-    || reason === "wrecked beyond repair" || reason === "wrecked beyond fighting"
-    || reason === "destroyed by magazine explosion" || reason === "lost to a magazine explosion";
+  return reason === "sunk" || reason === "foundered" || reason === "foundered after abandonment"
+    || reason === "sunk after structural collapse" || reason === "scuttled after abandonment"
+    || reason === "burnt out and sank" || reason === "wrecked beyond repair"
+    || reason === "wrecked beyond fighting" || reason === "destroyed by magazine explosion"
+    || reason === "lost to a magazine explosion";
 }
 function lossDisposition(ship) {
   if (!ship || !ship.out) return { key: "afloat", label: "afloat", short: "afloat", salvage: "operational status only", reason: "" };
@@ -5816,10 +5898,17 @@ function finishExecute() {
   }
   resolvePendingTorpedoes();                         // finish physical runs consistently when animation is skipped
   game.torpedoes = [];
-  const outBefore = new Set(game.ships.filter((s) => s.out).map((s) => s.id));
+  const outBefore = new Map(game.ships.filter((s) => s.out).map((s) => [s.id, s.outReason || ""]));
   for (let i = 0; i < ENGINE_TICKS_PER_GAME_TURN; i++) upkeepTick(game.ships, game.turn, game.log); // 120 s total
   for (const s of game.ships) {
-    if (s.out && !outBefore.has(s.id)) { spawnSink(s); logLine(`${s.name} is ${s.outReason}.`, "crit"); }   // foundered from fire or flooding
+    if (!s.out) continue;
+    const prior = outBefore.get(s.id);
+    const newlyRemoved = prior == null;
+    const physicallyLostAfterAbandonment = prior != null && !isSunkReason(prior) && isSunkReason(s.outReason);
+    if (newlyRemoved || physicallyLostAfterAbandonment) {
+      spawnSink(s);
+      logLine(`${s.name} is ${s.outReason}.`, "crit");
+    }
   }
   updateMorale();
   cleanupTargets();
@@ -7748,6 +7837,8 @@ function serializeGame() {
       if (s.crew !== 1) o.cr = r2(s.crew);
       if (s.morale !== 100) o.mo = Math.round(s.morale);
       if (s.out) { o.out = 1; o.oR = s.outReason || "disabled afloat"; }
+      if (s._abandonedTurn != null) o.abt = s._abandonedTurn;
+      if (s._postOutTicks) o.pot = s._postOutTicks;
       if (s.targetId) o.ti = s.targetId;
       if (!s.captainAlive) o.ca = 0;
       if (s.captainHitTurns) o.ch = s.captainHitTurns;
@@ -7781,6 +7872,8 @@ function loadGameFromCode(code) {
     s.damageControl = d.dc != null ? d.dc : 1; s.damageControlState = d.ds || "ready";
     s.crew = d.cr != null ? d.cr : 1; s.morale = d.mo != null ? d.mo : 100;
     s.out = !!d.out; s.outReason = d.out ? (d.oR || "disabled afloat") : null;
+    s._abandonedTurn = d.abt != null ? d.abt : null;
+    s._postOutTicks = d.pot || 0;
     if (s.out) s.sunkTurn = -99;                 // already gone; no fresh sink animation
     s.targetId = d.ti || null;
     s.captainAlive = d.ca !== 0;
