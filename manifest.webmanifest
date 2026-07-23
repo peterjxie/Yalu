@@ -6,5 +6,13 @@
   "display": "standalone",
   "background_color": "#0b252c",
   "theme_color": "#0b252c",
-  "description": "Turn-based pre-dreadnought naval action"
+  "description": "Turn-based pre-dreadnought naval action",
+  "icons": [
+    {
+      "src": "./icon.png",
+      "sizes": "2048x2048",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
