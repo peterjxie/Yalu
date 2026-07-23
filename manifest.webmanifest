@@ -1,0 +1,10 @@
+{
+  "name": "Echelon Naval Action",
+  "short_name": "Echelon",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b252c",
+  "theme_color": "#0b252c",
+  "description": "Turn-based pre-dreadnought naval action"
+}

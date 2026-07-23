@@ -2,9 +2,6 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -12,7 +9,8 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.64" />
+<meta name="application-version" content="0.66" />
+<link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
 <title>Echelon · Naval Action</title>
@@ -636,9 +634,20 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   #chartWrap:not(.command-open) .squadron-chips{bottom:12px}
   .squadron-chips{z-index:20;max-width:calc(100% - 20px);overflow-x:auto;justify-content:flex-start;padding:2px 3px;transform:translateX(-50%)}
 }
+
+/* ---- offline installation state ---- */
+#offlineStatus{position:fixed;right:8px;top:calc(48px + env(safe-area-inset-top));z-index:1000;
+  padding:4px 7px;border-radius:6px;border:1px solid rgba(200,164,92,.35);
+  background:rgba(5,24,30,.88);color:var(--brass);font:9px/1.2 var(--mono);letter-spacing:.8px;
+  text-transform:uppercase;box-shadow:0 4px 16px rgba(0,0,0,.28);pointer-events:none;}
+#offlineStatus.ready{color:#9dd6a1;border-color:rgba(111,207,115,.45);}
+#offlineStatus.offline{color:var(--ink);border-color:rgba(232,221,199,.38);}
+#offlineStatus.failed{color:#e38a7d;border-color:rgba(215,106,85,.50);}
+@media (max-width:700px){#offlineStatus{top:calc(44px + env(safe-area-inset-top));font-size:8px;padding:3px 6px;}}
 </style>
 </head>
 <body>
+<div id="offlineStatus">Offline check</div>
 <div id="app">
 
   <div id="topbar">
@@ -694,7 +703,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v0.64</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.66</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -736,7 +745,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v0.64 · abandonment fate and landscape squadrons</div>
+    <div class="build-stamp" id="buildStamp">v0.66 · offline deployment hotfix</div>
   </div>
 </div>
 
@@ -3483,7 +3492,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "0.62";
+const ECHELON_VERSION = "0.66";
 
 // ---- module-global game state ---------------------------------------------
 const game = {
@@ -8195,6 +8204,43 @@ if (typeof document !== "undefined") {
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
 }
+</script>
+
+<script>
+(function () {
+  var badge = document.getElementById('offlineStatus');
+  function setState(text, cls) {
+    if (!badge) { return; }
+    badge.textContent = text;
+    badge.className = cls || '';
+  }
+  function showOffline() {
+    setState('Offline mode', 'offline');
+  }
+  function showOnline() {
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      setState('Offline ready', 'ready');
+    }
+  }
+  window.addEventListener('offline', showOffline);
+  window.addEventListener('online', showOnline);
+
+  if (!('serviceWorker' in navigator) || !/^https?:$/.test(window.location.protocol)) {
+    setState(window.location.protocol === 'file:' ? 'Local file' : 'Online only', 'failed');
+    return;
+  }
+
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js', { scope: './' }).then(function () {
+      return navigator.serviceWorker.ready;
+    }).then(function () {
+      setState(navigator.onLine ? 'Offline ready' : 'Offline mode', navigator.onLine ? 'ready' : 'offline');
+    }).catch(function (err) {
+      console.error('Echelon offline installation failed', err);
+      setState('Offline failed', 'failed');
+    });
+  });
+}());
 </script>
 </body>
 </html>
