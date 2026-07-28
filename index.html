@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.66" />
+<meta name="application-version" content="0.68" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -703,7 +703,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v0.66</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.68</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -745,7 +745,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v0.66 · offline deployment hotfix</div>
+    <div class="build-stamp" id="buildStamp">v0.68 · Dingyuan-class rendering pass</div>
   </div>
 </div>
 
@@ -2510,6 +2510,90 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim) {
   ctx.restore();
 }
 
+
+// Dingyuan-class plan traced from the supplied contemporary plan: broad low hull,
+// ram bow, rounded counter stern, two offset 305 mm barbettes, twin funnels and
+// paired military masts.  This deliberately keeps Echelon's restrained schematic
+// language while replacing the generic ironclad geometry.
+function drawDingyuanClassPlan(ctx, L, B, ink, sacc, dim) {
+  const hl=L/2, hb=B/2;
+  ctx.save();
+  if (dim) ctx.globalAlpha=0.34;
+  ctx.lineJoin='round'; ctx.lineCap='round';
+  const lw=Math.max(0.55,L*0.006);
+  const pts=[];
+  const N=56;
+  for(let i=0;i<=N;i++){
+    const t=1-2*i/N; // +1 bow
+    let w;
+    if(t>0.58){ const u=(t-0.58)/0.42; w=hb*Math.pow(Math.max(0,1-u*u),0.58); }
+    else if(t<-0.62){ const u=(-0.62-t)/0.38; w=hb*(0.98-0.42*u*u); }
+    else w=hb*(0.985-0.025*Math.abs(t));
+    pts.push([t*hl,-w]);
+  }
+  const sw=hb*0.56;
+  for(let k=1;k<9;k++){ const a=Math.PI*k/9; pts.push([-hl-L*0.018*Math.sin(a),-sw*Math.cos(a)]); }
+  for(let i=0;i<=N;i++){
+    const t=-1+2*i/N;
+    let w;
+    if(t>0.58){ const u=(t-0.58)/0.42; w=hb*Math.pow(Math.max(0,1-u*u),0.58); }
+    else if(t<-0.62){ const u=(-0.62-t)/0.38; w=hb*(0.98-0.42*u*u); }
+    else w=hb*(0.985-0.025*Math.abs(t));
+    pts.push([t*hl,w]);
+  }
+  ctx.beginPath(); ctx.moveTo(pts[0][0],pts[0][1]); for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]); ctx.closePath();
+  ctx.fillStyle=sacc.fill; ctx.fill(); ctx.strokeStyle=ink; ctx.lineWidth=lw; ctx.stroke();
+
+  // upper-deck / armoured-citadel outline
+  const inset=0.13;
+  ctx.globalAlpha*=0.72;
+  ctx.beginPath();
+  ctx.moveTo(hl*0.68,-hb*(1-inset));
+  ctx.quadraticCurveTo(hl*0.91,-hb*0.70,hl*0.94,0);
+  ctx.quadraticCurveTo(hl*0.91,hb*0.70,hl*0.68,hb*(1-inset));
+  ctx.lineTo(-hl*0.63,hb*(1-inset));
+  ctx.quadraticCurveTo(-hl*0.86,hb*0.70,-hl*0.91,0);
+  ctx.quadraticCurveTo(-hl*0.86,-hb*0.70,-hl*0.63,-hb*(1-inset));
+  ctx.closePath(); ctx.strokeStyle=ink; ctx.lineWidth=Math.max(0.45,lw*0.52); ctx.stroke();
+  ctx.globalAlpha/=0.72;
+
+  // central flying deck and bridge block
+  const ssx=-L*0.035, ssl=L*0.34, ssw=B*0.34;
+  roundRect(ctx,ssx-ssl/2,-ssw/2,ssl,ssw,Math.min(3,ssw*0.18)); ctx.fillStyle=sacc.deck; ctx.fill(); ctx.strokeStyle=ink; ctx.lineWidth=lw*0.55; ctx.stroke();
+  roundRect(ctx,L*0.17-L*0.028,-B*0.31,L*0.056,B*0.62,2); ctx.fillStyle=sacc.deck; ctx.fill(); ctx.stroke();
+
+  // offset echelon barbettes.  Their diagonal relationship is the class signature.
+  const mounts=[{x:L*0.16,y:-B*0.29},{x:-L*0.02,y:B*0.29}];
+  for(const m of mounts){
+    const r=Math.max(B*0.235,L*0.028);
+    ctx.beginPath(); ctx.arc(m.x,m.y,r,0,Math.PI*2); ctx.fillStyle=sacc.mount; ctx.fill(); ctx.strokeStyle=ink; ctx.lineWidth=lw*0.72; ctx.stroke();
+    ctx.lineWidth=Math.max(0.7,lw*0.9);
+    const bl=r*1.25, sep=r*0.28;
+    ctx.beginPath(); ctx.moveTo(m.x+r*0.25,m.y-sep); ctx.lineTo(m.x+bl,m.y-sep); ctx.moveTo(m.x+r*0.25,m.y+sep); ctx.lineTo(m.x+bl,m.y+sep); ctx.stroke();
+  }
+
+  // twin funnels, centreline and aft of the barbettes
+  for(const x of [-L*0.13,-L*0.25]){
+    const fw=L*0.038, fh=B*0.24;
+    roundRect(ctx,x-fw/2,-fh/2,fw,fh,Math.min(2,fw*0.3)); ctx.fillStyle=sacc.mount; ctx.fill(); ctx.strokeStyle=ink; ctx.lineWidth=lw*0.55; ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x-fw*0.65,-fh*0.38); ctx.lineTo(x+fw*0.65,-fh*0.38); ctx.moveTo(x-fw*0.65,fh*0.38); ctx.lineTo(x+fw*0.65,fh*0.38); ctx.stroke();
+  }
+
+  // fore and aft military masts with fighting tops
+  for(const x of [L*0.36,-L*0.49]){
+    ctx.strokeStyle=ink; ctx.lineWidth=Math.max(0.45,lw*0.46); ctx.beginPath(); ctx.moveTo(x,-B*0.32); ctx.lineTo(x,B*0.32); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x,0,B*0.105,0,Math.PI*2); ctx.fillStyle=sacc.deck; ctx.fill(); ctx.stroke();
+  }
+
+  // boats, four large cutters around the central deck
+  const boats=[[-L*0.05,-B*0.40],[-L*0.05,B*0.40],[-L*0.34,-B*0.40],[-L*0.34,B*0.40]];
+  for(const b of boats){ const bl=L*0.095,bw=B*0.14; ctx.beginPath(); ctx.ellipse(b[0],b[1],bl/2,bw/2,0,0,Math.PI*2); ctx.strokeStyle=ink; ctx.lineWidth=lw*0.4; ctx.stroke(); }
+
+  // bow and stern 150 mm guns
+  for(const x of [L*0.78,-L*0.78]){ const r=Math.max(1.1,B*0.07); ctx.beginPath(); ctx.arc(x,0,r,0,Math.PI*2); ctx.fillStyle=sacc.mount; ctx.fill(); ctx.strokeStyle=ink; ctx.lineWidth=lw*0.48; ctx.stroke(); ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x+(x>0?1:-1)*r*2.2,0); ctx.stroke(); }
+  ctx.restore();
+}
+
 function renderedLossStatus(ship) {
   const reason = (ship && ship.outReason) || "";
   if (reason === "sunk" || reason === "foundered" || reason === "sunk after structural collapse" || reason === "wrecked beyond repair" || reason === "wrecked beyond fighting" || reason.includes("magazine explosion")) return "TOTAL LOSS";
@@ -2576,7 +2660,8 @@ function drawShip(ctx, v, ship, opts) {
   ctx.save();
   ctx.translate(cx, cy);
   rotateBowPlusX(ctx, ph);   // local +x bow aligned with screen-space travel
-  drawSchematic(ctx, L, B, ship._plan, ink, sacc, ship.out);
+  if (ship.id === "dingyuan" || ship.id === "zhenyuan") drawDingyuanClassPlan(ctx, L, B, ink, sacc, ship.out);
+  else drawSchematic(ctx, L, B, ship._plan, ink, sacc, ship.out);
   ctx.restore();
 
   // Shared status marks: out ships are crossed off; crippled ships carry a warning badge.
@@ -3006,6 +3091,33 @@ function sideMastsFor(id) {
 // primitives in px, origin at hull centre, waterline y = 0, +x toward the bow, up = -y
 function sideElevationPrims(ship, L) {
   const id = ship.id, hl = L / 2;
+  if (id === "dingyuan" || id === "zhenyuan") {
+    const P=[];
+    const line=(x1,y1,x2,y2,w)=>P.push({t:"line",a:[x1,y1,x2,y2],w:w||0.8});
+    const poly=(pts,w,fill)=>P.push({t:"poly",pts,w:w||1,close:true,fill:!!fill});
+    const fb=L*0.061, dr=L*0.034;
+    // low, broad German-built ironclad hull with ram bow and rounded counter stern
+    poly([[-hl,-fb*0.78],[-hl*0.86,-fb],[-hl*0.45,-fb*1.03],[hl*0.52,-fb*1.03],[hl*0.84,-fb*1.17],[hl*1.015,-fb*0.58],[hl*1.06,-fb*0.12],[hl*0.88,dr*0.58],[hl*0.42,dr],[-hl*0.46,dr],[-hl*0.86,dr*0.52],[-hl*1.01,-fb*0.10]],1,false);
+    P.push({t:"under",pts:[[-hl*1.01,0],[-hl*0.86,dr*0.52],[-hl*0.46,dr],[hl*0.42,dr],[hl*0.88,dr*0.58],[hl*1.06,-fb*0.12],[hl*1.015,0]]});
+    line(-hl,0,hl*1.04,0,2); line(-hl*0.48,-fb*0.25,hl*0.55,-fb*0.25,1.4);
+    // central armoured redoubt and low flying deck
+    poly([[-L*0.28,-fb*1.03],[L*0.30,-fb*1.03],[L*0.30,-fb*1.25],[-L*0.28,-fb*1.25]],0.7,true);
+    line(-L*0.30,-fb*1.78,L*0.32,-fb*1.78,1.0);
+    for(const x of [-L*0.30,0,L*0.31]) line(x,-fb*1.03,x,-fb*1.78,0.55);
+    // the two echelon barbettes appear as overlapping low drums in elevation
+    for(const x of [L*0.13,-L*0.02]){ poly([[x-L*0.055,-fb*1.03],[x+L*0.055,-fb*1.03],[x+L*0.045,-fb*1.56],[x-L*0.045,-fb*1.56]],0.65,true); line(x-L*0.01,-fb*1.42,x+L*0.13,-fb*1.42,1.0); line(x-L*0.01,-fb*1.50,x+L*0.13,-fb*1.50,1.0); }
+    // twin funnels abaft amidships
+    for(const x of [-L*0.14,-L*0.25]) poly([[x-L*0.022,-fb*1.25],[x+L*0.022,-fb*1.25],[x+L*0.019,-fb*2.58],[x-L*0.019,-fb*2.58]],0.65,true);
+    // military masts and fighting tops
+    for(const x of [L*0.38,-L*0.50]){ line(x,-fb*1.03,x,-fb*4.0,1.0); line(x-L*0.09,-fb*2.92,x+L*0.09,-fb*2.92,0.75); poly([[x-L*0.035,-fb*2.35],[x+L*0.035,-fb*2.35],[x+L*0.025,-fb*2.52],[x-L*0.025,-fb*2.52]],0.55,true); line(x,-fb*3.55,x-L*0.16,-fb*1.03,0.45); line(x,-fb*3.55,x+L*0.16,-fb*1.03,0.45); }
+    // bridge tower forward of the barbettes
+    poly([[L*0.29,-fb*1.03],[L*0.36,-fb*1.03],[L*0.35,-fb*2.1],[L*0.30,-fb*2.1]],0.6,true); line(L*0.27,-fb*2.18,L*0.39,-fb*2.18,0.8);
+    // large boats in davits
+    for(const x of [-L*0.34,-L*0.08]) poly([[x-L*0.055,-fb*1.72],[x+L*0.055,-fb*1.72],[x+L*0.040,-fb*1.52],[x-L*0.040,-fb*1.52]],0.45,true);
+    // porthole row and anchors
+    for(let x=-hl*0.82;x<hl*0.78;x+=L*0.035) poly([[x,-fb*0.58],[x+L*0.004,-fb*0.58],[x+L*0.004,-fb*0.51],[x,-fb*0.51]],0.25,true);
+    return P;
+  }
   const ht = SHIP_HULL[id] || "cru";
   const o = SHIP_SIDE[id] || {};
   const fb = (o.fb || SIDE_FB[ht] || 0.07) * L;
@@ -3492,7 +3604,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "0.66";
+const ECHELON_VERSION = "0.68";
 
 // ---- module-global game state ---------------------------------------------
 const game = {
