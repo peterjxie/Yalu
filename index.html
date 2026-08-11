@@ -3811,7 +3811,19 @@ const SKIRMISH_ANCHOR = {
   tsushima_approach: { A: { cx: 0, cy: 1700, hdg: 0 },    B: { cx: 0, cy: -1700, hdg: 180 } },
 };
 function proceduralFormation(side, type) {
-  const roster = GAME_DATA.ships.filter((s) => s.side === side).map((s) => s.id);  // dataset order: heavies first
+  // Dataset order lists heavies first but does not always keep a division together
+  // (the Japanese roster interleaves them), so a formation built straight off it
+  // scattered squadron mates along the line with other divisions wedged between.
+  // Group by division first, keeping each division's internal order and the order in
+  // which divisions first appear, so every formation below forms contiguous divisions.
+  const raw = GAME_DATA.ships.filter((s) => s.side === side).map((s) => s.id);
+  const byDiv = new Map();
+  for (const id of raw) {
+    const div = (shipDefById(id) || {}).division || "-";
+    if (!byDiv.has(div)) byDiv.set(div, []);
+    byDiv.get(div).push(id);
+  }
+  const roster = [].concat(...byDiv.values());
   const n = roster.length;
   const cfg = SKIRMISH_ANCHOR[SCN.id] || SKIRMISH_ANCHOR.yalu;
   const a = side === sideA() ? cfg.A : cfg.B;
@@ -3824,12 +3836,35 @@ function proceduralFormation(side, type) {
     id, x: Math.round(a.cx + ahead.x * f + abeam.x * s), y: Math.round(a.cy + ahead.y * f + abeam.y * s), heading_deg: a.hdg,
   });
   if (type === "line_abreast") {
-    const order = centerOut(roster), span = (n - 1) * gap;  // heaviest ship in the centre of the line
+    // Arrange whole divisions centre-out, not individual ships. Alternating ships
+    // outward from the centre put the heaviest ship amidships but tore every
+    // division into scattered chunks, so squadron mates started the action with
+    // other formations wedged between them. Blocks keep each division together
+    // while still setting the leading division in the centre of the line.
+    const blocks = [];
+    for (const id of roster) {
+      const div = (shipDefById(id) || {}).division || "-";
+      const last = blocks[blocks.length - 1];
+      if (last && last.div === div) last.ids.push(id); else blocks.push({ div, ids: [id] });
+    }
+    const order = centerOut(blocks).reduce((acc, b) => acc.concat(b.ids), []);
+    const span = (n - 1) * gap;
     order.forEach((id, k) => put(id, 0, -span / 2 + k * gap));
   } else if (type === "line_ahead") {
     roster.forEach((id, i) => put(id, -i * colGap, 0));     // van leads, the rest in column astern
   } else if (type === "double_column") {
-    const half = Math.ceil(n / 2);
+    // Divide on a division boundary near the middle rather than at exactly half the
+    // roster, which cut a division in two and left a lone battleship heading the
+    // cruiser column. Each column now holds whole divisions.
+    const bounds = [0];
+    for (let i = 1; i < roster.length; i++) {
+      const a = (shipDefById(roster[i - 1]) || {}).division, b = (shipDefById(roster[i]) || {}).division;
+      if (a !== b) bounds.push(i);
+    }
+    bounds.push(roster.length);
+    const mid = n / 2;
+    let half = bounds.reduce((best, v) => Math.abs(v - mid) < Math.abs(best - mid) ? v : best, bounds[0]);
+    if (half <= 0 || half >= n) half = Math.ceil(mid);
     roster.forEach((id, i) => { const col = i < half ? -1 : 1, idx = i < half ? i : i - half; put(id, -idx * colGap, col * colGap * 0.85); });
   } else if (type === "wedge") {
     roster.forEach((id, i) => { if (i === 0) return put(id, 0, 0); const rank = Math.ceil(i / 2), sd = (i % 2 === 1) ? -1 : 1; put(id, -rank * colGap * 0.8, sd * rank * gap * 0.7); });
