@@ -1,4 +1,4 @@
-var CACHE_NAME = "echelon-v0.68";
+var CACHE_NAME = "echelon-v0.69";
 var ROOT = self.registration.scope;
 var INDEX_URL = new URL("./index.html", ROOT).toString();
 var MANIFEST_URL = new URL("./manifest.webmanifest", ROOT).toString();
@@ -66,7 +66,11 @@ self.addEventListener("fetch", function (event) {
 
   if (event.request.mode === "navigate") {
     event.respondWith(
-      fetch(event.request).then(function (response) {
+      // cache: "reload" bypasses the browser's HTTP cache. GitHub Pages serves HTML
+      // with a max-age, so a plain fetch here could return a stale index.html and a
+      // fresh deploy would look like it had not landed. Offline still falls back to
+      // the cached copy below.
+      fetch(event.request, { cache: "reload" }).then(function (response) {
         if (response && response.ok) {
           var copy = response.clone();
           caches.open(CACHE_NAME).then(function (cache) {
