@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.72" />
+<meta name="application-version" content="0.79" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -703,7 +703,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v0.72</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.79</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -745,8 +745,9 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v0.72 · the sail interface: shot locker, wind rose, marines</div>
+    <div class="build-stamp" id="buildStamp">v0.79 · boarding is a finisher: defender edge, pistol-shot penetration, prize colours</div>
     <button id="sailGuideBtn" title="Sail-era guide" aria-label="Sail-era guide" style="display:none;position:fixed;top:10px;right:12px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid #6c7a86;background:#0e1a22;color:#e0b85a;font:600 15px/1 Georgia,serif;cursor:pointer;">i</button>
+    <button id="sailDetailBtn" title="Chart detail: names, chips and pips on or off" aria-label="Chart detail" style="display:none;position:fixed;top:42px;right:12px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid #6c7a86;background:#0e1a22;color:#9fb0bc;font:600 11px/1 sans-serif;cursor:pointer;">Aa</button>
     <div id="sailGuide" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(4,10,14,0.84);">
       <div style="max-width:740px;margin:3vh auto;background:#0e1a22;border:1px solid #2a3a44;border-radius:10px;padding:16px 20px 20px;max-height:90vh;overflow:auto;color:#cfd8de;font-size:13px;line-height:1.45;">
         <div style="display:flex;align-items:baseline;gap:10px;">
@@ -806,7 +807,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
               <text x="150" y="88" fill="#9fb0bc" font-size="9">the melee at the</text>
               <text x="150" y="100" fill="#9fb0bc" font-size="9">turn's end</text>
             </svg>
-            <div style="margin-top:5px;">Boarding is a first-class weapon. Crew, marines, drill and heart decide the melee; a ship that has struck is taken by any enemy alongside without a fight. Cripple her, close her, take her.</div>
+            <div style="margin-top:5px;">Grapples thrown inside 95 m lock the two ships fast together: neither moves until one side is carried or cuts the grapples, and the melee is fought out round after round. Crew, marines, drill and heart decide it, but a ship still in fighting order will throw your boarders back over the side: boarding finishes a beaten enemy, it does not open the action. The two bars beside the Board chip are your party against hers. A ship that has struck is taken by any enemy alongside without a fight. Cripple her, close her, take her.</div>
           </div>
           <div>
             <svg viewBox="0 0 200 130" width="100%" style="background:#0a141b;border:1px solid #1d2b34;border-radius:8px;">
@@ -821,6 +822,21 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
               <text x="155" y="122" fill="#9fb0bc" font-size="9" text-anchor="middle">sea fort</text>
             </svg>
             <div style="margin-top:5px;">At anchor you hold your berth and shoot from a platform that does not roll: moored lines and forts fire steadier than anything under way. A spring trains the battery a little each turn; cut the cable to make sail. A fort never flees and never strikes: it fights until its guns are wrecked.</div>
+          </div>
+          <div>
+            <svg viewBox="0 0 200 130" width="100%" style="background:#0a141b;border:1px solid #1d2b34;border-radius:8px;">
+              <path d="M14 52 Q17 40 32 39 L58 39 L64 43 L64 61 L58 65 L32 65 Q17 64 14 52 Z" fill="none" stroke="#e0b85a" stroke-width="1.7"/>
+              <path d="M84 54 Q87 44 99 43 L119 43 L124 46 L124 62 L119 65 L99 65 Q87 64 84 54 Z" fill="none" stroke="#aab6c2" stroke-width="1.5"/>
+              <path d="M142 55 Q144 47 154 46 L168 46 L172 49 L172 61 L168 64 L154 64 Q144 63 142 55 Z" fill="none" stroke="#aab6c2" stroke-width="1.2"/>
+              <text x="39" y="84" fill="#cfd8de" font-size="9" text-anchor="middle">1st and 2nd rates</text>
+              <text x="39" y="96" fill="#9fb0bc" font-size="8" text-anchor="middle">90 to 136 guns, the fleet's fists</text>
+              <text x="104" y="84" fill="#cfd8de" font-size="9" text-anchor="middle">3rd rates</text>
+              <text x="104" y="96" fill="#9fb0bc" font-size="8" text-anchor="middle">64 to 84, the 74 the workhorse</text>
+              <text x="157" y="84" fill="#cfd8de" font-size="9" text-anchor="middle">4th and 5th</text>
+              <text x="157" y="96" fill="#9fb0bc" font-size="8" text-anchor="middle">50s and frigates</text>
+              <text x="100" y="118" fill="#9fb0bc" font-size="8" text-anchor="middle">frigates never stand in the line: they scout, repeat signals and take prizes</text>
+            </svg>
+            <div style="margin-top:5px;">The rates. Only 3rd rate and above stand in the line. On the chart each name carries the same class chip as the ironclad theatres: the two-slash capital chip is a 1st or 2nd rate, one slash a 3rd or 4th rate of the line, the bare chip a frigate, the gunboat chip a sea fort. Under it, one wide bar in the ship's own colour is her hull; five dots by a figure mark are her crew; her sails are read straight off the masts standing on the hull. A small ring marks a ship at anchor; wake ticks astern show her way, none in irons; green arcs on selection mark her fastest headings.</div>
           </div>
         </div>
       </div>
@@ -1114,23 +1130,26 @@ var GAME_DATA = SCENARIO_DATA.yalu;
   mk(N, "f_timoleon", "Timoleon", 74, "France", "FR", REAR, QFR, FR_AT_ANCHOR);
   mk(N, "f_serieuse", "Serieuse", 38, "France", "FR", REAR, QFR, { anchored: true, crewStart: 0.9 });
   mk(N, "f_artemise", "Artemise", 38, "France", "FR", REAR, QFR, { anchored: true, crewStart: 0.9 });
-  const LINE = "Line";
-  mk(N, "goliath", "Goliath", 74, "Britain", "GB", LINE, QGB);
-  mk(N, "zealous", "Zealous", 74, "Britain", "GB", LINE, QGB);
-  mk(N, "orion", "Orion", 74, "Britain", "GB", LINE, QGB);
-  mk(N, "audacious", "Audacious", 74, "Britain", "GB", LINE, QGB);
-  mk(N, "theseus", "Theseus", 74, "Britain", "GB", LINE, QGB);
-  mk(N, "vanguard", "Vanguard", 74, "Britain", "GB", LINE, QGB);
-  mk(N, "minotaur", "Minotaur", 74, "Britain", "GB", LINE, QGB);
-  mk(N, "defence", "Defence", 74, "Britain", "GB", LINE, QGB);
-  mk(N, "bellerophon", "Bellerophon", 74, "Britain", "GB", LINE, QGB);
-  mk(N, "majestic", "Majestic", 74, "Britain", "GB", LINE, QGB);
-  mk(N, "leander", "Leander", 50, "Britain", "GB", LINE, QGB);
-  mk(N, "alexander", "Alexander", 74, "Britain", "GB", LINE, QGB);
-  mk(N, "swiftsure", "Swiftsure", 74, "Britain", "GB", LINE, QGB);
+  // Historically the British came down in one loose line and split at the head of
+  // the French van: Foley led five ships inside, the rest anchored down the seaward
+  // face. Two divisions carry that split as commands.
+  const INS = "Inshore", SEA = "Seaward";
+  mk(N, "goliath", "Goliath", 74, "Britain", "GB", INS, QGB);
+  mk(N, "zealous", "Zealous", 74, "Britain", "GB", INS, QGB);
+  mk(N, "orion", "Orion", 74, "Britain", "GB", INS, QGB);
+  mk(N, "audacious", "Audacious", 74, "Britain", "GB", INS, QGB);
+  mk(N, "theseus", "Theseus", 74, "Britain", "GB", INS, QGB);
+  mk(N, "vanguard", "Vanguard", 74, "Britain", "GB", SEA, QGB);
+  mk(N, "minotaur", "Minotaur", 74, "Britain", "GB", SEA, QGB);
+  mk(N, "defence", "Defence", 74, "Britain", "GB", SEA, QGB);
+  mk(N, "bellerophon", "Bellerophon", 74, "Britain", "GB", SEA, QGB);
+  mk(N, "majestic", "Majestic", 74, "Britain", "GB", SEA, QGB);
+  mk(N, "leander", "Leander", 50, "Britain", "GB", SEA, QGB);
+  mk(N, "alexander", "Alexander", 74, "Britain", "GB", SEA, QGB);
+  mk(N, "swiftsure", "Swiftsure", 74, "Britain", "GB", SEA, QGB);
   // Culloden struck the reef off Aboukir Island coming in and lay hard aground all
   // night, out of the action: present in the order of battle, immobile on the map.
-  mk(N, "culloden", "Culloden", 74, "Britain", "GB", LINE, QGB, { aground: true });
+  mk(N, "culloden", "Culloden", 74, "Britain", "GB", SEA, QGB, { aground: true });
   SCENARIO_DATA.nile = {
     metadata: {
       battle: "Battle of the Nile", date: "1 August 1798",
@@ -2018,7 +2037,18 @@ function shellToLoad(from, battery, target, range) {
   return (belt > 1 && pen >= belt * 1.15) ? "AP" : "HE";
 }
 function fireBattery(from, battery, target, turn) {
-  if (typeof isSailEra === "function" && isSailEra()) return sailFireBattery(from, battery, target, turn);
+  if (typeof isSailEra === "function" && isSailEra()) {
+    // A ship of this era fought both broadsides at once when doubled or when
+    // breaking the line: Victory raked Bucentaure to port while engaging to
+    // starboard. If this battery cannot bear on the ordered target, it takes the
+    // nearest enemy in its own arc instead of standing idle.
+    let t2 = target;
+    if (t2 && !batteryCanBear(from, battery, t2)) {
+      const alt = sailAltTarget(from, battery);
+      if (alt) t2 = alt;
+    }
+    return sailFireBattery(from, battery, t2 || target, turn);
+  }
   if (battery.knockedOut) return { error: "knocked out" };
   if (from.out || target.out) return { error: "invalid target" };
   const range = rangeBetween(from, target);
@@ -2376,6 +2406,43 @@ function angleOffWind(headingDeg) { return Math.abs(wrap180(headingDeg - sailWin
 // A square-rigged ship cannot lie closer than about six points (~65 deg) to the wind.
 const SAIL_NO_GO = 65;
 
+// Running aboard. Hulls cannot occupy the same water: when two ships end a move
+// inside hull clearance they have fouled, as Victory, Temeraire and Redoutable
+// fouled and fought locked together. They are pushed clear to a grapple's length,
+// both take sprung planking and torn gear, and an enemy alongside is now in
+// boarding reach, which is exactly what running aboard meant.
+function resolveFouls() {
+  if (!isSailEra()) return;
+  if (typeof window !== "undefined") window.__foulCount = window.__foulCount || 0;
+  for (let i = 0; i < game.ships.length; i++) {
+    const a = game.ships[i]; if (a.out && !a.struck) continue;
+    for (let j = i + 1; j < game.ships.length; j++) {
+      const b = game.ships[j]; if (b.out && !b.struck) continue;
+      if (a._grapple === b.id || b._grapple === a.id) continue;   // grappled ships are supposed to be touching
+      const minSep = ((a.length || 50) + (b.length || 50)) * 0.21;
+      const d = rangeBetween(a, b);
+      if (d >= minSep) continue;
+      // Being brought up all standing: the moving hull is set back along her own
+      // track, not shoved sideways, so the check reads as the collision it is
+      // rather than an unexplained drift.
+      const push = (minSep - d) + 2;
+      const back = (sh, amt) => { const hr = sh.heading * Math.PI / 180; sh.x -= Math.sin(hr) * amt; sh.y += Math.cos(hr) * amt; };
+      const aM = !a.anchored && !a.aground, bM = !b.anchored && !b.aground;
+      if (aM && bM) { back(a, push / 2); back(b, push / 2); }
+      else if (aM) back(a, push);
+      else if (bM) back(b, push);
+      a.hex = worldToHex(a.x, a.y); b.hex = worldToHex(b.x, b.y);   // keep the lattice in step without recentring the locked hulls
+      if (a._fouledTurn !== game.turn || b._fouledTurn !== game.turn) {
+        a._fouledTurn = game.turn; b._fouledTurn = game.turn;
+        a.structure = Math.max(0, a.structure - (2 + rnd() * 3));
+        b.structure = Math.max(0, b.structure - (2 + rnd() * 3));
+        if (typeof window !== "undefined") window.__foulCount++;
+        logLine(`${a.name} runs aboard ${b.name}: rigging fouled, planking sprung.`, "hit");
+      }
+    }
+  }
+}
+
 // Speed by point of sail. Best point for a square rig is the wind on or abaft the
 // beam; dead before the wind the after sails blanket the headsails.
 function sailPointFactor(headingDeg) {
@@ -2433,6 +2500,7 @@ function fellMast(t) {
   t.crew = Math.max(0.05, t.crew - (0.015 + rnd() * 0.02));
   for (const b of t.batteries) b.readiness = Math.max(0, (b.readiness || 0) - reloadMid(b.gun));
   logLine(`${t.name}'s ${["fore", "main", "mizzen"][i]}mast goes by the board.`, "hit");
+  t._fxMastUntil = (typeof performance !== "undefined" ? performance.now() : Date.now()) + 3000;
   if (t.mastsStanding === 0) logLine(`${t.name} lies dismasted, a wreck upon the water.`, "hit");
 }
 
@@ -2472,7 +2540,11 @@ function sailFireBattery(from, battery, target, turn) {
   const q = from.quality || 1;
   // Crew quality drives the rate of fire: a crack British crew got a round away in
   // 90-100 s, the allied average was nearer double that. Casualties slow it further.
-  const reloadS = reloadMid(battery.gun) / Math.max(0.35, q) * (2 - from.crew)
+  // Collingwood reckoned three broadsides to the Spaniard's two: about half again,
+  // not twice over. Drill is compressed to that spread so a well-worked ship is
+  // quicker without firing at double the enemy's rate.
+  const qRof = 0.62 + 0.38 * clamp(q, 0, 1);
+  const reloadS = reloadMid(battery.gun) / qRof * (2 - from.crew)
     * ((from.doctrine || "").toLowerCase() === "double" ? 1.3 : 1);
   if (battery.readiness < reloadS) return { error: "reloading" };
   const volleys = Math.min(3, Math.floor(battery.readiness / reloadS));
@@ -2485,7 +2557,11 @@ function sailFireBattery(from, battery, target, turn) {
 
   // The long beam swell at Trafalgar wrecked the gunnery of ill-drilled crews far
   // more than the well-drilled: a rolling platform punishes slow, unpractised loading.
-  const swell = 0.72 + 0.28 * q;
+  // Sea state is scenario ground truth: the long Atlantic swell off Trafalgar, a
+  // breeze chop in Aboukir Bay, near smooth water in the King's Deep roadstead.
+  // Roll punishes the ill-drilled most; smooth water lifts everyone toward steady.
+  const roll = (typeof SCN !== "undefined" && SCN.swell != null) ? SCN.swell : 1;
+  const swell = 1 - roll * (1 - (0.72 + 0.28 * q));
   let base = range <= 140 ? 0.34 : range <= 300 ? 0.22 : range <= 550 ? 0.12 : range <= 800 ? 0.055 : 0.02;
   let hc = base * q * (0.55 + 0.45 * from.crew) * clamp(target.length / 55, 0.6, 1.5) * swell;
   if (rake) hc *= 1.4;
@@ -2520,7 +2596,12 @@ function sailFireBattery(from, battery, target, turn) {
       target.morale = Math.max(0, target.morale - 0.4);
     } else {
       const dbl = doct === "double" ? 1.7 : 1;
-      const sd = w * 0.5 * dbl * (rake ? 1.8 : 1);
+      // At long range a ball lodged in two feet of oak; at pistol shot it drove clean
+      // through both sides, dismounting guns on the far side and filling the deck
+      // with splinters, which were what killed. Damage per hit therefore rises
+      // sharply as the range closes, which is why fleets closed at all.
+      const pen = range <= 120 ? 1.7 : range <= 250 ? 1.3 : range <= 450 ? 1 : 0.85;
+      const sd = w * 0.5 * dbl * pen * (rake ? 1.8 : 1);
       target.structure = Math.max(0, target.structure - sd); dmg += sd;
       // grape, splinters and dismounted guns: a stern rake swept the decks end to end
       crewLoss += (0.0026 + w * 0.00011) * (rakeStern ? 3 : rakeBow ? 2 : 1);
@@ -2535,6 +2616,7 @@ function sailFireBattery(from, battery, target, turn) {
   // Musketry: inside half pistol shot the tops and gangways firing small arms told,
   // scaled by the marine and soldier contingent aboard. Redoutable cleared Victory's
   // upper deck this way; Nelson fell to it.
+  if (doct !== "grape" && hits > 0 && range <= 250) crewLoss *= range <= 120 ? 1.6 : 1.25;   // splinters from a full penetration, the great killer
   if (range <= 100 && hits > 0) crewLoss += 0.0012 * volleys * (1 + 2 * (from.marines || 0.15));
   if (crewLoss > 0) target.crew = Math.max(0, target.crew - crewLoss);
 
@@ -2549,6 +2631,13 @@ function sailFireBattery(from, battery, target, turn) {
   battery.readiness -= volleys * reloadS;
   battery.lastFiredTurn = turn;
   from.firedThisTurn = true;
+  // Combat is told on the hull, not in text: the chart badges below draw from these.
+  if (hits > 0) {
+    const nowT = (typeof performance !== "undefined" ? performance.now() : Date.now());
+    target._fxUntil = nowT + 2600;
+    target._fxKind = doct; target._fxN = Math.min(4, hits);
+    target._fxRake = rake ? (rakeStern ? "stern" : "bow") : null;
+  }
   sailCheckStrike(target, from);
 
   return {
@@ -2560,6 +2649,63 @@ function sailFireBattery(from, battery, target, turn) {
     rake: rake ? (rakeStern ? "stern" : "bow") : null, rig: Math.round(rig),
     heavy: battery.count >= 6,
   };
+}
+
+// Lay her alongside: the boarder is brought against the target's engaged side,
+// heading parallel, and the two are held there until the grapples are cut.
+function holdAlongside(s, t) {
+  const sep = ((s.beam || 14) + (t.beam || 14)) * 0.52;
+  const hr = t.heading * Math.PI / 180;
+  const px = Math.cos(hr), py = Math.sin(hr);          // t's beam unit vector
+  const side = ((s.x - t.x) * px + (s.y - t.y) * py) >= 0 ? 1 : -1;
+  if (!s.anchored && !s.aground) {
+    s.x = t.x + px * sep * side; s.y = t.y + py * sep * side;
+    s.heading = t.heading; s.hex = worldToHex(s.x, s.y);
+  } else if (!t.anchored && !t.aground) {
+    t.x = s.x - px * sep * side; t.y = s.y - py * sep * side;
+    t.heading = s.heading; t.hex = worldToHex(t.x, t.y);
+  }
+}
+// The party a ship can throw into another: her people, their drill, the marines and
+// soldiers who formed the core of any rush, and how much heart is left in her.
+function boardingParty(x) {
+  return x.crew * ((x.def && x.def.complement) || 600) * (x.quality || 0.7) * (x.boardBonus || 1)
+    * (0.6 + x.morale / 250) * (1 + (x.marines || 0.15));
+}
+// Boarding was a finisher, not an opener. A ship still in fighting order met the
+// rush behind her bulwarks and boarding nets, with her own great guns and swivels
+// sweeping the gangways; Lucas' picked boarders could not carry Victory even with
+// her upper deck swept. It was ships already beaten, their guns silenced and their
+// people shattered, that were carried by storm. So the defender's edge is not flat:
+// it scales with the fight left in her.
+function defenderEdge(t) {
+  const structFrac = (t.structure || 0) / (t.structureMax || 1);
+  const fight = clamp(0.5 * (t.crew || 0) + 0.3 * ((t.morale || 0) / 100) + 0.2 * structFrac, 0, 1);
+  return 1.15 * (1 + 1.9 * Math.pow(fight, 1.5));
+}
+
+function grappleShips(s, t) {
+  s._grapple = t.id; t._grapple = s.id;
+  s._boardAtt = true; t._boardAtt = false;
+  s._boardRound = 0; s._boardPress = 0;
+  holdAlongside(s, t);
+}
+function releaseGrapple(s) {
+  const t = s._grapple ? shipById(s._grapple) : null;
+  s._grapple = null; s._boardAtt = false; s._boardRound = 0; s._boardPress = 0;
+  if (t) { t._grapple = null; t._boardAtt = false; t._boardRound = 0; t._boardPress = 0; }
+}
+
+function sailAltTarget(from, battery) {
+  let best = null, bd = 1e9;
+  for (const e of game.ships) {
+    if (e.side === from.side || e.out) continue;
+    const d = rangeBetween(from, e);
+    if (d > maxEffectiveRange(battery.gun) || d >= bd) continue;
+    if (!batteryCanBear(from, battery, e)) continue;
+    bd = d; best = e;
+  }
+  return best;
 }
 
 // ---- boarding and prize-taking ----------------------------------------------------
@@ -2576,6 +2722,7 @@ function eligibleBoardTarget(s) {
 }
 
 function commandeer(s, t, byStorm) {
+  if (typeof releaseGrapple === "function" && (s._grapple || t._grapple)) { releaseGrapple(s); releaseGrapple(t); }
   t.side = s.side; t.captured = true; t.struck = false; t.out = false; t.outReason = "";
   t.crew = 0.14;                                       // a prize crew goes across
   s.crew = Math.max(0.1, s.crew - 0.07);
@@ -2587,49 +2734,93 @@ function commandeer(s, t, byStorm) {
 
 function resolveBoardings() {
   if (!isSailEra()) return;
+  // A side losing the struggle badly cuts its grapples and hauls off.
+  for (const s of game.ships) {
+    if (!s._grapple || !s._boardAtt || s.side === game.playerSide) continue;
+    if ((s._boardPress || 0) <= -0.6 || s.crew < 0.2) {
+      logLine(`${s.name} cuts her grapples and hauls off.`, "sys");
+      releaseGrapple(s);
+    }
+  }
   // AI initiative: grapple when alongside with a clear advantage, or to secure a prize
   for (const s of game.ships) {
     if (s.out || s.side === game.playerSide || s._boardId) continue;
     const t = eligibleBoardTarget(s);
     if (!t) continue;
-    const adv = (s.crew * ((s.def && s.def.complement) || 600) * (s.quality || 1))
-      / Math.max(1, t.crew * ((t.def && t.def.complement) || 600) * (t.quality || 1));
-    if (t.struck || adv >= 1.5) s._boardId = t.id;
+    const adv = boardingParty(s) / Math.max(1, boardingParty(t) * defenderEdge(t));
+    if (t.struck || adv >= 1.25) s._boardId = t.id;   // no captain threw his people at a ship still in fighting order
   }
+  // Grapples thrown: the two ships lock and stay locked. Victory, Redoutable and
+  // Temeraire lay fast together for the best part of an hour, and Lucas' repeated
+  // rushes were beaten back one after another. A boarding is therefore a struggle
+  // fought out over turns, not a coin flip resolved in a moment.
   for (const s of game.ships) {
     const id = s._boardId;
     if (!id) continue;
     s._boardId = null;
-    if (s.out) continue;
+    if (s.out || s._grapple) continue;
     const t = shipById(id);
-    if (!t) continue;
+    if (!t || t.out && !t.struck) continue;
     if (rangeBetween(s, t) > 110) { logLine(`${s.name} cannot lay herself alongside ${t.name}.`, "sys"); continue; }
     if (t.struck) { commandeer(s, t); continue; }      // a struck ship surrenders without a fight
-    if (t.out) continue;
-    // The melee: numbers, quality and heart, with the defender's nets and bulwarks
-    // worth a modest edge.
-    const att = s.crew * ((s.def && s.def.complement) || 600) * (s.quality || 0.7) * (s.boardBonus || 1) * (0.6 + s.morale / 250) * (1 + (s.marines || 0.15));
-    const def = t.crew * ((t.def && t.def.complement) || 600) * (t.quality || 0.7) * (t.boardBonus || 1) * (0.6 + t.morale / 250) * 1.15 * (1 + (t.marines || 0.15));   // marines were the core of a boarding rush and of repelling one
-    s.crew = Math.max(0, s.crew - (0.05 + rnd() * 0.06));
-    t.crew = Math.max(0, t.crew - (0.05 + rnd() * 0.08));
-    if (att > def * 1.08) commandeer(s, t, true);
-    else {
-      s.morale = Math.max(0, s.morale - 12);
-      logLine(`${s.name}'s boarders are repulsed from ${t.name}.`, s.side === game.playerSide ? "bad" : "good");
-      sailCheckStrike(t, s);
-    }
+    if (t._grapple) { logLine(`${t.name} is already fast alongside another ship.`, "sys"); continue; }
+    grappleShips(s, t);
   }
-  // A ship that has struck is taken possession of as a matter of course by any
-  // enemy lying alongside: no order needed, either side, as in the record.
+  // One round of the melee for every locked pair, every turn, until one side is
+  // carried or the grapples are cut.
+  for (const s of game.ships) {
+    if (!s._grapple || !s._boardAtt) continue;
+    const t = shipById(s._grapple);
+    if (!t || t._grapple !== s.id) { releaseGrapple(s); continue; }
+    if (s.out || t.out) { if (t.struck) commandeer(s, t); else releaseGrapple(s); continue; }
+    holdAlongside(s, t);
+    if (t.struck) { commandeer(s, t); continue; }
+    const att = boardingParty(s), def = boardingParty(t) * defenderEdge(t);
+    const ratio = att / Math.max(1, def);
+    s._boardRound = (s._boardRound || 0) + 1;
+    // Each round costs both companies; the side giving ground loses the more men.
+    const bleed = 0.025 + rnd() * 0.03;
+    s.crew = Math.max(0, s.crew - bleed * (ratio >= 1 ? 1 : 1.5));
+    t.crew = Math.max(0, t.crew - bleed * (ratio >= 1 ? 1.5 : 1));
+    s._boardPress = (s._boardPress || 0) + (ratio - 1) * 1.15;
+    if (ratio >= 1) t.morale = Math.max(0, t.morale - 6);
+    else s.morale = Math.max(0, s.morale - 6);
+    if (s._boardPress >= 1) {                            // the deck is carried
+      const p = s._grapple; releaseGrapple(s); s._grapple = null;
+      commandeer(s, t, true);
+    } else if (s._boardPress <= -1 || s.crew < 0.12) {   // beaten back off her decks
+      logLine(`${s.name}'s boarders are beaten back off ${t.name}'s decks; the grapples are cut.`, s.side === game.playerSide ? "bad" : "good");
+      s.morale = Math.max(0, s.morale - 12);
+      releaseGrapple(s);
+      sailCheckStrike(s, t);
+    } else if (s._boardRound === 1) {
+      logLine(`${s.name} throws her grapples into ${t.name}: the boarders are away.`, s.side === game.playerSide ? "good" : "bad");
+    } else {
+      logLine(`${s.name} and ${t.name} lie locked together, the fight swaying across the decks.`, "hit");
+    }
+    sailCheckStrike(t, s);
+  }
+  // Possession of a ship that has struck was taken by sending a boat across with a
+  // prize crew, not by laying alongside: it needed only that the fighting near her
+  // had ended and that no friend of hers was still in a position to retake her. It
+  // took time, so a struck ship is not a prize until the turn after she strikes.
   for (const t of game.ships) {
     if (!t.struck || t.captured || !t.out) continue;
+    t._struckTurns = (t._struckTurns || 0) + 1;
+    if (t._struckTurns < 2) continue;
     let best = null, bd = 1e9;
     for (const e of game.ships) {
       if (e.side === t.side || e.out || e.crew < 0.2) continue;
       const d = rangeBetween(e, t);
-      if (d <= 95 && d < bd) { bd = d; best = e; }
+      if (d <= 300 && d < bd) { bd = d; best = e; }      // a boat's pull with a prize crew
     }
-    if (best) commandeer(best, t, false);
+    if (!best) continue;
+    let contested = false;                                // a friend of hers still up and near enough to retake her
+    for (const f of game.ships) {
+      if (f === t || f.side !== t.side || f.out || f.struck) continue;
+      if (rangeBetween(f, t) <= 200) { contested = true; break; }
+    }
+    if (!contested) commandeer(best, t, false);
   }
 }
 // ===== render.js =====
@@ -2866,6 +3057,16 @@ const CLASS_TIER_BY_ID = {
   yoshino: "heavy_cruiser", naniwa: "heavy_cruiser", takachiho: "heavy_cruiser",
 };
 function shipClassTier(ship) {
+  // Sail era mapped onto the same grammar the ironclad chart uses: the two-slash
+  // capital chip is a 1st or 2nd rate, the one-slash cruiser chip a 3rd or 4th
+  // rate of the line, the light chip a frigate or smaller, gunboat chip a fort.
+  if (typeof isSailEra === "function" && isSailEra()) {
+    if (ship.def && ship.def.fort) return "gunboat";
+    const g = parseInt((ship.def && ship.def.class) || ship.class) || 0;
+    if (g >= 90) return "capital";
+    if (g >= 50) return "heavy_cruiser";
+    return "light_cruiser";
+  }
   const explicit = CLASS_TIER_BY_ID[ship.id] || CLASS_TIER_BY_TYPE[ship.type];
   if (explicit) return explicit;
   // keyword fallback so a new dataset never silently shows a battleship as a cruiser
@@ -3076,8 +3277,11 @@ function drawSailShipTop(ctx, v, ship, opts) {
   const L = Math.max(ship.length * v.scale, 12);
   const B = Math.max(L * ratio, 4);
   const isSideA = ship.side !== "Combined" && ship.side !== "France" && ship.side !== "Denmark";
-  const ink = ship.struck ? "#8a8f94" : (opts.selected ? "#f3e7c8" : (isSideA ? "#e0b85a" : "#aab6c2"));
-  const fill = ship.struck ? "rgba(138,143,148,0.10)" : (isSideA ? "rgba(216,161,58,0.10)" : "rgba(154,167,178,0.10)");
+  // A ship that has struck but not yet been taken possession of belongs to neither
+  // side: she draws in bone, unfilled, until a boat goes across and she becomes a
+  // prize in her captor's colours.
+  const ink = ship.struck ? "#e8e2d2" : (opts.selected ? "#f3e7c8" : (isSideA ? "#e0b85a" : "#9fb6d6"));
+  const fill = ship.struck ? "rgba(232,226,210,0.05)" : (isSideA ? "rgba(216,161,58,0.12)" : "rgba(140,170,205,0.12)");
   const wind = (typeof sailWind === "function") ? sailWind() : { from: 292 };
   // Line weight in three tiers, as on a dockyard draught: hull heaviest, deck
   // structures medium, rig fittings light. One flat weight is what made the first
@@ -3120,7 +3324,9 @@ function drawSailShipTop(ctx, v, ship, opts) {
 
   // ---- hull -----------------------------------------------------------------
   ctx.fillStyle = fill; ctx.strokeStyle = ink; ctx.lineWidth = lwHull; ctx.lineJoin = "round";
+  if (ship.struck) ctx.setLineDash([Math.max(2, L * 0.05), Math.max(2, L * 0.035)]);   // colours down, possession not yet taken
   sailHullPath(ctx, L, B); ctx.fill(); ctx.stroke();
+  ctx.setLineDash([]);
   // transom: the flat stern with quarter galleries at each corner, the single
   // clearest bow/stern cue a plan view of this era offers
   const tw = B * 0.30;
@@ -3226,6 +3432,114 @@ function drawSailShipTop(ctx, v, ship, opts) {
       ctx.lineTo(sx * (chw + B * 0.09), y + L * 0.02); ctx.lineTo(sx * chw, y + L * 0.02); ctx.stroke();
     }
   }
+  // A prize wears her captor's colours with a split pendant at the bow: half in
+  // each side's ink, so a taken ship reads as taken at a glance.
+  if (ship.captured) {
+    // A prize wears her captor's colours over her own: the pendant at the main, and
+    // a second hull line in the captor's ink so she reads as taken at any zoom.
+    ctx.save(); ctx.globalAlpha = 0.95;
+    ctx.fillStyle = isSideA ? "#e0b85a" : "#9fb6d6"; ctx.fillRect(-B * 0.16, -L * 0.42, B * 0.16, L * 0.07);
+    ctx.fillStyle = isSideA ? "#9fb6d6" : "#e0b85a"; ctx.fillRect(0, -L * 0.42, B * 0.16, L * 0.07);
+    ctx.globalAlpha = 0.55; ctx.strokeStyle = isSideA ? "#e0b85a" : "#9fb6d6"; ctx.lineWidth = lwFit;
+    ctx.beginPath();
+    for (let k = 0; k <= 20; k++) { const t = -0.46 + 0.9 * k / 20, hw = sailHalfWidth(t, B / 2) * 1.16;
+      if (k === 0) ctx.moveTo(-hw, t * L); else ctx.lineTo(-hw, t * L); }
+    for (let k = 20; k >= 0; k--) { const t = -0.46 + 0.9 * k / 20; ctx.lineTo(sailHalfWidth(t, B / 2) * 1.16, t * L); }
+    ctx.closePath(); ctx.stroke();
+    ctx.restore();
+  }
+  // Wake ticks astern, scaled to her way through the water: the wind's effect on
+  // every ship read at a glance, and a ship in irons shows none at all.
+  if (!ship.anchored && !ship.aground && !(ship.def && ship.def.fort) && !ship.out && typeof sailEffSpeedKn === "function") {
+    const kn = sailEffSpeedKn(ship);
+    const nTick = kn >= 7 ? 3 : kn >= 4 ? 2 : kn >= 1.2 ? 1 : 0;
+    ctx.save(); ctx.globalAlpha *= 0.5; ctx.strokeStyle = ink; ctx.lineWidth = lwFit; ctx.lineCap = "round";
+    for (let k = 0; k < nTick; k++) {
+      const yy = L * (0.56 + 0.09 * k), ww = B * (0.34 - 0.07 * k);
+      ctx.beginPath(); ctx.moveTo(-ww, yy); ctx.lineTo(ww, yy); ctx.stroke();
+    }
+    ctx.lineCap = "butt"; ctx.restore();
+  }
+  // Selected in the planning phase: the no-go cone shaded on the water around her,
+  // so where she cannot point is a shape on the chart, not a sentence in a guide.
+  if (opts.selected && typeof game !== "undefined" && game.phase === "plan" && !ship.anchored && !ship.aground) {
+    const rel = ((wind.from - ph) % 360 + 360) % 360 * Math.PI / 180;   // wind eye in ship frame (0 = dead ahead)
+    const rr = L * 2.6, half = SAIL_NO_GO * Math.PI / 180;
+    ctx.save(); ctx.globalAlpha = 0.10; ctx.fillStyle = "#e07860";
+    ctx.beginPath(); ctx.moveTo(0, 0);
+    ctx.arc(0, 0, rr, rel - Math.PI / 2 - half, rel - Math.PI / 2 + half);
+    ctx.closePath(); ctx.fill();
+    // and the fastest headings in green: the wind on or just abaft the beam
+    ctx.globalAlpha = 0.35; ctx.strokeStyle = "#7fd08a"; ctx.lineWidth = Math.max(1.4, L * 0.02);
+    for (const sgn of [-1, 1]) {
+      ctx.beginPath();
+      ctx.arc(0, 0, rr * 0.92, rel - Math.PI / 2 + sgn * 90 * Math.PI / 180, rel - Math.PI / 2 + sgn * 115 * Math.PI / 180, sgn < 0);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+  // Hit badges, drawn for a couple of seconds after a broadside lands: white
+  // splinter ticks for hull, chevrons at the masts for rig, dots amidships for a
+  // deck-sweeping, a bright bar across the raked end. Graphics before text.
+  {
+    const nowT = (typeof performance !== "undefined" ? performance.now() : Date.now());
+    if (ship._fxUntil && nowT < ship._fxUntil) {
+      const f = (ship._fxUntil - nowT) / 2600;
+      ctx.save(); ctx.globalAlpha = 0.35 + 0.55 * f; ctx.lineWidth = lwStr; ctx.lineCap = "round";
+      const n = ship._fxN || 1;
+      if (ship._fxKind === "rig") {
+        ctx.strokeStyle = "#9fd0e8";
+        for (let k = 0; k < n; k++) { const y = (-0.24 + 0.25 * (k % 3)) * L;
+          ctx.beginPath(); ctx.moveTo(-B * 0.3, y + 3); ctx.lineTo(0, y - 2); ctx.lineTo(B * 0.3, y + 3); ctx.stroke(); }
+      } else if (ship._fxKind === "grape") {
+        ctx.fillStyle = "#e07860";
+        for (let k = 0; k < n + 1; k++) { ctx.beginPath(); ctx.arc((k % 2 ? -1 : 1) * B * 0.18, (-0.12 + 0.11 * k) * L, Math.max(0.8, L * 0.012), 0, Math.PI * 2); ctx.fill(); }
+      } else {
+        ctx.strokeStyle = "#f2ede0";
+        for (let k = 0; k < n; k++) { const sx = (k % 2 ? -1 : 1), y = (-0.15 + 0.13 * k) * L;
+          ctx.beginPath(); ctx.moveTo(sx * B * 0.5, y); ctx.lineTo(sx * (B * 0.5 + B * 0.28), y - L * 0.02); ctx.stroke(); }
+      }
+      if (ship._fxRake) {
+        ctx.strokeStyle = "#ffd76a"; ctx.lineWidth = Math.max(1.2, lwHull);
+        const y = ship._fxRake === "bow" ? -L * 0.46 : L * 0.44;
+        ctx.beginPath(); ctx.moveTo(-B * 0.42, y); ctx.lineTo(B * 0.42, y); ctx.stroke();
+      }
+      ctx.lineCap = "butt"; ctx.restore();
+    }
+    if (ship._fxMastUntil && nowT < ship._fxMastUntil) {
+      const f = (ship._fxMastUntil - nowT) / 3000;
+      ctx.save(); ctx.globalAlpha = 0.7 * f; ctx.strokeStyle = "#f0b45a"; ctx.lineWidth = lwStr;
+      ctx.beginPath(); ctx.arc(0, 0, L * (0.35 + 0.5 * (1 - f)), 0, Math.PI * 2); ctx.stroke(); ctx.restore();
+    }
+  }
+  // Boarding in progress: a grapple line toward the enemy alongside with paired
+  // dots in both sides' colours, on the boarder and on the boarded alike.
+  {
+    const bT = ship._grapple ? shipById(ship._grapple) : (ship._boardId ? shipById(ship._boardId) : null);
+    const bF = !bT ? game.ships.find((e) => e._boardId === ship.id && !e.out) : null;
+    const other = bT || bF;
+    if (other && rangeBetween(ship, other) <= 120) {
+      const dxw = other.x - ship.x, dyw = other.y - ship.y;
+      const a = (Math.atan2(dxw, -dyw) * 180 / Math.PI - ph) * Math.PI / 180;
+      const rr2 = Math.min(L * 1.1, Math.hypot(dxw, dyw) * (typeof v !== "undefined" && v.scale ? v.scale : 1) * 0.5);
+      const ex = Math.sin(a) * rr2, ey = -Math.cos(a) * rr2;
+      ctx.save(); ctx.globalAlpha = 0.85; ctx.lineWidth = lwStr; ctx.strokeStyle = "#f2ede0";
+      ctx.beginPath(); ctx.moveTo(Math.sin(a) * B * 0.5, -Math.cos(a) * B * 0.5);
+      let t2 = 0.25; while (t2 < 1) { ctx.lineTo(ex * t2 + (t2 * 4 % 2 < 1 ? 2 : -2) * Math.cos(a), ey * t2 + (t2 * 4 % 2 < 1 ? 2 : -2) * Math.sin(a)); t2 += 0.25; }
+      ctx.stroke();
+      // the struggle itself: a short bar between the hulls, filling toward whichever
+      // side is carrying the other's deck
+      const att2 = ship._boardAtt ? ship : other, prs = clamp(((att2 && att2._boardPress) || 0) / 2 + 0.5, 0, 1);
+      const bw2 = Math.max(9, L * 0.30), mx = ex * 0.5, my = ey * 0.5;
+      const ux2 = Math.cos(a), uy2 = Math.sin(a);
+      ctx.globalAlpha = 0.35; ctx.lineWidth = 3.4; ctx.strokeStyle = "#2c3a44";
+      ctx.beginPath(); ctx.moveTo(mx - ux2 * bw2 / 2, my - uy2 * bw2 / 2); ctx.lineTo(mx + ux2 * bw2 / 2, my + uy2 * bw2 / 2); ctx.stroke();
+      ctx.globalAlpha = 0.95; ctx.strokeStyle = att2 === ship ? (isSideA ? "#e0b85a" : "#9fb6d6") : (isSideA ? "#9fb6d6" : "#e0b85a");
+      ctx.beginPath(); ctx.moveTo(mx - ux2 * bw2 / 2, my - uy2 * bw2 / 2);
+      ctx.lineTo(mx - ux2 * bw2 / 2 + ux2 * bw2 * prs, my - uy2 * bw2 / 2 + uy2 * bw2 * prs); ctx.stroke();
+      ctx.restore();
+    }
+  }
   if (ship.struck && !ship.out) {                        // colours down: a pale ensign at the mizzen
     ctx.fillStyle = "#e8e6dd"; ctx.globalAlpha = 0.9;
     ctx.fillRect(B * 0.25, L * 0.30, Math.max(3, L * 0.06), Math.max(2, L * 0.04));
@@ -3239,6 +3553,61 @@ function drawSailShipTop(ctx, v, ship, opts) {
     ctx.beginPath(); ctx.moveTo(-r, r * 0.48); ctx.lineTo(r, -r * 0.48); ctx.stroke();
     ctx.restore();
   }
+  // Name and rate under the hull, as on the steam chart: the rate codes are the
+  // period classification (1st 100+, 2nd 90s, 3rd 64-84, 4th 50-60, 5th the frigates).
+  if (L >= 14 && !opts.noLabel && (typeof window === "undefined" || window.__sailDetail !== false)) {
+    ctx.save(); ctx.globalAlpha = ship.out ? 0.35 : 0.85;
+    const inkL = ship.struck ? "#8a8f94" : "#9fb0bc";
+    ctx.fillStyle = inkL;
+    ctx.font = `${Math.max(8, Math.min(10, L * 0.14))}px sans-serif`; ctx.textAlign = "center";
+    const nm = (ship.name || "").replace(/\s*\(.*\)/, "");
+    const ly = cy + L * 0.62 + 9;
+    ctx.fillText(nm, cx + 5, ly);
+    // rate chip in the exact ironclad grammar: capital = two slashes, one slash a
+    // 3rd or 4th rate, bare chip a frigate, gunboat chip a fort (shipClassTier).
+    const gx = cx - ctx.measureText(nm).width / 2 - 10;
+    // the identical icon function the ironclad chart uses, era-mapped by shipClassTier
+    if (typeof drawClassIcon === "function") drawClassIcon(ctx, gx, ly - 3, shipClassTier(ship), inkL, 9);
+    // Hull is the dominant readout: one wide bar in the ship's own ink directly
+    // under the name. Crew is five dots beside a figure mark. Sail health is not a
+    // bar at all: the masts standing on the hull above are the sail state.
+    if (!ship.out) {
+      const bw = Math.max(18, Math.min(32, L * 0.55)), bx = cx - bw / 2, by = ly + 3.5;
+      const hull = clamp(ship.structure / (ship.structureMax || 1), 0, 1);
+      ctx.globalAlpha = 0.3; ctx.fillStyle = "#2c3a44"; ctx.fillRect(bx, by, bw, 3);
+      ctx.globalAlpha = 0.95; ctx.fillStyle = ship.struck ? "#8a8f94" : (isSideA ? "#e0b85a" : "#aab6c2");
+      ctx.fillRect(bx, by, bw * hull, 3);
+      const dy2 = by + 7.5;
+      ctx.fillStyle = "#e08a7a"; ctx.globalAlpha = 0.9;
+      ctx.beginPath(); ctx.arc(bx + 1.4, dy2 + 0.4, 1.3, 0, Math.PI * 2); ctx.fill();   // the figure mark
+      ctx.fillRect(bx + 0.2, dy2 + 1.8, 2.4, 2.2);
+      const dots = 5, lit = Math.round(clamp(ship.crew, 0, 1) * dots);
+      for (let k = 0; k < dots; k++) {
+        ctx.globalAlpha = k < lit ? 0.9 : 0.22;
+        ctx.beginPath(); ctx.arc(bx + 8 + k * 5, dy2 + 2, 1.5, 0, Math.PI * 2); ctx.fill();
+      }
+      if (ship.anchored) {                        // an anchor, not a ring: shank, stock and flukes
+        const axx = bx + bw + 7, ayy = by + 2;
+        ctx.globalAlpha = 0.95; ctx.strokeStyle = inkL; ctx.lineWidth = 1.1; ctx.lineCap = "round";
+        ctx.beginPath(); ctx.moveTo(axx, ayy - 4); ctx.lineTo(axx, ayy + 3); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(axx - 2.4, ayy - 3); ctx.lineTo(axx + 2.4, ayy - 3); ctx.stroke();
+        ctx.beginPath(); ctx.arc(axx, ayy + 0.6, 3, 0.25 * Math.PI, 0.75 * Math.PI); ctx.stroke();
+        ctx.lineCap = "butt";
+      }
+    }
+    ctx.restore();
+  }
+}
+function sailRateCode(def) {
+  if (!def) return "";
+  if (def.fort) return "Fort";
+  const g = parseInt(def.class) || 0;
+  if (g >= 100) return "1st rate " + g;
+  if (g >= 90) return "2nd rate " + g;
+  if (g >= 64) return "3rd rate " + g;
+  if (g >= 50) return "4th rate " + g;
+  if (g >= 28) return "5th rate " + g;
+  return g ? "6th rate " + g : "";
 }
 // Plan half-width along t in [-0.5 (stern) .. +0.5 (bow)], fraction of half-beam.
 // From the draughts: a full entry with maximum beam just forward of amidships, a
@@ -3716,13 +4085,34 @@ function drawEffects(ctx, v, effects) {
       const dx = (e.wx || 0) * p * drift, dy = (e.wy || 0) * p * drift;
       const sx = wx(v, e.x + dx), sy = wy(v, e.y + dy);
       const scl = Math.abs(wx(v, 100) - wx(v, 0)) / 100;
-      const rad = e.big ? (14 + p * 60) : (6 + p * 26);
-      ctx.globalAlpha = e.life * (e.big ? 0.38 : 0.30);
-      ctx.fillStyle = "#d9d7cc";
-      ctx.beginPath(); ctx.arc(sx, sy, Math.max(2, rad * scl), 0, Math.PI * 2); ctx.fill();
-      if (e.big) {                                       // a second, thinner lobe downwind
-        ctx.globalAlpha = e.life * 0.18;
-        ctx.beginPath(); ctx.arc(sx + dx * 0.5, sy + dy * 0.5, Math.max(2, rad * 0.7 * scl), 0, Math.PI * 2); ctx.fill();
+      if (e.big) {
+        // A broadside is thirty-odd guns going off along a hundred and eighty feet
+        // of ship, so the smoke is a ragged bank of individual puffs rolling out
+        // from the engaged side and downwind, not one balloon. Each puff carries
+        // its own station, size, delay and drift from a fixed seed.
+        const hr = (e.hdg || 0) * Math.PI / 180, ar = (e.aim || 0) * Math.PI / 180;
+        const bxu = Math.sin(hr), byu = -Math.cos(hr);            // along the hull
+        const axu = Math.sin(ar), ayu = -Math.cos(ar);            // out toward the target
+        const L2 = (e.shipL || 55), sd = e.seed || 1;
+        ctx.fillStyle = "#d9d7cc";
+        for (let i = 0; i < 14; i++) {
+          const h1 = hash01(sd + i * 37), h2 = hash01(sd + i * 91 + 5), h3 = hash01(sd + i * 13 + 11);
+          const t0 = i * 0.028;                                    // guns do not all fire together
+          const pi = p - t0; if (pi <= 0) continue;
+          const along = (i / 13 - 0.5) * L2 * (0.94 + h1 * 0.14);  // station along the whole battery
+          const out = (4 + h2 * 10) + pi * (22 + h3 * 30);         // billowing clear of the side
+          const wob = (h3 - 0.5) * 13;
+          const px2 = e.x + bxu * along + axu * out + dx * (0.55 + h1 * 0.6) + byu * wob;
+          const py2 = e.y + byu * along + ayu * out + dy * (0.55 + h1 * 0.6) - bxu * wob;
+          const rad2 = (4 + h2 * 4.5) + pi * (20 + h1 * 18);
+          ctx.globalAlpha = Math.max(0, e.life * (0.30 + h2 * 0.14) * (1 - pi * 0.55));
+          ctx.beginPath(); ctx.arc(wx(v, px2), wy(v, py2), Math.max(1.2, rad2 * scl), 0, Math.PI * 2); ctx.fill();
+        }
+      } else {
+        const rad = 6 + p * 26;
+        ctx.globalAlpha = e.life * 0.30;
+        ctx.fillStyle = "#d9d7cc";
+        ctx.beginPath(); ctx.arc(sx, sy, Math.max(2, rad * scl), 0, Math.PI * 2); ctx.fill();
       }
     } else if (e.type === "slick") {
       // spreading oil and coal dust where she went down; outlives the foam
@@ -4456,7 +4846,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "0.72";
+const ECHELON_VERSION = "0.79";
 
 // ---- module-global game state ---------------------------------------------
 const game = {
@@ -4654,6 +5044,7 @@ SCENARIO_CONFIGS.trafalgar = {
   dataKey: "trafalgar",
   hexM: 61.7,                       // a third of the steam lattice: decisive gunnery here is 50-400 m, not 2-6 km
   wind: { from: 292, kn: 5 },       // light WNW airs before the coming gale, heavy beam swell from the west
+  swell: 1, sea: "heavy swell",     // the long westerly swell that wrecked ill-drilled gunnery
   title: "Battle of Trafalgar", date: "21 October 1805",
   brand: "Cape Trafalgar, 1805", subtitle: "Nelson breaks the line",
   sides: [
@@ -4713,6 +5104,7 @@ SCENARIO_CONFIGS.nile = {
   dataKey: "nile",
   hexM: 61.7,
   wind: { from: 337, kn: 8 },       // the NNW breeze that carried Nelson straight in
+  swell: 0.45, sea: "bay chop",     // open roadstead of Aboukir Bay: chop, not ocean swell
   title: "Battle of the Nile", date: "1 August 1798",
   brand: "Aboukir Bay, 1798", subtitle: "The fleet at anchor",
   sides: [
@@ -4768,6 +5160,7 @@ SCENARIO_CONFIGS.copenhagen = {
   dataKey: "copenhagen",
   hexM: 61.7,
   wind: { from: 170, kn: 10 },      // the southerly that carried Nelson up the King's Deep
+  swell: 0.15, sea: "smooth water", // an enclosed roadstead: everyone shoots from a near-steady deck
   title: "Battle of Copenhagen", date: "2 April 1801",
   brand: "The King's Deep, 1801", subtitle: "I really do not see the signal",
   sides: [
@@ -5081,7 +5474,7 @@ function setupScenario(playerSide, chineseFormationKey) {
   }
   game.torpedoes = [];
   game.turn = 1;
-  game.exec = null;
+  resolveFouls(), game.exec = null;
 
   // Historical divisions are the default command unit. The player can still detach,
   // reform or disband them manually. The Chinese Yalu arc remains ungrouped.
@@ -5638,6 +6031,23 @@ function updateMorale() {
   }
 }
 
+// A beaten fleet can only break off if it is free to run. Brueys' line was moored
+// and could not; the ships locked yardarm to yardarm in the melee at Trafalgar
+// fought on for hours after the issue was decided, and it was in those hours that
+// the prizes were taken and the victors were themselves cut to pieces. Outside the
+// sail era this is unconditional, as steam fleets could and did disengage.
+function sailCanDisengage(beatenSide) {
+  if (typeof isSailEra !== "function" || !isSailEra()) return true;
+  for (const s of game.ships) {
+    if (s.out || s.side !== beatenSide) continue;
+    if (s.anchored || s.aground || s._grapple) return false;          // moored, aground or locked: she stays
+    for (const e of game.ships) {
+      if (e.out || e.side === beatenSide) continue;
+      if (rangeBetween(s, e) <= 420) return false;                    // still under the enemy's guns
+    }
+  }
+  return true;
+}
 function checkVictory() {
   const A = sideA(), B = sideB();
   const cp = tonnagePct(A), jp = tonnagePct(B);
@@ -5646,7 +6056,7 @@ function checkVictory() {
   let over = false, reason = "";
   if (aAlive === 0 || bAlive === 0) { over = true; reason = "annihilation"; }
   else if (cp < 0.40 || jp < 0.40) { over = true; reason = "fighting strength broken"; }
-  else if (game.turn >= 8 && Math.abs(cp - jp) >= 0.30) { over = true; reason = "the beaten fleet disengages"; }
+  else if (game.turn >= 8 && Math.abs(cp - jp) >= 0.30 && sailCanDisengage(cp >= jp ? B : A)) { over = true; reason = "the beaten fleet disengages"; }
   else if (game.turn >= game.maxTurns) { over = true; reason = "disengagement at nightfall"; }
   let winner = null;
   if (over) {
@@ -6098,7 +6508,9 @@ function tickEffects(dt) {
           e.smoked = true;
           const w = sceneWind();
           const sail = isSailEra();
-          spawned.push({ type: "gunsmoke", x: e.x, y: e.y, wx: w.x, wy: w.y, life: 1, fade: sail ? 0.14 : 0.4, big: sail });
+          spawned.push({ type: "gunsmoke", x: e.x, y: e.y, wx: w.x, wy: w.y, life: 1, fade: sail ? 0.14 : 0.4, big: sail,
+            seed: Math.floor(rnd() * 9999), hdg: from ? from.heading : 0, aim: from && from._aimWorld != null ? from._aimWorld : (from ? from.heading + 90 : 90),
+            shipL: from ? (from.length || 55) : 55 });
         }
       } else {
         const x0 = from ? from.x : (e.x0 || 0), y0 = from ? from.y : (e.y0 || 0);
@@ -6623,7 +7035,15 @@ function worldToHex(x, y) {
   const r = (2 / 3 * y) / HEX_R;
   return hexRound(q, r);
 }
-function snapToHex(s) { const h = worldToHex(s.x, s.y); s.hex = h; const w = hexToWorld(h.q, h.r); s.x = w.x; s.y = w.y; }
+function snapToHex(s) {
+  const h = worldToHex(s.x, s.y); s.hex = h;
+  // The lattice governs where a ship may go, not where she is. Recentring her on
+  // the hex mark every turn threw moored ships sideways and astern off their true
+  // berths, which is not a manoeuvre any ship ever made. In the sail era the hex
+  // is recorded and the position left exactly as it lies.
+  if (isSailEra()) return;
+  const w = hexToWorld(h.q, h.r); s.x = w.x; s.y = w.y;
+}
 
 function moveAllowance(s) {
   if (isSailEra()) {
@@ -6640,6 +7060,7 @@ function moveAllowance(s) {
 }
 function turnAllowance(s) {
   if (isSailEra()) {
+    if (s._grapple) return 0;                            // fast alongside: she goes where the other goes
     if (s.aground) return 0;                             // hard aground: she lies as she struck
     if (s.anchored) return 9;                            // a spring to the cable trains her a point a turn
 
@@ -6655,7 +7076,7 @@ function reachableHexes(s) {
   // At anchor or aground the ship holds her berth. Brueys' line at the Nile and
   // the Danish blockships fought moored where they lay; a spring on the cable can
   // train the battery a little (turnAllowance) but the hex does not change.
-  if (isSailEra() && (s.anchored || s.aground)) return [{ q: s.hex.q, r: s.hex.r, stay: true, heading: s.heading }];
+  if (isSailEra() && (s.anchored || s.aground || s._grapple)) return [{ q: s.hex.q, r: s.hex.r, stay: true, heading: s.heading }];
   const N = moveAllowance(s), maxTurn = turnAllowance(s);
   if (N <= 0) return [{ q: s.hex.q, r: s.hex.r, stay: true, heading: s.heading }];
   const minReach = Math.max(1, Math.round(N * 0.55));
@@ -6679,7 +7100,19 @@ function reachableHexes(s) {
         if (off < SAIL_NO_GO && off <= angleOffWind(s.heading) + 4) continue;
       }
       const reach = N - (N - minReach) * (dev / maxTurn);
-      if (dHex <= reach + 0.49) out.push({ q, r, heading: brg });
+      if (dHex > reach + 0.49) continue;
+      if (isSailEra()) {
+        // A berth held by a ship that cannot move is not open water: moored ships,
+        // grounded ships and forts are obstacles to be conned around.
+        let blocked = false;
+        for (const o of game.ships) {
+          if (o === s || (o.out && !o.struck)) continue;
+          if (!(o.anchored || o.aground || o._grapple)) continue;
+          if (o.hex && o.hex.q === q && o.hex.r === r) { blocked = true; break; }
+        }
+        if (blocked) continue;
+      }
+      out.push({ q, r, heading: brg });
     }
   }
   return out;
@@ -6716,6 +7149,37 @@ function constrainedOrderHeading(s, wanted) {
 function setOrderHeading(s, wanted) {
   if (!s || s.out || s.side !== game.playerSide || game.phase !== "plan") return false;
   if (!s.order) defaultOrder(s);
+  if (isSailEra() && s.anchored && !s.aground && !s._grapple) {
+    // A spring on the cable warps her round in her own berth: the hex does not
+    // change, the broadside comes to bear.
+    if (!s.order || !s.hex) defaultOrder(s);
+    s.order = { q: s.hex.q, r: s.hex.r, heading: constrainedOrderHeading(s, wanted) };
+    s._manualThisTurn = true;
+    return true;
+  }
+  if (isSailEra() && !s.anchored && !s.aground) {
+    // Under sail the helm arrows steer the plotted track itself, not just the final
+    // bow. Pick the reachable hex whose approach lies closest to the wanted heading
+    // (farthest such hex wins), so the ship visibly comes round through the water
+    // and the no-go cone is felt on the helm: presses into the eye simply stop
+    // coming round where the rig gives out. Before this, the arrows only trimmed
+    // the endpoint heading while the destination stayed dead ahead, and the ship
+    // appeared to slide without answering her helm.
+    const want = ((wanted % 360) + 360) % 360;
+    const cells = reachableHexes(s).filter((c) => !c.stay);
+    if (cells.length) {
+      let bestDev = 1e9;
+      for (const c of cells) bestDev = Math.min(bestDev, Math.abs(wrap180(c.heading - want)));
+      let best = null, bd = -1;
+      const w0 = s.hex ? hexToWorld(s.hex.q, s.hex.r) : { x: s.x, y: s.y };
+      for (const c of cells) {
+        if (Math.abs(wrap180(c.heading - want)) > bestDev + 6) continue;
+        const w = hexToWorld(c.q, c.r); const d = Math.hypot(w.x - w0.x, w.y - w0.y);
+        if (d > bd) { bd = d; best = c; }
+      }
+      if (best) { s.order = { q: best.q, r: best.r, heading: best.heading }; s._manualThisTurn = true; return true; }
+    }
+  }
   s.order.heading = constrainedOrderHeading(s, wanted);
   s._manualThisTurn = true;
   return true;
@@ -6746,6 +7210,10 @@ function chooseAIOrder(s) {
     if (score > bestScore) { bestScore = score; best = c; }
   }
   s.order = best ? { q: best.q, r: best.r, heading: best.stay ? s.heading : best.heading } : null;
+  // A moored ship still works her spring to keep the battery bearing.
+  if (isSailEra() && s.anchored && !s.aground && !s._grapple && s.hex) {
+    s.order = { q: s.hex.q, r: s.hex.r, heading: constrainedOrderHeading(s, want) };
+  }
 }
 // A player ship left without orders maintains way: straight ahead at full reach.
 function defaultOrder(s) {
@@ -6893,7 +7361,7 @@ function autoFormHistoricalSquadrons() {
         : [[["Van"], "Van (Dumanoir)"], [["Centre"], "Centre (Villeneuve)"], [["Rear"], "Rear (Gravina)"]];
     } else if (SCN.id === "nile") {
       groups = game.playerSide === "Britain"
-        ? [[["Line"], "Nelson's Line"]]
+        ? [[["Inshore"], "Inshore Division (Foley)"], [["Seaward"], "Seaward Division (Nelson)"]]
         : [[["Van"], "Van"], [["Centre"], "Centre (Brueys)"], [["Rear"], "Rear (Villeneuve)"]];
     } else if (SCN.id === "copenhagen") {
       groups = game.playerSide === "Britain"
@@ -7111,10 +7579,21 @@ function startExecute() {
   // 2) record the animation endpoints
   for (const s of game.ships) {
     if (s.out) { s.order = null; s._ax1 = null; continue; }
-    const end = s.order ? hexToWorld(s.order.q, s.order.r) : { x: s.x, y: s.y };
+    let end = s.order ? hexToWorld(s.order.q, s.order.r) : { x: s.x, y: s.y };
+    if (s.order && isSailEra()) {
+      // Carry the ship's offset from her hex mark across the move, and let an order
+      // to hold simply hold: without this a ship at anchor was dragged onto the hex
+      // centre every turn, which read as her driving sideways or astern.
+      if (s.hex && s.order.q === s.hex.q && s.order.r === s.hex.r) end = { x: s.x, y: s.y };
+      else if (s.hex) {
+        const c0 = hexToWorld(s.hex.q, s.hex.r);
+        end = { x: end.x + (s.x - c0.x), y: end.y + (s.y - c0.y) };
+      }
+    }
     s._ax0 = s.x; s._ay0 = s.y; s._ah0 = s.heading;
     s._ax1 = end.x; s._ay1 = end.y; s._ah1 = s.order ? s.order.heading : s.heading;
   }
+  resolveSweptCollisions();                         // no hull passes through another
   game.exec = { t: 0, dur: 5.5, done: false };
   refillReadiness();                                // refill both sides' reload banks for this turn
   resolveTorpedoes();                               // torpedo boats loose FIRST - they press the attack home before the gun line can shred them
@@ -7123,6 +7602,55 @@ function startExecute() {
   game.selectedId = null; game.targetId = null; game.cardId = null; game.pending = null;
   syncTopBar(); syncPlayBtn(); syncPanel();
 }
+// Two hulls cannot occupy the same water at any point of the move, not merely at
+// its end. The tracks are walked together and any ship whose path would carry her
+// into another is brought up short at the last clear point: she runs aboard, or
+// hauls up under the other's stern, exactly as a ship checked by a hull in her way.
+function resolveSweptCollisions() {
+  if (!isSailEra()) return;
+  const live = game.ships.filter((s) => !s.out || s.struck);
+  const STEPS = 14;
+  const stop = {};
+  for (const s of live) stop[s.id] = 1;
+  const poseAt = (s, p) => {
+    const q = Math.min(p, stop[s.id]);
+    return (s._ax1 != null) ? moveCurvePose(s._ax0, s._ay0, s._ah0, s._ax1, s._ay1, s._ah1, q) : { x: s.x, y: s.y, heading: s.heading };
+  };
+  for (let k = 1; k <= STEPS; k++) {
+    const p = k / STEPS;
+    const pos = {};
+    for (const s of live) pos[s.id] = poseAt(s, p);
+    for (let i = 0; i < live.length; i++) {
+      for (let j = i + 1; j < live.length; j++) {
+        const a = live[i], b = live[j];
+        if (a._grapple === b.id || b._grapple === a.id) continue;      // locked together on purpose
+        // a fathom of margin so the tracks stay clear between sampled points too
+        const minSep = ((a.length || 50) + (b.length || 50)) * 0.21 + 4;
+        const A = pos[a.id], B = pos[b.id];
+        if (Math.hypot(A.x - B.x, A.y - B.y) >= minSep) continue;
+        const aMoving = a._ax1 != null && stop[a.id] > (k - 1) / STEPS && !a.anchored && !a.aground;
+        const bMoving = b._ax1 != null && stop[b.id] > (k - 1) / STEPS && !b.anchored && !b.aground;
+        const back = Math.max(0, (k - 1) / STEPS);
+        if (aMoving) stop[a.id] = Math.min(stop[a.id], back);
+        if (bMoving) stop[b.id] = Math.min(stop[b.id], back);
+        if (aMoving || bMoving) {
+          const nm = aMoving ? a : b, other = aMoving ? b : a;
+          if (!nm._checkedTurn || nm._checkedTurn !== game.turn) {
+            nm._checkedTurn = game.turn;
+            logLine(`${nm.name} is brought up short by ${other.name} lying in her water.`, "sys");
+          }
+        }
+        pos[a.id] = poseAt(a, p); pos[b.id] = poseAt(b, p);
+      }
+    }
+  }
+  for (const s of live) {
+    if (s._ax1 == null || stop[s.id] >= 1) continue;
+    const e = moveCurvePose(s._ax0, s._ay0, s._ah0, s._ax1, s._ay1, s._ah1, stop[s.id]);
+    s._ax1 = e.x; s._ay1 = e.y; s._ah1 = e.heading;
+  }
+}
+
 function movementPose(s, progress) {
   if (s._ax1 == null) return { x: s.x, y: s.y, heading: s.heading };
   return moveCurvePose(s._ax0, s._ay0, s._ah0, s._ax1, s._ay1, s._ah1, progress);
@@ -7167,7 +7695,7 @@ function finishExecute() {
   reconcileSquadrons();               // pass any flag whose leader was lost this turn
   telSnapshotTurn(_mv);
   game.turn += 1;
-  game.exec = null;
+  resolveFouls(), game.exec = null;
   // restore what you had selected, so the next order picks up where you left off
   const ks = game._keepSel ? shipById(game._keepSel) : null;
   if (ks && !ks.out) {
@@ -7732,10 +8260,15 @@ function renderSquadronPanel(body, sq) {
         <div class="spacing-controls"><button class="text-icon" data-space="-100" aria-label="Close formation spacing">−</button><span class="spacing-readout">${Math.round(sq.spacing || STATION_M)}m</span><button class="text-icon" data-space="100" aria-label="Open formation spacing">+</button></div>
       </div>
       ${headingButtonsHtml("squad", lead)}
-      <div class="doctrine-icons" aria-label="Shell doctrine">
+      <div class="doctrine-icons" aria-label="Shell doctrine">${isSailEra() ? `
+        <button class="text-icon${live.every((s)=> (s.doctrine||"auto") === "auto") ? " active" : ""}" data-sqdoc="auto" title="Auto for the whole squadron">A</button>
+        <button class="text-icon${live.every((s)=> s.doctrine === "hull") ? " active" : ""}" data-sqdoc="hull" title="Round shot">Round</button>
+        <button class="text-icon${live.every((s)=> s.doctrine === "rig") ? " active" : ""}" data-sqdoc="rig" title="Chain at the rig">Chain</button>
+        <button class="text-icon${live.every((s)=> s.doctrine === "grape") ? " active" : ""}" data-sqdoc="grape" title="Grape at the crews">Grape</button>
+        <button class="text-icon${live.every((s)=> s.doctrine === "double") ? " active" : ""}" data-sqdoc="double" title="Double-shotted">Double</button>` : `
         <button class="text-icon${live.every((s)=> (s.doctrine||"auto") === "auto") ? " active" : ""}" data-sqdoc="auto" title="Automatic shell selection">A</button>
         <button class="text-icon${live.every((s)=> s.doctrine === "AP") ? " active" : ""}" data-sqdoc="AP" title="Armour-piercing shells">AP</button>
-        <button class="text-icon${live.every((s)=> s.doctrine === "HE") ? " active" : ""}" data-sqdoc="HE" title="High-explosive shells">HE</button>
+        <button class="text-icon${live.every((s)=> s.doctrine === "HE") ? " active" : ""}" data-sqdoc="HE" title="High-explosive shells">HE</button>`}
       </div>
       <div class="member-grid">${members}</div>
       <div class="command-foot"><button class="icon-btn" id="sqDisband" title="Disband squadron" aria-label="Disband squadron">${iconSvg("detach")}</button></div>
@@ -7855,13 +8388,39 @@ function syncPanel() {
       <div class="target-chip">${iconSvg("target")}<span>${tgtText}</span></div>
       ${s.side === game.playerSide ? headingButtonsHtml("ship", s) : ""}
       ${s.side === game.playerSide ? (isSailEra() ? `<div class="doctrine-icons" aria-label="Fire doctrine">
-        <button class="text-icon${(s.doctrine||"auto") === "auto" ? " active" : ""}" data-shell="auto" title="Automatic aim">A</button>
-        <button class="text-icon${s.doctrine === "hull" ? " active" : ""}" data-shell="hull" title="Round shot into the hull: guns, crew, the fabric of the ship">Round</button>
-        <button class="text-icon${s.doctrine === "rig" ? " active" : ""}" data-shell="rig" title="Chain and bar at the rigging: masts, spars, way through the water. Weak past 400 m">Chain</button>
-        <button class="text-icon${s.doctrine === "grape" ? " active" : ""}" data-shell="grape" title="Grape and canister: sweeps the decks of men, little hull damage. Useless past 300 m">Grape</button>
-        <button class="text-icon${s.doctrine === "double" ? " active" : ""}" data-shell="double" title="Double-shotted guns: crushing inside 250 m, wild beyond, slow to load">Double</button>
-        ${(() => { const T = shipById(s.targetId); return T && eligibleBoardTarget(s, T) ? `<button class="text-icon${s._boardId ? " active" : ""}" id="boardBtn" title="Grapple and board her">Board</button>` : ""; })()}
-        ${isSailEra() && !s.aground && !(s.def && s.def.fort) ? (s.anchored ? `<button class="text-icon active" id="cableBtn" title="Cut the cable and get under way">Cut cable</button>` : `<button class="text-icon" id="cableBtn" title="Let go and bring up: hold this berth, a spring trains the battery">Anchor</button>`) : ""}
+        ${(() => {
+          const auto = (s.doctrine || "auto") === "auto";
+          const T = shipById(s.targetId);
+          const pred = auto && T && !T.out ? sailDoctrine(s, rangeBetween(s, T)) : null;
+          const shots = [["hull", "Round", "Round shot into the hull: guns, crew, the fabric of the ship"],
+                         ["rig", "Chain", "Chain and bar at the rigging: masts, spars, way. Weak past 400 m"],
+                         ["grape", "Grape", "Grape and canister: sweeps the decks inside 300 m"],
+                         ["double", "Double", "Double-shotted: crushing inside 250 m, wild beyond, slow to load"]];
+          let h = `<button class="text-icon${auto ? " active" : ""}" data-shell="auto" title="Auto: the gunner chooses by doctrine and range. Toggle off to load by hand">A</button>`;
+          for (const [v, lab, tip] of shots) {
+            const picked = auto ? pred === v : s.doctrine === v;
+            const st = auto ? `opacity:${picked ? 1 : 0.35};${picked ? "outline:1px dashed currentColor;" : ""}` : "";
+            h += `<button class="text-icon${!auto && s.doctrine === v ? " active" : ""}" data-shell="${v}" style="${st}" title="${tip}${auto ? " (Auto has the shot)" : ""}">${lab}</button>`;
+          }
+          h += `<button class="text-icon" data-fleetauto="1" title="Whole fleet to Auto shot selection">⚑A</button>`;
+          return h;
+        })()}
+        <details class="help-pop"><summary class="icon-btn tiny" aria-label="Shot locker help">?</summary><div><b>Round</b>: hull, guns and men at any range. <b>Chain</b>: cuts rig and speed, weak past 400 m. <b>Grape</b>: sweeps crews inside 300 m, spares the hull. <b>Double</b>: 1.7x hull damage inside 250 m, wild beyond, slow to load. <b>A</b> follows national doctrine: British into the hull, allied high at the rig, everyone hull at half pistol shot.</div></details>
+        ${(() => {
+          const T = shipById(s.targetId);
+          if (!(T && eligibleBoardTarget(s, T))) return "";
+          // Two bars, yours and hers: your party against her party behind her
+          // bulwarks. Marines and soldiers are already counted in both.
+          const a = boardingParty(s), d = boardingParty(T) * defenderEdge(T);
+          const tot = a + d || 1, fa = Math.round(100 * a / tot);
+          const col = fa >= 58 ? "#7fd08a" : fa >= 46 ? "#e0b85a" : "#e07860";
+          return `<button class="text-icon${s._boardId ? " active" : ""}" id="boardBtn" title="Grapple and board her. Your boarding party against hers behind her bulwarks: ${fa} to ${100 - fa}">Board</button>
+        <span class="board-odds" title="Boarders: yours against hers" style="display:inline-flex;align-items:center;gap:3px;padding:0 4px;vertical-align:middle;">
+          <span style="display:inline-block;width:34px;height:6px;background:#2c3a44;border-radius:3px;overflow:hidden;"><span style="display:block;height:100%;width:${fa}%;background:${col};"></span></span>
+        </span>`;
+        })()}
+        ${isSailEra() && s._grapple ? `<button class="text-icon active" id="grappleBtn" title="Cut the grapples and haul off">Cut grapples</button>` : ""}
+        ${isSailEra() && !s._grapple && !s.aground && !(s.def && s.def.fort) ? (s.anchored ? `<button class="text-icon active" id="cableBtn" title="Cut the cable and get under way">Cut cable</button>` : `<button class="text-icon" id="cableBtn" title="Let go and bring up: hold this berth, a spring trains the battery">Anchor</button>`) : ""}
         ${s.order ? `<button class="icon-btn" id="clearOrderBtn" title="Clear plotted course" aria-label="Clear plotted course">×</button>` : ""}
       </div>` : `<div class="doctrine-icons" aria-label="Shell doctrine">
         <button class="text-icon${(s.doctrine||"auto") === "auto" ? " active" : ""}" data-shell="auto" title="Automatic shell selection">A</button>
@@ -7872,7 +8431,17 @@ function syncPanel() {
       <div class="battery-strip">${batChips}${torpChip}</div>
     </div>`;
 
-  body.querySelectorAll("[data-shell]").forEach((btn) => btn.addEventListener("click", () => { s.doctrine = btn.getAttribute("data-shell"); syncPanel(); }));
+  body.querySelectorAll("[data-shell]").forEach((btn) => btn.addEventListener("click", () => {
+    const v = btn.getAttribute("data-shell");
+    // Auto is a lock: while engaged it displays its pick and the hand loads nothing.
+    if (isSailEra() && v !== "auto" && (s.doctrine || "auto") === "auto") { showToast("Auto has the shot: toggle A off to load by hand"); return; }
+    s.doctrine = v; syncPanel();
+  }));
+  const fa = body.querySelector("[data-fleetauto]");
+  if (fa) fa.addEventListener("click", () => {
+    for (const x of game.ships) if (x.side === game.playerSide) x.doctrine = "auto";
+    showToast("Fleet shell selection to Auto"); syncPanel();
+  });
   const bb = document.getElementById("boardBtn");
   if (bb) bb.addEventListener("click", () => {
     const T = shipById(s.targetId);
@@ -7880,6 +8449,14 @@ function syncPanel() {
     s._boardId = s._boardId === T.id ? null : T.id;
     showToast(s._boardId ? `${s.name}: boarders away for ${T.name}` : `${s.name}: boarding stood down`);
     syncPanel();
+  });
+  const gb2 = document.getElementById("grappleBtn");
+  if (gb2) gb2.addEventListener("click", () => {
+    if (!s._grapple) return;
+    const o = shipById(s._grapple);
+    releaseGrapple(s);
+    logLine(`${s.name} cuts her grapples${o ? ` and hauls off from ${o.name}` : ""}.`, "");
+    showToast(`${s.name}: grapples cut`); syncPanel();
   });
   const cb = document.getElementById("cableBtn");
   if (cb) cb.addEventListener("click", () => {
@@ -8080,6 +8657,14 @@ function onPointerUp(e) {
           if (sq) { squadronSetTarget(sq, ship.id); game.targetId = ship.id; logLine(`Squadron ${sq.id}: target ${ship.name}.`, ""); }
         } else if (sel0 && sel0.side === game.playerSide && !sel0.out && sel0.targetId !== ship.id) {
           sel0.targetId = ship.id; game.targetId = ship.id; logLine(`${sel0.name}: target ${ship.name}.`, "");
+          if (isSailEra()) {
+            // Under sail the order that follows a target is usually board, cut cable
+            // or change the shot, so the command chips must stay under your hand
+            // instead of being replaced by the enemy's dossier.
+            showToast(`${sel0.name}: target ${ship.name}`);
+            game.cardId = null; syncPanel();
+            return;
+          }
         }
         game.cardId = ship.id; syncPanel();
       }
@@ -9175,7 +9760,7 @@ function loadGameFromCode(code) {
   game.menuMode = sv.v >= 2 ? (sv.menu || "ship") : "ship";
   game.selSquadId = sv.v >= 2 ? (sv.sqsel || null) : null;
   if (game.menuMode === "squad" && !squadronById(game.selSquadId)) { game.menuMode = "ship"; game.selSquadId = null; }
-  game.exec = null; game.busy = false;
+  resolveFouls(), game.exec = null; game.busy = false;
   game.log = [];
   logLine(`Action restored: turn ${game.turn}. Tap a ship to give orders, then End Turn.`, "sys");
   ohOv("gameMenu"); ohOv("startScreen"); ohOv("resultScreen");
@@ -9199,7 +9784,7 @@ function restartBattle() {
 function quitToMenu() {
   ["codexOverlay", "fleetOverlay", "squadronOverlay", "resultScreen", "gameMenu"].forEach(ohOv);
   const ss = document.getElementById("startScreen"); if (ss) ss.classList.add("show");
-  game.started = false; game.running = false; game.exec = null; game.busy = false; game.phase = "playing";
+  game.started = false; game.running = false; resolveFouls(), game.exec = null; game.busy = false; game.phase = "playing";
 }
 
 function startGame(playerSide, formationKey) {
@@ -9392,8 +9977,8 @@ function init() {
         openingChoices.innerHTML = th.scenarios.map((sid) => {
           const c = SCENARIO_CONFIGS[sid];
           return `<div class="opening-choice" data-scn="${sid}"><div class="oc-name">${c.opening}</div><div class="oc-time">${c.date}</div><div class="oc-desc">${c.subtitle}</div></div>`;
-        }).join("");
-        openingChoices.querySelectorAll(".opening-choice").forEach((b) => b.addEventListener("click", () => selectOpening(b.getAttribute("data-scn"))));
+        }).join("") + (th.id === "sail" ? `<div class="opening-choice" data-guide="1"><div class="oc-name">How this era fights</div><div class="oc-time">guide</div><div class="oc-desc">Wind, raking, the shot locker, boarding, anchors and forts</div></div>` : "");
+        openingChoices.querySelectorAll(".opening-choice").forEach((b) => b.addEventListener("click", () => { if (b.getAttribute("data-guide")) { openSailGuide(); return; } selectOpening(b.getAttribute("data-scn")); }));
         openingRow.style.display = "";
       } else {
         openingRow.style.display = "none";
@@ -9481,11 +10066,18 @@ function closeSailGuide() { const g = document.getElementById("sailGuide"); if (
   if (g) g.addEventListener("click", (e) => { if (e.target === g) closeSailGuide(); });
 })();
 // The guide opens itself once at the first sail-era start; the i button carries it after.
+window.__sailDetail = true;
+(function () {
+  const d = document.getElementById("sailDetailBtn");
+  if (d) d.addEventListener("click", () => { window.__sailDetail = !window.__sailDetail; d.style.color = window.__sailDetail ? "#9fb0bc" : "#4c5a64"; });
+})();
 const __startGameBase = startGame;
 startGame = function (a, b) {
   __startGameBase(a, b);
   const btn = document.getElementById("sailGuideBtn");
   if (btn) btn.style.display = isSailEra() ? "block" : "none";
+  const dbtn = document.getElementById("sailDetailBtn");
+  if (dbtn) dbtn.style.display = isSailEra() ? "block" : "none";
   if (isSailEra() && !window.__sailGuideSeen) { window.__sailGuideSeen = true; openSailGuide(); }
 };
 // Wind rose in the top corner of the chart: the from-arrow, the strength, and the
@@ -9493,23 +10085,80 @@ startGame = function (a, b) {
 function drawWindRose() {
   const c = document.getElementById("chart"); if (!c) return;
   const x = c.getContext("2d"); const wind = sailWind();
-  const R = 30, cx = c.width - R - 16, cy = R + 18;
-  x.save(); x.setTransform(1, 0, 0, 1, 0, 0); x.globalAlpha = 0.92;
-  x.fillStyle = "rgba(10,20,26,0.72)"; x.beginPath(); x.arc(cx, cy, R + 9, 0, Math.PI * 2); x.fill();
-  x.strokeStyle = "#6c7a86"; x.lineWidth = 1; x.beginPath(); x.arc(cx, cy, R, 0, Math.PI * 2); x.stroke();
+  // The weather is the engine of this era, so it gets a card, not a token: a
+  // compass rose carrying the wind's eye, the no-go cone she cannot point into,
+  // the beam-reach arcs where she is fastest, the sea state, and, when a ship is
+  // selected, her own heading marked on the ring with her point of sail named.
+  const R = 46, cx = R + 26, cy = R + 30;
+  const sel = (typeof selectedShip === "function") ? selectedShip() : null;
+  x.save(); x.setTransform(1, 0, 0, 1, 0, 0);
+  x.globalAlpha = 0.9; x.fillStyle = "rgba(8,18,24,0.72)";
+  roundRect(x, cx - R - 14, cy - R - 18, (R + 14) * 2, R * 2 + 58, 12); x.fill();
+  x.globalAlpha = 1;
+  x.strokeStyle = "#3d4d58"; x.lineWidth = 1;
+  x.beginPath(); x.arc(cx, cy, R, 0, Math.PI * 2); x.stroke();
+  x.beginPath(); x.arc(cx, cy, R * 0.62, 0, Math.PI * 2); x.globalAlpha = 0.5; x.stroke(); x.globalAlpha = 1;
+  for (let a = 0; a < 360; a += 30) {                        // compass ticks, N marked
+    const r0 = a % 90 === 0 ? R - 7 : R - 4, rr = Math.PI * (a - 90) / 180;
+    x.globalAlpha = a % 90 === 0 ? 0.8 : 0.4;
+    x.beginPath(); x.moveTo(cx + Math.cos(rr) * r0, cy + Math.sin(rr) * r0);
+    x.lineTo(cx + Math.cos(rr) * R, cy + Math.sin(rr) * R); x.stroke();
+  }
+  x.globalAlpha = 0.75; x.fillStyle = "#8fa0ac"; x.font = "9px sans-serif"; x.textAlign = "center";
+  x.fillText("N", cx, cy - R + 10);
   const fr = wind.from * Math.PI / 180, a0 = fr - Math.PI / 2;
-  x.fillStyle = "rgba(224,120,90,0.16)"; x.strokeStyle = "rgba(224,120,90,0.45)";
+  x.globalAlpha = 1; x.fillStyle = "rgba(224,120,90,0.20)"; x.strokeStyle = "rgba(224,120,90,0.5)";
   x.beginPath(); x.moveTo(cx, cy);
   x.arc(cx, cy, R, a0 - SAIL_NO_GO * Math.PI / 180, a0 + SAIL_NO_GO * Math.PI / 180);
   x.closePath(); x.fill(); x.stroke();
-  const ax = Math.sin(fr), ay = -Math.cos(fr);
-  x.strokeStyle = "#e0b85a"; x.lineWidth = 2.2; x.lineCap = "round";
-  x.beginPath(); x.moveTo(cx + ax * (R - 2), cy + ay * (R - 2)); x.lineTo(cx - ax * R * 0.3, cy - ay * R * 0.3); x.stroke();
-  const hx = cx - ax * R * 0.3, hy = cy - ay * R * 0.3, px = -ay, py = ax;
-  x.beginPath(); x.moveTo(hx + (ax * 7 + px * 4), hy + (ay * 7 + py * 4)); x.lineTo(hx, hy); x.lineTo(hx + (ax * 7 - px * 4), hy + (ay * 7 - py * 4)); x.stroke();
+  x.strokeStyle = "rgba(127,208,138,0.75)"; x.lineWidth = 3.4;              // fastest points
+  for (const sgn of [-1, 1]) {
+    x.beginPath(); x.arc(cx, cy, R - 2, a0 + sgn * 90 * Math.PI / 180, a0 + sgn * 118 * Math.PI / 180, sgn < 0); x.stroke();
+  }
+  const ax = Math.sin(fr), ay = -Math.cos(fr);                              // wind arrow, blowing in
+  x.strokeStyle = "#e0b85a"; x.lineWidth = 3.2; x.lineCap = "round";
+  const tipx = cx + ax * R * 0.66, tipy = cy + ay * R * 0.66;   // stops on the inner ring: the figure stays clear
+  x.beginPath(); x.moveTo(cx + ax * (R - 3), cy + ay * (R - 3)); x.lineTo(tipx, tipy); x.stroke();
+  const pxv = -ay, pyv = ax;
+  x.beginPath(); x.moveTo(tipx + ax * 10 + pxv * 6, tipy + ay * 10 + pyv * 6);
+  x.lineTo(tipx, tipy); x.lineTo(tipx + ax * 10 - pxv * 6, tipy + ay * 10 - pyv * 6); x.stroke();
+  for (let k = 1; k <= 2; k++) {                                            // fletching: strength at a glance
+    const fx = cx + ax * (R - 3 - k * 8), fy = cy + ay * (R - 3 - k * 8);
+    if ((wind.kn || 0) >= k * 4) { x.lineWidth = 2; x.beginPath(); x.moveTo(fx, fy); x.lineTo(fx + pxv * 7 + ax * 4, fy + pyv * 7 + ay * 4); x.stroke(); }
+  }
   x.lineCap = "butt";
-  x.fillStyle = "#cfd8de"; x.font = "10px sans-serif"; x.textAlign = "center";
-  x.fillText((wind.kn || 0) + " kn", cx, cy + R + 15);
+  if (sel && !sel.out) {                                                    // her heading on the ring
+    const hr = sel.heading * Math.PI / 180, hx = Math.sin(hr), hy = -Math.cos(hr);
+    x.strokeStyle = "#f3e7c8"; x.lineWidth = 2;
+    x.beginPath(); x.moveTo(cx + hx * R * 0.66, cy + hy * R * 0.66); x.lineTo(cx + hx * (R - 5), cy + hy * (R - 5)); x.stroke();
+    x.fillStyle = "#f3e7c8"; x.beginPath(); x.arc(cx + hx * (R - 6), cy + hy * (R - 6), 2.6, 0, Math.PI * 2); x.fill();
+  }
+  x.fillStyle = "#e8e2d2"; x.font = "600 19px sans-serif"; x.textAlign = "center";
+  x.fillText(String(wind.kn || 0), cx, cy + 3);
+  x.font = "8px sans-serif"; x.fillStyle = "#8fa0ac"; x.fillText("kn", cx, cy + 14);
+  let ly = cy + R + 14;
+  if (typeof SCN !== "undefined" && SCN.sea) {                              // swell chevrons: sea state as a shape
+    const rough = SCN.swell != null ? SCN.swell : 1, nW = rough > 0.7 ? 3 : rough > 0.3 ? 2 : 1;
+    const amp = 1.2 + rough * 3.2;
+    x.strokeStyle = "#7fa8bd"; x.lineWidth = 1.4; x.globalAlpha = 0.85;
+    for (let r2 = 0; r2 < nW; r2++) {
+      const yy = ly + r2 * 4.6;
+      x.beginPath();
+      for (let k = 0; k <= 24; k++) { const xx = cx - 24 + k * 2; const yv = yy + Math.sin(k * 0.72) * amp;
+        if (k === 0) x.moveTo(xx, yv); else x.lineTo(xx, yv); }
+      x.stroke();
+    }
+    ly += nW * 4.6 + 9;
+    x.globalAlpha = 0.9; x.fillStyle = "#8fa0ac"; x.font = "9px sans-serif";
+    x.fillText(SCN.sea, cx, ly);
+    ly += 12;
+  }
+  if (sel && !sel.out && !sel.anchored && !sel.aground) {                   // her point of sail, one word
+    const a = angleOffWind(sel.heading);
+    const word = a < SAIL_NO_GO ? "in irons" : a < 80 ? "close-hauled" : a < 115 ? "beam reach" : a < 150 ? "broad reach" : "running";
+    x.fillStyle = a < SAIL_NO_GO ? "#e07860" : (a >= 90 && a < 118 ? "#7fd08a" : "#cfd8de");
+    x.font = "600 10px sans-serif"; x.fillText(word, cx, ly);
+  }
   x.restore();
 }
 if (typeof loop === "function") {
