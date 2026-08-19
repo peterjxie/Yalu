@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.79" />
+<meta name="application-version" content="0.82" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -343,6 +343,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .result-roster .roster-row .rr-sil{width:66px;height:22px;object-fit:contain;opacity:.92;}
 .rr-class-chip{width:26px;height:18px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(232,221,199,.14);border-radius:5px;background:rgba(232,221,199,.045);color:var(--ink);}
 .rr-class-chip .type-glyph{margin:0;width:18px;height:12px;opacity:.95}.rr-class-chip .type-glyph svg{width:18px;height:12px}
+.roster-row.rr-prize .rr-name{color:#e0b85a;}
+.roster-row.rr-prize .rr-state{color:#e0b85a;}
 .st-sunk .rr-sil,.permanent-loss .rr-sil{opacity:.28;filter:grayscale(1);}
 .st-sunk .rr-class-chip,.permanent-loss .rr-class-chip{position:relative;opacity:.38;filter:grayscale(1);}
 .st-sunk .rr-class-chip::after,.permanent-loss .rr-class-chip::after{content:"";position:absolute;left:2px;right:2px;top:50%;height:1.5px;background:currentColor;transform:rotate(-27deg);transform-origin:center}
@@ -560,7 +562,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .loss-names{display:flex;flex-direction:column;gap:4px;margin:8px 0 2px;padding-top:7px;border-top:1px solid rgba(232,221,199,.08)}
 .loss-name{display:grid;grid-template-columns:27px minmax(78px,1fr) minmax(100px,1.35fr);align-items:center;gap:6px;font-family:var(--mono);font-size:9px;line-height:1.3;color:var(--ink-dim)}
 .loss-name b{min-width:0;color:var(--ink);font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.loss-name .loss-status{min-width:0;white-space:normal;overflow-wrap:anywhere}.loss-class-chip{width:25px;height:17px;display:inline-flex;align-items:center;justify-content:center;border:1px solid rgba(232,221,199,.14);border-radius:5px;background:rgba(232,221,199,.04);color:var(--ink)}.loss-class-chip .type-glyph{margin:0;width:18px;height:12px}.loss-name.permanent .loss-class-chip{position:relative;opacity:.35;filter:grayscale(1)}.loss-name.permanent .loss-class-chip::after{content:"";position:absolute;left:1px;right:1px;top:50%;height:1.5px;background:currentColor;transform:rotate(-27deg);transform-origin:center}.loss-name.permanent b{text-decoration:line-through;opacity:.66}.loss-name.st-out,.loss-name.st-sunk{color:#c98d82}.loss-name.st-heavy{color:#d0b46d}
-.squad-access{min-width:38px!important;width:38px!important;padding:0!important}.squad-access span{display:none!important}.squad-access svg{width:20px!important;height:20px!important}.squadron-chips{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:none;gap:7px;z-index:18;pointer-events:none;transition:bottom .16s ease}.squadron-chips.show{display:flex}.squad-chip{pointer-events:auto;min-width:34px;height:30px;padding:0 10px;border-radius:16px;border:1px solid rgba(200,164,92,.45);background:rgba(5,22,28,.72);color:var(--ink);font-family:var(--mono);font-weight:700;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.3);backdrop-filter:blur(2px)}.squad-chip.active{border-color:var(--brass);color:var(--brass);background:rgba(20,45,48,.9);box-shadow:0 0 0 1px rgba(200,164,92,.22),0 2px 10px rgba(0,0,0,.38)}@media(max-width:560px){.squadron-chips{bottom:8px;gap:6px}.squad-chip{min-width:32px;height:28px;padding:0 9px}}.squadron-card{max-width:480px}.squad-picker-note,.squad-picker-empty{font-size:12px;color:var(--ink-dim);margin:0 0 12px}.squad-pick{width:100%;display:grid;grid-template-columns:34px 1fr 18px;align-items:center;gap:8px;text-align:left;border:1px solid rgba(200,164,92,.22);background:rgba(8,28,34,.42);color:var(--ink);border-radius:8px;padding:10px;margin:0 0 7px}.squad-pick:hover,.squad-pick:active{border-color:rgba(200,164,92,.6);background:rgba(16,48,57,.58)}.squad-pick-icon svg{width:26px;height:22px}.squad-pick b{display:block;font-size:12px}.squad-pick small{display:block;color:var(--ink-dim);font-family:var(--mono);font-size:9px;margin-top:3px}.squad-pick-arrow{font-size:24px;color:var(--brass)}.squad-new{margin-top:12px;width:100%}
+.squad-access{min-width:38px!important;width:38px!important;padding:0!important}.squad-access span{display:none!important}.squad-access svg{width:20px!important;height:20px!important}.squadron-chips{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:none;gap:7px;z-index:18;pointer-events:none;transition:bottom .16s ease}.squadron-chips.show{display:flex}.squad-chip{pointer-events:auto;min-width:34px;height:30px;padding:0 10px;border-radius:16px;border:1px solid rgba(200,164,92,.45);background:rgba(5,22,28,.72);color:var(--ink);font-family:var(--mono);font-weight:700;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.3);backdrop-filter:blur(2px)}.squad-chip.active{border-color:var(--brass);color:var(--brass);background:rgba(20,45,48,.9);box-shadow:0 0 0 1px rgba(200,164,92,.22),0 2px 10px rgba(0,0,0,.38)}@media(max-width:560px){.squadron-chips{bottom:8px;gap:6px}.squad-chip{min-width:32px;height:28px;padding:0 9px}}.squadron-card{max-width:480px}.squad-picker-note,.squad-picker-empty{font-size:12px;color:var(--ink-dim);margin:0 0 12px}.squad-pick{width:100%;display:grid;grid-template-columns:34px 1fr 18px;align-items:center;gap:8px;text-align:left;border:1px solid rgba(200,164,92,.22);background:rgba(8,28,34,.42);color:var(--ink);border-radius:8px;padding:10px;margin:0 0 7px}.squad-pick:hover,.squad-pick:active{border-color:rgba(200,164,92,.6);background:rgba(16,48,57,.58)}.squad-pick-icon svg{width:26px;height:22px}.squad-pick b{display:block;font-size:12px}.squad-pick small{display:block;color:var(--ink-dim);font-family:var(--mono);font-size:9px;margin-top:3px}.squad-pick-arrow{font-size:24px;color:var(--brass)}.squad-new{margin-top:12px;width:100%}.squad-row{display:flex;align-items:stretch;gap:6px;margin:0 0 7px}.squad-row .squad-pick{margin:0;flex:1}.squad-disband{flex:0 0 auto;padding:0 12px;border-radius:8px;border:1px solid rgba(200,120,96,.4);background:rgba(40,16,14,.4);color:#e0a08a;font-size:11px;font-family:var(--mono)}.squad-disband:hover,.squad-disband:active{border-color:rgba(224,120,96,.75);color:#f0b8a2}
 @media(max-width:560px){.squad-access{min-width:38px!important;width:38px!important}.squad-access span{display:none!important}}
 @media (max-width:960px) and (orientation:portrait){#main:has(#panel.expanded) .squadron-chips{bottom:calc(min(20dvh,168px) + 18px)}}
 @media (max-width:960px) and (orientation:landscape){
@@ -703,7 +705,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v0.79</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.82</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -745,7 +747,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v0.79 · boarding is a finisher: defender edge, pistol-shot penetration, prize colours</div>
+    <div class="build-stamp" id="buildStamp">v0.82 · the Yalu judged by what Ito was sent to do: cruisers broken, command of the sea, every torpedo reported</div>
     <button id="sailGuideBtn" title="Sail-era guide" aria-label="Sail-era guide" style="display:none;position:fixed;top:10px;right:12px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid #6c7a86;background:#0e1a22;color:#e0b85a;font:600 15px/1 Georgia,serif;cursor:pointer;">i</button>
     <button id="sailDetailBtn" title="Chart detail: names, chips and pips on or off" aria-label="Chart detail" style="display:none;position:fixed;top:42px;right:12px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid #6c7a86;background:#0e1a22;color:#9fb0bc;font:600 11px/1 sans-serif;cursor:pointer;">Aa</button>
     <div id="sailGuide" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(4,10,14,0.84);">
@@ -2533,6 +2535,10 @@ function sailCheckStrike(s, foe) {
 // One broadside pass. Same return shape as fireBattery so every caller reads it.
 function sailFireBattery(from, battery, target, turn) {
   if (battery.knockedOut || battery.count <= 0) return { error: "knocked out" };
+  // A prize crew of a dozen or two had the ship, her wreckage and her prisoners to
+  // mind. No prize taken at the Nile or at Trafalgar rejoined the action under her
+  // captor's colours, so a prize does not fight.
+  if (from.captured) return { error: "prize crew securing the ship" };
   if (from.out || target.out) return { error: "invalid target" };
   const range = rangeBetween(from, target);
   if (!batteryCanBear(from, battery, target)) return { error: "cannot bear" };
@@ -2723,12 +2729,21 @@ function eligibleBoardTarget(s) {
 
 function commandeer(s, t, byStorm) {
   if (typeof releaseGrapple === "function" && (s._grapple || t._grapple)) { releaseGrapple(s); releaseGrapple(t); }
-  t.side = s.side; t.captured = true; t.struck = false; t.out = false; t.outReason = "";
+  // A ship taken back by her own flag is not a prize but a recapture: Santa Ana was
+  // retaken from her prize crew in the gale after Trafalgar and served on.
+  const retaken = (typeof homeSide === "function") && homeSide(t) === s.side;
+  t.side = s.side; t.captured = !retaken; t.struck = false; t.out = false; t.outReason = "";
+  if (retaken) {
+    t.crew = Math.max(t.crew, 0.25); t.morale = Math.max(t.morale, 40); t._struckTurns = 0;
+    logLine(`${t.name} is retaken and hoists her own colours again.`, s.side === game.playerSide ? "good" : "bad");
+    for (const b of t.batteries) b.readiness = 0;
+    return;
+  }
   t.crew = 0.14;                                       // a prize crew goes across
   s.crew = Math.max(0.1, s.crew - 0.07);
   t.morale = 45; t.targetId = null; t._follow = null; t.order = null;
   for (const b of t.batteries) b.readiness = 0;
-  logLine(`${s.name} ${byStorm ? "carries" : "takes possession of"} ${t.name} — the prize changes hands.`,
+  logLine(`${s.name} ${byStorm ? "carries" : "takes possession of"} ${t.name}. The prize changes hands.`,
     s.side === game.playerSide ? "good" : "bad");
 }
 
@@ -3270,6 +3285,20 @@ function roundRect(ctx, x, y, w, h, r) {
 // Age of sail, top view: a full hull lens, bowsprit, and three masts with yards
 // braced round to the wind. Simpler than the steam schematics but honest about
 // rig state: a fallen mast leaves a gap, a struck ship goes grey.
+// One word under any ship that is not free to manoeuvre, so her stillness is never
+// a mystery: either she is held, or she has nothing left to steer with.
+function sailImmobileReason(s) {
+  if (!s || typeof isSailEra !== "function" || !isSailEra()) return "";
+  if (s.struck && !s.captured) return "struck";
+  if (s.aground) return "aground";
+  if (s._grapple) return "grappled";
+  if (s.anchored) return "moored";
+  if (s.captured) return "prize";
+  if ((s.mastsStanding != null ? s.mastsStanding : 3) === 0) return "dismasted";
+  if (typeof sailEffSpeedKn === "function" && sailEffSpeedKn(s) < STEERAGE_WAY_KN) return "no steerage way";
+  return "";
+}
+
 function drawSailShipTop(ctx, v, ship, opts) {
   const px = pX(ship), py = pY(ship), ph = pH(ship);
   const cx = wx(v, px), cy = wy(v, py);
@@ -3561,18 +3590,43 @@ function drawSailShipTop(ctx, v, ship, opts) {
     ctx.fillStyle = inkL;
     ctx.font = `${Math.max(8, Math.min(10, L * 0.14))}px sans-serif`; ctx.textAlign = "center";
     const nm = (ship.name || "").replace(/\s*\(.*\)/, "");
+    // Two ships lying hull to hull would otherwise stack their names on the same
+    // spot: each of a locked pair throws her label out to her own beam.
+    let ldx = 0;
+    if (ship._grapple) {
+      const o = shipById(ship._grapple);
+      if (o) {
+        const hr = ship.heading * Math.PI / 180;
+        const px2 = Math.cos(hr), py2 = Math.sin(hr);
+        ldx = (((ship.x - o.x) * px2 + (ship.y - o.y) * py2) >= 0 ? 1 : -1) * L * 0.62;
+      }
+    }
     const ly = cy + L * 0.62 + 9;
-    ctx.fillText(nm, cx + 5, ly);
+    ctx.fillText(nm, cx + 5 + ldx, ly);
     // rate chip in the exact ironclad grammar: capital = two slashes, one slash a
     // 3rd or 4th rate, bare chip a frigate, gunboat chip a fort (shipClassTier).
-    const gx = cx - ctx.measureText(nm).width / 2 - 10;
+    const gx = cx + ldx - ctx.measureText(nm).width / 2 - 10;
+    let reason = sailImmobileReason(ship);
+    if (reason === "grappled" && !ship._boardAtt) reason = "";     // one badge to a locked pair, not two on the same spot
+    if (reason) {
+      ctx.save();
+      ctx.font = `600 8px sans-serif`; ctx.textAlign = "center";
+      const tw = ctx.measureText(reason).width + 8, bx2 = cx + ldx, by2 = cy - L * 0.62 - 8;
+      ctx.globalAlpha = 0.85; ctx.fillStyle = "#0f171d";
+      if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(bx2 - tw / 2, by2 - 5, tw, 10, 4); ctx.fill(); }
+      else ctx.fillRect(bx2 - tw / 2, by2 - 5, tw, 10);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = ship.captured ? (isSideA ? "#e0b85a" : "#9fb6d6") : (ship.struck ? "#e8e2d2" : "#9aa7b2");
+      ctx.fillText(reason, bx2, by2);
+      ctx.restore();
+    }
     // the identical icon function the ironclad chart uses, era-mapped by shipClassTier
     if (typeof drawClassIcon === "function") drawClassIcon(ctx, gx, ly - 3, shipClassTier(ship), inkL, 9);
     // Hull is the dominant readout: one wide bar in the ship's own ink directly
     // under the name. Crew is five dots beside a figure mark. Sail health is not a
     // bar at all: the masts standing on the hull above are the sail state.
     if (!ship.out) {
-      const bw = Math.max(18, Math.min(32, L * 0.55)), bx = cx - bw / 2, by = ly + 3.5;
+      const bw = Math.max(18, Math.min(32, L * 0.55)), bx = cx + ldx - bw / 2, by = ly + 3.5;
       const hull = clamp(ship.structure / (ship.structureMax || 1), 0, 1);
       ctx.globalAlpha = 0.3; ctx.fillStyle = "#2c3a44"; ctx.fillRect(bx, by, bw, 3);
       ctx.globalAlpha = 0.95; ctx.fillStyle = ship.struck ? "#8a8f94" : (isSideA ? "#e0b85a" : "#aab6c2");
@@ -4846,7 +4900,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "0.79";
+const ECHELON_VERSION = "0.82";
 
 // ---- module-global game state ---------------------------------------------
 const game = {
@@ -5496,7 +5550,20 @@ function setupScenario(playerSide, chineseFormationKey) {
 // ---- helpers ---------------------------------------------------------------
 function rebuildShipIndex() { game._shipById = new Map(game.ships.map((s) => [s.id, s])); }
 function shipById(id) { return (game._shipById && game._shipById.get(id)) || game.ships.find((s) => s.id === id) || null; }
-function aliveOnSide(side) { return game.ships.filter((s) => s.side === side && !s.out); }
+// Every book in the game is kept under the flag the ship was commissioned under.
+// A prize is a loss to the fleet that lost her and does not become fighting
+// strength for the fleet that took her: her guns are not manned and her captor has
+// put a prize crew aboard at his own expense. Keeping the books by live side made
+// the battle report unreadable, listing fifteen Frenchmen and Spaniards under the
+// Royal Navy and Victory under the Combined Fleet.
+function homeSide(s) {
+  if (!s) return "";
+  if (typeof isSailEra === "function" && !isSailEra()) return s.side;
+  const d = (typeof GAME_DATA !== "undefined" && GAME_DATA.ships) ? GAME_DATA.ships.find((x) => x.id === s.id) : null;
+  return (d && d.side) ? d.side : s.side;
+}
+function isPrizeOf(s, side) { return !!(s && s.captured && homeSide(s) !== side && s.side === side); }
+function aliveOnSide(side) { return game.ships.filter((s) => homeSide(s) === side && !s.out && !s.captured); }
 function deg2radL(d) { return d * Math.PI / 180; }
 
 // absolute bearing A->B in the engine's heading convention (0 = toward -y)
@@ -5566,6 +5633,7 @@ function isSunkReason(reason) {
 function lossDisposition(ship) {
   if (!ship || !ship.out) return { key: "afloat", label: "afloat", short: "afloat", salvage: "operational status only", reason: "" };
   const reason = ship.outReason || "disabled afloat";
+  if (ship._escaped) return { key: "escaped", label: "hauled off, escaped", short: "escaped", salvage: "undamaged, out of the action", reason: "stood away" };
   if (isSunkReason(reason)) {
     const why = reason.includes("magazine") ? "magazine explosion" : reason === "wrecked beyond fighting" ? "wrecked beyond repair" : reason;
     return { key: "total", label: `total loss · ${why}`, short: "total loss", salvage: "not repairable", reason: why };
@@ -5910,18 +5978,22 @@ function shipEff(s) {
   const fld = clamp(1 - (s.flooding || 0) / 100, 0, 1);
   return clamp(struct * 0.45 + crew * 0.25 + sys * 0.15 + fld * 0.15, 0, 1);
 }
-function sideTons(side) { return game.ships.filter((s) => s.side === side).reduce((a, s) => a + shipTons(s), 0); }
-function sideEffTons(side) { return game.ships.filter((s) => s.side === side).reduce((a, s) => a + shipTons(s) * shipEff(s), 0); }
+function sideTons(side) { return game.ships.filter((s) => homeSide(s) === side).reduce((a, s) => a + shipTons(s), 0); }
+function sideEffTons(side) { return game.ships.filter((s) => homeSide(s) === side).reduce((a, s) => a + shipTons(s) * (s.captured ? 0 : shipEff(s)), 0); }
 function tonnagePct(side) { const t = sideTons(side); return t > 0 ? sideEffTons(side) / t : 0; }
 function tonnageBreakdown(side) {
   let sunk = 0, out = 0, crippled = 0, abandoned = 0, repairable = 0;
   let sunkCount = 0, outCount = 0, crippledCount = 0, abandonedCount = 0, disabledCount = 0;
   const sunkList = [], outList = [], crippledList = [], abandonedList = [], disabledListAfloat = [];
+  let takenCount = 0, prizeCount = 0; const takenList = [], prizeList = [];
   for (const s of game.ships) {
-    if (s.side !== side) continue;
+    if (isPrizeOf(s, side)) { prizeCount++; prizeList.push(s.name); }        // she is ours now
+    if (homeSide(s) !== side) continue;
     const tons = shipTons(s);
+    if (s.captured) { out += tons; outCount++; takenCount++; takenList.push(s.name); outList.push(s.name); continue; }
     if (s.out) {
       const d = lossDisposition(s);
+      if (d.key === "escaped") { continue; }                                 // she stood away whole
       if (d.key === "total") { sunk += tons; sunkCount++; sunkList.push(s.name); }
       else if (d.key === "abandoned") { out += tons; abandoned += tons; outCount++; abandonedCount++; outList.push(s.name); abandonedList.push(s.name); }
       else { out += tons; repairable += tons; outCount++; disabledCount++; outList.push(s.name); disabledListAfloat.push(s.name); }
@@ -5935,6 +6007,7 @@ function tonnageBreakdown(side) {
     sunk: Math.round(sunk), out: Math.round(out), abandoned: Math.round(abandoned), repairable: Math.round(repairable), crippled: Math.round(crippled),
     disabled: Math.round(out + crippled), effectiveLost: Math.round(effectiveLost), total: Math.round(total),
     sunkCount, outCount, abandonedCount, disabledCount, crippledCount, sunkList, outList, abandonedList, disabledListAfloat, crippledList,
+    takenCount, takenList, prizeCount, prizeList,
     disabledList: outList.concat(crippledList.map((n) => n + " (crippled)")),
   };
 }
@@ -6036,6 +6109,39 @@ function updateMorale() {
 // fought on for hours after the issue was decided, and it was in those hours that
 // the prizes were taken and the victors were themselves cut to pieces. Outside the
 // sail era this is unconditional, as steam fleets could and did disengage.
+// Ten of Dumanoir's van wore round and stood away from Trafalgar untouched, and
+// four more ran for Cadiz; at the Nile the two rear ships cut and escaped. A fleet
+// whose fighting strength is broken does not stand to be taken ship by ship: those
+// still able to make sail and not yet under an enemy's guns haul off, and once they
+// are three miles clear they are out of the action, not a loss.
+function sailWithdrawals() {
+  if (!isSailEra()) return;
+  const A = sideA(), B = sideB();
+  for (const side of [A, B]) {
+    if (tonnagePct(side) >= 0.60) continue;                       // strength not yet broken
+    for (const s of game.ships) {
+      if (s.out || s.side !== side || s.captured) continue;
+      if (s.anchored || s.aground || s._grapple) continue;        // moored, aground or locked: she cannot
+      if (sailEffSpeedKn(s) < STEERAGE_WAY_KN) continue;          // nothing to make sail with
+      let engaged = false;
+      for (const e of game.ships) {
+        if (e.out || e.side === side) continue;
+        if (rangeBetween(s, e) <= 500) { engaged = true; break; }
+      }
+      if (engaged) continue;
+      if (!s._withdrawing) { s._withdrawing = true; logLine(`${s.name} wears round and stands away.`, s.side === game.playerSide ? "bad" : "good"); }
+    }
+  }
+  for (const s of game.ships) {
+    if (s.out || !s._withdrawing) continue;
+    let near = 1e9;
+    for (const e of game.ships) { if (e.out || e.side === s.side) continue; near = Math.min(near, rangeBetween(s, e)); }
+    if (near > 4800) {                                            // roughly three miles: clean out of the action
+      s.out = true; s.outReason = "hauled off"; s.sunkTurn = game.turn; s._escaped = true;
+      logLine(`${s.name} is clear of the action and stands away.`, s.side === game.playerSide ? "" : "sys");
+    }
+  }
+}
 function sailCanDisengage(beatenSide) {
   if (typeof isSailEra !== "function" || !isSailEra()) return true;
   for (const s of game.ships) {
@@ -6156,22 +6262,46 @@ function objectiveOutcome(side) {
     return { side, result, won: result === "win", title, score, objectives, enemyDamage, ironcladsAlive, chinaLost, japanLost, own, foe, netExchange };
   }
 
+  // The Japanese objectives were written around sinking a Chinese ironclad, which
+  // is a thing that did not happen and, on the day, could not. Zhenyuan was struck
+  // some 220 times and Dingyuan about 159 without her belt being pierced; Ito broke
+  // off at nightfall precisely because his guns could not finish them and he would
+  // not hazard his ships to torpedo work in the dark. What Ito was actually sent to
+  // do was cover the Korean landings and destroy the Beiyang Fleet's fighting power,
+  // and he did it by shooting the cruiser force to pieces: Chaoyong, Yangwei,
+  // Zhiyuan, Jingyuan and Guangjia, five ships gone, and no Japanese ship lost.
+  // The victory conditions are therefore rebuilt on that measure, with an ironclad
+  // put under counting as a bonus beyond the historical result rather than a
+  // requirement for it. Measured before this change: twelve Japanese runs produced
+  // twelve defeats and no ironclad sunk, which is to say the objectives asked for
+  // something the era did not permit.
   const chineseDamage = Math.min(75, chinaShips.reduce((a, s) => a + valCN(s), 0));
   const ownPenalty = japanShips.reduce((a, s) => a + valJP(s), 0);
+  const cruiserKills = chinaShips.filter((s) => s.out && s.id !== "dingyuan" && s.id !== "zhenyuan").length;
+  const beiyangBroken = tonnagePct("China") <= 0.55 || chinaGone;    // driven off as a fighting fleet
+  const fieldHeld = beiyangBroken || (nightfall && chinaLost >= 3);
   const objectives = [
-    { label: "Beiyang fleet broken (five or more removed from combat)", met: chinaLost >= 5 },
-    { label: "A Chinese ironclad sent under", met: ironcladsAlive < 2 },
-    { label: "Fleet brought through without loss", met: japanLost === 0 },
+    { label: "Beiyang cruiser force broken (four or more destroyed or disabled)", met: cruiserKills >= 4 },
+    { label: "Command of the sea taken: the Beiyang Fleet driven off", met: fieldHeld },
+    { label: "Fleet brought through without loss, as in 1894", met: japanLost === 0 },
+    { label: "Beyond the record: a Chinese ironclad put under", met: ironcladsAlive < 2 },
   ];
-  const score = clamp(Math.round(chineseDamage + (japanLost === 0 ? 18 : 0) - ownPenalty), 0, 100);
+  const score = clamp(Math.round(
+    12 * Math.min(cruiserKills, 5)                                   // the five ships Ito actually destroyed
+    + (japanLost === 0 ? 18 : japanLost === 1 ? 8 : 0)               // four Japanese ships were mauled, none lost
+    + (fieldHeld ? 10 : 0)
+    + (ironcladsAlive < 2 ? 12 : 0)                                  // a feat beyond the day
+    - Math.max(0, japanLost - 1) * 10
+    - ownPenalty * 0.35
+  ), 0, 100);
   let result, title;
   if (japanGone) { result = "loss"; title = "Crushing Defeat"; }
-  else if (ownPenalty >= 28 && chineseDamage >= 40) { result = "draw"; title = "A Bloody Draw"; }
-  else if (score >= 70) { result = "win"; title = "Decisive Victory"; }
-  else if (score >= 50) { result = "win"; title = "Victory"; }
-  else if (score >= 30) { result = "loss"; title = "Indecisive Action"; }
+  else if (japanLost >= 3 && cruiserKills < 4) { result = "loss"; title = "Costly Defeat"; }
+  else if (score >= 70) { result = "win"; title = ironcladsAlive < 2 ? "Decisive Victory" : "Victory at the Yalu"; }
+  else if (score >= 50) { result = "win"; title = japanLost === 0 ? "Victory" : "Costly Victory"; }
+  else if (score >= 32) { result = "draw"; title = "Indecisive Action"; }
   else { result = "loss"; title = "The Enemy Escaped"; }
-  return { side, result, won: result === "win", title, score, objectives, chineseDamage, ownPenalty, ironcladsAlive, chinaLost, japanLost };
+  return { side, result, won: result === "win", title, score, objectives, chineseDamage, ownPenalty, ironcladsAlive, chinaLost, japanLost, cruiserKills };
 }
 
 // ===========================================================================
@@ -6944,9 +7074,14 @@ function resolveTorpedoArrival(t, targetPose) {
   if (t.resolved) return;
   t.resolved = true; t.dead = true;
   const T = shipById(t.targetId);
-  if (!T || T.out) { telTorpedoResolve(t, "target unavailable"); return; }
+  const shooter = t.sourceId ? shipById(t.sourceId) : null;
+  const own = shooter && shooter.side === game.playerSide;
+  // A torpedo that simply vanished from the log left the player unable to tell a
+  // miss from a misrun from a hit, so every run now reports its own end.
+  if (!T || T.out) { telTorpedoResolve(t, "target unavailable"); if (shooter) logLine(`${shooter.name}: torpedo runs on, the target is already out of the fight.`, "muted"); return; }
   if (t.failure === "misrun") {
     telTorpedoResolve(t, "misrun");
+    logLine(`${shooter ? shooter.name + ": t" : "T"}orpedo misruns and broaches, no attack on ${T.name}.`, "muted");
     game.effects.push({ type: "torpMiss", x: t.x, y: t.y, life: 1, fade: 0.9, dir: t.hr });
     return;
   }
@@ -6954,16 +7089,20 @@ function resolveTorpedoArrival(t, targetPose) {
   const intersects = torpedoIntersectsHull(t, pose, T);
   if (!intersects || t.failure === "depth") {
     telTorpedoResolve(t, t.failure === "depth" ? "depth failure" : "miss");
+    logLine(t.failure === "depth"
+      ? `${shooter ? shooter.name + ": t" : "T"}orpedo runs deep and passes under ${T.name}.`
+      : `${shooter ? shooter.name + ": t" : "T"}orpedo passes astern of ${T.name}, no hit.`, own ? "" : "muted");
     game.effects.push({ type: "torpMiss", x: t.x, y: t.y, life: 1, fade: 0.9, dir: t.hr });
     return;
   }
   if (t.failure === "dud") {
     telTorpedoResolve(t, "dud");
     game.effects.push({ type: "torpDud", x: t.x, y: t.y, life: 1, fade: 1.0, dir: t.hr });
-    logLine(`Torpedo strikes ${T.name} but fails to detonate.`, "muted");
+    logLine(`${shooter ? shooter.name + ": t" : "T"}orpedo strikes ${T.name} but fails to detonate.`, own ? "" : "muted");
     return;
   }
   telTorpedoResolve(t, "hit");
+  logLine(`TORPEDO HIT: ${shooter ? shooter.name : "a boat"} strikes ${T.name} below the belt.`, own ? "good" : "bad");
   torpedoHit(T, { x: t.x, y: t.y }, t.period);
   const A = t.sourceId ? telAgg(t.sourceId) : null; if (A) A.torpHit = (A.torpHit || 0) + 1;
   const D = telAgg(T.id); D.torpHitTaken = (D.torpHitTaken || 0) + 1;
@@ -7058,15 +7197,25 @@ function moveAllowance(s) {
   // At 185.2 m per hex, one knot covers exactly one third of a hex in 120 seconds.
   return Math.max(0, Math.min(14, Math.round(eff / 3)));
 }
+// Below about a knot and a half a square-rigged ship has no steerage way: the helm
+// is dead and she carries on as the wind and her last impulse take her.
+const STEERAGE_WAY_KN = 1.5;
 function turnAllowance(s) {
   if (isSailEra()) {
     if (s._grapple) return 0;                            // fast alongside: she goes where the other goes
     if (s.aground) return 0;                             // hard aground: she lies as she struck
     if (s.anchored) return 9;                            // a spring to the cable trains her a point a turn
 
-    // Wearing a ship of the line through 90-100 degrees took minutes in light airs;
-    // helm answer depends on way through the water, which mast loss and crew both cut.
-    return Math.max(12, Math.min(34, maxTurnRate(s) * (GAME_TURN_SECONDS / 60) * mastFactor(s) * (0.6 + 0.4 * (s.crew != null ? s.crew : 1))));
+    // The rudder does nothing without water flowing past it. A ship of the line with
+    // less than about a knot and a half of way on will not answer her helm at all:
+    // she must be turned by backing and filling, by her boats, or by a spring on a
+    // cable. There is therefore no floor here. Above steerage way the helm answers
+    // in proportion to the way she has on, capped by what the rudder could do in
+    // two minutes.
+    const way = sailEffSpeedKn(s);
+    if (way < STEERAGE_WAY_KN) return 0;
+    const rate = maxTurnRate(s) * (GAME_TURN_SECONDS / 60) * mastFactor(s) * (0.6 + 0.4 * (s.crew != null ? s.crew : 1));
+    return Math.min(34, rate * clamp(way / 4, 0.25, 1));
   }
   return Math.max(18, Math.min(85, maxTurnRate(s) * (GAME_TURN_SECONDS / 60)));
 }
@@ -7091,6 +7240,14 @@ function reachableHexes(s) {
       const brg = ((Math.atan2(ddx, -ddy) * 180 / Math.PI) % 360 + 360) % 360;
       const dev = Math.abs(((brg - s.heading + 540) % 360) - 180);
       if (dev > maxTurn + 0.5) continue;
+      if (isSailEra()) {
+        // A ship comes round by describing an arc, she does not pivot. The tactical
+        // diameter of a ship of the line was some five of her own lengths, so the
+        // alteration she can make is set by the distance she runs: a short board
+        // buys a small change of course, and to come round far she must run far.
+        const R = 2.5 * (s.length || 55);
+        if (dev > (dHex * HEX_M) / R * (180 / Math.PI) + 0.5) continue;
+      }
       if (isSailEra()) {
         // A square-rigged ship cannot point closer than ~65 degrees to the wind, and
         // tacking through it was not attempted under fighting sail in this swell:
@@ -7218,6 +7375,18 @@ function chooseAIOrder(s) {
 // A player ship left without orders maintains way: straight ahead at full reach.
 function defaultOrder(s) {
   const w0 = hexToWorld(s.hex.q, s.hex.r);
+  // Once she is in the melee a ship left without orders does not sail out of it.
+  // In the pell-mell battle captains backed and filled to hold their place beside
+  // the enemy they were engaging, so an unordered ship with an enemy within close
+  // range shortens sail and keeps her ground rather than running past.
+  if (isSailEra()) {
+    let close = false;
+    for (const e of game.ships) {
+      if (e.out || e.side === s.side) continue;
+      if (rangeBetween(s, e) <= 300) { close = true; break; }
+    }
+    if (close) { s.order = { q: s.hex.q, r: s.hex.r, heading: s.heading }; return; }
+  }
   let best = null, bestD = -1;
   for (const c of reachableHexes(s)) {
     if (c.stay) continue;
@@ -7570,7 +7739,7 @@ function startExecute() {
     for (const s of game.ships) {
       if (s.out) continue;
       if (s._routing && s.anchored && !s.aground) { s.anchored = false; logLine(`${s.name} cuts her cable and makes sail.`, ""); }
-      if (s._routing) fleeOrder(s);                          // only a routed ship runs, whatever was ordered
+      if (s._routing || (s._withdrawing && s.side !== game.playerSide)) fleeOrder(s);   // routed, or hauling off with the beaten fleet
       else if (s.side === game.playerSide) { if (!s.order) defaultOrder(s); }
       else chooseAIOrder(s);
     }
@@ -7609,7 +7778,7 @@ function startExecute() {
 function resolveSweptCollisions() {
   if (!isSailEra()) return;
   const live = game.ships.filter((s) => !s.out || s.struck);
-  const STEPS = 14;
+  const STEPS = 24;
   const stop = {};
   for (const s of live) stop[s.id] = 1;
   const poseAt = (s, p) => {
@@ -7643,6 +7812,27 @@ function resolveSweptCollisions() {
         pos[a.id] = poseAt(a, p); pos[b.id] = poseAt(b, p);
       }
     }
+  }
+  // The sampled walk can leave a pair a few metres inside clearance between steps,
+  // so the finishing positions are tightened until every pair is genuinely clear.
+  for (let pass = 0; pass < 6; pass++) {
+    let touched = false;
+    const pos = {};
+    for (const s of live) pos[s.id] = poseAt(s, 1);
+    for (let i = 0; i < live.length; i++) {
+      for (let j = i + 1; j < live.length; j++) {
+        const a = live[i], b = live[j];
+        if (a._grapple === b.id || b._grapple === a.id) continue;
+        const minSep = ((a.length || 50) + (b.length || 50)) * 0.21 + 4;
+        if (Math.hypot(pos[a.id].x - pos[b.id].x, pos[a.id].y - pos[b.id].y) >= minSep) continue;
+        for (const sh of [a, b]) {
+          if (sh._ax1 == null || sh.anchored || sh.aground || stop[sh.id] <= 0) continue;
+          stop[sh.id] = Math.max(0, stop[sh.id] - 1 / STEPS);
+          pos[sh.id] = poseAt(sh, 1); touched = true;
+        }
+      }
+    }
+    if (!touched) break;
   }
   for (const s of live) {
     if (s._ax1 == null || stop[s.id] >= 1) continue;
@@ -7846,7 +8036,8 @@ function resolveFire() {
     logLine(`Your line engages ${n} target${n > 1 ? "s" : ""}, ${pHits} hit${pHits !== 1 ? "s" : ""}.`, "fire");
   }
   if (isSailEra()) {
-    resolveBoardings();                                   // grapples close alongside once the guns have spoken
+    sailWithdrawals();
+  resolveBoardings();                                   // grapples close alongside once the guns have spoken
     for (const s of game.ships) if (!s.out) sailCheckStrike(s, null);
   }
   game._pHitsTurn = pFired ? pHits : null;
@@ -8249,7 +8440,7 @@ function renderSquadronPanel(body, sq) {
         <button class="cycle-btn glyph-only" data-sqcyc="1" aria-label="Next squadron">›</button>
         <details class="help-pop"><summary class="icon-btn tiny" aria-label="Squadron help">?</summary><div>This panel commands only the ships listed here. Tap a lit hex to move them. Tap a member to return to individual control.</div></details>
       </div>
-      <div class="target-chip">${iconSvg("target")}<span>${tgt && !tgt.out ? tgt.name + " · " + Math.round(rangeBetween(lead, tgt)) + " m" : "—"}</span></div>
+      <div class="target-chip">${iconSvg("target")}<span>${tgt && !tgt.out ? tgt.name + " · " + Math.round(rangeBetween(lead, tgt)) + " m" : "none"}</span></div>
       <div class="formation-block"><div class="glyph-head">${iconSvg("squad")}<details class="help-pop control-help"><summary class="icon-btn tiny" aria-label="Formation help">?</summary><div>The ship silhouettes are the station layout viewed from above. The first silhouette is the flagship.</div></details></div>
         <div class="formation-strip" aria-label="Formation">
           <button class="formation-choice${(sq.formation||"line") === "line" ? " active" : ""}" data-form="line" aria-label="Ships in line ahead">${iconSvg("line")}</button>
@@ -8956,9 +9147,18 @@ function openSquadronPicker() {
   const rows = own.map((sq) => {
     const live = sq.members.map(shipById).filter((x) => x && !x.out);
     const lead = shipById(sq.leaderId);
-    return `<button class="squad-pick" data-sqid="${sq.id}"><span class="squad-pick-icon">${iconSvg("squad")}</span><span><b>${sq.name || `Squadron ${sq.id}`}</b><small>${live.length}/${sq.members.length} ships · flagship ${lead ? lead.name : "lost"}</small></span><span class="squad-pick-arrow">›</span></button>`;
+    return `<div class="squad-row"><button class="squad-pick" data-sqid="${sq.id}"><span class="squad-pick-icon">${iconSvg("squad")}</span><span><b>${sq.name || `Squadron ${sq.id}`}</b><small>${live.length}/${sq.members.length} ships · flagship ${lead ? lead.name : "lost"}</small></span><span class="squad-pick-arrow">›</span></button><button class="squad-disband" data-disband="${sq.id}" title="Disband this squadron: every ship reverts to her own orders">Disband</button></div>`;
   }).join("");
   body.innerHTML = `<h3 class="codex-h">Squadrons</h3><p class="squad-picker-note">Select an existing squadron, or form a new one.</p>${rows || `<div class="squad-picker-empty">No squadrons formed.</div>`}<button class="gm-btn squad-new" id="squadNewBtn">＋ Form new squadron</button>`;
+  body.querySelectorAll("[data-disband]").forEach((b) => b.addEventListener("click", (ev) => {
+    ev.stopPropagation();
+    const id = parseInt(b.getAttribute("data-disband"), 10);
+    const sq = squadronById(id); if (!sq) return;
+    disbandSquadron(id);
+    if (game.selSquadId === id) { game.selSquadId = null; game.menuMode = null; }
+    logLine(`${sq.name || `Squadron ${id}`} is dissolved; every ship answers for herself.`, "sys");
+    openSquadronPicker(); syncPanel(); draw();
+  }));
   body.querySelectorAll("[data-sqid]").forEach((b) => b.addEventListener("click", () => {
     const sq = squadronById(parseInt(b.getAttribute("data-sqid"), 10));
     if (!sq) return;
@@ -9156,9 +9356,11 @@ function warVerdict(outcome) {
     tacLine = outcome.result === "win" ? "you broke the Beiyang line and held the field."
       : outcome.result === "draw" ? "you broke them, but at a cost the real Combined Fleet never bore."
       : "the Beiyang Fleet slipped away in better order than history allowed.";
+    const ck = outcome.cruiserKills != null ? outcome.cruiserKills : cl;
     if (jl >= 2) { stratTag = "Cost"; stratLine = "you hold the field, but a gutted cruiser line blunts the blockade and your timetable slips."; }
-    else if (cl >= 5 && ic < 2) { stratTag = "Triumph"; stratLine = "the Beiyang Fleet broken and a battleship under, at little cost. Command of the sea is secured and the convoys flow."; }
-    else if (cl >= 5) { stratTag = "Unfinished"; stratLine = "the Beiyang Fleet is broken, but the ironclads' belts save them. They survive as a fleet-in-being at Weihaiwei; the work is left for later, as in 1894."; }
+    else if (ck >= 4 && ic < 2) { stratTag = "Triumph"; stratLine = "the Beiyang cruiser force destroyed and a battleship under, which is more than Ito managed. Command of the sea is secured and the convoys flow."; }
+    else if (ck >= 4) { stratTag = "Command of the sea"; stratLine = "the Beiyang cruiser force is destroyed and the fleet driven back to Weihaiwei. The ironclads' belts hold, as they held in 1894, but they never contest the Yellow Sea again and the landings proceed."; }
+    else if (ck >= 2) { stratTag = "Partial"; stratLine = "the Beiyang Fleet is hurt but still a fleet. It withdraws in order and the sea stays contested."; }
     else { stratTag = "Stalemate"; stratLine = "the Beiyang Fleet draws off in good order; command of the sea stays contested."; }
   }
   return { tacTag, tacLine, stratTag, stratLine };
@@ -9275,17 +9477,22 @@ function calculatedReadings(outcome) {
 
 function lossSummaryHTML(side, label) {
   const b = tonnageBreakdown(side), retained = Math.round(tonnagePct(side) * 100);
-  const affected = game.ships.filter((s) => s.side === side && (s.out || shipCondition(s).cls === "st-heavy"));
-  const rank = (s) => s.out ? (lossDisposition(s).key === "total" ? 0 : lossDisposition(s).key === "abandoned" ? 1 : 2) : 3;
+  const affected = game.ships.filter((s) => homeSide(s) === side && (s.out || s.captured || shipCondition(s).cls === "st-heavy"));
+  const rank = (s) => s.captured ? -1 : s.out ? (lossDisposition(s).key === "total" ? 0 : lossDisposition(s).key === "abandoned" ? 1 : 2) : 3;
   affected.sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name));
   const names = affected.length
     ? `<div class="loss-names">${affected.map((s) => {
-        const c = shipCondition(s), permanent = s.out && ["total", "abandoned"].includes(lossDisposition(s).key);
-        return `<span class="loss-name ${c.cls}${permanent ? " permanent" : ""}"><span class="loss-class-chip">${shipTypeGlyph(s)}</span><b title="${s.name}">${s.name}</b><span class="loss-status">${c.label}</span></span>`;
+        const c = shipCondition(s);
+        let permanent = s.out && ["total", "abandoned"].includes(lossDisposition(s).key);
+        let status = c.label, cls = c.cls;
+        if (s.captured) { status = `taken as a prize by ${sideLabel(s.side)}`; cls = "st-out"; permanent = true; }
+        else if (s._escaped) { status = "stood away, out of the action"; cls = "st-dmg"; permanent = false; }
+        else if (s.struck) { status = "struck her colours, not taken"; cls = "st-out"; }
+        return `<span class="loss-name ${cls}${permanent ? " permanent" : ""}"><span class="loss-class-chip">${shipTypeGlyph(s)}</span><b title="${s.name}">${s.name}</b><span class="loss-status">${status}</span></span>`;
       }).join("")}</div>`
     : `<div class="loss-names"><span class="loss-name intact"><span></span><b>No losses</b><span class="loss-status">No ships removed or crippled</span></span></div>`;
   const permanent = b.sunkCount + b.abandonedCount;
-  return `<div class="loss-card"><div class="loss-card-head"><span class="tag ${clsForSide(side)}">${label}</span><b>${retained}% effective</b></div><div class="loss-metrics"><span class="lm sunk"><b>${b.sunkCount}</b><small>destroyed</small></span><span class="lm out"><b>${b.abandonedCount}</b><small>abandoned</small></span><span class="lm out"><b>${b.disabledCount}</b><small>disabled</small></span><span class="lm cripple"><b>${b.crippledCount}</b><small>crippled</small></span></div>${names}<div class="material-line"><span>Practical permanent losses <b>${permanent}</b></span><span>Effective fighting tonnage lost <b>${b.effectiveLost.toLocaleString()} t</b></span></div></div>`;
+  return `<div class="loss-card"><div class="loss-card-head"><span class="tag ${clsForSide(side)}">${label}</span><b>${retained}% effective</b></div><div class="loss-metrics"><span class="lm sunk"><b>${b.sunkCount}</b><small>destroyed</small></span><span class="lm out"><b>${b.takenCount}</b><small>taken by enemy</small></span><span class="lm cripple"><b>${b.prizeCount}</b><small>prizes taken</small></span><span class="lm out"><b>${b.disabledCount}</b><small>disabled</small></span><span class="lm cripple"><b>${b.crippledCount}</b><small>crippled</small></span></div>${names}<div class="material-line"><span>Practical permanent losses <b>${permanent}</b></span><span>Effective fighting tonnage lost <b>${b.effectiveLost.toLocaleString()} t</b></span></div></div>`;
 }
 
 function buildBattleReport() {
@@ -9304,7 +9511,15 @@ function buildBattleReport() {
   L.push(`Strategic: ${wv.stratTag} - ${wv.stratLine}`);
   L.push(`Fighting strength retained: ${la} ${Math.round(v.cp * 100)}%  -  ${lb} ${Math.round(v.jp * 100)}%`);
   L.push(`Hull states: ${la} ${cb.sunkCount} destroyed / ${cb.abandonedCount} abandoned wreck / ${cb.disabledCount} disabled afloat / ${cb.crippledCount} crippled  -  ${lb} ${jb.sunkCount} destroyed / ${jb.abandonedCount} abandoned wreck / ${jb.disabledCount} disabled afloat / ${jb.crippledCount} crippled`);
-  L.push(`Practical permanent losses: ${la} ${cb.sunkCount + cb.abandonedCount}  -  ${lb} ${jb.sunkCount + jb.abandonedCount}`);
+  L.push(`Practical permanent losses: ${la} ${cb.sunkCount + cb.abandonedCount + cb.takenCount}  -  ${lb} ${jb.sunkCount + jb.abandonedCount + jb.takenCount}`);
+  L.push("");
+  L.push("PRIZES AND LOSSES");
+  const took = (n) => n === 1 ? "1 enemy ship taken as a prize" : `${n} enemy ships taken as prizes`;
+  const lost = (n) => n === 1 ? "1 of her own taken by the enemy" : `${n} of her own taken by the enemy`;
+  L.push(`  ${la}: ${took(cb.prizeCount)}${cb.prizeCount ? " (" + cb.prizeList.join(", ") + ")" : ""}`);
+  L.push(`  ${la}: ${lost(cb.takenCount)}${cb.takenCount ? " (" + cb.takenList.join(", ") + ")" : ""}`);
+  L.push(`  ${lb}: ${took(jb.prizeCount)}${jb.prizeCount ? " (" + jb.prizeList.join(", ") + ")" : ""}`);
+  L.push(`  ${lb}: ${lost(jb.takenCount)}${jb.takenCount ? " (" + jb.takenList.join(", ") + ")" : ""}`);
   const sa = sideSystemSummary(sideA()), sb = sideSystemSummary(sideB());
   L.push(`Systems: ${la} machinery ${sa.machineryAffected} affected (${sa.machinerySevere} severe, ${sa.avgMachinery}% mean), steering ${sa.steeringAffected} affected (${sa.steeringSevere} severe, ${sa.avgSteering}% mean), guns disabled ${sa.disabledGuns}  -  ${lb} machinery ${sb.machineryAffected} affected (${sb.machinerySevere} severe, ${sb.avgMachinery}% mean), steering ${sb.steeringAffected} affected (${sb.steeringSevere} severe, ${sb.avgSteering}% mean), guns disabled ${sb.disabledGuns}`);
   L.push(`Effective tonnage lost: ${la} ${cb.effectiveLost.toLocaleString()} t  -  ${lb} ${jb.effectiveLost.toLocaleString()} t`);
@@ -9318,7 +9533,7 @@ function buildBattleReport() {
   L.push("PER-SHIP STATISTICS  (shots / hits / heavy hits / damage dealt / damage + hits taken / end state)");
   for (const side of [sideA(), sideB()]) {
     L.push(`  ${sideLabel(side).toUpperCase()}`);
-    for (const s of game.ships.filter((x) => x.side === side)) {
+    for (const s of game.ships.filter((x) => homeSide(x) === side)) {
       const a = tel.agg[s.id] || {};
       const c = shipCondition(s);
       const hitPct = a.shots ? Math.round(100 * a.hits / a.shots) : 0;
@@ -9326,7 +9541,11 @@ function buildBattleReport() {
       line += a.heavyShots ? ` hvy ${pad((a.heavyHits || 0) + "/" + a.heavyShots, 6)}` : `${pad("", 11)}`;
       line += ` dealt ${pad(Math.round(a.dmgDealt || 0), 5)} taken ${pad(Math.round(a.dmgTaken || 0), 5)} /${pad((a.hitsTaken || 0) + "h", 4)}`;
       if (a.torpFired) line += ` torp ${a.torpHit}/${a.torpFired}`;
-      line += `  ->  ${c.label}`;
+      let state = c.label;
+      if (s.captured) state = `TAKEN AS A PRIZE by ${sideLabel(s.side)}`;
+      else if (s._escaped) state = "stood away, out of the action";
+      else if (s.struck) state = "struck her colours, not taken";
+      line += `  ->  ${state}`;
       L.push(line);
     }
   }
@@ -9448,7 +9667,7 @@ function downloadReport() {
 function shipCondition(s) {
   if (s.out) {
     const d = lossDisposition(s);
-    return { cls: d.key === "total" ? "st-sunk" : "st-out", glyph: d.key === "total" ? "✕" : "—", label: d.label, disposition: d };
+    return { cls: d.key === "total" ? "st-sunk" : "st-out", glyph: d.key === "total" ? "✕" : "▪", label: d.label, disposition: d };
   }
   const hull = s.structure / s.structureMax;
   const hp = Math.round(hull * 100);
@@ -9474,12 +9693,31 @@ function shipSilhouetteURL(ship, w, h) {
   try { return c.toDataURL("image/png"); } catch (e) { return ""; }
 }
 function fleetRosterHTML(side, label) {
-  const rows = game.ships.filter((s) => s.side === side).map((s) => {
+  // A ship is listed under the flag she was commissioned under, whatever became of
+  // her: a prize taken from the enemy is shown as a prize, and one of your own
+  // carried by the enemy stays on your list as a loss rather than quietly vanishing.
+  const homeSide = (s) => {
+    const d = (typeof GAME_DATA !== "undefined" && GAME_DATA.ships) ? GAME_DATA.ships.find((x) => x.id === s.id) : null;
+    return d && d.side ? d.side : s.side;
+  };
+  const rows = game.ships.filter((s) => (isSailEra() ? homeSide(s) : s.side) === side).map((s) => {
     const c = shipCondition(s);
     const sil = shipSilhouetteURL(s, 66, 22);
     const img = sil ? `<img class="rr-sil" src="${sil}" alt="">` : `<span class="rr-sil"></span>`;
-    const permanent = s.out && ["total", "abandoned"].includes(lossDisposition(s).key);
-    return `<div class="roster-row ${c.cls}${permanent ? " permanent-loss" : ""}">${img}<span class="rr-state">${c.glyph || "•"}</span><span class="rr-class-chip">${shipTypeGlyph(s)}</span><span class="rr-name" title="${s.name}">${s.name}</span><span class="rr-stat">${c.label}</span></div>`;
+    let permanent = s.out && ["total", "abandoned"].includes(lossDisposition(s).key);
+    let glyph = c.glyph || "•", stat = c.label, cls = c.cls, tag = "";
+    if (isSailEra()) {
+      const held = s.captured && s.side !== side;                 // she was ours, the enemy has her
+      const won = s.captured && s.side === side;                  // we have her
+      if (held) { glyph = "⚑"; stat = "taken as a prize"; cls = "st-out"; permanent = true; }
+      else if (won) { glyph = "⚑"; stat = `prize · ${Math.round(100 * s.structure / (s.structureMax || 1))}%`; cls = "st-dmg"; tag = " rr-prize"; }
+      else if (s.struck) { glyph = "⚐"; stat = "struck her colours"; cls = "st-out"; }
+      else if (!s.out) {
+        const r = sailImmobileReason(s);
+        if (r) stat = `${c.label} · ${r}`;                        // why she is not manoeuvring
+      }
+    }
+    return `<div class="roster-row ${cls}${permanent ? " permanent-loss" : ""}${tag}">${img}<span class="rr-state">${glyph}</span><span class="rr-class-chip">${shipTypeGlyph(s)}</span><span class="rr-name" title="${s.name}">${s.name}</span><span class="rr-stat">${stat}</span></div>`;
   }).join("");
   return `<div class="roster-col"><div class="roster-h"><span class="tag ${clsForSide(side)}">${label}</span></div>${rows}</div>`;
 }
