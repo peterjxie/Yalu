@@ -2236,7 +2236,33 @@ function markAbandoned(s, turn, reason) {
 // The ship no longer fights or pumps effectively, but water and fire continue to act.
 // A badly settling hull may founder; an isolated crew may scuttle to prevent capture.
 function updateOutOfActionFate(s, ships, turn, log) {
-  if (!s.out || !isAbandonedReason(s.outReason) || isFinalPhysicalLossReason(s.outReason)) return;
+  if (!s.out || isFinalPhysicalLossReason(s.outReason)) return;
+  if (!isAbandonedReason(s.outReason)) {
+    // A ship disabled but not abandoned still has her people aboard fighting the
+    // damage, so she is not frozen: fires and water go on working, but against
+    // organised damage control, and most such ships were saved. Only the worst
+    // settle, which is what happened to the ships that foundered hours after the
+    // guns stopped.
+    if (s.captured) return;
+    s._postOutTicks = (s._postOutTicks || 0) + 1;
+    const dcx = clamp((s.crew || 0.2) * 0.8, 0.05, 0.9);
+    if ((s.fires || 0) > 0) {
+      s.structure = Math.max(0, s.structure - s.fires * (s.structureMax || 1) * 0.0016);
+      if (rnd() < 0.10 + 0.34 * dcx) s.fires = Math.max(0, s.fires - 1);
+      s.flooding = clamp((s.flooding || 0) + 0.5 * s.fires, 0, 100);
+    }
+    if ((s.flooding || 0) > 0) {
+      const pumping = 1.1 + 3.0 * dcx;                      // she is still being pumped
+      const ingress = 1.4 + 3.0 * (1 - clamp((s.structure || 0) / (s.structureMax || 1), 0, 1));
+      s.flooding = clamp(s.flooding + ingress - pumping, 0, 100);
+    }
+    if ((s.flooding || 0) >= 85) {
+      s.outReason = (s.fires || 0) >= 4 ? "burnt out and sank" : "foundered after the action was decided";
+      s.structure = 0;
+      if (typeof logLine === "function") logLine(`${s.name} settles and goes down.`, s.side === game.playerSide ? "bad" : "good");
+    }
+    return;
+  }
   s._postOutTicks = (s._postOutTicks || 0) + 1;
   if (s._abandonedTurn == null) s._abandonedTurn = s.sunkTurn || turn;
 
@@ -3175,6 +3201,52 @@ function drawTargetLine(ctx, v, from, to, color, lw, withHead, dash) {
 function shipScreenLen(v, ship) { return Math.max(ship.length * v.scale, 14); }   // symbol floor: at fleet zoom ships draw as oversized counters so they stay readable and tappable on a phone
 
 // hull: pointed clipper bow at local -y, flat transom stern at local +y
+// ---- light, shadow and attitude -------------------------------------------
+// A hull drawn flat reads as a symbol. Give the scene one light and the same hull
+// reads as an object: a lit side, a shaded side, and a shadow cast on the water.
+// The sun's bearing is per scenario, taken from the time of day each action was
+// fought: the Nile at dusk with the sun in the west, Trafalgar in early afternoon,
+// the Yalu at midday, Tsushima in the early afternoon under overcast.
+function sceneLight() {
+  const key = (typeof game !== "undefined" && game.scenario) || "";
+  const L = { nile: { brg: 285, hard: 0.85 }, copenhagen: { brg: 155, hard: 0.5 },
+              trafalgar: { brg: 200, hard: 0.7 }, yalu: { brg: 180, hard: 0.65 },
+              tsushima: { brg: 215, hard: 0.35 }, tsushima_approach: { brg: 215, hard: 0.35 } }[key];
+  return L || { brg: 200, hard: 0.6 };
+}
+// The light in the ship's own frame, so the lit side follows her as she turns.
+function lightInHullFrame(heading) {
+  const l = sceneLight();
+  const rel = ((l.brg - (heading || 0)) * Math.PI) / 180;
+  return { x: Math.sin(rel), y: Math.cos(rel), hard: l.hard };
+}
+// Flooding puts her over; water forward pulls her head down. Both are already
+// tracked, and both were the first thing an observer noticed about a beaten ship.
+function hullAttitude(ship) {
+  const fl = clamp((ship.flooding || 0) / 100, 0, 1);
+  const hurt = 1 - clamp((ship.structure || 0) / (ship.structureMax || 1), 0, 1);
+  return { list: fl * 0.30 + hurt * 0.05, trim: fl * 0.12 };
+}
+function drawHullShadow(ctx, ship, L, B, pathFn) {
+  const li = lightInHullFrame(ship.heading || 0);
+  const off = L * 0.06 * li.hard;
+  ctx.save();
+  ctx.globalAlpha = 0.20 * li.hard;
+  ctx.fillStyle = "#04090d";
+  ctx.translate(-li.x * off, -li.y * off);
+  pathFn(ctx, L, B); ctx.fill();
+  ctx.restore();
+}
+// A cross-hull gradient standing in for the lit and shaded sides.
+function hullShadeGradient(ctx, ship, L, B, base) {
+  const li = lightInHullFrame(ship.heading || 0);
+  const g = ctx.createLinearGradient(li.x * B * 0.6, li.y * L * 0.5, -li.x * B * 0.6, -li.y * L * 0.5);
+  g.addColorStop(0, "rgba(255,246,225," + (0.16 * li.hard).toFixed(3) + ")");
+  g.addColorStop(0.5, base);
+  g.addColorStop(1, "rgba(0,0,0," + (0.26 * li.hard).toFixed(3) + ")");
+  return g;
+}
+
 function hullPath(ctx, L, B) {
   const hl = L / 2, hb = B / 2;
   ctx.beginPath();
@@ -3383,10 +3455,30 @@ function drawSailShipTop(ctx, v, ship, opts) {
   }
 
   // ---- hull -----------------------------------------------------------------
-  ctx.fillStyle = fill; ctx.strokeStyle = ink; ctx.lineWidth = lwHull; ctx.lineJoin = "round";
+  // She sits in real light and real water: a shadow cast to leeward of the sun, a
+  // lit side and a shaded side, and the attitude her damage has given her.
+  drawHullShadow(ctx, ship, L, B, sailHullPath);
+  const att = hullAttitude(ship);
+  if (att.list > 0.01 || att.trim > 0.01) {
+    ctx.translate(att.list * B * 0.5, att.trim * L * 0.10);
+    ctx.scale(Math.max(0.55, 1 - att.list * 0.8), Math.max(0.80, 1 - att.trim * 0.5));
+  }
+  ctx.fillStyle = ship.struck ? fill : hullShadeGradient(ctx, ship, L, B, fill);
+  ctx.strokeStyle = ink; ctx.lineWidth = lwHull; ctx.lineJoin = "round";
   if (ship.struck) ctx.setLineDash([Math.max(2, L * 0.05), Math.max(2, L * 0.035)]);   // colours down, possession not yet taken
   sailHullPath(ctx, L, B); ctx.fill(); ctx.stroke();
   ctx.setLineDash([]);
+  // Burnt plating where she has been hit hard: scorch along the engaged side.
+  if ((ship.fires || 0) > 0 || (ship.structure || 0) / (ship.structureMax || 1) < 0.55) {
+    const marks = Math.min(5, 1 + (ship.fires || 0) + Math.round((1 - (ship.structure || 0) / (ship.structureMax || 1)) * 3));
+    ctx.save(); ctx.globalAlpha = 0.30; ctx.fillStyle = "#12100e";
+    for (let i = 0; i < marks; i++) {
+      const t = -0.34 + 0.68 * ((i * 0.37) % 1), hw = sailHalfWidth(t, B / 2);
+      const sd = (i % 2) ? 1 : -1;
+      ctx.beginPath(); ctx.ellipse(sd * hw * 0.75, t * L, B * 0.16, L * 0.05, 0, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
   // transom: the flat stern with quarter galleries at each corner, the single
   // clearest bow/stern cue a plan view of this era offers
   const tw = B * 0.30;
@@ -3718,7 +3810,7 @@ function sailHullPath(ctx, L, B) {
   for (let k = 30; k >= 1; k--) { const t = -0.5 + 0.97 * k / 30; ctx.lineTo(-sailHalfWidth(t, hb), t * L); }
   ctx.closePath();
 }
-function drawSchematic(ctx, L, B, plan, ink, sacc, dim) {
+function drawSchematic(ctx, L, B, plan, ink, sacc, dim, ship) {
   const hl = L / 2, hb = B / 2;
   ctx.save();
   if (dim) ctx.globalAlpha = 0.34;
@@ -3726,11 +3818,32 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim) {
   // hull
   const P = plan.hp || HULL_TYPES.cru;
   const pts = hullOutline(L, B, Math.max(24, Math.min(64, Math.round(L / 3))), P);
-  ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
-  for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
-  ctx.closePath();
-  ctx.fillStyle = sacc.fill; ctx.fill();
+  const tracePts = (c) => { c.beginPath(); c.moveTo(pts[0][0], pts[0][1]);
+    for (let i = 1; i < pts.length; i++) c.lineTo(pts[i][0], pts[i][1]); c.closePath(); };
+  // Shadow on the water, then a lit side and a shaded side, then the attitude her
+  // flooding has put her in. Same light model as the sail theatres.
+  if (typeof drawHullShadow === "function" && ship) {
+    drawHullShadow(ctx, ship, L, B, (c) => tracePts(c));
+    const att = hullAttitude(ship);
+    if (att.list > 0.01 || att.trim > 0.01) {
+      ctx.translate(att.list * B * 0.5, att.trim * L * 0.10);
+      ctx.scale(Math.max(0.55, 1 - att.list * 0.8), Math.max(0.80, 1 - att.trim * 0.5));
+    }
+  }
+  tracePts(ctx);
+  ctx.fillStyle = (typeof hullShadeGradient === "function" && ship) ? hullShadeGradient(ctx, ship, L, B, sacc.fill) : sacc.fill;
+  ctx.fill();
   ctx.lineWidth = lw; ctx.strokeStyle = ink; ctx.lineJoin = "round"; ctx.stroke();
+  if (ship && ((ship.fires || 0) > 0 || (ship.structure || 0) / (ship.structureMax || 1) < 0.5)) {
+    // burnt and holed plating where she has been worked over
+    const marks = Math.min(5, 1 + (ship.fires || 0) + Math.round((1 - (ship.structure || 0) / (ship.structureMax || 1)) * 3));
+    ctx.save(); ctx.globalAlpha = 0.34; ctx.fillStyle = "#0d0c0b";
+    for (let i = 0; i < marks; i++) {
+      const t = -0.36 + 0.72 * ((i * 0.41) % 1), sd = (i % 2) ? 1 : -1;
+      ctx.beginPath(); ctx.ellipse(sd * B * 0.34, t * L, B * 0.17, L * 0.045, 0, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
   // tumblehome: inner upper-deck outline, inset from the waterline beam
   if (plan.tumble) {
     const f = 1 - plan.tumble, dp = [];
@@ -3912,7 +4025,7 @@ function drawShip(ctx, v, ship, opts) {
   ctx.save();
   ctx.translate(cx, cy);
   rotateBowPlusX(ctx, ph);   // local +x bow aligned with screen-space travel
-  drawSchematic(ctx, L, B, ship._plan, ink, sacc, ship.out);
+  drawSchematic(ctx, L, B, ship._plan, ink, sacc, ship.out, ship);
   ctx.restore();
 
   // Shared status marks: out ships are crossed off; crippled ships carry a warning badge.
@@ -5693,6 +5806,9 @@ function lossDisposition(ship) {
     const why = reason.includes("burnt out") ? "burnt out" : reason.includes("settling") ? "settling" : reason;
     return { key: "abandoned", label: `abandoned wreck · doubtful salvage${why ? ` (${why})` : ""}`, short: "abandoned", salvage: "doubtful salvage", reason: why };
   }
+  if (ship._postAction) {
+    return { key: "disabled", label: `disabled afloat · ${ship._postAction}`, short: "disabled afloat", salvage: ship._postAction, reason: ship._postAction };
+  }
   const why = reason === "disabled afloat" || reason.includes("out of action") ? "" : reason;
   return { key: "disabled", label: `disabled afloat · potentially repairable${why ? ` (${why})` : ""}`, short: "disabled afloat", salvage: "potentially repairable", reason: why };
 }
@@ -6202,6 +6318,53 @@ function sailCanDisengage(beatenSide) {
   }
   return true;
 }
+// Out of the gun action, but still afloat and still a hull that can be sunk.
+function disabledButAfloat(t) {
+  return !!(t && t.out && !t.captured && (t.structure || 0) > 0
+    && typeof lossDisposition === "function" && lossDisposition(t).key === "disabled");
+}
+// A ship disabled but afloat is not yet a loss and not yet a survivor: what became
+// of her was decided by the situation when the guns stopped. At Tsushima the
+// disabled Russians were finished at night by torpedo craft or gave up at dawn,
+// because Togo held the sea and they were eighteen thousand miles from a friendly
+// port. At the Yalu the beaten Chinese limped to Port Arthur and Weihaiwei and
+// fought again, because Ito broke off at nightfall and did not pursue. The same
+// material state, opposite fates: the discriminator is whether she can still steam,
+// who is left in possession of the water round her, and whether the enemy has
+// torpedo craft in contact.
+function adjudicateDisabledAfloat() {
+  if (typeof isSailEra === "function" && isSailEra()) return;      // sail settles this by possession
+  for (const s of game.ships) {
+    if (!s.out || s.captured || s._adjudicated) continue;
+    if (lossDisposition(s).key !== "disabled") continue;
+    s._adjudicated = true;
+    const canSteam = (s.engine == null ? 1 : s.engine) > 0.25 && (s.flooding || 0) < 60 && (s.crew || 0) > 0.25;
+    let foeNear = Infinity, friendNear = Infinity, foeTorpedo = false;
+    for (const o of game.ships) {
+      if (o === s || o.out) continue;
+      const r = rangeBetween(s, o);
+      if (o.side === s.side) friendNear = Math.min(friendNear, r);
+      else {
+        foeNear = Math.min(foeNear, r);
+        if (r <= 9000 && o.torpedoes && (o.torpedoes.count || 0) > 0) foeTorpedo = true;
+      }
+    }
+    const enemyHoldsHer = foeNear < friendNear && foeNear < 9000;
+    const ownSideBroken = tonnagePct(s.side) < 0.40;
+    if (!canSteam && (enemyHoldsHer || ownSideBroken)) {
+      s._postAction = foeTorpedo ? "finished by torpedo craft after the action" : "left to the enemy, a total loss";
+      s.outReason = "wrecked beyond repair";
+      s.structure = 0;
+      logLine(`${s.name}, disabled and unable to steam, is ${foeTorpedo ? "finished off after dark" : "left to the enemy"}.`,
+        s.side === game.playerSide ? "bad" : "good");
+    } else if (!canSteam) {
+      s._postAction = "taken in tow by her own side, repairable";
+    } else {
+      s._postAction = "steamed clear under her own power, repairable";
+    }
+  }
+}
+
 function checkVictory() {
   const A = sideA(), B = sideB();
   const cp = tonnagePct(A), jp = tonnagePct(B);
@@ -7044,12 +7207,15 @@ function resolveTorpedoesLegacy() {
     };
     const reach = TORPEDO_RANGE * 1.02;
     let best = null, bestPt = null, bestAim = null, bestSc = null, bestD = reach;
+    // Torpedo craft may also finish a ship that is disabled but still afloat: that
+    // is how the Russian cripples were dealt with on the night of 27 May, and it is
+    // the only way a beaten hull can be put under once the guns have left her alone.
     const tgt = shipById(s.targetId);
-    if (tgt && !tgt.out && tgt.side !== s.side) {
+    if (tgt && tgt.side !== s.side && (!tgt.out || disabledButAfloat(tgt))) {
       const sc = trackOf(tgt); if (sc.d < reach) { best = tgt; bestPt = sc.p; bestAim = sc.q; bestSc = sc; bestD = sc.d; }
     }
     if (!best) for (const e of game.ships) {
-      if (e.out || e.side === s.side) continue;
+      if (e.side === s.side || (e.out && !disabledButAfloat(e))) continue;
       const sc = trackOf(e); if (sc.d < bestD) { bestD = sc.d; best = e; bestPt = sc.p; bestAim = sc.q; bestSc = sc; }
     }
     if (!best) continue;
@@ -9844,6 +10010,10 @@ function showResultGeneric(verdict, screen, body) {
 }
 
 function showResult(verdict) {
+  // Every route into the result screen passes here, including the turn limit, so the
+  // adjudication of disabled ships is settled at this single point rather than at
+  // one of the several places that can end an action.
+  if (typeof adjudicateDisabledAfloat === "function") adjudicateDisabledAfloat();
   game.phase = "over";
   game.busy = false;
   syncTopBar();
