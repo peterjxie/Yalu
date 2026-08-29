@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.83" />
+<meta name="application-version" content="0.90" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -725,7 +725,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v0.83</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.90</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -767,7 +767,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v0.83 · the guide in plain English, a glossary of the words, and a landing card that is not a battle</div>
+    <div class="build-stamp" id="buildStamp">v0.90 · wakes under sail, smoke by the boilers, turrets that follow the target, and a quieter chart</div>
     <button id="sailGuideBtn" title="Sail-era guide" aria-label="Sail-era guide" style="display:none;position:fixed;top:10px;right:12px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid #6c7a86;background:#0e1a22;color:#e0b85a;font:600 15px/1 Georgia,serif;cursor:pointer;">i</button>
     <button id="sailDetailBtn" title="Chart detail: names, chips and pips on or off" aria-label="Chart detail" style="display:none;position:fixed;top:42px;right:12px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid #6c7a86;background:#0e1a22;color:#9fb0bc;font:600 11px/1 sans-serif;cursor:pointer;">Aa</button>
     <div id="sailGuide" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(4,10,14,0.84);">
@@ -3316,8 +3316,10 @@ const SHIP_LAYOUT = {
   jiyuan: { f: [0.0], m: sCat(sM(0.42, 0, 2, 210), sM(-0.50, 0, 1, 150)) },
   zhiyuan: { f: [0.03], m: sCat(sM(0.50, 0, 2, 210), sM(-0.52, 0, 1, 210), sPair(0.05, 0.72, 1, 152)) },
   jingyuan_1886: { f: [0.03], m: sCat(sM(0.50, 0, 2, 210), sM(-0.52, 0, 1, 210), sPair(0.05, 0.72, 1, 152)) },
-  jingyuan_1887: { f: [0.03, -0.19], m: sCat(sM(0.45, 0, 2, 210), sPair(0.0, 0.72, 1, 150)) },
-  laiyuan: { f: [0.03, -0.19], m: sCat(sM(0.45, 0, 2, 210), sPair(0.0, 0.72, 1, 150)) },
+  // Chen Yue's draught (JINGYUAN, project): ONE funnel amidships, and both 210s
+  // in a single twin barbette FORWARD; the 150s sit aft, one each broadside.
+  jingyuan_1887: { f: [0.0], m: sCat(sM(0.30, 0, 2, 210), sPair(-0.28, 0.68, 1, 150)) },
+  laiyuan: { f: [0.0], m: sCat(sM(0.30, 0, 2, 210), sPair(-0.28, 0.68, 1, 150)) },
   chaoyong: { f: [0.0], m: sCat(sM(0.55, 0, 1, 254), sM(-0.55, 0, 1, 254), sPair(0.20, 0.62, 1, 120), sPair(-0.20, 0.62, 1, 120)) },
   yangwei: { f: [0.0], m: sCat(sM(0.55, 0, 1, 254), sM(-0.55, 0, 1, 254), sPair(0.20, 0.62, 1, 120), sPair(-0.20, 0.62, 1, 120)) },
   pingyuan: { f: [-0.12], m: sCat(sM(0.45, 0, 1, 260), sPair(-0.05, 0.66, 1, 150)) },
@@ -3327,9 +3329,11 @@ const SHIP_LAYOUT = {
   zuo1: { f: [0.0], tb: true, m: sCat(sM(0.30, 0, 1, 37)) },
   // --- Japan ---
   yoshino: { f: [-0.08, 0.12], m: sCat(sM(0.60, 0, 1, 152), sM(-0.60, 0, 1, 152), sPair(0.05, 0.68, 1, 152), sBroad([0.30, 0.10, -0.15, -0.35], 0.80, 120)) },
-  naniwa: { f: [-0.02], m: sCat(sM(0.55, 0, 1, 260), sM(-0.55, 0, 1, 260), sBroad([0.18, -0.05, -0.28], 0.72, 152)) },
-  takachiho: { f: [-0.02], m: sCat(sM(0.55, 0, 1, 260), sM(-0.55, 0, 1, 260), sBroad([0.18, -0.05, -0.28], 0.72, 152)) },
-  akitsushima: { f: [-0.08, 0.12], m: sCat(sPair(0.34, 0.62, 1, 152), sPair(-0.40, 0.62, 1, 152), sPair(0.06, 0.72, 1, 120), sPair(-0.18, 0.72, 1, 120), sM(0.58, 0, 1, 120), sM(-0.60, 0, 1, 120)) },
+  // Naniwa class carried TWO funnels (Brassey's, Conway's), not one.
+  naniwa: { f: [0.10, -0.10], m: sCat(sM(0.55, 0, 1, 260), sM(-0.55, 0, 1, 260), sBroad([0.18, -0.05, -0.28], 0.72, 152)) },
+  takachiho: { f: [0.10, -0.10], m: sCat(sM(0.55, 0, 1, 260), sM(-0.55, 0, 1, 260), sBroad([0.18, -0.05, -0.28], 0.72, 152)) },
+  // Akitsushima carried a SINGLE funnel (Brassey's plates), not two.
+  akitsushima: { f: [0.02], m: sCat(sPair(0.34, 0.62, 1, 152), sPair(-0.40, 0.62, 1, 152), sPair(0.06, 0.72, 1, 120), sPair(-0.18, 0.72, 1, 120), sM(0.58, 0, 1, 120), sM(-0.60, 0, 1, 120)) },
   matsushima: { f: [0.05], hull: "clipper", m: sCat(sM(-0.50, 0, 1, 320), sBroad([0.35, 0.15, -0.05, -0.25, -0.42], 0.80, 120), sPair(0.60, 0.18, 1, 120)) },
   itsukushima: { f: [-0.05], hull: "clipper", m: sCat(sM(0.50, 0, 1, 320), sBroad([0.32, 0.12, -0.08, -0.28, -0.45], 0.80, 120), sPair(-0.58, 0.16, 1, 120)) },
   hashidate: { f: [-0.05], hull: "clipper", m: sCat(sM(0.50, 0, 1, 320), sBroad([0.32, 0.12, -0.08, -0.28, -0.45], 0.80, 120), sPair(-0.58, 0.16, 1, 120)) },
@@ -3355,11 +3359,40 @@ function parseMount(text, count, cal) {
   }
   add(0, 0, count); return out;
 }
+// Funnel arrangements for the Tsushima fleets, previously left to the generic
+// two-funnel fallback, which drew Shikishima, Azuma, Izumo, Iwate and Oslyabya
+// short a funnel each, gave Navarin a pair she never carried instead of her four,
+// and put a second funnel on Nikolai I. Longitudinal positions are fractions of
+// length, bow positive; {x, pair} draws an athwartships pair. Sources per line:
+// project reference draughts where present, otherwise Conway's 1860-1905.
+const SHIP_FUNNELS = {
+  mikasa: [0.10, -0.08], asahi: [0.10, -0.08], fuji: [0.09, -0.09],           // two funnels: photographs, project refs
+  shikishima: [0.16, 0.0, -0.16],                                             // three funnels: Shikishima_blueprint (project)
+  asama: [0.12, -0.10], tokiwa: [0.12, -0.10], yakumo: [0.12, -0.10],         // two funnels: Asama_Brasseys (project), Conway's
+  azuma: [0.22, 0.0, -0.14],                                                  // three funnels: Azuma left elevation (project)
+  izumo: [0.18, 0.02, -0.14], iwate: [0.18, 0.02, -0.14],                     // three funnels: Izumo class left elevation (project)
+  kasuga: [0.10, -0.08], nisshin: [0.10, -0.08],                              // two funnels: Conway's
+  kasagi: [0.10, -0.10], chitose: [0.10, -0.10],
+  suma: [0.08, -0.08], akashi: [0.08, -0.08],
+  niitaka: [0.10, -0.08], tsushima_cruiser: [0.10, -0.08], otowa: [0.10, -0.08],
+  suvorov: [0.13, -0.07], aleksandr3: [0.13, -0.07],                          // two funnels: Borodino_class (project)
+  borodino: [0.13, -0.07], oryol: [0.13, -0.07],
+  oslyabya: [0.20, 0.03, -0.14],                                              // three funnels: Peresvet class, Conway's
+  sisoy: [0.08, -0.06],                                                       // two close in tandem: builder's drawing (project)
+  navarin: [{ x: 0.10, pair: 0.42 }, { x: -0.08, pair: 0.42 }],               // four in two athwartships pairs: Navarin photo (project)
+  nikolai1: [{ x: 0.02, pair: 0.40 }],                                        // two abreast: Aleksandr II class draught (project)
+  apraksin: [0.10, -0.08], senyavin: [0.10, -0.08], ushakov: [0.10, -0.08],   // two funnels: Ushakov photo (project)
+  admiral_nakhimov: [0.06, -0.08],                                            // two close together: project photo
+  oleg: [0.16, 0.0, -0.16],                                                   // three funnels: Bogatyr class, Conway's
+  aurora: [0.16, 0.0, -0.16],                                                 // three funnels: Pallada class, Conway's
+  zhemchug: [0.16, 0.0, -0.16], izumrud: [0.16, 0.0, -0.16],                  // three funnels: Izumrud class, Conway's
+};
 function buildShipPlan(ship) {
   const hp = HULL_TYPES[SHIP_HULL[ship.id]] || HULL_TYPES.cru;
   const lay = SHIP_LAYOUT[ship.id];
   const masts = (typeof sideMastsFor === "function") ? sideMastsFor(ship.id) : [];
-  if (lay) return { mounts: lay.m, funnels: lay.f, masts, hp, ss: lay.ss, ct: lay.ct, tumble: lay.tumble };
+  const fOverride = SHIP_FUNNELS[ship.id];
+  if (lay) return { mounts: lay.m, funnels: fOverride || lay.f, masts, hp, ss: lay.ss, ct: lay.ct, tumble: lay.tumble };
   // fallback: derive from the dataset's mount text
   const calMap = {};
   for (const b of (ship.batteries || [])) if (b.gunId) calMap[b.gunId] = (b.gun && (b.gun.calibre_mm || b.gun.bore_mm)) || 0;
@@ -3367,7 +3400,7 @@ function buildShipPlan(ship) {
   arm.sort((a, b) => (calMap[b.gun_id] || 0) - (calMap[a.gun_id] || 0));
   let mounts = [];
   for (const a of arm) mounts = mounts.concat(parseMount(a.mount, a.count, calMap[a.gun_id] || 0));
-  return { mounts, funnels: (ship.length > 78) ? [-0.05, 0.12] : [0.05], masts, hp };
+  return { mounts, funnels: fOverride || ((ship.length > 78) ? [-0.05, 0.12] : [0.05]), masts, hp };
 }
 function roundRect(ctx, x, y, w, h, r) {
   ctx.beginPath();
@@ -3462,6 +3495,21 @@ function drawSailShipTop(ctx, v, ship, opts) {
   if (att.list > 0.01 || att.trim > 0.01) {
     ctx.translate(att.list * B * 0.5, att.trim * L * 0.10);
     ctx.scale(Math.max(0.55, 1 - att.list * 0.8), Math.max(0.80, 1 - att.trim * 0.5));
+  }
+  // A ship with way on trails a wake astern and a bow wave forward, both scaled
+  // to her speed through the water, so motion reads even on a still chart.
+  const wayKn = (typeof sailEffSpeedKn === "function" && !ship.anchored && !ship.aground && !ship.struck) ? sailEffSpeedKn(ship) : 0;
+  if (wayKn > 0.8) {
+    const wk = Math.min(1, wayKn / 9);
+    ctx.save(); ctx.lineWidth = 1;
+    for (let wq = -1; wq <= 1; wq += 2) {
+      ctx.strokeStyle = "rgba(219,238,242," + (0.05 + 0.09 * wk).toFixed(3) + ")";
+      ctx.beginPath(); ctx.moveTo(wq * B * 0.16, L * 0.48);
+      ctx.lineTo(wq * B * (0.5 + 0.9 * wk), L * (0.52 + 0.95 * wk)); ctx.stroke();
+    }
+    ctx.strokeStyle = "rgba(219,238,242," + (0.10 + 0.14 * wk).toFixed(3) + ")";
+    ctx.beginPath(); ctx.moveTo(-B * 0.30, -L * 0.44); ctx.quadraticCurveTo(0, -L * 0.56 - 3 * wk, B * 0.30, -L * 0.44); ctx.stroke();
+    ctx.restore();
   }
   ctx.fillStyle = ship.struck ? fill : hullShadeGradient(ctx, ship, L, B, fill);
   ctx.strokeStyle = ink; ctx.lineWidth = lwHull; ctx.lineJoin = "round";
@@ -3725,7 +3773,7 @@ function drawSailShipTop(ctx, v, ship, opts) {
       }
     }
     const ly = cy + L * 0.62 + 9;
-    ctx.fillText(nm, cx + 5 + ldx, ly);
+    if (L >= 24) ctx.fillText(nm, cx + 5 + ldx, ly);   // at fleet zoom the chips carry identity; names return as you close
     // rate chip in the exact ironclad grammar: capital = two slashes, one slash a
     // 3rd or 4th rate, bare chip a frigate, gunboat chip a fort (shipClassTier).
     const gx = cx + ldx - ctx.measureText(nm).width / 2 - 10;
@@ -3939,12 +3987,29 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim, ship) {
       ctx.beginPath(); ctx.arc(mx, my, r, 0, Math.PI * 2);
       ctx.fillStyle = sacc.mount; ctx.fill(); ctx.lineWidth = Math.max(0.8, lw * 0.7); ctx.strokeStyle = ink; ctx.stroke();
       const outboard = Math.abs(m.y) >= 0.5, sp = r * 0.6;
+      // Heavy guns train on the ship's ordered target instead of resting fore and
+      // aft: relative bearing in the hull frame (+x bow, +y starboard), each mount
+      // limited to the arc its position allows, so nothing fires through the ship.
+      let aim = null;
+      if (ship && ship.targetId && cal >= 150 && typeof shipById === "function") {
+        const tg = shipById(ship.targetId);
+        if (tg && !tg.out) {
+          const rel = ((Math.atan2(tg.x - ship.x, -(tg.y - ship.y)) * 180 / Math.PI - (ship.heading || 0)) % 360 + 360) % 360;
+          const rr = rel * Math.PI / 180;
+          const ok = outboard
+            ? (m.y > 0 ? (rel > 15 && rel < 165) : (rel > 195 && rel < 345))
+            : (m.x >= 0 ? (rel < 130 || rel > 230) : (rel > 50 && rel < 310));
+          if (ok) aim = { x: Math.cos(rr), y: Math.sin(rr) };
+        }
+      }
       const barW = Math.max(0.7, lw * (cal >= 280 ? 1.15 : cal >= 240 ? 0.95 : cal >= 200 ? 0.8 : 0.65)), barLen = r * (cal >= 280 ? 1.55 : cal >= 240 ? 1.7 : 1.4);
       ctx.lineWidth = barW; ctx.lineCap = "round";
       for (let k = 0; k < m.guns; k++) {
         const off = (k - (m.guns - 1) / 2) * sp;
         ctx.beginPath();
-        if (outboard) { const dy = m.y >= 0 ? 1 : -1; ctx.moveTo(mx + off, my); ctx.lineTo(mx + off, my + dy * barLen); }
+        if (aim) { const px2 = -aim.y * off, py2 = aim.x * off;
+          ctx.moveTo(mx + px2, my + py2); ctx.lineTo(mx + px2 + aim.x * barLen, my + py2 + aim.y * barLen); }
+        else if (outboard) { const dy = m.y >= 0 ? 1 : -1; ctx.moveTo(mx + off, my); ctx.lineTo(mx + off, my + dy * barLen); }
         else { const dx = m.x >= 0 ? 1 : -1; ctx.moveTo(mx, my + off); ctx.lineTo(mx + dx * barLen, my + off); }
         ctx.stroke();
       }
@@ -4105,11 +4170,16 @@ function drawShip(ctx, v, ship, opts) {
     ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
     const label = ship.name.replace(/\s*\(.*\)/, "");
     const tw = ctx.measureText(label).width;
-    ctx.fillStyle = "rgba(7,20,24,0.66)";
-    ctx.fillRect(cx - tw / 2 - 4, cy - yoff - 9, tw + 8, 13);
-    ctx.fillStyle = ship.out ? "rgba(159,176,172,0.58)" : accent;
-    ctx.fillText(label, cx, cy - yoff + 1);
-    if (ship.out) {
+    // At fleet zoom the name plates blanket the chart; the health bars and chips
+    // carry identity there, and the names return as the ship grows past 24 px.
+    const showName = L >= 24;
+    if (showName) {
+      ctx.fillStyle = "rgba(7,20,24,0.66)";
+      ctx.fillRect(cx - tw / 2 - 4, cy - yoff - 9, tw + 8, 13);
+      ctx.fillStyle = ship.out ? "rgba(159,176,172,0.58)" : accent;
+      ctx.fillText(label, cx, cy - yoff + 1);
+    }
+    if (ship.out && showName) {
       ctx.globalAlpha = 0.62; ctx.strokeStyle = "rgba(159,176,172,0.72)"; ctx.lineWidth = 0.8;
       ctx.beginPath(); ctx.moveTo(cx - tw / 2 - 1, cy - yoff - 2); ctx.lineTo(cx + tw / 2 + 1, cy - yoff - 2); ctx.stroke();
       ctx.globalAlpha = 1;
@@ -4372,8 +4442,12 @@ function hash01(n) { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return 
 // downwind; a burning ship adds a darker, denser column and a flame flicker.
 function drawShipSmoke(ctx, v, s, tSec) {
   if (s.out) return;
-  const lay = SHIP_LAYOUT[s.id];
-  if (!lay || !lay.f || !lay.f.length) return;
+  // Previously read only SHIP_LAYOUT, so no Tsushima ship made any smoke at all,
+  // and a ship stopped made as much as one at full speed. Funnels now resolve the
+  // same way the plan does, and the column scales with what the boilers are doing.
+  const funnels = (s._plan && s._plan.funnels) || (typeof SHIP_FUNNELS !== "undefined" && SHIP_FUNNELS[s.id]) || (SHIP_LAYOUT[s.id] || {}).f;
+  if (!funnels || !funnels.length) return;
+  const boil = Math.max(0.15, Math.min(1, (s.throttle == null ? 0.6 : s.throttle) * (s.engine == null ? 1 : s.engine)));
   const Lm = (s.def && s.def.dimensions_m && s.def.dimensions_m.length) || 90;
   const hr = s.heading * Math.PI / 180;
   const bx = Math.sin(hr), by = -Math.cos(hr);                 // bow unit vector (world)
@@ -4382,8 +4456,8 @@ function drawShipSmoke(ctx, v, s, tSec) {
   const scl = Math.abs(wx(v, 100) - wx(v, 0)) / 100;           // screen px per world metre
   if (scl < 0.008) return;                                     // zoomed too far out to matter
   ctx.save();
-  for (let fi = 0; fi < lay.f.length; fi++) {
-    const fEnt = lay.f[fi];
+  for (let fi = 0; fi < funnels.length; fi++) {
+    const fEnt = funnels[fi];
     const fx = (typeof fEnt === "object") ? fEnt.x : fEnt;
     const fwx = s.x + bx * fx * (Lm / 2), fwy = s.y + by * fx * (Lm / 2);
     for (let i = 0; i < 6; i++) {
@@ -4392,7 +4466,7 @@ function drawShipSmoke(ctx, v, s, tSec) {
       const px = fwx - bx * (i * 9 + drift * 0.14) + wind.x * (i / 6) * wind.k + wob * by;
       const py = fwy - by * (i * 9 + drift * 0.14) + wind.y * (i / 6) * wind.k + wob * -bx;
       const rWorld = 4 + i * 2.6, a = 0.11 * (1 - i / 6.5);
-      ctx.globalAlpha = a;
+      ctx.globalAlpha = a * (0.35 + 0.85 * boil);
       ctx.fillStyle = "#1a2226";
       ctx.beginPath(); ctx.arc(wx(v, px), wy(v, py), Math.max(1, rWorld * scl), 0, Math.PI * 2); ctx.fill();
     }
@@ -5044,7 +5118,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "0.83";
+const ECHELON_VERSION = "0.90";
 
 // ---- module-global game state ---------------------------------------------
 const game = {
