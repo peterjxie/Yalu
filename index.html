@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.90" />
+<meta name="application-version" content="0.92" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -399,7 +399,24 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   #panel{top:auto;left:6px;right:6px;bottom:6px;width:auto;height:min(42vh,380px);max-height:none;border-radius:14px;}
 }
 @media (max-width:960px) and (orientation:landscape){
+  /* Landscape had only this positioning rule and inherited the desktop body, so on
+     a phone's short screen the lower controls clipped with no way to reach them:
+     a different incomplete set from portrait's. It now gets the same wrapping,
+     both-way-scrolling body as portrait, and the title bar widens the panel
+     instead of raising it. */
   #panel{top:6px;right:6px;bottom:6px;left:auto;width:min(38vw,360px);height:auto;max-height:none;border-radius:14px;}
+  #panel.tall{width:min(64vw,560px);}
+  .panel-title{cursor:pointer}
+  #panelBody{overflow:auto;padding:5px 6px 7px;touch-action:pan-x pan-y;-webkit-overflow-scrolling:touch}
+  .command-glass{display:flex;flex-wrap:wrap;align-items:center;align-content:flex-start;gap:7px;min-width:0;height:auto;padding:6px;border-radius:10px}
+  .status-strip,.systems-strip,.target-chip,.helm-block,.formation-block,.doctrine-icons,.battery-strip,.member-grid,.command-foot,.board-odds{flex:0 0 auto;margin-top:0}
+  .command-foot{display:flex;flex-wrap:wrap;gap:6px;width:100%}
+  .doctrine-icons{display:flex;flex-wrap:wrap;gap:5px;max-width:100%}
+  .command-head{order:0}.formation-block{order:1}.helm-block{order:2}.systems-strip{order:3}.status-strip{order:4}.target-chip{order:5}.doctrine-icons{order:6}.battery-strip{order:7}.member-grid{order:8}.command-foot{order:9}
+  .member-grid{display:flex;width:100%;max-width:none;overflow-x:auto;gap:5px;margin-top:0}
+  .member-chip{width:118px;min-width:118px}
+  .mini-profile{display:none!important}
+  .inline-help{display:none}
 }
 @media (max-width:560px){
   .codex-grid{grid-template-columns:1fr;}
@@ -725,7 +742,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v0.90</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.92</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -767,7 +784,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v0.90 · wakes under sail, smoke by the boilers, turrets that follow the target, and a quieter chart</div>
+    <div class="build-stamp" id="buildStamp">v0.92 · ship names back at every zoom</div>
     <button id="sailGuideBtn" title="Sail-era guide" aria-label="Sail-era guide" style="display:none;position:fixed;top:10px;right:12px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid #6c7a86;background:#0e1a22;color:#e0b85a;font:600 15px/1 Georgia,serif;cursor:pointer;">i</button>
     <button id="sailDetailBtn" title="Chart detail: names, chips and pips on or off" aria-label="Chart detail" style="display:none;position:fixed;top:42px;right:12px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid #6c7a86;background:#0e1a22;color:#9fb0bc;font:600 11px/1 sans-serif;cursor:pointer;">Aa</button>
     <div id="sailGuide" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(4,10,14,0.84);">
@@ -3773,7 +3790,7 @@ function drawSailShipTop(ctx, v, ship, opts) {
       }
     }
     const ly = cy + L * 0.62 + 9;
-    if (L >= 24) ctx.fillText(nm, cx + 5 + ldx, ly);   // at fleet zoom the chips carry identity; names return as you close
+    ctx.fillText(nm, cx + 5 + ldx, ly);                // names always shown: v0.90 hid them at fleet zoom and that was reverted
     // rate chip in the exact ironclad grammar: capital = two slashes, one slash a
     // 3rd or 4th rate, bare chip a frigate, gunboat chip a fort (shipClassTier).
     const gx = cx + ldx - ctx.measureText(nm).width / 2 - 10;
@@ -4170,9 +4187,9 @@ function drawShip(ctx, v, ship, opts) {
     ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
     const label = ship.name.replace(/\s*\(.*\)/, "");
     const tw = ctx.measureText(label).width;
-    // At fleet zoom the name plates blanket the chart; the health bars and chips
-    // carry identity there, and the names return as the ship grows past 24 px.
-    const showName = L >= 24;
+    // Names are always shown. v0.90 hid them below 24 px of drawn hull and that
+    // was reverted: a commander reads her fleet by name at any zoom.
+    const showName = true;
     if (showName) {
       ctx.fillStyle = "rgba(7,20,24,0.66)";
       ctx.fillRect(cx - tw / 2 - 4, cy - yoff - 9, tw + 8, 13);
@@ -5118,7 +5135,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "0.90";
+const ECHELON_VERSION = "0.92";
 
 // ---- module-global game state ---------------------------------------------
 const game = {
@@ -8875,11 +8892,11 @@ function syncPanel() {
                          ["rig", "Chain", "Chain and bar at the rigging: masts, spars, way. Weak past 400 m"],
                          ["grape", "Grape", "Grape and canister: sweeps the decks inside 300 m"],
                          ["double", "Double", "Double-shotted: crushing inside 250 m, wild beyond, slow to load"]];
-          let h = `<button class="text-icon${auto ? " active" : ""}" data-shell="auto" title="Auto: the gunner chooses by doctrine and range. Toggle off to load by hand">A</button>`;
+          let h = `<button class="text-icon${auto ? " active" : ""}" data-shell="auto" title="Auto: the gunner chooses by doctrine and range. Pick any shot to load by hand">A</button>`;
           for (const [v, lab, tip] of shots) {
             const picked = auto ? pred === v : s.doctrine === v;
             const st = auto ? `opacity:${picked ? 1 : 0.35};${picked ? "outline:1px dashed currentColor;" : ""}` : "";
-            h += `<button class="text-icon${!auto && s.doctrine === v ? " active" : ""}" data-shell="${v}" style="${st}" title="${tip}${auto ? " (Auto has the shot)" : ""}">${lab}</button>`;
+            h += `<button class="text-icon${!auto && s.doctrine === v ? " active" : ""}" data-shell="${v}" style="${st}" title="${tip}${auto ? " (tap to take the gun by hand)" : ""}">${lab}</button>`;
           }
           h += `<button class="text-icon" data-fleetauto="1" title="Whole fleet to Auto shot selection">⚑A</button>`;
           return h;
@@ -8912,8 +8929,9 @@ function syncPanel() {
 
   body.querySelectorAll("[data-shell]").forEach((btn) => btn.addEventListener("click", () => {
     const v = btn.getAttribute("data-shell");
-    // Auto is a lock: while engaged it displays its pick and the hand loads nothing.
-    if (isSailEra() && v !== "auto" && (s.doctrine || "auto") === "auto") { showToast("Auto has the shot: toggle A off to load by hand"); return; }
+    // Picking a shot takes the gun out of Auto by itself; A hands it back. The old
+    // guard made Auto a one-way lock with no way out: A re-armed Auto and every
+    // other chip was refused while Auto held, so shot could never be chosen by hand.
     s.doctrine = v; syncPanel();
   }));
   const fa = body.querySelector("[data-fleetauto]");
@@ -9573,7 +9591,7 @@ function telShot(from, target, gun, res) {
   if (!game.tel.salvos) game.tel.salvos = [];
   game.tel.salvos.push({
     turn: game.turn, fromId: from.id, toId: target.id, calibre: Math.round(cal), gun: gun.name || "gun",
-    shell: res.shell || "AP", range: res.range || 0, shots: res.shots || 0, hits: res.hits || 0,
+    shell: res.shell || (typeof isSailEra === "function" && isSailEra() ? "Round" : "AP"), range: res.range || 0, shots: res.shots || 0, hits: res.hits || 0,
     hitChance: res.hitChance || 0, damage: res.totalDmg || 0, penetration: res.penetration || 0,
     pens: res.pens || 0, ricochets: res.ricochets || 0, bounces: res.bounces || 0, fires: res.fires || 0,
     duds: res.duds || 0, hardHits: res.hardHits || 0, nearPens: res.nearPens || 0, partials: res.partials || 0,
@@ -9582,7 +9600,7 @@ function telShot(from, target, gun, res) {
   A.shots += res.shots; A.hits += res.hits; A.dmgDealt += res.totalDmg;
   A.rangeSum += res.range * res.shots; A.firesStarted += res.fires || 0;
   if (cal >= 240) { A.heavyShots += res.shots; A.heavyHits += res.hits; }
-  const sh = res.shell || "AP";
+  const sh = res.shell || (typeof isSailEra === "function" && isSailEra() ? "Round" : "AP");
   if (sh === "HE") {
     A.heShots += res.shots; A.heHits += res.hits; A.heDmg += res.totalDmg; A.heFires += res.fires || 0;
   } else {
@@ -9894,7 +9912,7 @@ function buildMechanicsReport() {
   for (const e of salvos) {
     if (e.turn !== lastTurn) { lastTurn = e.turn; L.push(`  --- TURN ${e.turn} ---`); }
     let line = `    ${shipName(e.fromId)} ${e.calibre}mm ${e.shell} -> ${shipName(e.toId)} | ${e.range}m | P(hit) ${pct(e.hitChance)} | ${e.hits}/${e.shots} | dmg ${Math.round(e.damage || 0)}`;
-    if (e.shell === "AP") line += ` | pen ${e.penetration}mm | material pens ${e.pens || 0} | ric ${e.ricochets || 0} | armour fail ${e.bounces || 0}`;
+    if (!isSailEra() && e.shell === "AP") line += ` | pen ${e.penetration}mm | material pens ${e.pens || 0} | ric ${e.ricochets || 0} | armour fail ${e.bounces || 0}`;
     if (e.armourHits) line += ` | mean obliq ${e.meanObliquity || 0}°`;
     if (e.duds) line += ` | duds ${e.duds}`;
     if (e.fires) line += ` | fires ${e.fires}`;
