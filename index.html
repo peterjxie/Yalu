@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="1.10" />
+<meta name="application-version" content="1.11" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -3723,9 +3723,9 @@ SHIP_TRACE.princess_royal = SHIP_TRACE.lion;   // sisters, same plan
 // which draws both ships on the one plate. Shikishima's third funnel and Asahi's
 // pair are carried by SHIP_FUNNELS, not by the hull.
 SHIP_TRACE.shikishima = {
-  top: [[1.00, 0.02], [0.95, 0.12], [0.88, 0.26], [0.79, 0.43], [0.68, 0.60], [0.56, 0.75],
-        [0.44, 0.87], [0.30, 0.95], [0.16, 0.99], [0.00, 1.00], [-0.16, 1.00], [-0.30, 0.98],
-        [-0.44, 0.94], [-0.56, 0.88], [-0.68, 0.79], [-0.79, 0.67], [-0.88, 0.52], [-0.95, 0.34], [-1.00, 0.16]],
+  top: [[1.00, 0.09], [0.96, 0.24], [0.90, 0.42], [0.82, 0.60], [0.72, 0.76], [0.60, 0.88],
+        [0.46, 0.95], [0.30, 0.99], [0.12, 1.00], [-0.08, 1.00], [-0.26, 0.99], [-0.42, 0.96],
+        [-0.56, 0.92], [-0.68, 0.86], [-0.79, 0.77], [-0.88, 0.64], [-0.95, 0.47], [-1.00, 0.28]],
   side: [[1.055, 0.008], [1.02, 0.032], [1.00, 0.0505], [0.90, 0.0505], [0.78, 0.0492],
          [0.66, 0.0478], [0.54, 0.0465], [0.46, 0.0458],
          [0.445, 0.0650], [0.385, 0.0650], [0.378, 0.0790], [0.330, 0.0790],
@@ -3737,9 +3737,9 @@ SHIP_TRACE.asahi = SHIP_TRACE.shikishima;   // same plate, near-sister
 // Mikasa, from the plan supplied (MIkasa.jpeg): a touch longer than Shikishima,
 // the two funnels close together amidships between the military masts.
 SHIP_TRACE.mikasa = {
-  top: [[1.00, 0.02], [0.95, 0.13], [0.88, 0.28], [0.79, 0.45], [0.68, 0.62], [0.56, 0.77],
-        [0.44, 0.88], [0.30, 0.95], [0.16, 0.99], [0.00, 1.00], [-0.16, 1.00], [-0.32, 0.98],
-        [-0.46, 0.94], [-0.58, 0.89], [-0.70, 0.81], [-0.80, 0.70], [-0.89, 0.56], [-0.96, 0.38], [-1.00, 0.20]],
+  top: [[1.00, 0.09], [0.96, 0.25], [0.90, 0.43], [0.82, 0.61], [0.72, 0.77], [0.60, 0.89],
+        [0.46, 0.96], [0.30, 0.99], [0.12, 1.00], [-0.08, 1.00], [-0.26, 0.99], [-0.42, 0.97],
+        [-0.56, 0.93], [-0.68, 0.87], [-0.79, 0.78], [-0.88, 0.66], [-0.95, 0.49], [-1.00, 0.30]],
   side: [[1.055, 0.008], [1.02, 0.033], [1.00, 0.0500], [0.88, 0.0500], [0.76, 0.0488],
          [0.62, 0.0472], [0.50, 0.0460], [0.44, 0.0455],
          [0.425, 0.0645], [0.360, 0.0645], [0.352, 0.0788], [0.300, 0.0788],
@@ -3750,9 +3750,9 @@ SHIP_TRACE.mikasa = {
 // Fuji, from the blueprint supplied (ijnfuji1897battleship.png): the oldest of the
 // four, shorter and fuller, with the sharpest ram and the broadest counter.
 SHIP_TRACE.fuji = {
-  top: [[1.00, 0.02], [0.96, 0.14], [0.89, 0.30], [0.80, 0.48], [0.69, 0.66], [0.57, 0.81],
-        [0.44, 0.91], [0.30, 0.97], [0.14, 1.00], [-0.02, 1.00], [-0.18, 0.99], [-0.34, 0.97],
-        [-0.48, 0.93], [-0.60, 0.88], [-0.72, 0.80], [-0.82, 0.70], [-0.90, 0.57], [-0.96, 0.40], [-1.00, 0.22]],
+  top: [[1.00, 0.10], [0.96, 0.26], [0.90, 0.45], [0.82, 0.63], [0.72, 0.79], [0.60, 0.90],
+        [0.46, 0.97], [0.30, 1.00], [0.12, 1.00], [-0.08, 1.00], [-0.26, 0.99], [-0.42, 0.97],
+        [-0.56, 0.94], [-0.68, 0.88], [-0.79, 0.79], [-0.88, 0.67], [-0.95, 0.50], [-1.00, 0.32]],
   side: [[1.055, 0.008], [1.02, 0.034], [1.00, 0.0520], [0.90, 0.0518], [0.78, 0.0502],
          [0.64, 0.0485], [0.52, 0.0470], [0.46, 0.0462],
          [0.448, 0.0662], [0.378, 0.0662], [0.370, 0.0812], [0.318, 0.0812],
@@ -3764,9 +3764,9 @@ SHIP_TRACE.fuji = {
 // supplied (JINGYUAN.jpeg): a long low armoured cruiser, single heavy barbette
 // forward, very low freeboard aft, two close funnels amidships.
 SHIP_TRACE.laiyuan = {
-  top: [[1.00, 0.02], [0.94, 0.14], [0.86, 0.30], [0.76, 0.49], [0.64, 0.67], [0.52, 0.81],
-        [0.40, 0.91], [0.26, 0.97], [0.12, 1.00], [-0.04, 1.00], [-0.20, 0.98], [-0.36, 0.95],
-        [-0.50, 0.90], [-0.64, 0.82], [-0.76, 0.70], [-0.86, 0.55], [-0.94, 0.36], [-1.00, 0.16]],
+  top: [[1.00, 0.08], [0.95, 0.22], [0.88, 0.40], [0.79, 0.58], [0.68, 0.74], [0.56, 0.86],
+        [0.42, 0.94], [0.26, 0.98], [0.10, 1.00], [-0.08, 1.00], [-0.26, 0.99], [-0.42, 0.96],
+        [-0.56, 0.92], [-0.68, 0.85], [-0.79, 0.75], [-0.88, 0.61], [-0.95, 0.44], [-1.00, 0.26]],
   side: [[1.055, 0.006], [1.02, 0.028], [1.00, 0.0448], [0.88, 0.0442], [0.74, 0.0432],
          [0.60, 0.0420], [0.50, 0.0412],
          [0.488, 0.0620], [0.400, 0.0620], [0.392, 0.0752], [0.330, 0.0752],
@@ -3777,9 +3777,9 @@ SHIP_TRACE.laiyuan = {
 // Jiyuan, from the plan supplied (JiYuan.jpg): protected cruiser, one funnel, the
 // twin barbette forward under its hood, low freeboard, rounded counter.
 SHIP_TRACE.jiyuan = {
-  top: [[1.00, 0.02], [0.94, 0.15], [0.86, 0.32], [0.76, 0.52], [0.64, 0.70], [0.52, 0.84],
-        [0.38, 0.93], [0.24, 0.98], [0.08, 1.00], [-0.08, 1.00], [-0.24, 0.98], [-0.40, 0.95],
-        [-0.54, 0.90], [-0.68, 0.82], [-0.80, 0.70], [-0.90, 0.53], [-0.97, 0.32], [-1.00, 0.16]],
+  top: [[1.00, 0.09], [0.95, 0.24], [0.88, 0.42], [0.79, 0.61], [0.68, 0.77], [0.56, 0.88],
+        [0.42, 0.95], [0.26, 0.99], [0.08, 1.00], [-0.10, 1.00], [-0.28, 0.99], [-0.44, 0.96],
+        [-0.58, 0.92], [-0.70, 0.85], [-0.81, 0.74], [-0.90, 0.60], [-0.96, 0.42], [-1.00, 0.26]],
   side: [[1.055, 0.006], [1.02, 0.030], [1.00, 0.0475], [0.86, 0.0468], [0.72, 0.0455],
          [0.60, 0.0445],
          [0.585, 0.0665], [0.480, 0.0665], [0.470, 0.0800], [0.400, 0.0800],
@@ -3794,16 +3794,82 @@ SHIP_TRACE.jiyuan = {
 // echelon barbettes, and the raised forecastle. Coarser than the Jutland traces
 // by an honest margin; a proper draught would let it be redone properly.
 SHIP_TRACE.dingyuan = {
-  top: [[1.00, 0.03], [0.94, 0.16], [0.86, 0.34], [0.76, 0.54], [0.64, 0.72], [0.52, 0.85],
-        [0.38, 0.94], [0.22, 0.99], [0.06, 1.00], [-0.10, 1.00], [-0.26, 0.98], [-0.42, 0.95],
-        [-0.56, 0.90], [-0.70, 0.82], [-0.82, 0.70], [-0.92, 0.53], [-0.98, 0.32], [-1.00, 0.18]],
-  side: [[1.05, 0.008], [1.01, 0.030], [0.98, 0.0455], [0.86, 0.0450], [0.74, 0.0442],
-         [0.62, 0.0435],
-         [0.605, 0.0640], [0.500, 0.0640], [0.492, 0.0800], [0.400, 0.0800],
-         [0.392, 0.0700], [0.20, 0.0695], [0.00, 0.0690], [-0.18, 0.0682], [-0.30, 0.0672],
-         [-0.312, 0.0470], [-0.50, 0.0450], [-0.70, 0.0425], [-0.88, 0.0400], [-1.00, 0.0382]],
+  // 94.5 m on 18.3 m of beam: barely five lengths to a breadth, a floating brick
+  // by later standards. The stem is bluff above water with the ram below it.
+  top: [[1.00, 0.14], [0.96, 0.32], [0.90, 0.52], [0.82, 0.70], [0.72, 0.84], [0.60, 0.93],
+        [0.46, 0.98], [0.30, 1.00], [0.12, 1.00], [-0.08, 1.00], [-0.26, 1.00], [-0.42, 0.98],
+        [-0.56, 0.95], [-0.68, 0.90], [-0.79, 0.82], [-0.88, 0.70], [-0.95, 0.54], [-1.00, 0.36]],
+  // Rebuilt so the profile agrees with the deck plan: a low forecastle to about
+  // 0.40, then the citadel and its flying deck spanning 0.36 to -0.16, which is
+  // where the funnels at 0.06 and -0.10 actually stand, then a low quarterdeck.
+  side: [[1.04, 0.010], [1.00, 0.034], [0.96, 0.0470], [0.84, 0.0470], [0.70, 0.0462],
+         [0.56, 0.0455], [0.44, 0.0450],
+         [0.400, 0.0450], [0.380, 0.0700], [0.360, 0.0700], [0.352, 0.0855], [0.300, 0.0855],
+         [0.292, 0.0770], [0.16, 0.0770], [0.00, 0.0770], [-0.10, 0.0770], [-0.155, 0.0765],
+         [-0.170, 0.0480], [-0.34, 0.0470], [-0.52, 0.0455], [-0.72, 0.0438], [-0.90, 0.0420], [-1.00, 0.0408]],
 };
 SHIP_TRACE.zhenyuan = SHIP_TRACE.dingyuan;   // sister, same class
+
+// ---------------------------------------------------------------------------
+// v1.11 tracing batch two: the Borodino class and the Japanese armoured cruisers.
+
+// Borodino class, from the plate supplied (Borodino_class.jpg): 121 m on 23.2 m,
+// barely over five lengths to a breadth, and the fullest deck plan in the game.
+// Two 12in turrets on the centreline, four 6in wing turrets, one 6in amidships.
+SHIP_TRACE.borodino = {
+  top: [[1.00, 0.10], [0.96, 0.27], [0.90, 0.46], [0.82, 0.65], [0.72, 0.81], [0.60, 0.92],
+        [0.46, 0.98], [0.30, 1.00], [0.12, 1.00], [-0.08, 1.00], [-0.26, 0.99], [-0.42, 0.97],
+        [-0.56, 0.93], [-0.68, 0.86], [-0.79, 0.76], [-0.88, 0.62], [-0.95, 0.44], [-1.00, 0.25]],
+  side: [[1.05, 0.010], [1.01, 0.033], [0.98, 0.0472], [0.86, 0.0470], [0.72, 0.0460],
+         [0.58, 0.0450], [0.48, 0.0444],
+         [0.462, 0.0642], [0.398, 0.0642], [0.390, 0.0792], [0.328, 0.0792],
+         [0.320, 0.0672], [0.16, 0.0668], [0.00, 0.0665], [-0.16, 0.0662], [-0.28, 0.0652],
+         [-0.292, 0.0472], [-0.46, 0.0460], [-0.62, 0.0446], [-0.80, 0.0430], [-0.92, 0.0414], [-1.00, 0.0402]],
+};
+SHIP_TRACE.suvorov = SHIP_TRACE.borodino;      // sisters, one plate
+SHIP_TRACE.aleksandr3 = SHIP_TRACE.borodino;
+SHIP_TRACE.oryol = SHIP_TRACE.borodino;
+
+// Asama and Tokiwa, from the Brassey's plate supplied (Asama_Brasseys.jpg), which
+// draws both: 134.7 m on 20.5 m, finer than a battleship, fuller than Azuma.
+SHIP_TRACE.asama = {
+  top: [[1.00, 0.07], [0.95, 0.22], [0.88, 0.40], [0.80, 0.59], [0.70, 0.76], [0.58, 0.88],
+        [0.44, 0.95], [0.28, 0.99], [0.10, 1.00], [-0.08, 1.00], [-0.26, 0.99], [-0.42, 0.96],
+        [-0.56, 0.92], [-0.68, 0.85], [-0.79, 0.75], [-0.88, 0.61], [-0.95, 0.43], [-1.00, 0.24]],
+  side: [[1.05, 0.008], [1.01, 0.031], [0.98, 0.0448], [0.86, 0.0445], [0.72, 0.0436],
+         [0.58, 0.0428], [0.48, 0.0422],
+         [0.465, 0.0620], [0.400, 0.0620], [0.392, 0.0762], [0.330, 0.0762],
+         [0.322, 0.0645], [0.16, 0.0642], [0.00, 0.0638], [-0.16, 0.0635], [-0.28, 0.0628],
+         [-0.292, 0.0448], [-0.46, 0.0436], [-0.62, 0.0422], [-0.80, 0.0406], [-0.92, 0.0392], [-1.00, 0.0380]],
+};
+SHIP_TRACE.tokiwa = SHIP_TRACE.asama;
+
+// Izumo class, from the left-elevation plan supplied: three funnels evenly spaced
+// between pole masts, 132.3 m on 20.9 m.
+SHIP_TRACE.izumo = {
+  top: [[1.00, 0.06], [0.95, 0.21], [0.88, 0.39], [0.80, 0.58], [0.70, 0.75], [0.58, 0.87],
+        [0.44, 0.95], [0.28, 0.99], [0.10, 1.00], [-0.08, 1.00], [-0.26, 0.99], [-0.42, 0.96],
+        [-0.56, 0.91], [-0.68, 0.84], [-0.79, 0.74], [-0.88, 0.60], [-0.95, 0.42], [-1.00, 0.23]],
+  side: [[1.05, 0.008], [1.01, 0.030], [0.98, 0.0442], [0.86, 0.0440], [0.72, 0.0432],
+         [0.58, 0.0424], [0.46, 0.0418],
+         [0.448, 0.0612], [0.385, 0.0612], [0.377, 0.0752], [0.318, 0.0752],
+         [0.310, 0.0638], [0.16, 0.0635], [0.00, 0.0632], [-0.16, 0.0628], [-0.28, 0.0622],
+         [-0.292, 0.0442], [-0.46, 0.0430], [-0.62, 0.0416], [-0.80, 0.0400], [-0.92, 0.0386], [-1.00, 0.0374]],
+};
+SHIP_TRACE.iwate = SHIP_TRACE.izumo;
+
+// Azuma, from her own left-elevation plan supplied: the French-built odd one out,
+// 137.9 m on 18.0 m, nearly eight lengths to a breadth, visibly finer than Izumo.
+SHIP_TRACE.azuma = {
+  top: [[1.00, 0.05], [0.95, 0.19], [0.88, 0.36], [0.80, 0.54], [0.70, 0.71], [0.58, 0.84],
+        [0.44, 0.93], [0.28, 0.98], [0.10, 1.00], [-0.08, 1.00], [-0.26, 0.98], [-0.42, 0.95],
+        [-0.56, 0.90], [-0.68, 0.82], [-0.79, 0.71], [-0.88, 0.57], [-0.95, 0.39], [-1.00, 0.20]],
+  side: [[1.05, 0.008], [1.01, 0.030], [0.98, 0.0438], [0.86, 0.0435], [0.72, 0.0428],
+         [0.58, 0.0420], [0.46, 0.0414],
+         [0.445, 0.0605], [0.380, 0.0605], [0.372, 0.0742], [0.315, 0.0742],
+         [0.307, 0.0630], [0.16, 0.0628], [0.00, 0.0625], [-0.16, 0.0622], [-0.28, 0.0615],
+         [-0.292, 0.0438], [-0.46, 0.0426], [-0.62, 0.0412], [-0.80, 0.0396], [-0.92, 0.0382], [-1.00, 0.0370]],
+};
 SHIP_TRACE.queen_mary = SHIP_TRACE.lion;
 // Tiger, traced from the Combrig sheet Peter supplied (IMG_7454): the finest hull
 // of the three, a very long run aft, the shelter deck carrying Q between the
@@ -3956,6 +4022,9 @@ const SHIP_FUNNELS = {
   tsesarevich: [0.14, -0.04],                                                 // two funnels between the masts, group forward of amidships (IMG_7448)
   retvizan: [0.12, -0.10],                                                    // two funnels: Conway's; UNVERIFIED against a draught
   peresvet: [0.18, 0.02, -0.14], pobeda: [0.18, 0.02, -0.14],                 // three evenly spaced, group just forward (Peresvet draught, IMG_7450)
+  asama: [0.08, -0.08], tokiwa: [0.08, -0.08],                                // re-measured off the Brassey's plate (Asama_Brasseys.jpg)
+  izumo: [0.12, 0.02, -0.08], iwate: [0.12, 0.02, -0.08],                     // three evenly spaced (Izumo elevation plan)
+  azuma: [0.14, 0.03, -0.08],                                                 // three, grouped slightly forward (Azuma elevation plan)
   jiyuan: [-0.02],                                                            // single funnel, measured off the plan (JiYuan.jpg)
   laiyuan: [0.06, -0.08],                                                     // two close funnels amidships (JINGYUAN.jpeg)
   dingyuan: [0.06, -0.10], zhenyuan: [0.06, -0.10],                           // provisional: low-resolution sectional (定远舰.jpg)
@@ -5866,8 +5935,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "1.10";
-const ECHELON_BUILD_NOTE = "tracing batch: the Japanese battle line and the Beiyang ironclads from the project plans";
+const ECHELON_VERSION = "1.11";
+const ECHELON_BUILD_NOTE = "ironclad hulls made beamy again, Dingyuan aligned, Borodinos and the armoured cruisers traced";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
