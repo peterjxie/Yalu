@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.92" />
+<meta name="application-version" content="0.94" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -18,7 +18,7 @@
 :root{
   --sea-deep:#0b252c; --sea-mid:#0f3540; --panel:#0d2a31; --panel-edge:#1c4651;
   --ink:#e8ddc7; --ink-dim:#9fb0ac; --brass:#c8a45c; --brass-dim:#8a7740;
-  --china:#d8a13a; --japan:#9aa7b2; --japan-red:#c0392b;
+  --china:#d8a13a; --japan:#a78bfa; --japan-red:#c0392b;
   --pen:#6fcf73; --partial:#e3c45c; --bounce:#d76a55;
   --serif:"Hoefler Text",Georgia,"Times New Roman",serif;
   --ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
@@ -742,7 +742,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v0.92</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v0.94</span></div>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
       <button class="start-load" id="startLoadBtn">Load</button>
@@ -784,7 +784,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v0.92 · ship names back at every zoom</div>
+    <div class="build-stamp" id="buildStamp">v0.94 · the enemy fleet moves off pale grey onto violet, clear of the sea and of a struck ship</div>
     <button id="sailGuideBtn" title="Sail-era guide" aria-label="Sail-era guide" style="display:none;position:fixed;top:10px;right:12px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid #6c7a86;background:#0e1a22;color:#e0b85a;font:600 15px/1 Georgia,serif;cursor:pointer;">i</button>
     <button id="sailDetailBtn" title="Chart detail: names, chips and pips on or off" aria-label="Chart detail" style="display:none;position:fixed;top:42px;right:12px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid #6c7a86;background:#0e1a22;color:#9fb0bc;font:600 11px/1 sans-serif;cursor:pointer;">Aa</button>
     <div id="sailGuide" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(4,10,14,0.84);">
@@ -2726,11 +2726,24 @@ function sailFireBattery(from, battery, target, turn) {
 
 // Lay her alongside: the boarder is brought against the target's engaged side,
 // heading parallel, and the two are held there until the grapples are cut.
-function holdAlongside(s, t) {
+// Which of her sides a ship is lying on: +1 starboard, -1 port, in her own frame.
+function berthSide(s, t) {
+  const hr = t.heading * Math.PI / 180;
+  return ((s.x - t.x) * Math.cos(hr) + (s.y - t.y) * Math.sin(hr)) >= 0 ? 1 : -1;
+}
+// Everyone currently fast alongside her.
+function grapplersOf(t) {
+  return (t._grapples || []).map((id) => shipById(id)).filter((x) => x && !x.out);
+}
+function releaseAllGrapples(t) {
+  for (const g of grapplersOf(t)) releaseGrapple(g);
+  t._grapples = []; t._grapple = null; t._boardAtt = false;
+}
+function holdAlongside(s, t, forceSide) {
   const sep = ((s.beam || 14) + (t.beam || 14)) * 0.52;
   const hr = t.heading * Math.PI / 180;
   const px = Math.cos(hr), py = Math.sin(hr);          // t's beam unit vector
-  const side = ((s.x - t.x) * px + (s.y - t.y) * py) >= 0 ? 1 : -1;
+  const side = forceSide || berthSide(s, t);
   if (!s.anchored && !s.aground) {
     s.x = t.x + px * sep * side; s.y = t.y + py * sep * side;
     s.heading = t.heading; s.hex = worldToHex(s.x, s.y);
@@ -2757,16 +2770,23 @@ function defenderEdge(t) {
   return 1.15 * (1 + 1.9 * Math.pow(fight, 1.5));
 }
 
-function grappleShips(s, t) {
-  s._grapple = t.id; t._grapple = s.id;
+function grappleShips(s, t, forceSide) {
+  s._grapple = t.id;
+  t._grapples = (t._grapples || []).filter((id) => id !== s.id);
+  t._grapples.push(s.id);
+  t._grapple = t._grapples[0];                         // kept for the renderer and the panel
   s._boardAtt = true; t._boardAtt = false;
   s._boardRound = 0; s._boardPress = 0;
-  holdAlongside(s, t);
+  holdAlongside(s, t, forceSide);
 }
 function releaseGrapple(s) {
   const t = s._grapple ? shipById(s._grapple) : null;
   s._grapple = null; s._boardAtt = false; s._boardRound = 0; s._boardPress = 0;
-  if (t) { t._grapple = null; t._boardAtt = false; t._boardRound = 0; t._boardPress = 0; }
+  if (t) {
+    t._grapples = (t._grapples || []).filter((id) => id !== s.id);
+    t._grapple = t._grapples[0] || null;
+    if (!t._grapples.length) { t._boardAtt = false; t._boardRound = 0; t._boardPress = 0; }
+  }
 }
 
 function sailAltTarget(from, battery) {
@@ -2795,7 +2815,7 @@ function eligibleBoardTarget(s) {
 }
 
 function commandeer(s, t, byStorm) {
-  if (typeof releaseGrapple === "function" && (s._grapple || t._grapple)) { releaseGrapple(s); releaseGrapple(t); }
+  if (typeof releaseGrapple === "function") { releaseGrapple(s); if (typeof releaseAllGrapples === "function") releaseAllGrapples(t); }
   // A ship taken back by her own flag is not a prize but a recapture: Santa Ana was
   // retaken from her prize crew in the gale after Trafalgar and served on.
   const retaken = (typeof homeSide === "function") && homeSide(t) === s.side;
@@ -2845,19 +2865,31 @@ function resolveBoardings() {
     if (!t || t.out && !t.struck) continue;
     if (rangeBetween(s, t) > 110) { logLine(`${s.name} cannot lay herself alongside ${t.name}.`, "sys"); continue; }
     if (t.struck) { commandeer(s, t); continue; }      // a struck ship surrenders without a fight
-    if (t._grapple) { logLine(`${t.name} is already fast alongside another ship.`, "sys"); continue; }
-    grappleShips(s, t);
+    // Berths alongside. A ship has two sides, so two enemies can lie aboard her at
+    // once and no more: Victory and Temeraire were both alongside Redoutable at
+    // Trafalgar and her people had to hold two gangways at the same time. A third
+    // ship has nowhere to lay herself and must wait for a berth to clear.
+    const held = grapplersOf(t);
+    if (held.length >= 2) { logLine(`${t.name} has ships fast on both sides; ${s.name} can find no berth.`, "sys"); continue; }
+    let berth = berthSide(s, t);
+    if (held.length === 1 && berthSide(held[0], t) === berth) berth = -berth;   // take the free side
+    grappleShips(s, t, berth);
   }
   // One round of the melee for every locked pair, every turn, until one side is
   // carried or the grapples are cut.
   for (const s of game.ships) {
     if (!s._grapple || !s._boardAtt) continue;
     const t = shipById(s._grapple);
-    if (!t || t._grapple !== s.id) { releaseGrapple(s); continue; }
+    if (!t || !(t._grapples || []).includes(s.id)) { releaseGrapple(s); continue; }
     if (s.out || t.out) { if (t.struck) commandeer(s, t); else releaseGrapple(s); continue; }
     holdAlongside(s, t);
     if (t.struck) { commandeer(s, t); continue; }
-    const att = boardingParty(s), def = boardingParty(t) * defenderEdge(t);
+    // Her defence divides between the parties on her decks. This is why doubling up
+    // worked: not more men against her, but her own men split two ways, each half
+    // meeting a full boarding party. She still bleeds once per party, since the loop
+    // resolves a round for each ship alongside her.
+    const alongside = Math.max(1, (t._grapples || []).length);
+    const att = boardingParty(s), def = (boardingParty(t) * defenderEdge(t)) / alongside;
     const ratio = att / Math.max(1, def);
     s._boardRound = (s._boardRound || 0) + 1;
     // Each round costs both companies; the side giving ground loses the more men.
@@ -2868,7 +2900,8 @@ function resolveBoardings() {
     if (ratio >= 1) t.morale = Math.max(0, t.morale - 6);
     else s.morale = Math.max(0, s.morale - 6);
     if (s._boardPress >= 1) {                            // the deck is carried
-      const p = s._grapple; releaseGrapple(s); s._grapple = null;
+      releaseGrapple(s); s._grapple = null;
+      releaseAllGrapples(t);                             // she has changed hands: everyone casts off
       commandeer(s, t, true);
     } else if (s._boardPress <= -1 || s.crew < 0.12) {   // beaten back off her decks
       logLine(`${s.name}'s boarders are beaten back off ${t.name}'s decks; the grapples are cut.`, s.side === game.playerSide ? "bad" : "good");
@@ -2922,7 +2955,7 @@ const PALETTE = {
   parchment: "#e8ddc7", parchmentDim: "#a9b3ad",
   brass: "#c8a45c", brassDim: "#8a7740",
   china: "#d8a13a", chinaHull: "#5b4a28", chinaDeck: "#6e5a32",
-  japan: "#9aa7b2", japanHull: "#333f49", japanDeck: "#46535e",
+  japan: "#a78bfa", japanHull: "#2e2a44", japanDeck: "#403a5c",
   japanRed: "#c0392b",
   fire: "#ff7a2e", fireHot: "#ffd07a", smoke: "#1b2429",
   splash: "#bcd6dc", foam: "#dbeef2",
@@ -3455,7 +3488,7 @@ function drawSailShipTop(ctx, v, ship, opts) {
   // A ship that has struck but not yet been taken possession of belongs to neither
   // side: she draws in bone, unfilled, until a boat goes across and she becomes a
   // prize in her captor's colours.
-  const ink = ship.struck ? "#e8e2d2" : (opts.selected ? "#f3e7c8" : (isSideA ? "#e0b85a" : "#9fb6d6"));
+  const ink = ship.struck ? "#e8e2d2" : (opts.selected ? "#f3e7c8" : (isSideA ? "#e0b85a" : "#a78bfa"));
   const fill = ship.struck ? "rgba(232,226,210,0.05)" : (isSideA ? "rgba(216,161,58,0.12)" : "rgba(140,170,205,0.12)");
   const wind = (typeof sailWind === "function") ? sailWind() : { from: 292 };
   // Line weight in three tiers, as on a dockyard draught: hull heaviest, deck
@@ -3655,9 +3688,9 @@ function drawSailShipTop(ctx, v, ship, opts) {
     // A prize wears her captor's colours over her own: the pendant at the main, and
     // a second hull line in the captor's ink so she reads as taken at any zoom.
     ctx.save(); ctx.globalAlpha = 0.95;
-    ctx.fillStyle = isSideA ? "#e0b85a" : "#9fb6d6"; ctx.fillRect(-B * 0.16, -L * 0.42, B * 0.16, L * 0.07);
-    ctx.fillStyle = isSideA ? "#9fb6d6" : "#e0b85a"; ctx.fillRect(0, -L * 0.42, B * 0.16, L * 0.07);
-    ctx.globalAlpha = 0.55; ctx.strokeStyle = isSideA ? "#e0b85a" : "#9fb6d6"; ctx.lineWidth = lwFit;
+    ctx.fillStyle = isSideA ? "#e0b85a" : "#a78bfa"; ctx.fillRect(-B * 0.16, -L * 0.42, B * 0.16, L * 0.07);
+    ctx.fillStyle = isSideA ? "#a78bfa" : "#e0b85a"; ctx.fillRect(0, -L * 0.42, B * 0.16, L * 0.07);
+    ctx.globalAlpha = 0.55; ctx.strokeStyle = isSideA ? "#e0b85a" : "#a78bfa"; ctx.lineWidth = lwFit;
     ctx.beginPath();
     for (let k = 0; k <= 20; k++) { const t = -0.46 + 0.9 * k / 20, hw = sailHalfWidth(t, B / 2) * 1.16;
       if (k === 0) ctx.moveTo(-hw, t * L); else ctx.lineTo(-hw, t * L); }
@@ -3751,7 +3784,7 @@ function drawSailShipTop(ctx, v, ship, opts) {
       const ux2 = Math.cos(a), uy2 = Math.sin(a);
       ctx.globalAlpha = 0.35; ctx.lineWidth = 3.4; ctx.strokeStyle = "#2c3a44";
       ctx.beginPath(); ctx.moveTo(mx - ux2 * bw2 / 2, my - uy2 * bw2 / 2); ctx.lineTo(mx + ux2 * bw2 / 2, my + uy2 * bw2 / 2); ctx.stroke();
-      ctx.globalAlpha = 0.95; ctx.strokeStyle = att2 === ship ? (isSideA ? "#e0b85a" : "#9fb6d6") : (isSideA ? "#9fb6d6" : "#e0b85a");
+      ctx.globalAlpha = 0.95; ctx.strokeStyle = att2 === ship ? (isSideA ? "#e0b85a" : "#a78bfa") : (isSideA ? "#a78bfa" : "#e0b85a");
       ctx.beginPath(); ctx.moveTo(mx - ux2 * bw2 / 2, my - uy2 * bw2 / 2);
       ctx.lineTo(mx - ux2 * bw2 / 2 + ux2 * bw2 * prs, my - uy2 * bw2 / 2 + uy2 * bw2 * prs); ctx.stroke();
       ctx.restore();
@@ -3804,7 +3837,7 @@ function drawSailShipTop(ctx, v, ship, opts) {
       if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(bx2 - tw / 2, by2 - 5, tw, 10, 4); ctx.fill(); }
       else ctx.fillRect(bx2 - tw / 2, by2 - 5, tw, 10);
       ctx.globalAlpha = 1;
-      ctx.fillStyle = ship.captured ? (isSideA ? "#e0b85a" : "#9fb6d6") : (ship.struck ? "#e8e2d2" : "#9aa7b2");
+      ctx.fillStyle = ship.captured ? (isSideA ? "#e0b85a" : "#a78bfa") : (ship.struck ? "#e8e2d2" : "#a78bfa");
       ctx.fillText(reason, bx2, by2);
       ctx.restore();
     }
@@ -3817,7 +3850,7 @@ function drawSailShipTop(ctx, v, ship, opts) {
       const bw = Math.max(18, Math.min(32, L * 0.55)), bx = cx + ldx - bw / 2, by = ly + 3.5;
       const hull = clamp(ship.structure / (ship.structureMax || 1), 0, 1);
       ctx.globalAlpha = 0.3; ctx.fillStyle = "#2c3a44"; ctx.fillRect(bx, by, bw, 3);
-      ctx.globalAlpha = 0.95; ctx.fillStyle = ship.struck ? "#8a8f94" : (isSideA ? "#e0b85a" : "#aab6c2");
+      ctx.globalAlpha = 0.95; ctx.fillStyle = ship.struck ? "#8a8f94" : (isSideA ? "#e0b85a" : "#b9a3fb");
       ctx.fillRect(bx, by, bw * hull, 3);
       const dy2 = by + 7.5;
       ctx.fillStyle = "#e08a7a"; ctx.globalAlpha = 0.9;
@@ -4102,7 +4135,7 @@ function drawShip(ctx, v, ship, opts) {
   const sacc = isSideA
     ? { fill: "rgba(216,161,58,0.10)", deck: "rgba(216,161,58,0.20)", mount: "rgba(216,161,58,0.34)" }
     : { fill: "rgba(154,167,178,0.10)", deck: "rgba(154,167,178,0.20)", mount: "rgba(154,167,178,0.34)" };
-  const ink = opts.selected ? "#f3e7c8" : (isSideA ? "#e0b85a" : "#aab6c2");
+  const ink = opts.selected ? "#f3e7c8" : (isSideA ? "#e0b85a" : "#b9a3fb");
   if (!ship._plan) ship._plan = buildShipPlan(ship);
   ctx.save();
   ctx.translate(cx, cy);
@@ -5135,7 +5168,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "0.92";
+const ECHELON_VERSION = "0.94";
 
 // ---- module-global game state ---------------------------------------------
 const game = {
@@ -9338,7 +9371,7 @@ function drawDossierProfile(s) {
   try {
     const ctx = ev.getContext("2d"), W = ev.width, H = ev.height;
     ctx.clearRect(0, 0, W, H);
-    const ink = s.side === "Japan" ? "#aab6c2" : "#e0b85a";
+    const ink = s.side === "Japan" ? "#b9a3fb" : "#e0b85a";
     const plate = "#0b1f25";
     const Lm0 = (s.def && s.def.dimensions_m && s.def.dimensions_m.length) || 100;
     const L = (W - 44) * Math.max(0.45, Math.min(1, Lm0 / 115));   // profile length tracks the real ship
