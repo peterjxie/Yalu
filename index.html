@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="1.06" />
+<meta name="application-version" content="1.09" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -2699,7 +2699,11 @@ if (typeof module !== "undefined" && module.exports) {
 // Spanish doctrine firing high at spars and rigging, the British into the hull).
 // ===================================================================================
 
-const SAIL_SCENARIOS = ["nile", "copenhagen", "trafalgar"];
+// Every sail-era scenario MUST be listed here: this gate selects the entire sail
+// engine (movement, strikes, boarding, doctrine, weighing). Camperdown and
+// Navarino were missing, so both ran as steam battles in sail costume: no
+// strikes, no weighing, rams live. The uiscan harness now asserts membership.
+const SAIL_SCENARIOS = ["camperdown", "nile", "copenhagen", "trafalgar", "navarino"];
 function isSailEra() { return SAIL_SCENARIOS.indexOf(activeScenarioId()) >= 0; }
 function sailWind() { return (typeof SCN !== "undefined" && SCN.wind) || { from: 292, kn: 5 }; }
 function angleOffWind(headingDeg) { return Math.abs(wrap180(headingDeg - sailWind().from)); }
@@ -3410,8 +3414,8 @@ function shipClassTier(ship) {
   // Sail era mapped onto the same grammar the ironclad chart uses: the two-slash
   // capital chip is a 1st or 2nd rate, the one-slash cruiser chip a 3rd or 4th
   // rate of the line, the light chip a frigate or smaller, gunboat chip a fort.
+  if (ship.def && ship.def.fort) return "fort";        // its own glyph, both eras
   if (typeof isSailEra === "function" && isSailEra()) {
-    if (ship.def && ship.def.fort) return "gunboat";
     const g = parseInt((ship.def && ship.def.class) || ship.class) || 0;
     if (g >= 90) return "capital";
     if (g >= 50) return "heavy_cruiser";
@@ -3442,7 +3446,15 @@ function drawClassIcon(ctx, cx, cy, tier, color, sz) {
     ctx.moveTo(lo, -h); ctx.lineTo(hi, -h); ctx.lineTo(tip, 0); ctx.lineTo(hi, h); ctx.lineTo(lo, h); ctx.closePath();
   };
   const slashAt = (x) => { ctx.beginPath(); ctx.moveTo(x + h * 0.5, -h * 0.96); ctx.lineTo(x - h * 0.5, h * 0.96); ctx.stroke(); };
-  if (tier === "torpedo") {
+  if (tier === "fort") {
+    // a bastion: square body with three merlons, unmistakably not a hull
+    ctx.beginPath();
+    ctx.moveTo(-w * 0.72, h); ctx.lineTo(-w * 0.72, -h * 0.35);
+    ctx.lineTo(-w * 0.72, -h); ctx.lineTo(-w * 0.38, -h); ctx.lineTo(-w * 0.38, -h * 0.35);
+    ctx.lineTo(-w * 0.17, -h * 0.35); ctx.lineTo(-w * 0.17, -h); ctx.lineTo(w * 0.17, -h); ctx.lineTo(w * 0.17, -h * 0.35);
+    ctx.lineTo(w * 0.38, -h * 0.35); ctx.lineTo(w * 0.38, -h); ctx.lineTo(w * 0.72, -h); ctx.lineTo(w * 0.72, h);
+    ctx.closePath(); fillStroke();
+  } else if (tier === "torpedo") {
     ctx.beginPath(); ctx.moveTo(-w, -h); ctx.lineTo(w, 0); ctx.lineTo(-w, h); ctx.closePath(); fillStroke();
   } else if (tier === "gunboat") {
     ctx.beginPath();
@@ -3625,6 +3637,7 @@ const SHIP_HULL = {
 // Hull half-width along t in [-1 (stern) .. +1 (bow)], fraction of half-beam. Bow is convex (ram), never concave.
 function hullHalfWidth(t, hb, P) {
   P = P || HULL_TYPES.cru;
+  if (P._trace) return hb * traceHalfWidth(P._trace, Math.max(-1, Math.min(1, t)));
   if (t >= 0.5) {                                          // bow (convex ram, or rounded for liners)
     const u = (t - 0.5) / 0.5;
     if (P.rnd) return hb * Math.sqrt(Math.max(0, 1 - u * u)) * P.mid;
@@ -3638,12 +3651,95 @@ function hullHalfWidth(t, hb, P) {
 }
 function hullOutline(L, B, N, P) {
   N = N || 60; const hl = L / 2, hb = B / 2; const pts = [];
+  if (P && P._trace) {                                     // traced deck outline: the plan's own line, both sides
+    for (const [t, w] of P._trace) pts.push([t * hl, -w * hb]);
+    for (let i = P._trace.length - 1; i >= 0; i--) { const [t, w] = P._trace[i]; pts.push([t * hl, w * hb]); }
+    return pts;
+  }
   for (let i = 0; i <= N; i++) { const t = 1 - 2 * i / N; pts.push([t * hl, -hullHalfWidth(t, hb, P)]); }
   // rounded counter stern: an elliptical cap instead of a flat transom
   const sw = hullHalfWidth(-1, hb, P), cap = Math.min(hl * 0.07, sw * 1.6);
   for (let k = 1; k < 7; k++) { const a = Math.PI * k / 7; pts.push([-hl - cap * Math.sin(a) * 0.9, -sw * Math.cos(a)]); }
   for (let i = 0; i <= N; i++) { const t = -1 + 2 * i / N; pts.push([t * hl, hullHalfWidth(t, hb, P)]); }
   return pts;
+}
+// ---- traced hull outlines and profiles, measured off the plan images --------
+// The method change of v1.07, per Peter's explicit instruction: where a plan
+// exists, the hull is TRACED from it, never constructed from an archetype.
+// top: pairs [x, halfBreadth] from bow to stern, x in half-length fractions
+// (+1 bow .. -1 stern), halfBreadth as a fraction of half-beam at that station.
+// side: pairs [x, height] from bow to stern tracing the sheer AND superstructure
+// silhouette, height above the waterline as a fraction of ship LENGTH. Every
+// entry cites the image it was measured from. The renderer interpolates the top
+// trace for mount clamping, replaces the parametric hull path with it, and in
+// profile substitutes the traced silhouette for the generic deck-and-blocks.
+const SHIP_TRACE = {
+  // Derfflinger class, traced from the plan Peter supplied (IMG_7455): fine entry
+  // filling to full beam by about a third aft, long parallel midbody, rounded
+  // cruiser counter; in profile a flush low sheer, the bridge tower the only tall
+  // mass, a boat-deck plateau between the funnels, and a low after block.
+  derfflinger: {
+    top: [[1.00, 0.02], [0.96, 0.12], [0.90, 0.26], [0.82, 0.44], [0.72, 0.62], [0.60, 0.78],
+          [0.48, 0.90], [0.36, 0.97], [0.20, 1.00], [0.00, 1.00], [-0.20, 0.99], [-0.36, 0.96],
+          [-0.52, 0.90], [-0.66, 0.80], [-0.78, 0.68], [-0.88, 0.55], [-0.96, 0.38], [-1.00, 0.14]],
+    // v1.09 redo at fine pitch: sloped masses, no stair-steps (IMG_7455).
+    side: [[1.045, 0.010], [1.02, 0.030], [1.00, 0.0405], [0.92, 0.0415], [0.80, 0.0420],
+           [0.68, 0.0415], [0.56, 0.0408], [0.50, 0.0408],
+           [0.455, 0.0408], [0.435, 0.070], [0.425, 0.070], [0.415, 0.082], [0.375, 0.082],
+           [0.370, 0.088], [0.335, 0.088], [0.330, 0.074], [0.315, 0.074], [0.310, 0.058],
+           [0.24, 0.056], [0.10, 0.0555], [-0.02, 0.0555], [-0.08, 0.054],
+           [-0.11, 0.054], [-0.115, 0.047], [-0.21, 0.047], [-0.215, 0.0415],
+           [-0.35, 0.0392], [-0.52, 0.0365], [-0.70, 0.0338], [-0.86, 0.0315], [-1.00, 0.0298]],
+  },
+};
+SHIP_TRACE.lutzow = SHIP_TRACE.derfflinger;   // sister, same plan
+// Lion class, traced from the plan Peter supplied (IMG_7453): a knife entry finer
+// than the German, full beam only a quarter aft, the forecastle deck carried past
+// Q with the quarterdeck break abaft it, and a strongly tapered cruiser stern.
+SHIP_TRACE.lion = {
+  top: [[1.00, 0.02], [0.95, 0.10], [0.88, 0.22], [0.80, 0.36], [0.70, 0.52], [0.58, 0.68],
+        [0.46, 0.82], [0.34, 0.92], [0.22, 0.98], [0.06, 1.00], [-0.12, 1.00], [-0.28, 0.97],
+        [-0.44, 0.91], [-0.58, 0.82], [-0.70, 0.70], [-0.81, 0.56], [-0.90, 0.40], [-0.97, 0.22], [-1.00, 0.10]],
+  // v1.09 redo at fine pitch (IMG_7453): high forecastle deck, the bridge in two
+  // sloped steps, shelter deck through the stacks, quarterdeck break abaft Q.
+  side: [[1.05, 0.012], [1.02, 0.032], [1.00, 0.0465], [0.90, 0.0468], [0.78, 0.0462],
+         [0.66, 0.0452], [0.54, 0.0442], [0.46, 0.0438],
+         [0.445, 0.072], [0.435, 0.072], [0.425, 0.086], [0.385, 0.086],
+         [0.380, 0.093], [0.345, 0.093], [0.340, 0.079], [0.325, 0.079], [0.320, 0.060],
+         [0.24, 0.0585], [0.10, 0.058], [-0.04, 0.0575], [-0.115, 0.0565],
+         [-0.13, 0.047], [-0.30, 0.0455], [-0.40, 0.0448],
+         [-0.435, 0.0448], [-0.445, 0.0330],
+         [-0.60, 0.0322], [-0.78, 0.0310], [-0.92, 0.0300], [-1.00, 0.0295]],
+};
+SHIP_TRACE.princess_royal = SHIP_TRACE.lion;   // sisters, same plan
+SHIP_TRACE.queen_mary = SHIP_TRACE.lion;
+// Tiger, traced from the Combrig sheet Peter supplied (IMG_7454): the finest hull
+// of the three, a very long run aft, the shelter deck carrying Q between the
+// split second and third funnels, quarterdeck break near half aft.
+SHIP_TRACE.tiger = {
+  top: [[1.00, 0.02], [0.94, 0.10], [0.86, 0.22], [0.77, 0.36], [0.66, 0.52], [0.54, 0.68],
+        [0.42, 0.82], [0.30, 0.92], [0.18, 0.98], [0.02, 1.00], [-0.16, 0.99], [-0.32, 0.95],
+        [-0.46, 0.88], [-0.60, 0.78], [-0.72, 0.64], [-0.83, 0.48], [-0.92, 0.30], [-0.98, 0.14], [-1.00, 0.06]],
+  // v1.09 redo at fine pitch (IMG_7454): compact bridge, the shelter deck long
+  // aft carrying Q, the break at half length, the finest stern of the three.
+  side: [[1.05, 0.012], [1.02, 0.031], [1.00, 0.0455], [0.88, 0.0455], [0.74, 0.0448],
+         [0.60, 0.0438], [0.48, 0.0430], [0.40, 0.0428],
+         [0.385, 0.070], [0.375, 0.070], [0.365, 0.084], [0.325, 0.084],
+         [0.320, 0.091], [0.290, 0.091], [0.285, 0.077], [0.270, 0.077], [0.265, 0.058],
+         [0.18, 0.0570], [0.06, 0.0565], [-0.06, 0.0560], [-0.20, 0.0552], [-0.32, 0.0545],
+         [-0.345, 0.0455], [-0.475, 0.0445],
+         [-0.500, 0.0445], [-0.510, 0.0318],
+         [-0.68, 0.0308], [-0.85, 0.0298], [-1.00, 0.0292]],
+};
+function traceHalfWidth(tr, t) {
+  if (t >= tr[0][0]) return tr[0][1];
+  for (let i = 1; i < tr.length; i++) {
+    if (t >= tr[i][0]) {
+      const a = tr[i - 1], b = tr[i], u = (t - b[0]) / Math.max(1e-6, a[0] - b[0]);
+      return b[1] + (a[1] - b[1]) * u;
+    }
+  }
+  return tr[tr.length - 1][1];
 }
 // ---- researched per-ship gun & funnel layouts -------------------------------
 // x: +bow .. -stern (fraction of half-length); y: +stbd .. -port (fraction of half-beam); guns = barrels.
@@ -3703,18 +3799,18 @@ const SHIP_LAYOUT = {
   // ---- Jutland capital ships. Stations for the Lions, Tiger and the Derfflingers
   // are measured off the plans Peter supplied (IMG_7453/7454/7455); the echelon
   // wing ships and the QEs are class-reference and marked UNVERIFIED.
-  lion: { m: sCat(sM(0.60, 0, 2, 343), sM(0.44, 0, 2, 343), sM(-0.24, 0, 2, 343), sM(-0.60, 0, 2, 343)) },
-  princess_royal: { m: sCat(sM(0.60, 0, 2, 343), sM(0.44, 0, 2, 343), sM(-0.24, 0, 2, 343), sM(-0.60, 0, 2, 343)) },
-  queen_mary: { m: sCat(sM(0.60, 0, 2, 343), sM(0.44, 0, 2, 343), sM(-0.24, 0, 2, 343), sM(-0.60, 0, 2, 343)) },
-  tiger: { m: sCat(sM(0.60, 0, 2, 343), sM(0.44, 0, 2, 343), sM(-0.06, 0, 2, 343), sM(-0.60, 0, 2, 343), sPair(0.20, 0.68, 1, 152), sPair(0.02, 0.68, 1, 152), sPair(-0.30, 0.68, 1, 152)) },
+  lion: { m: sCat(sM(0.62, 0, 2, 343), sM(0.46, 0, 2, 343), sM(-0.20, 0, 2, 343), sM(-0.58, 0, 2, 343)) },   // A/B/Q re-measured off IMG_7453
+  princess_royal: { m: sCat(sM(0.62, 0, 2, 343), sM(0.46, 0, 2, 343), sM(-0.20, 0, 2, 343), sM(-0.58, 0, 2, 343)) },   // A/B/Q re-measured off IMG_7453
+  queen_mary: { m: sCat(sM(0.62, 0, 2, 343), sM(0.46, 0, 2, 343), sM(-0.20, 0, 2, 343), sM(-0.58, 0, 2, 343)) },   // A/B/Q re-measured off IMG_7453
+  tiger: { m: sCat(sM(0.60, 0, 2, 343), sM(0.45, 0, 2, 343), sM(0.00, 0, 2, 343), sM(-0.56, 0, 2, 343), sPair(0.20, 0.68, 1, 152), sPair(0.02, 0.68, 1, 152), sPair(-0.30, 0.68, 1, 152)) },   // Q at 0.00 per IMG_7454
   new_zealand: { m: sCat(sM(0.58, 0, 2, 305), sM(0.10, 0.45, 2, 305), sM(-0.06, -0.45, 2, 305), sM(-0.58, 0, 2, 305)) },
   indefatigable: { m: sCat(sM(0.58, 0, 2, 305), sM(0.10, 0.45, 2, 305), sM(-0.06, -0.45, 2, 305), sM(-0.58, 0, 2, 305)) },
   barham: { m: sCat(sM(0.60, 0, 2, 381), sM(0.44, 0, 2, 381), sM(-0.44, 0, 2, 381), sM(-0.60, 0, 2, 381), sPair(0.16, 0.68, 1, 152), sPair(0.0, 0.68, 1, 152), sPair(-0.16, 0.68, 1, 152)) },
   valiant: { m: sCat(sM(0.60, 0, 2, 381), sM(0.44, 0, 2, 381), sM(-0.44, 0, 2, 381), sM(-0.60, 0, 2, 381), sPair(0.16, 0.68, 1, 152), sPair(0.0, 0.68, 1, 152), sPair(-0.16, 0.68, 1, 152)) },
   warspite: { m: sCat(sM(0.60, 0, 2, 381), sM(0.44, 0, 2, 381), sM(-0.44, 0, 2, 381), sM(-0.60, 0, 2, 381), sPair(0.16, 0.68, 1, 152), sPair(0.0, 0.68, 1, 152), sPair(-0.16, 0.68, 1, 152)) },
   malaya: { m: sCat(sM(0.60, 0, 2, 381), sM(0.44, 0, 2, 381), sM(-0.44, 0, 2, 381), sM(-0.60, 0, 2, 381), sPair(0.16, 0.68, 1, 152), sPair(0.0, 0.68, 1, 152), sPair(-0.16, 0.68, 1, 152)) },
-  lutzow: { m: sCat(sM(0.58, 0, 2, 305), sM(0.42, 0, 2, 305), sM(-0.42, 0, 2, 305), sM(-0.58, 0, 2, 305), sPair(0.16, 0.68, 1, 150), sPair(0.0, 0.68, 1, 150), sPair(-0.16, 0.68, 1, 150)) },
-  derfflinger: { m: sCat(sM(0.58, 0, 2, 305), sM(0.42, 0, 2, 305), sM(-0.42, 0, 2, 305), sM(-0.58, 0, 2, 305), sPair(0.16, 0.68, 1, 150), sPair(0.0, 0.68, 1, 150), sPair(-0.16, 0.68, 1, 150)) },
+  lutzow: { m: sCat(sM(0.62, 0, 2, 305), sM(0.46, 0, 2, 305), sM(-0.40, 0, 2, 305), sM(-0.58, 0, 2, 305), sPair(0.16, 0.68, 1, 150), sPair(0.0, 0.68, 1, 150), sPair(-0.16, 0.68, 1, 150)) },   // A/B re-measured off IMG_7455
+  derfflinger: { m: sCat(sM(0.62, 0, 2, 305), sM(0.46, 0, 2, 305), sM(-0.40, 0, 2, 305), sM(-0.58, 0, 2, 305), sPair(0.16, 0.68, 1, 150), sPair(0.0, 0.68, 1, 150), sPair(-0.16, 0.68, 1, 150)) },
   seydlitz: { m: sCat(sM(0.58, 0, 2, 280), sM(0.10, 0.45, 2, 280), sM(-0.08, -0.45, 2, 280), sM(-0.42, 0, 2, 280), sM(-0.58, 0, 2, 280), sPair(0.14, 0.68, 1, 150), sPair(-0.02, 0.68, 1, 150)) },
   moltke: { m: sCat(sM(0.58, 0, 2, 280), sM(0.10, 0.45, 2, 280), sM(-0.08, -0.45, 2, 280), sM(-0.42, 0, 2, 280), sM(-0.58, 0, 2, 280), sPair(0.14, 0.68, 1, 150), sPair(-0.02, 0.68, 1, 150)) },
   von_der_tann: { m: sCat(sM(0.58, 0, 2, 280), sM(0.14, 0.45, 2, 280), sM(-0.10, -0.45, 2, 280), sM(-0.58, 0, 2, 280), sPair(0.12, 0.68, 1, 150), sPair(-0.04, 0.68, 1, 150)) },
@@ -3770,13 +3866,13 @@ const SHIP_FUNNELS = {
   peresvet: [0.18, 0.02, -0.14], pobeda: [0.18, 0.02, -0.14],                 // three evenly spaced, group just forward (Peresvet draught, IMG_7450)
   sevastopol: [0.12, -0.06], poltava: [0.12, -0.06],                          // two close funnels forward of amidships (Petropavlovsk plan, IMG_7449)
   // ---- Jutland, from the plans Peter supplied ----
-  lion: [0.20, 0.06, -0.08], princess_royal: [0.20, 0.06, -0.08],             // three grouped, Q abaft them (Lion plan, IMG_7453)
-  queen_mary: [0.20, 0.06, -0.08],
-  tiger: [0.24, 0.10, -0.18],                                                 // third funnel split aft, Q between 2 and 3 (Combrig sheet, IMG_7454)
+  lion: [0.22, 0.08, -0.06], princess_royal: [0.22, 0.08, -0.06],             // re-measured off the plan (IMG_7453)
+  queen_mary: [0.22, 0.08, -0.06],
+  tiger: [0.26, 0.13, -0.13],                                                 // re-measured off the Combrig sheet (IMG_7454): Q at the deck centre between 2 and 3
   new_zealand: [0.16, 0.0, -0.16], indefatigable: [0.16, 0.0, -0.16],         // three funnels: Conway's; UNVERIFIED against a draught
   barham: [0.10, -0.06], valiant: [0.10, -0.06],                              // two funnels: Queen Elizabeth class, Conway's
   warspite: [0.10, -0.06], malaya: [0.10, -0.06],
-  lutzow: [0.16, -0.04], derfflinger: [0.16, -0.04],                          // two funnels (Derfflinger plan, IMG_7455)
+  lutzow: [0.20, 0.00], derfflinger: [0.20, 0.00],                            // re-measured off the plan (IMG_7455): f1 abaft the bridge, f2 just forward of amidships
   seydlitz: [0.14, -0.06], moltke: [0.14, -0.06],                             // two funnels: Conway's; UNVERIFIED against a draught
   von_der_tann: [0.14, -0.08],                                                // two funnels: Conway's; UNVERIFIED against a draught
 };
@@ -3827,7 +3923,10 @@ function drawSailShipTop(ctx, v, ship, opts) {
   const ratio = (ship.beam && ship.length) ? ship.beam / ship.length : 0.27;
   const L = Math.max(ship.length * v.scale, 12);
   const B = Math.max(L * ratio, 4);
-  const isSideA = ship.side !== "Combined" && ship.side !== "France" && ship.side !== "Denmark";
+  // Side identity comes from the scenario, never from a name list: the old list
+  // predated the Netherlands, the Ottomans and the Allies, so every fleet added
+  // since rendered gold on both sides.
+  const isSideA = ship.side === sideA();
   // A ship that has struck but not yet been taken possession of belongs to neither
   // side: she draws in bone, unfilled, until a boat goes across and she becomes a
   // prize in her captor's colours.
@@ -4167,7 +4266,10 @@ function drawSailShipTop(ctx, v, ship, opts) {
     }
     const ly = cy + L * 0.62 + 9;
     drawEnsign(ctx, cx + ldx - 6.5, ly - 7, 13, flagFor(ship), ship.out ? 0.35 : 0.9);
-    if (opts.selected) ctx.fillText(nm, cx + 5 + ldx, ly + 11);
+    // The labels toggle governs names, as it always did; the ensign is the
+    // always-on identity. v1.06 wrongly reduced names to the selected ship only,
+    // which made Camperdown's thirty-one same-flag liners unreadable.
+    if (opts.selected || opts.showLabel) ctx.fillText(nm, cx + 5 + ldx, ly + 11);
     // rate chip in the exact ironclad grammar: capital = two slashes, one slash a
     // 3rd or 4th rate, bare chip a frigate, gunboat chip a fort (shipClassTier).
     const gx = cx + ldx - ctx.measureText(nm).width / 2 - 10;
@@ -4258,7 +4360,9 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim, ship) {
   if (dim) ctx.globalAlpha = 0.34;
   const lw = Math.max(0.5, L * 0.0060);
   // hull
-  const P = plan.hp || HULL_TYPES.cru;
+  let P = plan.hp || HULL_TYPES.cru;
+  const TRT = ship && typeof SHIP_TRACE !== "undefined" && SHIP_TRACE[ship.id];
+  if (TRT && TRT.top) P = Object.assign({}, P, { _trace: TRT.top });
   const pts = hullOutline(L, B, Math.max(24, Math.min(64, Math.round(L / 3))), P);
   const tracePts = (c) => { c.beginPath(); c.moveTo(pts[0][0], pts[0][1]);
     for (let i = 1; i < pts.length; i++) c.lineTo(pts[i][0], pts[i][1]); c.closePath(); };
@@ -4373,6 +4477,27 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim, ship) {
       ctx.restore();
     }
   }
+  // Gun smoke: the banks a broadside leaves. Sail: great pale clouds rolling
+  // downwind from the engaged sides for a turn or two; steam: a thinner grey
+  // smear pulled astern. Deterministic offsets, no state kept.
+  if (ship._firedTurn != null && (game.turn || 0) - ship._firedTurn <= 1 && !ship.out) {
+    const sailS = (typeof isSailEra === "function") && isSailEra();
+    const wf2 = (SCN && SCN.wind && SCN.wind.from) || 300;
+    const aS = ((wf2 + 180 - ship.heading) * Math.PI) / 180;
+    const dxs = Math.sin(aS), dys = -Math.cos(aS);
+    ctx.save();
+    const npf = sailS ? 5 : 3;
+    for (let iS = 0; iS < npf; iS++) {
+      const t2 = (iS + 1) / npf, sideS = (iS % 2 ? 1 : -1);
+      const px = dxs * L * (sailS ? 0.55 : 0.45) * t2 - (sailS ? 0 : L * 0.30 * t2);
+      const py = dys * L * (sailS ? 0.55 : 0.45) * t2 + sideS * (sailS ? B * 0.95 : B * 0.40);
+      const rr3 = (sailS ? L * 0.17 : L * 0.085) * (0.55 + t2);
+      ctx.globalAlpha = (sailS ? 0.15 : 0.09) * (1.2 - t2) * (ship.out ? 0 : 1);
+      ctx.fillStyle = sailS ? "#d9d6c8" : "#79828a";
+      ctx.beginPath(); ctx.ellipse(px, py, rr3 * 1.3, rr3 * 0.8, aS, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.restore();
+  }
   if (ship._critFlash != null && (game.turn || 0) - ship._critFlash <= 1) {
     ctx.save(); ctx.globalAlpha = 0.85; ctx.strokeStyle = "#ff5640"; ctx.lineWidth = 1.4;
     ctx.beginPath(); ctx.arc(0, 0, hl * 0.55, 0, Math.PI * 2); ctx.stroke();
@@ -4382,7 +4507,7 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim, ship) {
   // mounts: barbettes (disc + barrels) and casemate boxes; barrels scale with calibre
   for (const m of plan.mounts) {
     const cal = m.cal || 0;
-    const lhw = hullHalfWidth(m.x, hb, P);
+    const lhw = hullHalfWidth(m.x, hb, P);   // consults the trace when one exists
     let my = m.y * hb;
     if (Math.abs(my) > lhw * 0.92) my = (m.y >= 0 ? 1 : -1) * lhw * 0.92;   // keep at/inside the hull edge
     const mx = m.x * hl;
@@ -4499,10 +4624,24 @@ function drawEnsign(ctx, x, y, wF, key, alpha) {
 
 function drawShip(ctx, v, ship, opts) {
   if (typeof scenarioVisibility === "function" && scenarioVisibility() && game.playerSide
-      && ship.side !== game.playerSide && !ship.out
-      && typeof fleetSights === "function" && !fleetSights(game.playerSide, ship)) {
-    ctx.save(); ctx.globalAlpha *= 0.30;
-    try { return drawShipInner(ctx, v, ship, opts); } finally { ctx.restore(); }
+      && ship.side !== game.playerSide && !ship.out) {
+    if (typeof fleetSights === "function" && !fleetSights(game.playerSide, ship)) {
+      ctx.save(); ctx.globalAlpha *= 0.30;
+      try { return drawShipInner(ctx, v, ship, opts); } finally { ctx.restore(); }
+    }
+    // Sighted but distant: fade with range toward the sight limit, so the haze
+    // Campbell describes is on the SCREEN, not only inside the gunnery model.
+    let rMin = 1e12, lim = 0;
+    for (const f of game.ships) {
+      if (f.side !== game.playerSide || f.out) continue;
+      const r = rangeBetween(f, ship);
+      if (r < rMin) { rMin = r; lim = (typeof sightLimit === "function" ? sightLimit(f, ship) : 1e12); }
+    }
+    if (lim > 0 && rMin > lim * 0.55) {
+      const f2 = Math.max(0.5, 1 - 0.5 * (rMin - lim * 0.55) / (lim * 0.45));
+      ctx.save(); ctx.globalAlpha *= f2;
+      try { return drawShipInner(ctx, v, ship, opts); } finally { ctx.restore(); }
+    }
   }
   return drawShipInner(ctx, v, ship, opts);
 }
@@ -4517,7 +4656,7 @@ function drawShipInner(ctx, v, ship, opts) {
   // Side A (the historical defender: China at Yalu, Russia at Tsushima) takes the gold
   // palette; side B (Japan in both battles) takes the red. Keyed off "not Japan" so the
   // Russian line no longer shares the Japanese colour.
-  const isSideA = ship.side !== "Japan";
+  const isSideA = ship.side === sideA();   // same fix as the sail path: Germany and the 1904 Russians were both gold
   const hullCol = isSideA ? PALETTE.chinaHull : PALETTE.japanHull;
   const deckCol = isSideA ? PALETTE.chinaDeck : PALETTE.japanDeck;
   const accent = isSideA ? PALETTE.china : PALETTE.japan;
@@ -5125,9 +5264,12 @@ function sideElevationPrims(ship, L) {
 
   // ---- hull: gentle sheer deck, ram bow, flat bottom, counter stern (outline) ----
   const cit = o.citadel ? fb * 0.13 : 0;
+  const TRD = (typeof SHIP_TRACE !== "undefined" && SHIP_TRACE[id] && SHIP_TRACE[id].side) || null;
   const shp = SIDE_SHAPE[ht] || null;
   const N = 18, deck = [];
-  for (let i = 0; i <= N; i++) {
+  if (TRD) {                                               // the plan's own silhouette, stern to bow
+    for (let i = TRD.length - 1; i >= 0; i--) deck.push([TRD[i][0] * hl, -TRD[i][1] * L]);
+  } else for (let i = 0; i <= N; i++) {
     const xf = -1 + 2 * i / N, x = xf * hl;
     let sy = -fb - 0.07 * fb * (xf * xf);
     if (shp) {
@@ -5167,6 +5309,8 @@ function sideElevationPrims(ship, L) {
 
   const dk = -fb - cit;                                                            // working deck height
 
+  // ---- generic massing, suppressed when a traced silhouette already carries it ----
+  if (!TRD) {
   // ---- flying / hurricane deck (runs over the turrets, foremast to funnels) ----
   if (o.flyingDeck) {
     const a = o.flyingDeck[0] * hl, b = o.flyingDeck[1] * hl;
@@ -5217,14 +5361,24 @@ function sideElevationPrims(ship, L) {
     }
   }
 
+  }
   // ---- funnels (solid, capped) ----
-  const funH = fb * (matsu ? 1.7 : iron ? 1.55 : 1.7);
-  const funW = L * 0.042;
+  const tHt = TRD ? function (xf) {                        // traced silhouette height at a station, fraction of L
+    if (xf >= TRD[0][0]) return TRD[0][1];
+    for (let q = 1; q < TRD.length; q++) if (xf >= TRD[q][0]) {
+      const a2 = TRD[q - 1], b2 = TRD[q], u2 = (xf - b2[0]) / Math.max(1e-6, a2[0] - b2[0]);
+      return b2[1] + (a2[1] - b2[1]) * u2;
+    }
+    return TRD[TRD.length - 1][1];
+  } : null;
+  const funH = TRD ? L * 0.088 : fb * (matsu ? 1.7 : iron ? 1.55 : 1.7);           // traced ships: true stack height ~0.088 L
+  const funW = L * (TRD ? 0.034 : 0.042);
   for (const fEnt of lay.f) {
     const fxF = (typeof fEnt === "object") ? fEnt.x : fEnt;
-    const fx = fxF * hl, rake = funH * 0.04, top = dk - funH;
+    const fx = fxF * hl, rake = funH * 0.04;
     const overHouse = lay.ss && fxF <= ssA + 0.03 && fxF >= ssB - 0.03;             // is there a deckhouse under this funnel?
-    const base = overHouse ? dk - ssH : dk;                                         // rise from the upper deck if there is one, else the main deck
+    const base = TRD ? -tHt(fxF) * L : (overHouse ? dk - ssH : dk);                 // traced: rise from the silhouette itself
+    const top = base - funH;
     fpoly([[fx - funW / 2, base], [fx + funW / 2, base], [fx + funW / 2 - rake, top], [fx - funW / 2 - rake, top]], 0.6);
     frect(fx - rake - funW * 0.62, top - L * 0.006, funW * 1.24, L * 0.012, 0.4);
     line(fx - funW * 0.44 - rake * 0.9, top + funH * 0.10, fx + funW * 0.44 - rake * 0.9, top + funH * 0.10, 0.6);   // cap band
@@ -5233,7 +5387,7 @@ function sideElevationPrims(ship, L) {
   }
   if (!tb && lay.f.length) {                                                        // J-cowl ventilators flanking the boiler space
     const fVals = lay.f.map((fe) => ((typeof fe === "object") ? fe.x : fe) * hl);
-    const cvBase = lay.ss ? dk - ssH : dk;
+    const cvBase = TRD ? -tHt(0) * L : (lay.ss ? dk - ssH : dk);
     for (const cvx of [Math.max(...fVals) + L * 0.040, Math.min(...fVals) - L * 0.040]) {
       const cvH = fb * 0.55;
       line(cvx, cvBase, cvx, cvBase - cvH, 0.8);
@@ -5244,22 +5398,23 @@ function sideElevationPrims(ship, L) {
   // ---- guns last, so near-side deck-mounted secondaries stay in front of the superstructure ----
   for (const mt of lay.m) {
     const gx = mt.x * hl, cal = mt.cal || 120, dir = gx >= 0 ? 1 : -1;
+    const gDk = TRD ? -tHt(gx / hl) * L : dk;                                     // traced ships: guns sit ON the silhouette
     if (mt.t === "turret" && cal < 180) {                                         // secondary gun turret on the upper deck
-      const tw = L * 0.030, th = fb * 0.46;
-      fpoly([[gx - tw / 2, dk], [gx + tw / 2, dk], [gx + tw * 0.34, dk - th], [gx - tw * 0.34, dk - th]], 0.5);
-      const blen = L * 0.024, bt = L * 0.005, by = dk - th * 0.55;
+      const tw = L * 0.030, th = TRD ? L * 0.013 : fb * 0.46;
+      fpoly([[gx - tw / 2, gDk], [gx + tw / 2, gDk], [gx + tw * 0.34, gDk - th], [gx - tw * 0.34, gDk - th]], 0.5);
+      const blen = L * 0.024, bt = L * 0.005, by = gDk - th * 0.55;
       frect(gx + dir * tw * 0.30, by - bt / 2, dir * blen, bt, 0.4);
     } else if (cal >= 180) {                                                       // main gun turret / barbette: wide LOW drum + barrel(s)
       const cf = Math.max(0.85, Math.min(1.35, cal / 260));
-      const gw = L * (cal >= 280 ? 0.092 : 0.062) * cf, gh = fb * 0.40 * cf, topW = gw * (cal >= 280 ? 0.86 : 0.74);   // heavy barbettes were fully a tenth of the ship's length across
-      fpoly([[gx - gw / 2, dk], [gx + gw / 2, dk], [gx + topW / 2, dk - gh], [gx - topW / 2, dk - gh]], 0.6);
+      const gw = L * (cal >= 280 ? 0.092 : 0.062) * cf, gh = (TRD ? L * 0.019 : fb * 0.40) * cf, topW = gw * (cal >= 280 ? 0.86 : 0.74);   // heavy barbettes were fully a tenth of the ship's length across
+      fpoly([[gx - gw / 2, gDk], [gx + gw / 2, gDk], [gx + topW / 2, gDk - gh], [gx - topW / 2, gDk - gh]], 0.6);
       const blen = L * (0.040 + cal / 11000), bthick = L * (cal >= 300 ? 0.0072 : cal >= 240 ? 0.0062 : 0.0052);
-      const by = dk - gh * 0.55;
+      const by = gDk - gh * 0.55;
       frect(gx + dir * topW * 0.42, by - bthick / 2, dir * blen, bthick, 0.4);     // twin barrels sit abreast, so only one shows in profile
     } else if (Math.abs(mt.y) < 0.2) {                                            // light gun on deck (bow/stern)
-      const sw = L * 0.02, sh = fb * 0.42, bt = L * 0.0045;
-      frect(gx - sw / 2, dk - sh, sw, sh, 0.6);
-      frect(gx + dir * sw * 0.35, dk - sh * 0.6 - bt / 2, dir * L * 0.028, bt, 0.4);
+      const sw = L * 0.02, sh = TRD ? L * 0.012 : fb * 0.42, bt = L * 0.0045;
+      frect(gx - sw / 2, gDk - sh, sw, sh, 0.6);
+      frect(gx + dir * sw * 0.35, gDk - sh * 0.6 - bt / 2, dir * L * 0.028, bt, 0.4);
     } else {                                                                       // casemate port, set in the hull side at the deck line (matches the top view)
       const py = dk + fb * 0.05, pw = L * 0.014, bt = L * 0.004;
       frect(gx - pw / 2, py - pw / 2, pw, pw, 0.5);
@@ -5503,13 +5658,13 @@ Object.assign(SHIP_SIDE, {
   sevastopol:  { fb: 0.062, masts: [[0.30, 1], [-0.24, 1]] },      // Petropavlovsk plan (IMG_7449)
   poltava:     { fb: 0.062, masts: [[0.30, 1], [-0.24, 1]] },
   // Jutland: tripod foremasts on the British ships, per the supplied plans.
-  lion: { masts: [[0.32, 1], [-0.30, 0]] }, princess_royal: { masts: [[0.32, 1], [-0.30, 0]] },
-  queen_mary: { masts: [[0.32, 1], [-0.30, 0]] },
-  tiger: { masts: [[0.32, 1], [-0.34, 0]] },
+  lion: { masts: [[0.30, 1], [-0.16, 0]] }, princess_royal: { masts: [[0.30, 1], [-0.16, 0]] },   // tripod at the bridge, light main abaft the stacks (IMG_7453)
+  queen_mary: { masts: [[0.30, 1], [-0.16, 0]] },
+  tiger: { masts: [[0.22, 1], [-0.30, 0]] },   // tripod hard against the first stack (IMG_7454)
   new_zealand: { masts: [[0.30, 1], [-0.28, 0]] }, indefatigable: { masts: [[0.30, 1], [-0.28, 0]] },
   barham: { fb: 0.07, masts: [[0.28, 1], [-0.26, 0]] }, valiant: { fb: 0.07, masts: [[0.28, 1], [-0.26, 0]] },
   warspite: { fb: 0.07, masts: [[0.28, 1], [-0.26, 0]] }, malaya: { fb: 0.07, masts: [[0.28, 1], [-0.26, 0]] },
-  lutzow: { fb: 0.068, masts: [[0.26, 1], [-0.28, 1]] }, derfflinger: { fb: 0.068, masts: [[0.26, 1], [-0.28, 1]] },
+  lutzow: { fb: 0.068, masts: [[0.24, 1], [-0.16, 1]] }, derfflinger: { fb: 0.068, masts: [[0.24, 1], [-0.16, 1]] },   // masts re-stationed off IMG_7455
   seydlitz: { fb: 0.068, masts: [[0.28, 1], [-0.30, 1]] }, moltke: { fb: 0.068, masts: [[0.28, 1], [-0.30, 1]] },
   von_der_tann: { fb: 0.068, masts: [[0.28, 1], [-0.30, 1]] },
 });
@@ -5616,8 +5771,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "1.06";
-const ECHELON_BUILD_NOTE = "the whole field on one screen, and every ship under her own colours";
+const ECHELON_VERSION = "1.09";
+const ECHELON_BUILD_NOTE = "profiles redone at fine pitch, unified tier icons, the fort bastion, powder smoke and haze";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
@@ -6201,9 +6356,21 @@ SCENARIO_CONFIGS.tsushima.opening = "The Crossing";
 // Ordered chronologically, per instruction: sail first, Jutland last.
 // Ordered chronologically, per instruction: sail first, Jutland last.
 const THEATRES = [
-  { id: "sail", name: "The Age of Fighting Sail", date: "1797 to 1827",
-    desc: "The great fleet actions under canvas. Wind is the engine, the broadside is the argument, and the boarding party is the full stop: Camperdown, the Nile, Copenhagen, Trafalgar, and the last of them all at Navarino.",
-    scenarios: ["camperdown", "nile", "copenhagen", "trafalgar", "navarino"] },
+  { id: "camperdown", name: "Battle of Camperdown", date: "11 October 1797",
+    desc: "Duncan against De Winter off the Dutch coast: two hull-shooting navies, no time to form line, and the bloodiest action of the age per ship engaged.",
+    scenarios: ["camperdown"] },
+  { id: "nile", name: "Battle of the Nile", date: "1 August 1798",
+    desc: "Nelson finds Brueys at single anchor across Aboukir Bay and destroys the line piecemeal from both sides as the light fails.",
+    scenarios: ["nile"] },
+  { id: "copenhagen", name: "Battle of Copenhagen", date: "2 April 1801",
+    desc: "Nelson against the moored Danish line and the Trekroner fort: a slugging match at anchor in the King's Deep.",
+    scenarios: ["copenhagen"] },
+  { id: "trafalgar", name: "Battle of Trafalgar", date: "21 October 1805",
+    desc: "Nelson breaks the Combined Fleet's crescent in two columns and the melee decides the age.",
+    scenarios: ["trafalgar"] },
+  { id: "navarino", name: "Battle of Navarino", date: "20 October 1827",
+    desc: "The last battle of the sailing fleets: three allied squadrons anchored inside the Ottoman horseshoe, gun to gun until one side has no broadsides left.",
+    scenarios: ["navarino"] },
   { id: "yalu", name: "Battle of the Yalu", date: "17 September 1894",
     desc: "The Beiyang Fleet meets the Combined Fleet off the Yalu mouth: Chinese ironclads and solid shot against Japanese quick-firers. Chinese and Japanese histories call this the Battle of the Yellow Sea, or Dadonggou; English usage keeps Yalu for 1894 so the 1904 battle can own the other name.",
     scenarios: ["yalu"] },
@@ -8385,6 +8552,22 @@ function setOrderHeading(s, wanted) {
   if (!s || s.out || s.side !== game.playerSide || game.phase !== "plan") return false;
   if (!s.order) defaultOrder(s);
   if (isSailEra() && s.anchored && !s.aground && !s._grapple) {
+    const dh0 = Math.abs(((wanted - s.heading + 540) % 360) - 180);
+    if (dh0 > 35 && !(s.def && s.def.fort)) {
+      // Weighing, per the agreed paying-off design: a big ordered turn means the
+      // captain wants under way. Cutting the cable casts her head onto the nearer
+      // clear tack just outside the no-go cone with bare steerage; the turn is
+      // spent doing it. Without this, an anchored player fleet (Navarino) had no
+      // way to move at all.
+      s.anchored = false;
+      const wf = (SCN.wind && SCN.wind.from) || 0;
+      const offP = ((wanted - wf + 540) % 360) - 180;
+      s.heading = (wf + (offP >= 0 ? 55 : -55) + 360) % 360;
+      s.order = { q: s.hex.q, r: s.hex.r, heading: s.heading };
+      s._manualThisTurn = true;
+      logLine(`${s.name} cuts her cable and pays off on the ${offP >= 0 ? "port" : "starboard"} tack.`, "");
+      return true;
+    }
     // A spring on the cable warps her round in her own berth: the hex does not
     // change, the broadside comes to bear.
     if (!s.order || !s.hex) defaultOrder(s);
@@ -8447,7 +8630,20 @@ function chooseAIOrder(s) {
   s.order = best ? { q: best.q, r: best.r, heading: best.stay ? s.heading : best.heading } : null;
   // A moored ship still works her spring to keep the battery bearing.
   if (isSailEra() && s.anchored && !s.aground && !s._grapple && s.hex) {
-    s.order = { q: s.hex.q, r: s.hex.r, heading: constrainedOrderHeading(s, want) };
+    const dh0 = Math.abs(((want - s.heading + 540) % 360) - 180);
+    if (dh0 > 35 && !(s.def && s.def.fort)) {
+      // Weighing, the agreed paying-off rule, applied on THIS path too: the twin
+      // of this branch got the fix first and this live one kept springing in
+      // place, which is exactly how Navarino stayed unplayable.
+      s.anchored = false;
+      const wf = (SCN.wind && SCN.wind.from) || 0;
+      const offP = ((want - wf + 540) % 360) - 180;
+      s.heading = (wf + (offP >= 0 ? 55 : -55) + 360) % 360;
+      s.order = { q: s.hex.q, r: s.hex.r, heading: s.heading };
+      logLine(`${s.name} cuts her cable and pays off on the ${offP >= 0 ? "port" : "starboard"} tack.`, "");
+    } else {
+      s.order = { q: s.hex.q, r: s.hex.r, heading: constrainedOrderHeading(s, want) };
+    }
   }
 }
 // A player ship left without orders maintains way: straight ahead at full reach.
@@ -10164,9 +10360,18 @@ function drawDossierProfile(s) {
     const Lm0 = (s.def && s.def.dimensions_m && s.def.dimensions_m.length) || 100;
     const L = (W - 44) * Math.max(0.45, Math.min(1, Lm0 / 115));   // profile length tracks the real ship
     ctx.save();
-    ctx.translate(W / 2, H * 0.80);
     ctx.lineJoin = "round"; ctx.lineCap = "round";
     const prims = sideElevationPrims(s, L);
+    // Fit the WHOLE profile vertically: tall rigs and funnels were clipped at the
+    // canvas top in portrait because the old transform assumed a fixed band.
+    let fMinY = 1e9, fMaxY = -1e9;
+    for (const p of prims) {
+      if ((p.t === "poly" || p.t === "under") && p.pts) { for (const pt of p.pts) { if (pt[1] < fMinY) fMinY = pt[1]; if (pt[1] > fMaxY) fMaxY = pt[1]; } }
+      else if (p.t === "line") { fMinY = Math.min(fMinY, p.a[1], p.a[3]); fMaxY = Math.max(fMaxY, p.a[1], p.a[3]); }
+    }
+    const fScl = Math.min(1, (H * 0.88) / Math.max(1, fMaxY - fMinY));
+    ctx.translate(W / 2, H * 0.94 - fMaxY * fScl);
+    ctx.scale(fScl, fScl);
     const hull = prims.find((p) => p.t === "poly");          // first poly is the hull outline
     const hullPath = () => { ctx.beginPath(); ctx.moveTo(hull.pts[0][0], hull.pts[0][1]); for (let i = 1; i < hull.pts.length; i++) ctx.lineTo(hull.pts[i][0], hull.pts[i][1]); ctx.closePath(); };
     let minX = 1e9, maxX = -1e9, minY = 1e9, maxY = -1e9;
@@ -10822,6 +11027,17 @@ function shipCondition(s) {
   return { cls: "st-ok", glyph: "✓", label: `intact · ${hp}%` };
 }
 // Render a ship's solid side-silhouette to a small data-URL, fitted by bounding box.
+// A tier chip rendered to a data URL for menus and tallies: the same striped
+// grammar as the map (capital two slashes, cruiser one, light bare, fort its own
+// bastion). The little side-silhouettes were unreadable at 66 px and are gone
+// from the lists, per instruction.
+function classIconURL(ship, w, h, color) {
+  if (typeof document === "undefined" || typeof drawClassIcon !== "function") return "";
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const cx = c.getContext("2d");
+  drawClassIcon(cx, w / 2, h / 2, shipClassTier(ship), color || "#9fb0bc", Math.min(h * 0.9, 18));
+  return c.toDataURL();
+}
 function shipSilhouetteURL(ship, w, h) {
   if (typeof document === "undefined" || typeof sideElevationPrims !== "function") return "";
   const L = 200;
@@ -10848,7 +11064,7 @@ function fleetRosterHTML(side, label) {
   };
   const rows = game.ships.filter((s) => (isSailEra() ? homeSide(s) : s.side) === side).map((s) => {
     const c = shipCondition(s);
-    const sil = shipSilhouetteURL(s, 66, 22);
+    const sil = classIconURL(s, 66, 22);
     const img = sil ? `<img class="rr-sil" src="${sil}" alt="">` : `<span class="rr-sil"></span>`;
     let permanent = s.out && ["total", "abandoned"].includes(lossDisposition(s).key);
     let glyph = c.glyph || "•", stat = c.label, cls = c.cls, tag = "";
