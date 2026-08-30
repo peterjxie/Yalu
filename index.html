@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="1.00" />
+<meta name="application-version" content="1.01" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -5274,8 +5274,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "1.00";
-const ECHELON_BUILD_NOTE = "the 1904 squadron measured against real draughts, station by station";
+const ECHELON_VERSION = "1.01";
+const ECHELON_BUILD_NOTE = "the cones now quote the same odds the dice roll: aspect, obliquity and the ballistic-limit band";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
@@ -6025,16 +6025,40 @@ function previewMove(ship, desiredHeading, throttle) {
   };
 }
 
-// penetration verdict vs a target's primary protective zone
-function solution(gun, target, range) {
-  const pen = penAt(gun, range);
+// The chance one AP shell defeats the target's primary protection at this range and,
+// when the shooter is known, at the target's CURRENT ASPECT. This mirrors the maths
+// the resolver actually rolls (descent + aspect obliquity, ricochet expectation above
+// 55 degrees, the De Marre t^0.7 velocity ratio, and the logistic ballistic-limit
+// band), so what the player is shown and what the dice do can never disagree.
+// Period proof practice was itself statistical: plates were accepted on shots-passed
+// criteria and shell lots scattered widely, so a hard pass/fail line is the one thing
+// the record does not support.
+function penChanceNow(from, gun, target, range) {
   const zone = isDeckProtected(target) ? "deck" : (zoneArmour(target, "belt") > 0 ? "belt" : "deck");
   const arm = zoneArmour(target, zone) || 1;
+  if (arm <= 1) return { p: 1, zone, arm, obDeg: 0 };
+  let obDeg = 0, pRic = 0, obFactor = 1;
+  if (zone !== "deck" && from) {
+    obDeg = impactObliquity(from, target, descentAngle(range));
+    pRic = clamp((obDeg - 55) / 23, 0, 0.85);
+    obFactor = Math.pow(Math.max(0, Math.cos(obDeg * Math.PI / 180)), 2.143);
+  }
+  const ratio = Math.pow((penAt(gun, range) * obFactor) / arm, 0.7);
+  const pPen = 1 / (1 + Math.exp(-(ratio - 1) / 0.05));
+  return { p: (1 - pRic) * pPen, zone, arm, obDeg };
+}
+// penetration verdict vs a target's primary protective zone, expressed as odds:
+// green means better than even money, amber means a real chance (the mixed-results
+// zone of the ballistic-limit band, one shell in eight or better), red means the
+// band gives effectively nothing. The old flat pen>=armour test showed red where
+// a real minority chance existed and green where obliquity would have saved her.
+function solution(gun, target, range, from) {
+  const v = penChanceNow(from || null, gun, target, range);
   let verdict, cls;
-  if (pen >= arm) { verdict = "PENETRATES"; cls = "pen"; }
-  else if (pen >= 0.82 * arm) { verdict = "PARTIAL"; cls = "partial"; }
+  if (v.p >= 0.5) { verdict = "PENETRATES"; cls = "pen"; }
+  else if (v.p >= 0.125) { verdict = "PARTIAL"; cls = "partial"; }
   else { verdict = "BOUNCES"; cls = "bounce"; }
-  return { pen: Math.round(pen), zone, arm, verdict, cls, range: Math.round(range) };
+  return { pen: Math.round(penAt(gun, range)), zone: v.zone, arm: v.arm, verdict, cls, range: Math.round(range), p: v.p };
 }
 
 // shots a battery can fire this turn from banked readiness
@@ -6157,7 +6181,7 @@ function aiScore(S, T) {
   const r = rangeBetween(S, T);
   const main = S.batteries.find((b) => !b.knockedOut) || S.batteries[0];
   if (!main) return 0;
-  const sol = solution(main.gun, T, r);
+  const sol = solution(main.gun, T, r, S);
   const shell = chooseShell(S, main.gun, T, r);
   const deck = isDeckProtected(T);
   let penF, value = T.structureMax;
@@ -8658,7 +8682,7 @@ function drawGunDots(ctx, v, ship, target) {
   const main = [], sec = [];
   for (const b of ship.batteries) {
     if (b.knockedOut || gunCalibre(b.gun) < 100 || range > maxEffectiveRange(b.gun) || !bearingInArc(rel, b.arc)) continue;
-    const pierces = penAt(b.gun, range) >= armour;
+    const pierces = penChanceNow(ship, b.gun, target, range).p >= 0.5;   // even money through the ballistic-limit band at her current aspect
     let verdict;                                              // HE: calibre is moot (amber); AP: green if it pierces else red; auto picks the effective round
     if (doc === "HE") verdict = "he";
     else if (doc === "AP") verdict = pierces ? "pen" : "no";
@@ -8723,14 +8747,14 @@ function buildConeSpecs(ship, target, headingForArcs) {
     const rel = ((absBearing(ship, target) - hd + 540) % 360) - 180;   // bearing rel. to shown heading
     const bearer = ship.batteries.find((b) => !b.knockedOut && range <= maxEffectiveRange(b.gun) && bearingInArc(rel, b.arc));
     if (bearer) {
-      const sol = solution2(bearer.gun, target, range);
+      const sol = solution2(bearer.gun, target, range, ship);
       const he = (ship.doctrine === "HE");                                  // HE does not care about belt penetration, so show it as effective
       const col = he ? "95,207,115" : sol.cls === "pen" ? "95,207,115" : sol.cls === "partial" ? "227,196,92" : "215,106,85";
       specs.push({ relLo: rel - 5, relHi: rel + 5, reachM: range, fill: `rgba(${col},0.16)`, stroke: `rgba(${col},0.75)`, lw: 1.3 });
       const zone = isDeckProtected(target) ? "deck" : (zoneArmour(target, "belt") > 0 ? "belt" : "deck");
       const armour = zoneArmour(target, zone) || 1;
       let defeatRange = 0;
-      for (let r = 600; r <= maxEffectiveRange(bearer.gun); r += 250) { if (penAt(bearer.gun, r) >= armour) defeatRange = r; }
+      for (let r = 600; r <= maxEffectiveRange(bearer.gun); r += 250) { if (penChanceNow(null, bearer.gun, target, r).p >= 0.5) defeatRange = r; }
       solution = { defeatRange, maxRange: maxEffectiveRange(bearer.gun) };
     } else {
       // locked on, but nothing bears at this heading: the red "can't fire" cone
@@ -8740,12 +8764,14 @@ function buildConeSpecs(ship, target, headingForArcs) {
   return { specs, solution };
 }
 // penetration verdict helper (mirrors solution(), kept separate for cone use)
-function solution2(gun, target, range) {
-  const zone = isDeckProtected(target) ? "deck" : (zoneArmour(target, "belt") > 0 ? "belt" : "deck");
-  const arm = zoneArmour(target, zone) || 1;
-  const pen = penAt(gun, range);
-  const cls = pen >= arm ? "pen" : pen >= 0.82 * arm ? "partial" : "bounce";
-  return { cls };
+// The cone's own verdict, now the same odds the resolver rolls: green at better
+// than even money, amber for the mixed-results zone (one in eight or better),
+// red where the band gives effectively nothing. Passing the shooter makes the
+// cone answer the question the player is actually asking: at HER aspect, now.
+function solution2(gun, target, range, from) {
+  const v = penChanceNow(from || null, gun, target, range);
+  const cls = v.p >= 0.5 ? "pen" : v.p >= 0.125 ? "partial" : "bounce";
+  return { cls, p: v.p };
 }
 
 // ===========================================================================
