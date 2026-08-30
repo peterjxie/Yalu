@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.99" />
+<meta name="application-version" content="1.00" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -3455,15 +3455,20 @@ const SHIP_LAYOUT = {
   saikyo_maru: { f: [-0.12, 0.15], hull: "liner", m: sCat(sM(0.55, 0, 1, 120), sM(-0.55, 0, 1, 57)) },
   // ---- 1904 First Pacific Squadron, mounts per class plans (Conway's) ----
   // Tsesarevich: Borodino prototype, six twin 6in wing turrets, pronounced tumblehome.
-  tsesarevich: { tumble: true, m: sCat(sM(0.60, 0, 2, 305), sM(-0.58, 0, 2, 305), sPair(0.30, 0.62, 2, 152), sPair(0.0, 0.66, 2, 152), sPair(-0.30, 0.62, 2, 152)) },
+  tsesarevich: { tumble: true, m: sCat(sM(0.58, 0, 2, 305), sM(-0.56, 0, 2, 305), sPair(0.32, 0.60, 2, 152), sPair(0.02, 0.64, 2, 152), sPair(-0.30, 0.60, 2, 152)) },   // stations from the Trumpeter plan (IMG_7448)
   // Retvizan: conventional casemate battery, six 6in a side on the main deck.
   retvizan: { m: sCat(sM(0.60, 0, 2, 305), sM(-0.58, 0, 2, 305), sPair(0.30, 0.68, 1, 152), sPair(0.18, 0.68, 1, 152), sPair(0.06, 0.68, 1, 152), sPair(-0.06, 0.68, 1, 152), sPair(-0.18, 0.68, 1, 152), sPair(-0.30, 0.68, 1, 152)) },
   // Peresvet class: 10in twins fore and aft, casemate 6in five a side, one bow chaser.
-  peresvet: { m: sCat(sM(0.62, 0, 2, 254), sM(-0.58, 0, 2, 254), sM(0.82, 0, 1, 152), sPair(0.28, 0.66, 1, 152), sPair(0.14, 0.66, 1, 152), sPair(0.0, 0.66, 1, 152), sPair(-0.14, 0.66, 1, 152), sPair(-0.28, 0.66, 1, 152)) },
-  pobeda: { m: sCat(sM(0.62, 0, 2, 254), sM(-0.58, 0, 2, 254), sM(0.82, 0, 1, 152), sPair(0.28, 0.66, 1, 152), sPair(0.14, 0.66, 1, 152), sPair(0.0, 0.66, 1, 152), sPair(-0.14, 0.66, 1, 152), sPair(-0.28, 0.66, 1, 152)) },
+  // Peresvet line draught (IMG_7450): turrets +0.58/-0.62, casemates in a band
+  // between the fore and main masts, bow chaser on the forecastle.
+  peresvet: { m: sCat(sM(0.58, 0, 2, 254), sM(-0.62, 0, 2, 254), sM(0.82, 0, 1, 152), sPair(0.30, 0.66, 1, 152), sPair(0.15, 0.66, 1, 152), sPair(0.0, 0.66, 1, 152), sPair(-0.15, 0.66, 1, 152), sPair(-0.30, 0.66, 1, 152)) },
+  pobeda: { m: sCat(sM(0.58, 0, 2, 254), sM(-0.62, 0, 2, 254), sM(0.82, 0, 1, 152), sPair(0.30, 0.66, 1, 152), sPair(0.15, 0.66, 1, 152), sPair(0.0, 0.66, 1, 152), sPair(-0.15, 0.66, 1, 152), sPair(-0.30, 0.66, 1, 152)) },
   // Poltava class: two twin 6in wing turrets a side amidships, four more 6in in casemates.
-  sevastopol: { m: sCat(sM(0.58, 0, 2, 305), sM(-0.54, 0, 2, 305), sPair(0.20, 0.60, 2, 152), sPair(-0.16, 0.60, 2, 152), sPair(0.02, 0.70, 1, 152), sPair(-0.34, 0.66, 1, 152)) },
-  poltava: { m: sCat(sM(0.58, 0, 2, 305), sM(-0.54, 0, 2, 305), sPair(0.20, 0.60, 2, 152), sPair(-0.16, 0.60, 2, 152), sPair(0.02, 0.70, 1, 152), sPair(-0.34, 0.66, 1, 152)) },
+  // Petropavlovsk plan (IMG_7449): main turrets at +0.52/-0.64 of half-length, the
+  // four twin 6in wing turrets straddling the superstructure at +0.22 and -0.18,
+  // remaining casemate singles on the quarters.
+  sevastopol: { m: sCat(sM(0.52, 0, 2, 305), sM(-0.64, 0, 2, 305), sPair(0.22, 0.62, 2, 152), sPair(-0.18, 0.62, 2, 152), sPair(0.44, 0.62, 1, 152), sPair(-0.40, 0.60, 1, 152)) },
+  poltava: { m: sCat(sM(0.52, 0, 2, 305), sM(-0.64, 0, 2, 305), sPair(0.22, 0.62, 2, 152), sPair(-0.18, 0.62, 2, 152), sPair(0.44, 0.62, 1, 152), sPair(-0.40, 0.60, 1, 152)) },
 };
 function parseMount(text, count, cal) {
   const t = (text || "").toLowerCase(); const out = [];
@@ -3508,9 +3513,13 @@ const SHIP_FUNNELS = {
   oleg: [0.16, 0.0, -0.16],                                                   // three funnels: Bogatyr class, Conway's
   aurora: [0.16, 0.0, -0.16],                                                 // three funnels: Pallada class, Conway's
   zhemchug: [0.16, 0.0, -0.16], izumrud: [0.16, 0.0, -0.16],                  // three funnels: Izumrud class, Conway's
-  tsesarevich: [0.12, -0.10], retvizan: [0.12, -0.10],                        // two funnels each: Conway's, photographs
-  peresvet: [0.20, 0.03, -0.14], pobeda: [0.20, 0.03, -0.14],                 // three funnels: Peresvet class, as Oslyabya
-  sevastopol: [0.10, -0.08], poltava: [0.10, -0.08],                          // two funnels: Poltava class, Conway's
+  // Stations below measured off the draughts Peter supplied (uploads IMG_7448-7450):
+  // the Trumpeter Tsesarevich plan, the Morskaya Kollektsia Petropavlovsk plan for
+  // the Poltavas, and the Peresvet-class line draught. Retvizan still awaits a plan.
+  tsesarevich: [0.14, -0.04],                                                 // two funnels between the masts, group forward of amidships (IMG_7448)
+  retvizan: [0.12, -0.10],                                                    // two funnels: Conway's; UNVERIFIED against a draught
+  peresvet: [0.18, 0.02, -0.14], pobeda: [0.18, 0.02, -0.14],                 // three evenly spaced, group just forward (Peresvet draught, IMG_7450)
+  sevastopol: [0.12, -0.06], poltava: [0.12, -0.06],                          // two close funnels forward of amidships (Petropavlovsk plan, IMG_7449)
 };
 function buildShipPlan(ship) {
   const hp = HULL_TYPES[SHIP_HULL[ship.id]] || HULL_TYPES.cru;
@@ -5155,12 +5164,12 @@ SHIP_LAYOUT.oslyabya = { f: [0.20, 0.0, -0.20], ss: [0.42, -0.42], ct: 0.50, m: 
 Object.assign(SHIP_SIDE, { oslyabya: { masts: [[0.40, 1], [-0.36, 1]] } });
 Object.assign(SHIP_SIDE, {
   // 1904 squadron. Peresvets carried the class's long high-freeboard forecastle.
-  tsesarevich: { masts: [[0.38, 1], [-0.32, 1]] },
-  retvizan:    { masts: [[0.38, 1], [-0.32, 1]] },
-  peresvet:    { fb: 0.085, masts: [[0.40, 1], [-0.36, 1]] },
-  pobeda:      { fb: 0.085, masts: [[0.40, 1], [-0.36, 1]] },
-  sevastopol:  { fb: 0.062, masts: [[0.34, 1], [-0.30, 1]] },
-  poltava:     { fb: 0.062, masts: [[0.34, 1], [-0.30, 1]] },
+  tsesarevich: { masts: [[0.30, 1], [-0.16, 1]] },                 // foremast before No.1 funnel, main between No.2 and the aft turret (IMG_7448)
+  retvizan:    { masts: [[0.38, 1], [-0.32, 1]] },                 // UNVERIFIED: no draught yet
+  peresvet:    { fb: 0.085, masts: [[0.30, 1], [-0.26, 1]] },      // masts close aboard the funnel group (IMG_7450)
+  pobeda:      { fb: 0.085, masts: [[0.30, 1], [-0.26, 1]] },
+  sevastopol:  { fb: 0.062, masts: [[0.30, 1], [-0.24, 1]] },      // Petropavlovsk plan (IMG_7449)
+  poltava:     { fb: 0.062, masts: [[0.30, 1], [-0.24, 1]] },
 });
 
 // ===== Tsushima 1905: Japanese cruiser force (armoured + protected) =====
@@ -5265,8 +5274,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "0.99";
-const ECHELON_BUILD_NOTE = "the 1904 squadron audited: same guns, same armour model, and proper top and side views";
+const ECHELON_VERSION = "1.00";
+const ECHELON_BUILD_NOTE = "the 1904 squadron measured against real draughts, station by station";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
