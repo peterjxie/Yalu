@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.95" />
+<meta name="application-version" content="0.96" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -422,7 +422,10 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   .codex-grid{grid-template-columns:1fr;}
   .loss-overview{grid-template-columns:1fr;}
   .cr-row{grid-template-columns:1fr;gap:2px;}
-  .rail-btn.opt{display:none;}
+  .rail-btn.opt{display:inline-flex;}
+  #rail{overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  #rail::-webkit-scrollbar{display:none}
+  #menuBtn{order:99;position:sticky;right:0;background:rgba(5,22,28,.92);box-shadow:-8px 0 10px rgba(5,22,28,.92)}
   .strengths{gap:6px;}
   .strengths .sbar{min-width:70px;}
 }
@@ -5169,8 +5172,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "0.95";
-const ECHELON_BUILD_NOTE = "the version is readable on a phone again, and one constant now drives every place it appears";
+const ECHELON_VERSION = "0.96";
+const ECHELON_BUILD_NOTE = "the rail keeps every control on a phone, including the menu that holds Quit";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
