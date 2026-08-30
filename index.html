@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="1.04" />
+<meta name="application-version" content="1.05" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -1349,6 +1349,122 @@ var GAME_DATA = SCENARIO_DATA.yalu;
       wind: "fresh NW breeze, a lee shore under the Dutch line",
       scope: "The thirty-one ships of the two lines of battle. Frigates and the small craft of both fleets stood out of the line and are out of scope for v1, as at Trafalgar.",
       note: "Rates are class templates; gun counts are totals for both broadsides.",
+    },
+    guns: G, ships: C, formations: {},
+  };
+})();
+
+// ---------------------------------------------------------------------------
+// Navarino (20 October 1827): the last great battle of sailing fleets, fought
+// entirely at anchor inside a landlocked bay. Scope per the agreed plan: the
+// ships that fought as ships are individual (the six named Ottoman and Egyptian
+// heavies, and first-line frigates carried as positional entities because their
+// names are unreliably recorded); the inner crescents of corvettes and brigs
+// are grouped division markers with combined broadsides and a single strike
+// test each, which is how contemporary accounts treat them. The fireships that
+// opened the action had spent their moment within minutes; the snapshot is the
+// action general, and a live fireship mechanic is queued with the ram.
+(function () {
+  const G = SCENARIO_DATA.trafalgar.guns;
+  const RATES = {
+    24:  { len: 36, beam: 9.8,  disp: 550,  kn: 9.5, comp: 180, arm: [[18, "sail_12"]] },
+    38:  { len: 44, beam: 11.3, disp: 950,  kn: 10.5, comp: 300, arm: [[26, "sail_18"], [8, "sail_12"]] },
+    50:  { len: 45, beam: 12.3, disp: 1050, kn: 9.0, comp: 340, arm: [[22, "sail_24"], [22, "sail_12"]] },
+    56:  { len: 45, beam: 12.2, disp: 1100, kn: 9.0, comp: 350, arm: [[24, "sail_24"], [24, "sail_12"]] },
+    60:  { len: 49, beam: 13.6, disp: 1500, kn: 9.5, comp: 520, arm: [[28, "sail_24"], [26, "sail_18"]] },
+    64:  { len: 48, beam: 13.5, disp: 1400, kn: 9.0, comp: 500, arm: [[26, "sail_24"], [26, "sail_18"]] },
+    74:  { len: 55, beam: 14.5, disp: 1900, kn: 9.5, comp: 620, arm: [[28, "sail_32"], [30, "sail_18"]] },
+    84:  { len: 58, beam: 15.3, disp: 2300, kn: 9.0, comp: 800, arm: [[30, "sail_32"], [32, "sail_24"]] },
+    grpc:{ len: 42, beam: 12.0, disp: 3200, kn: 8.0, comp: 900, arm: [[56, "sail_12"]] },   // a division of 7-8 corvettes as one marker
+    grpb:{ len: 38, beam: 11.0, disp: 2000, kn: 8.0, comp: 600, arm: [[36, "sail_12"]] },   // a division of brigs as one marker
+  };
+  function mk(list, id, name, rate, side, nation, division, quality, extra) {
+    const R = RATES[rate];
+    let arm = R.arm.map(([c, g2]) => ({ count: c, gun_id: g2, mount: "gundeck broadside" }));
+    if (nation === "GB" && rate >= 74) arm.push({ count: 6, gun_id: "sail_c32", mount: "quarterdeck carronade broadside" });
+    const FLEET = { GB: "Royal Navy", FR: "Marine Royale", RU: "Imperial Russian Navy", OT: "Ottoman Navy", EG: "Egyptian Navy" }[nation];
+    const NAT = { GB: "British", FR: "French", RU: "Russian", OT: "Ottoman", EG: "Egyptian" }[nation];
+    list.push(Object.assign({
+      id, name, side, division,
+      marines: nation === "GB" ? 0.16 : nation === "FR" ? 0.14 : nation === "RU" ? 0.12 : 0.08,
+      fleet: FLEET,
+      type: typeof rate === "string" ? "Division of small craft" : (rate <= 38 ? "Frigate" : "Ship of the line"),
+      class: typeof rate === "string" ? `${NAT} division marker` : `${rate}-gun ${NAT} ${rate >= 50 ? "two-decker" : "frigate"}`,
+      dimensions_m: { length: R.len, beam: R.beam, draft: rate === 84 ? 7.0 : 6.0 },
+      displacement_lt: { normal: R.disp },
+      speed_kn: R.kn, complement: R.comp, quality,
+      armament: arm, armor_mm: {}, plan_template: "sail",
+      decks: (typeof rate === "number" && rate >= 50) ? 2 : 1,
+      uncertainty: "medium",
+      sources: ["standard published orders of battle (Anderson; James; Conway's)"],
+    }, extra || {}));
+  }
+  const C = [];
+  const AN = { anchored: true };
+  const QGB = 0.95, QFR = 0.85, QRU = 0.80;
+  // The Ottoman fleet fought with courage and almost no gunnery drill; the Egyptian
+  // squadron had French instructors and shot better. Casualty and expenditure
+  // accounts (Codrington's despatch; Anderson) carry the split.
+  const QOT = 0.45, QEG = 0.55;
+  const AL = "Allied Line", AF = "Allied Frigates", O1 = "First Line", O2 = "Second Line", O3 = "Third Line";
+  // Allies.
+  mk(C, "asia", "Asia", 84, "Allies", "GB", AL, QGB, AN);
+  mk(C, "genoa", "Genoa", 74, "Allies", "GB", AL, QGB, AN);
+  mk(C, "albion", "Albion", 74, "Allies", "GB", AL, QGB, AN);
+  mk(C, "glasgow", "Glasgow", 50, "Allies", "GB", AL, QGB, AN);
+  mk(C, "breslau", "Breslau", 84, "Allies", "FR", AL, QFR, AN);
+  mk(C, "scipion", "Scipion", 74, "Allies", "FR", AL, QFR, AN);
+  mk(C, "trident", "Trident", 74, "Allies", "FR", AL, QFR, AN);
+  mk(C, "sirene", "Sirene", 60, "Allies", "FR", AL, QFR, AN);
+  mk(C, "azov", "Azov", 74, "Allies", "RU", AL, QRU, AN);
+  mk(C, "gangut", "Gangut", 84, "Allies", "RU", AL, QRU, AN);
+  mk(C, "iezekiil", "Iezekiil", 74, "Allies", "RU", AL, QRU, AN);
+  mk(C, "aleksandr_nevskii", "Aleksandr Nevskii", 74, "Allies", "RU", AL, QRU, AN);
+  mk(C, "cambrian", "Cambrian", 38, "Allies", "GB", AF, QGB, AN);
+  mk(C, "dartmouth", "Dartmouth", 38, "Allies", "GB", AF, QGB, AN);
+  mk(C, "talbot", "Talbot", 24, "Allies", "GB", AF, QGB, AN);
+  mk(C, "armide", "Armide", 38, "Allies", "FR", AF, QFR, AN);
+  mk(C, "provornyi", "Provornyi", 38, "Allies", "RU", AF, QRU, AN);
+  mk(C, "konstantin", "Konstantin", 38, "Allies", "RU", AF, QRU, AN);
+  mk(C, "elena", "Elena", 38, "Allies", "RU", AF, QRU, AN);
+  mk(C, "kastor", "Kastor", 38, "Allies", "RU", AF, QRU, AN);
+  // Ottoman and Egyptian named heavies.
+  mk(C, "ghiuh_rewan", "Ghiuh Rewan", 84, "Ottoman", "OT", O1, QOT, AN);
+  mk(C, "fahti_bahri", "Fahti Bahri", 74, "Ottoman", "OT", O1, QOT, AN);
+  mk(C, "burj_zafer", "Burj Zafer", 74, "Ottoman", "OT", O1, QOT, AN);
+  mk(C, "guerriere_eg", "Guerriere", 60, "Ottoman", "EG", O1, QEG, AN);
+  mk(C, "ihsania", "Ihsania", 64, "Ottoman", "EG", O1, QEG, AN);
+  mk(C, "souriya", "Souriya", 56, "Ottoman", "EG", O1, QEG, AN);
+  // First-line frigates: individually fought, unreliably named. Positional ids,
+  // uncertainty very high, per the Yalu small-craft precedent.
+  for (let k = 1; k <= 4; k++) mk(C, "fr_e" + k, "First-Line Frigate E" + k, 38, "Ottoman", "OT", O1, QOT, Object.assign({ uncertainty: "very_high_inferred_dimensions" }, AN));
+  for (let k = 1; k <= 4; k++) mk(C, "fr_w" + k, "First-Line Frigate W" + k, 38, "Ottoman", "OT", O1, QOT, Object.assign({ uncertainty: "very_high_inferred_dimensions" }, AN));
+  // Division markers for the inner crescents.
+  mk(C, "corvettes_e", "Corvette Division (East)", "grpc", "Ottoman", "OT", O2, QOT, Object.assign({ uncertainty: "very_high_inferred_dimensions" }, AN));
+  mk(C, "corvettes_w", "Corvette Division (West)", "grpc", "Ottoman", "OT", O2, QOT, Object.assign({ uncertainty: "very_high_inferred_dimensions" }, AN));
+  mk(C, "brigs_e", "Brig Division (East)", "grpb", "Ottoman", "OT", O3, QOT, Object.assign({ uncertainty: "very_high_inferred_dimensions" }, AN));
+  mk(C, "brigs_w", "Brig Division (West)", "grpb", "Ottoman", "OT", O3, QOT, Object.assign({ uncertainty: "very_high_inferred_dimensions" }, AN));
+  // The batteries at the bay mouth, on the Copenhagen fort pattern.
+  C.push({ id: "neokastro", name: "Neokastro Battery", side: "Ottoman", division: O1,
+    fleet: "Ottoman Navy", type: "Shore battery", class: "Fortress battery",
+    dimensions_m: { length: 70, beam: 46, draft: 3 }, displacement_lt: { normal: 4200 },
+    speed_kn: 0, complement: 500, quality: 0.5,
+    armament: [{ count: 26, gun_id: "sail_32", mount: "gundeck broadside" }, { count: 20, gun_id: "sail_24", mount: "gundeck broadside" }],
+    armor_mm: {}, plan_template: "sail", decks: 1, fort: true, anchored: true, aground: true,
+    uncertainty: "medium", sources: ["standard published orders of battle (Anderson; James; Conway's)"] });
+  C.push({ id: "sphacteria", name: "Sphacteria Battery", side: "Ottoman", division: O1,
+    fleet: "Ottoman Navy", type: "Shore battery", class: "Fortress battery",
+    dimensions_m: { length: 70, beam: 46, draft: 3 }, displacement_lt: { normal: 4200 },
+    speed_kn: 0, complement: 400, quality: 0.5,
+    armament: [{ count: 22, gun_id: "sail_32", mount: "gundeck broadside" }, { count: 16, gun_id: "sail_24", mount: "gundeck broadside" }],
+    armor_mm: {}, plan_template: "sail", decks: 1, fort: true, anchored: true, aground: true,
+    uncertainty: "medium", sources: ["standard published orders of battle (Anderson; James; Conway's)"] });
+  SCENARIO_DATA.navarino = {
+    metadata: {
+      battle: "Battle of Navarino", date: "20 October 1827",
+      wind: "light SSW airs inside a landlocked bay",
+      scope: "Both fleets at anchor at the moment the action became general. Named heavies individual; first-line frigates positional; the inner crescents as division markers; the fireships omitted (their moment had passed) and queued as a mechanic with the ram.",
+      note: "Rates are class templates; gun counts are totals for both broadsides. Cutting a cable leaves a ship head to wind pending the authorised paying-off change.",
     },
     guns: G, ships: C, formations: {},
   };
@@ -3436,7 +3552,8 @@ function sceneLight() {
               tsushima: { brg: 215, hard: 0.35 }, tsushima_approach: { brg: 215, hard: 0.35 },
               yellow_sea: { brg: 290, hard: 0.55 },
               run_south: { brg: 255, hard: 0.40 },
-              camperdown: { brg: 220, hard: 0.45 } }[key];
+              camperdown: { brg: 220, hard: 0.45 },
+              navarino: { brg: 235, hard: 0.55 } }[key];
   return L || { brg: 200, hard: 0.6 };
 }
 // The light in the ship's own frame, so the lit side follows her as she turns.
@@ -5451,8 +5568,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "1.04";
-const ECHELON_BUILD_NOTE = "Camperdown: Duncan goes straight in, and both navies fire into the hull";
+const ECHELON_VERSION = "1.05";
+const ECHELON_BUILD_NOTE = "Navarino: the last battle of the sailing fleets, fought entirely at anchor";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
@@ -5839,6 +5956,62 @@ SCENARIO_CONFIGS.camperdown = {
     place(col(-1300, 3300, 105, ["monarch","powerful","monmouth","director","veteran","montagu","russell_97","adamant"], 280));
   },
 };
+SCENARIO_CONFIGS.navarino = {
+  id: "navarino",
+  dataKey: "navarino",
+  hexM: 61.7,
+  wind: { from: 200, kn: 6 },       // the light SSW airs that carried the allies in; every ship lies head to it
+  swell: 0.2, sea: "landlocked calm",
+  title: "Battle of Navarino", date: "20 October 1827",
+  brand: "Navarino Bay, 1827", subtitle: "The last battle of the sailing fleets",
+  sides: [
+    { id: "Allies", label: "Allied Squadrons", short: "Allies", cls: "china",
+      desc: "Britain, France and Russia. Twenty sail anchored inside the horseshoe at half pistol shot, better guns and far better gunners. Silence the crescent ring by ring before their weight of numbers tells." },
+    { id: "Ottoman", label: "Ottoman-Egyptian Fleet", short: "Ottoman", cls: "japan",
+      desc: "The Sultan's and the Pasha's fleets. Three rings of ships and the shore batteries, everything anchored, courage in plenty and drill in short supply. Every allied ship is inside your circle: make the bay a trap." },
+  ],
+  playerDefault: "Allies",
+  sideLabel: { Allies: "Allied Squadrons", Ottoman: "Ottoman-Egyptian Fleet" },
+  defaultResolve: { Allies: 0.85, Ottoman: 0.55 },
+  flagship: { Allies: "asia", Ottoman: "ghiuh_rewan" },
+  admiral: { Allies: "Vice-Admiral Codrington", Ottoman: "Tahir Pasha" },
+  captains: {
+    asia:        { name: "Vice-Admiral Codrington", resolve: 0.95 },
+    azov:        { name: "Captain Lazarev",         resolve: 0.92 },   // Azov fought five ships at once and helped burn three
+    sirene:      { name: "Rear-Admiral de Rigny",   resolve: 0.88 },
+    gangut:      { name: "Rear-Admiral Heiden",     resolve: 0.85 },
+    ghiuh_rewan: { name: "Tahir Pasha",             resolve: 0.80 },
+    guerriere_eg:{ name: "Moharram Bey",            resolve: 0.72 },
+  },
+  ai: { Allies: { min: 80, max: 300 }, Ottoman: { min: 80, max: 300 } },
+  maxTurns: 60, maxSeconds: 7200,
+  intro: "Codrington led the allied squadrons into Navarino Bay and anchored them in the middle of Ibrahim's horseshoe, gun to gun with a fleet three times their number. A musket shot at a boat's crew, a cannon shot in answer, and the bay became a ring of fire at anchor: no manoeuvre, no chase, only broadsides at half pistol shot until one side had no broadsides left. By nightfall the Ottoman-Egyptian fleet had ceased to exist, and no great fleet ever fought under sail again.",
+  deploy: function (place, playerSide, key, proc, F) {
+    function ring(cx, cy, r, b0, b1, ids, hdg) {
+      const n = ids.length, span = ((b1 - b0) + 360) % 360 || 360;
+      return { __geo: "engine", ships: ids.map((id, i2) => {
+        const b = (b0 + span * (n === 1 ? 0.5 : i2 / (n - 1))) * Math.PI / 180;
+        return { id, x: Math.round(cx + r * Math.sin(b)), y: Math.round(cy - r * Math.cos(b)), heading_deg: hdg };
+      }) };
+    }
+    // The horseshoe opens south toward the entrance. First line of heavies on the
+    // outer ring, the allied squadrons anchored inside it at 350-450 m, the corvette
+    // and brig divisions behind the first line, the batteries at the bay mouth.
+    // The first line of heavies is the INNERMOST Ottoman ring, facing the allied
+    // anchorage at about 240 m; the corvette and brig divisions lie behind it,
+    // further out, exactly as the accounts describe (and from where, historically,
+    // much of their fire went into their own first line's backs).
+    place(ring(0, 300, 1420, 250, 470, ["fr_w4","fr_w3","fr_w2","souriya","burj_zafer","ghiuh_rewan","fahti_bahri","guerriere_eg","ihsania","fr_e1","fr_e2","fr_e3","fr_e4","fr_w1"], 200));
+    place(ring(0, 300, 1720, 290, 430, ["corvettes_w","brigs_w","brigs_e","corvettes_e"], 200));
+    place(ring(0, 300, 1180, 258, 462, ["glasgow","albion","genoa","asia","azov","gangut","iezekiil","aleksandr_nevskii","breslau","scipion","trident","sirene"], 200));
+    place(ring(0, 300, 1250, 200, 248, ["cambrian","dartmouth","talbot","armide"], 200));
+    place(ring(0, 300, 1250, 112, 160, ["provornyi","konstantin","elena","kastor"], 200));
+    place({ __geo: "engine", ships: [
+      { id: "neokastro", x: 950, y: 1650, heading_deg: 290 },
+      { id: "sphacteria", x: -950, y: 1600, heading_deg: 70 },
+    ] });
+  },
+};
 SCENARIO_CONFIGS.nile = {
   id: "nile",
   dataKey: "nile",
@@ -5983,9 +6156,9 @@ const THEATRES = [
   { id: "tsushima", name: "The Russo-Japanese War", date: "1904 to 1905",
     desc: "Togo against two Russian fleets: the breakout from Port Arthur in 1904, and the destruction of the relief squadron at Tsushima the next spring.",
     scenarios: ["yellow_sea", "tsushima_approach", "tsushima"] },
-  { id: "sail", name: "The Age of Fighting Sail", date: "1797 to 1805",
+  { id: "sail", name: "The Age of Fighting Sail", date: "1797 to 1827",
     desc: "Nelson's battles. Wind is the engine, the broadside is the argument, and the boarding party is the full stop. The Nile, Copenhagen, Trafalgar.",
-    scenarios: ["camperdown", "nile", "copenhagen", "trafalgar"] },
+    scenarios: ["camperdown", "nile", "copenhagen", "trafalgar", "navarino"] },
 ];
 
 // --- Tsushima division lines (Phase 1: division command + station-keeping) -----
