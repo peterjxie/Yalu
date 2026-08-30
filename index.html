@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="0.98" />
+<meta name="application-version" content="0.99" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -3453,6 +3453,17 @@ const SHIP_LAYOUT = {
   hiei: { f: [0.0], m: sCat(sPair(0.45, 0.25, 1, 170), sM(-0.55, 0, 1, 170), sBroad([0.12, -0.10, -0.32], 0.72, 150)) },
   akagi: { f: [0.0], m: sCat(sM(0.50, 0, 1, 120), sM(-0.50, 0, 1, 120), sPair(0.0, 0.60, 1, 120)) },
   saikyo_maru: { f: [-0.12, 0.15], hull: "liner", m: sCat(sM(0.55, 0, 1, 120), sM(-0.55, 0, 1, 57)) },
+  // ---- 1904 First Pacific Squadron, mounts per class plans (Conway's) ----
+  // Tsesarevich: Borodino prototype, six twin 6in wing turrets, pronounced tumblehome.
+  tsesarevich: { tumble: true, m: sCat(sM(0.60, 0, 2, 305), sM(-0.58, 0, 2, 305), sPair(0.30, 0.62, 2, 152), sPair(0.0, 0.66, 2, 152), sPair(-0.30, 0.62, 2, 152)) },
+  // Retvizan: conventional casemate battery, six 6in a side on the main deck.
+  retvizan: { m: sCat(sM(0.60, 0, 2, 305), sM(-0.58, 0, 2, 305), sPair(0.30, 0.68, 1, 152), sPair(0.18, 0.68, 1, 152), sPair(0.06, 0.68, 1, 152), sPair(-0.06, 0.68, 1, 152), sPair(-0.18, 0.68, 1, 152), sPair(-0.30, 0.68, 1, 152)) },
+  // Peresvet class: 10in twins fore and aft, casemate 6in five a side, one bow chaser.
+  peresvet: { m: sCat(sM(0.62, 0, 2, 254), sM(-0.58, 0, 2, 254), sM(0.82, 0, 1, 152), sPair(0.28, 0.66, 1, 152), sPair(0.14, 0.66, 1, 152), sPair(0.0, 0.66, 1, 152), sPair(-0.14, 0.66, 1, 152), sPair(-0.28, 0.66, 1, 152)) },
+  pobeda: { m: sCat(sM(0.62, 0, 2, 254), sM(-0.58, 0, 2, 254), sM(0.82, 0, 1, 152), sPair(0.28, 0.66, 1, 152), sPair(0.14, 0.66, 1, 152), sPair(0.0, 0.66, 1, 152), sPair(-0.14, 0.66, 1, 152), sPair(-0.28, 0.66, 1, 152)) },
+  // Poltava class: two twin 6in wing turrets a side amidships, four more 6in in casemates.
+  sevastopol: { m: sCat(sM(0.58, 0, 2, 305), sM(-0.54, 0, 2, 305), sPair(0.20, 0.60, 2, 152), sPair(-0.16, 0.60, 2, 152), sPair(0.02, 0.70, 1, 152), sPair(-0.34, 0.66, 1, 152)) },
+  poltava: { m: sCat(sM(0.58, 0, 2, 305), sM(-0.54, 0, 2, 305), sPair(0.20, 0.60, 2, 152), sPair(-0.16, 0.60, 2, 152), sPair(0.02, 0.70, 1, 152), sPair(-0.34, 0.66, 1, 152)) },
 };
 function parseMount(text, count, cal) {
   const t = (text || "").toLowerCase(); const out = [];
@@ -4759,7 +4770,11 @@ function sideElevationPrims(ship, L) {
   const o = SHIP_SIDE[id] || {};
   const fb = (o.fb || SIDE_FB[ht] || 0.07) * L;
   const dr = (SIDE_DR[ht] || 0.032) * L;
-  const lay = SHIP_LAYOUT[id] || { f: [], m: [] };
+  const lay0 = SHIP_LAYOUT[id] || { f: [], m: [] };
+  // The profile previously read SHIP_LAYOUT alone, so any ship whose funnels live
+  // only in SHIP_FUNNELS (all of Tsushima since v0.89, and the 1904 squadron)
+  // drew a bare hull. Resolve through the same chain as the plan and the smoke.
+  const lay = { f: (lay0.f && lay0.f.length ? lay0.f : (typeof SHIP_FUNNELS !== "undefined" && SHIP_FUNNELS[id]) || []), m: lay0.m || [] };
   const liner = ht === "liner", tb = ht === "tb", iron = ht === "iron", matsu = ht === "matsu";
   const P = [];
   const line = (x1, y1, x2, y2, w) => P.push({ t: "line", a: [x1, y1, x2, y2], w: w || 0.8 });
@@ -5138,6 +5153,15 @@ SHIP_LAYOUT.oslyabya = { f: [0.20, 0.0, -0.20], ss: [0.42, -0.42], ct: 0.50, m: 
   _case(sCat(sBroad([0.34, 0.16, -0.04, -0.24, -0.44], 0.80, 152), [sM(0.86, 0, 1, 152)]))         // 10x 6in side casemates + 1 bow chaser = 11
 ) };
 Object.assign(SHIP_SIDE, { oslyabya: { masts: [[0.40, 1], [-0.36, 1]] } });
+Object.assign(SHIP_SIDE, {
+  // 1904 squadron. Peresvets carried the class's long high-freeboard forecastle.
+  tsesarevich: { masts: [[0.38, 1], [-0.32, 1]] },
+  retvizan:    { masts: [[0.38, 1], [-0.32, 1]] },
+  peresvet:    { fb: 0.085, masts: [[0.40, 1], [-0.36, 1]] },
+  pobeda:      { fb: 0.085, masts: [[0.40, 1], [-0.36, 1]] },
+  sevastopol:  { fb: 0.062, masts: [[0.34, 1], [-0.30, 1]] },
+  poltava:     { fb: 0.062, masts: [[0.34, 1], [-0.30, 1]] },
+});
 
 // ===== Tsushima 1905: Japanese cruiser force (armoured + protected) =====
 // Sourced from Conway's / Jane's / naval-encyclopedia; Yakumo and Nisshin schematics found by search.
@@ -5241,8 +5265,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "0.98";
-const ECHELON_BUILD_NOTE = "mist over the Tsushima strait: sighting limits, powder smoke, and the failing light";
+const ECHELON_VERSION = "0.99";
+const ECHELON_BUILD_NOTE = "the 1904 squadron audited: same guns, same armour model, and proper top and side views";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
