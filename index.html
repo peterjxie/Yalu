@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="1.01" />
+<meta name="application-version" content="1.02" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -2034,6 +2034,17 @@ function resolveHit(from, battery, target, range) {
     target.crew = clamp(target.crew - 0.06, 0.2, 1);
   }
   if (crit === "magazine") { target.structure = -1; target._magazine = true; }   // the magazine itself detonates
+
+  // The mark on the hull. A shell through the armour into her vitals, or any
+  // critical, leaves something the eye can find once the turn has resolved;
+  // the schematic draws it. Ironclad era only: sail wounds read in rig and colours.
+  if (typeof isSailEra !== "function" || !isSailEra()) {
+    if (penetrated && !dud && (zone === "belt" || zone === "turret")) {
+      target._breaches = (target._breaches || []).slice(-5);
+      target._breaches.push({ t: (rnd() - 0.5) * 1.1, turn: game.turn, mag: crit === "magazine" });
+    }
+    if (crit) target._critFlash = game.turn;
+  }
 
   return {
     zone, armour: Math.round(armour), pen: Math.round(pen),
@@ -4094,6 +4105,31 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim, ship) {
     ctx.beginPath(); ctx.arc(mxp, 0, mr, 0, Math.PI * 2); ctx.fillStyle = ink; ctx.fill();
     if (mm[1] && mr > 1.0) { ctx.beginPath(); ctx.arc(mxp, 0, mr * 1.9, 0, Math.PI * 2); ctx.lineWidth = 0.7; ctx.strokeStyle = ink; ctx.stroke(); }
   }
+  // Breaches and criticals, marked after the turn resolves. A penetration into
+  // her vitals leaves an ember at the wound that cools over three turns; a
+  // magazine blow stays lit. A fresh critical throws a double shock ring for a
+  // turn, so the eye finds the ship that was just hurt without a number in sight.
+  if (ship._breaches && ship._breaches.length) {
+    for (const br of ship._breaches) {
+      const age = (game.turn || 0) - br.turn;
+      if (!br.mag && age > 3) continue;
+      const fade = br.mag ? 0.75 : Math.max(0.18, 1 - age * 0.3);
+      const jit = (((br.t * 7919) % 1) + 1) % 1;
+      const bx = br.t * hl, by = (jit - 0.5) * B * 0.35;
+      ctx.save(); ctx.globalAlpha = fade;
+      ctx.fillStyle = age <= 0 ? "#ffb36b" : "#e0653a";
+      ctx.beginPath(); ctx.arc(bx, by, Math.max(1.1, B * 0.07), 0, Math.PI * 2); ctx.fill();
+      ctx.strokeStyle = "#7a2f18"; ctx.lineWidth = 0.9;
+      ctx.beginPath(); ctx.arc(bx, by, Math.max(1.8, B * 0.12), 0, Math.PI * 2); ctx.stroke();
+      ctx.restore();
+    }
+  }
+  if (ship._critFlash != null && (game.turn || 0) - ship._critFlash <= 1) {
+    ctx.save(); ctx.globalAlpha = 0.85; ctx.strokeStyle = "#ff5640"; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(0, 0, hl * 0.55, 0, Math.PI * 2); ctx.stroke();
+    ctx.globalAlpha = 0.4; ctx.beginPath(); ctx.arc(0, 0, hl * 0.72, 0, Math.PI * 2); ctx.stroke();
+    ctx.restore();
+  }
   // mounts: barbettes (disc + barrels) and casemate boxes; barrels scale with calibre
   for (const m of plan.mounts) {
     const cal = m.cal || 0;
@@ -5274,8 +5310,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "1.01";
-const ECHELON_BUILD_NOTE = "the cones now quote the same odds the dice roll: aspect, obliquity and the ballistic-limit band";
+const ECHELON_VERSION = "1.02";
+const ECHELON_BUILD_NOTE = "the wound shows on the hull, and the ram bow finally earns its keep";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
@@ -8585,12 +8621,57 @@ function resolveFire() {
     const n = pTargets.size;
     logLine(`Your line engages ${n} target${n > 1 ? "s" : ""}, ${pHits} hit${pHits !== 1 ? "s" : ""}.`, "fire");
   }
+  if (!isSailEra()) resolveRams();                      // steam bows carry rams; the sail era boards instead
   if (isSailEra()) {
     sailWithdrawals();
   resolveBoardings();                                   // grapples close alongside once the guns have spoken
     for (const s of game.ships) if (!s.out) sailCheckStrike(s, null);
   }
   game._pHitsTurn = pFired ? pHits : null;
+}
+
+// Ramming. Every capital ship of the era carried a ram bow and fleets took the
+// threat seriously: the Japanese line at the Yalu stood off the Chinese ironclads
+// partly for fear of it, and Lissa 1866 gave the type its one great proof, with
+// Ferdinand Max striking Re d'Italia square amidships at about 11 knots while the
+// Italian lay nearly stopped with her steering shot away; she foundered in minutes.
+// The record's other lesson is that glancing contact between ships with way on
+// mostly started rivets. Both live here: the blow scales with closing speed
+// squared, squareness (sin^2 of the blow against the victim's keel) and the mass
+// ratio, calibrated so the Lissa case founders the victim and an oblique 6-knot
+// brush is damage-control work. Enemy pairs only; a same-side touch stays a log line.
+function resolveRams() {
+  const R = (typeof rnd === "function") ? rnd : Math.random;
+  for (let i = 0; i < game.ships.length; i++) for (let j = 0; j < game.ships.length; j++) {
+    if (i === j) continue;
+    const a = game.ships[i], b = game.ships[j];
+    if (a.out || b.out || a.side === b.side) continue;
+    const d = rangeBetween(a, b);
+    if (d > ((a.beam || 14) + (b.beam || 14)) * 0.9) continue;            // hulls not touching
+    const brg = (Math.atan2(b.x - a.x, -(b.y - a.y)) * 180 / Math.PI + 360) % 360;
+    const bowOff = Math.abs(((brg - a.heading + 540) % 360) - 180);
+    if (bowOff > 35) continue;                                            // not a bow-on blow
+    const va = (a.maxSpeed || 0) * (a.throttle == null ? 1 : a.throttle) * (a.engine == null ? 1 : a.engine);
+    const bAway = Math.cos(((((b.heading - brg + 540) % 360) - 180)) * Math.PI / 180);
+    const vb = (b.maxSpeed || 0) * (b.throttle == null ? 1 : b.throttle) * (b.engine == null ? 1 : b.engine);
+    const closing = va - vb * bAway;
+    if (closing < 3) continue;                                            // no way on the blow
+    const imp = Math.abs(((brg - b.heading + 540) % 360) - 180);          // 90 = square on her side
+    const square = Math.pow(Math.sin(imp * Math.PI / 180), 2);
+    const massA = (a.def && a.def.displacement_lt && (a.def.displacement_lt.normal || 0)) || 5000;
+    const massB = (b.def && b.def.displacement_lt && (b.def.displacement_lt.normal || 0)) || 5000;
+    const blow = 0.76 * (massA / Math.max(1, massB)) * closing * closing * square;
+    if (blow < 2) continue;
+    b.flooding = Math.min(100, (b.flooding || 0) + blow);
+    b.structure = Math.max(-1, b.structure - b.structureMax * Math.min(0.45, blow / 300));
+    a.flooding = Math.min(100, (a.flooding || 0) + blow * 0.25);          // the stem pays a quarter of the bill
+    a.structure = Math.max(0, a.structure - a.structureMax * Math.min(0.12, blow / 1200));
+    b._breaches = (b._breaches || []).slice(-5);
+    b._breaches.push({ t: 0.05 - R() * 0.3, turn: game.turn, mag: false });
+    b._critFlash = game.turn;
+    logLine(`${a.name} drives her ram into ${b.name}${square > 0.8 ? " square amidships" : ""}: the sea comes in.`, "crit");
+    if (blow >= 60) logLine(`${b.name} is mortally hurt below the waterline.`, "crit");
+  }
 }
 
 function loop(nowArg) {
