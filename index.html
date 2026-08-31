@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="1.12" />
+<meta name="application-version" content="1.13" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -259,6 +259,18 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .theatre-choice .tc-name{font-family:var(--serif);font-size:22px;color:var(--ink);}
 .theatre-choice .tc-date{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--brass-dim);margin:4px 0 8px;}
 .theatre-choice .tc-desc{font-size:11.5px;line-height:1.4;color:var(--ink-dim);}
+.tc-head,.oc-head,.sc-head{display:flex;align-items:baseline;gap:8px;}
+.tc-head .tc-name,.oc-head .oc-name,.sc-head .sc-name{flex:1;}
+.tc-info{margin-left:auto;flex:none;width:19px;height:19px;border-radius:50%;border:1px solid #2f6f80;background:none;color:#7fa6c8;font-family:var(--serif);font-size:11px;line-height:1;cursor:pointer;padding:0;}
+.tc-info:hover{border-color:var(--brass);color:var(--brass);}
+.tc-force,.oc-force,.sc-force{display:flex;align-items:center;gap:6px;margin-top:7px;flex-wrap:wrap;}
+.tc-force img,.oc-force img,.sc-force img{height:20px;display:block;}
+.tc-v{font-family:var(--serif);font-size:12px;color:var(--brass-dim);}
+.oc-cond{margin-top:4px;} .oc-cond img{height:16px;display:block;opacity:.85;}
+.tc-pips{display:flex;align-items:center;gap:4px;margin-top:8px;}
+.tc-pips i{width:5px;height:5px;border-radius:50%;background:var(--brass-dim);display:block;}
+.tc-pips span{font-family:var(--mono);font-size:9px;color:var(--brass-dim);margin-left:3px;}
+.tc-desc,.oc-desc,.sc-desc{margin-top:8px;}
 .setup-back{background:none;border:none;color:#7fa6c8;font-family:var(--ui);font-size:13px;cursor:pointer;padding:0;margin-bottom:14px;display:block;}
 .opening-choices{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
 .opening-choice{flex:1;min-width:150px;background:#0a242b;border:1px solid #1c4651;border-radius:7px;padding:12px 11px;cursor:pointer;text-align:left;}
@@ -3410,12 +3422,18 @@ const CLASS_TIER_BY_ID = {
   matsushima: "heavy_cruiser", itsukushima: "heavy_cruiser", hashidate: "heavy_cruiser",
   yoshino: "heavy_cruiser", naniwa: "heavy_cruiser", takachiho: "heavy_cruiser",
 };
-function shipClassTier(ship) {
+// sailOverride lets a caller judge a ship by a STATED era instead of the loaded
+// one. The menus summarise scenarios that are not the active scenario, and without
+// this every fleet was tiered under whichever era happened to be in play, which
+// showed Beatty's battlecruisers as light craft on the theatre page.
+function shipClassTier(ship, sailOverride) {
   // Sail era mapped onto the same grammar the ironclad chart uses: the two-slash
   // capital chip is a 1st or 2nd rate, the one-slash cruiser chip a 3rd or 4th
   // rate of the line, the light chip a frigate or smaller, gunboat chip a fort.
   if (ship.def && ship.def.fort) return "fort";        // its own glyph, both eras
-  if (typeof isSailEra === "function" && isSailEra()) {
+  const sailEra = (typeof sailOverride === "boolean") ? sailOverride
+    : (typeof isSailEra === "function" && isSailEra());
+  if (sailEra) {
     const g = parseInt((ship.def && ship.def.class) || ship.class) || 0;
     if (g >= 90) return "capital";
     if (g >= 50) return "heavy_cruiser";
@@ -4794,6 +4812,89 @@ function drawEnsign(ctx, x, y, wF, key, alpha) {
   ctx.restore();
 }
 
+// ---- menu summaries: facts by the cheapest honest channel ------------------
+// Every symbol used here is one the player also meets in play (the ensigns fly on
+// the map, the tier chips mark ships on the map and in the fleet tally), so the
+// grammar teaches itself instead of needing a key. Numerals carry counts, a wind
+// arrow carries the wind, and prose is kept for the info tap.
+function scenarioDefs(cfg) {
+  const D = (typeof SCENARIO_DATA !== "undefined") && SCENARIO_DATA[cfg.dataKey || cfg.id];
+  if (!D || !D.ships) return [];
+  return D.ships.filter((d) => (!cfg.roster || cfg.roster.indexOf(d.id) >= 0)
+    && !(cfg.rosterExcludeDivision && d.division === cfg.rosterExcludeDivision));
+}
+// Force by tier for one side: the same four classes the map draws.
+function sideForce(cfg, sideId) {
+  const out = { total: 0, capital: 0, cruiser: 0, light: 0, fort: 0, ensigns: [] };
+  const seen = {};
+  // The tier must be judged by the CARD'S era, not by whatever scenario happens to
+  // be loaded: shipClassTier reads the active scenario, so on the theatre page it
+  // classified sail ships under steam rules and collapsed every fleet into one bucket.
+  const sail = (typeof SAIL_SCENARIOS !== "undefined") && SAIL_SCENARIOS.indexOf(cfg.id) >= 0;
+  for (const d of scenarioDefs(cfg)) {
+    if (d.side !== sideId) continue;
+    out.total++;
+    const fake = { id: d.id, side: d.side, type: d.type, class: d.class, def: d };
+    const t = (typeof shipClassTier === "function") ? shipClassTier(fake, sail) : "light_cruiser";
+    if (t === "fort") out.fort++;
+    else if (t === "capital") out.capital++;
+    else if (t === "heavy_cruiser" || t === "light_cruiser") out[t === "heavy_cruiser" ? "cruiser" : "light"]++;
+    else out.light++;
+    const fk = (typeof flagFor === "function") ? flagFor(fake) : "gb";
+    if (!seen[fk]) { seen[fk] = 1; out.ensigns.push(fk); }
+  }
+  return out;
+}
+// One side's line: her ensigns, her total, then chip-and-numeral by tier.
+function forceStripURL(cfg, sideId, w, h) {
+  if (typeof document === "undefined") return "";
+  const F = sideForce(cfg, sideId);
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const x = c.getContext("2d");
+  x.font = "600 11px ui-sans-serif, system-ui, sans-serif";
+  x.textBaseline = "middle";
+  let px = 1;
+  for (const fk of F.ensigns.slice(0, 3)) { drawEnsign(x, px, h / 2 - 4.4, 14, fk, 1); px += 17; }
+  px += 3;
+  const rows = [["capital", F.capital], ["heavy_cruiser", F.cruiser], ["light_cruiser", F.light], ["fort", F.fort]].filter((r) => r[1]);
+  if (rows.length > 1) {                                  // a mixed force: total first, then the make-up
+    x.fillStyle = "#e8dcc0"; x.fillText(String(F.total), px, h / 2); px += String(F.total).length * 7 + 8;
+  }
+  x.fillStyle = "#9fb0bc";
+  for (const [tier, n] of rows) {
+    if (typeof drawClassIcon === "function") drawClassIcon(x, px + 6, h / 2, tier, "#9fb0bc", 12);
+    px += 13;
+    x.fillStyle = "#8ea3b0"; x.fillText(String(n), px, h / 2);
+    px += String(n).length * 6.5 + 7;
+  }
+  return c.toDataURL();
+}
+// The conditions, drawn rather than described: the wind and its force under sail,
+// the sighting limit where haze is modelled.
+function conditionURL(cfg, w, h) {
+  if (typeof document === "undefined") return "";
+  const c = document.createElement("canvas"); c.width = w; c.height = h;
+  const x = c.getContext("2d");
+  x.font = "600 10px ui-sans-serif, system-ui, sans-serif";
+  x.textBaseline = "middle"; x.fillStyle = "#8ea3b0";
+  let px = 2;
+  if (cfg.wind) {
+    x.save(); x.translate(px + 8, h / 2); x.rotate(((cfg.wind.from + 180) % 360) * Math.PI / 180);
+    x.strokeStyle = "#7fa6c8"; x.lineWidth = 1.3;
+    x.beginPath(); x.moveTo(0, 6); x.lineTo(0, -6); x.moveTo(-3, -2.5); x.lineTo(0, -6); x.lineTo(3, -2.5); x.stroke();
+    x.restore(); px += 18;
+    x.fillStyle = "#8ea3b0"; x.fillText(cfg.wind.kn + " kn", px, h / 2); px += 34;
+  }
+  const V = (typeof SCN_VISIBILITY !== "undefined") && SCN_VISIBILITY[cfg.id];
+  if (V && V.base) {
+    x.strokeStyle = "#7f8f9a"; x.lineWidth = 1.1;                    // haze bars: the sighting limit
+    for (let k = 0; k < 3; k++) { x.beginPath(); x.moveTo(px, h / 2 - 3 + k * 3); x.lineTo(px + 11 - k * 3, h / 2 - 3 + k * 3); x.stroke(); }
+    px += 15;
+    x.fillStyle = "#8ea3b0"; x.fillText(Math.round(V.base / 1000) + " km", px, h / 2);
+  }
+  return c.toDataURL();
+}
+
 function drawShip(ctx, v, ship, opts) {
   if (typeof scenarioVisibility === "function" && scenarioVisibility() && game.playerSide
       && ship.side !== game.playerSide && !ship.out) {
@@ -5943,8 +6044,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "1.12";
-const ECHELON_BUILD_NOTE = "profiles built around each ship stations, so no gun stands on a bridge roof";
+const ECHELON_VERSION = "1.13";
+const ECHELON_BUILD_NOTE = "theatres regrouped, and the menus say it with ensigns, force strips and a wind arrow";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
@@ -6503,6 +6604,8 @@ SCENARIO_CONFIGS.copenhagen = {
     ] });
   },
 };
+SCENARIO_CONFIGS.camperdown.opening = "Camperdown";  // every scenario carries one: uiscan asserts it
+SCENARIO_CONFIGS.navarino.opening = "Navarino";
 SCENARIO_CONFIGS.nile.opening = "The Nile";           // sub-choice cards on the theatre page
 SCENARIO_CONFIGS.copenhagen.opening = "Copenhagen";
 SCENARIO_CONFIGS.trafalgar.opening = "Trafalgar";
@@ -6525,31 +6628,22 @@ SCENARIO_CONFIGS.tsushima.opening = "The Crossing";
 
 // Theatres group one or more scenarios. The landing page chooses a theatre; a theatre with more
 // than one scenario (Tsushima) then offers the opening as a further choice on its setup page.
-// Ordered chronologically, per instruction: sail first, Jutland last.
-// Ordered chronologically, per instruction: sail first, Jutland last.
+// A theatre is a WAR or an ERA, never a single battle: the sail era holds its five
+// actions as openings, exactly as the Russo-Japanese War holds its three. Splitting
+// the sail battles into five theatres in v1.08 fixed an undefined label and broke
+// this rule; the rule matters more, so the label was fixed properly instead (every
+// scenario now carries .opening, asserted by uiscan). Chronological.
 const THEATRES = [
-  { id: "camperdown", name: "Battle of Camperdown", date: "11 October 1797",
-    desc: "Duncan against De Winter off the Dutch coast: two hull-shooting navies, no time to form line, and the bloodiest action of the age per ship engaged.",
-    scenarios: ["camperdown"] },
-  { id: "nile", name: "Battle of the Nile", date: "1 August 1798",
-    desc: "Nelson finds Brueys at single anchor across Aboukir Bay and destroys the line piecemeal from both sides as the light fails.",
-    scenarios: ["nile"] },
-  { id: "copenhagen", name: "Battle of Copenhagen", date: "2 April 1801",
-    desc: "Nelson against the moored Danish line and the Trekroner fort: a slugging match at anchor in the King's Deep.",
-    scenarios: ["copenhagen"] },
-  { id: "trafalgar", name: "Battle of Trafalgar", date: "21 October 1805",
-    desc: "Nelson breaks the Combined Fleet's crescent in two columns and the melee decides the age.",
-    scenarios: ["trafalgar"] },
-  { id: "navarino", name: "Battle of Navarino", date: "20 October 1827",
-    desc: "The last battle of the sailing fleets: three allied squadrons anchored inside the Ottoman horseshoe, gun to gun until one side has no broadsides left.",
-    scenarios: ["navarino"] },
-  { id: "yalu", name: "Battle of the Yalu", date: "17 September 1894",
+  { id: "sail", name: "The Age of Fighting Sail", date: "1797 to 1827",
+    desc: "The great fleet actions under canvas. Wind is the engine, the broadside is the argument, and the boarding party is the full stop: Camperdown, the Nile, Copenhagen, Trafalgar, and the last of them all at Navarino.",
+    scenarios: ["camperdown", "nile", "copenhagen", "trafalgar", "navarino"] },
+  { id: "yalu", name: "Battle of the Yalu", date: "1894",
     desc: "The Beiyang Fleet meets the Combined Fleet off the Yalu mouth: Chinese ironclads and solid shot against Japanese quick-firers. Chinese and Japanese histories call this the Battle of the Yellow Sea, or Dadonggou; English usage keeps Yalu for 1894 so the 1904 battle can own the other name.",
     scenarios: ["yalu"] },
   { id: "tsushima", name: "The Russo-Japanese War", date: "1904 to 1905",
     desc: "Togo against two Russian fleets: the breakout from Port Arthur in 1904, and the destruction of the relief squadron at Tsushima the next spring.",
     scenarios: ["yellow_sea", "tsushima_approach", "tsushima"] },
-  { id: "jutland", name: "Jutland", date: "31 May 1916",
+  { id: "jutland", name: "Jutland", date: "1916",
     desc: "The battlecruiser duel that opened the greatest fleet action of the dreadnought age: Beatty against Hipper on the Run to the South.",
     scenarios: ["run_south"] },
 ];
@@ -11723,9 +11817,16 @@ function init() {
     if (!wrap) return;
     wrap.innerHTML = SCN.sides.map((sd, i) =>
       `<div class="side-choice ${sd.cls}${i === 0 ? " active" : ""}" data-side="${sd.id}">
-         <div class="sc-name">${sd.label}</div>
-         <div class="sc-desc">${sd.desc}</div>
+         <div class="sc-head"><div class="sc-name">${sd.label}</div>
+           <button class="tc-info" data-sinfo="${sd.id}" aria-label="About this side">i</button></div>
+         <div class="sc-force"><img src="${forceStripURL(SCN, sd.id, 190, 20)}" alt=""></div>
+         <div class="sc-desc" id="scd-${sd.id}" style="display:none">${sd.desc}</div>
        </div>`).join("");
+    wrap.querySelectorAll(".tc-info").forEach((b) => b.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      const d = document.getElementById("scd-" + b.getAttribute("data-sinfo"));
+      if (d) d.style.display = d.style.display === "none" ? "" : "none";
+    }));
     wireSideChoices();
   }
   function applyScenarioToStart() {
@@ -11753,8 +11854,22 @@ function init() {
       if (th.scenarios.length > 1) {
         openingChoices.innerHTML = th.scenarios.map((sid) => {
           const c = SCENARIO_CONFIGS[sid];
-          return `<div class="opening-choice" data-scn="${sid}"><div class="oc-name">${c.opening}</div><div class="oc-time">${c.date}</div><div class="oc-desc">${c.subtitle}</div></div>`;
+          const a = forceStripURL(c, c.sides[0].id, 178, 19), b2 = forceStripURL(c, c.sides[1].id, 178, 19);
+          const cond = conditionURL(c, 96, 16);
+          return `<div class="opening-choice" data-scn="${sid}">
+            <div class="oc-head"><div class="oc-name">${c.opening}</div>
+              <button class="tc-info" data-oinfo="${sid}" aria-label="About this action">i</button></div>
+            <div class="oc-time">${c.date}</div>
+            <div class="oc-force"><img src="${a}" alt=""><img src="${b2}" alt=""></div>
+            <div class="oc-cond"><img src="${cond}" alt=""></div>
+            <div class="oc-desc" id="ocd-${sid}" style="display:none">${c.subtitle}</div>
+          </div>`;
         }).join("") + (th.id === "sail" ? `<div class="opening-guide" data-guide="1"><div class="og-mark">?</div><div class="og-body"><div class="og-name">How fighting sail works</div><div class="og-desc">Read this first if you have not fought under sail. Wind and the no-go zone, raking, the four kinds of shot, boarding, anchors and forts, and what every mark on the chart means.</div></div><div class="og-go">Open</div></div>` : "");
+        openingChoices.querySelectorAll(".tc-info").forEach((b) => b.addEventListener("click", (ev) => {
+          ev.stopPropagation();
+          const d = document.getElementById("ocd-" + b.getAttribute("data-oinfo"));
+          if (d) d.style.display = d.style.display === "none" ? "" : "none";
+        }));
         openingChoices.querySelectorAll(".opening-choice, .opening-guide").forEach((b) => b.addEventListener("click", () => { if (b.getAttribute("data-guide")) { openSailGuide(); return; } selectOpening(b.getAttribute("data-scn")); }));
         openingRow.style.display = "";
       } else {
@@ -11766,8 +11881,23 @@ function init() {
       setupPanel.style.display = "";
     }
 
-    theatreChoices.innerHTML = THEATRES.map((th) =>
-      `<div class="theatre-choice" data-th="${th.id}"><div class="tc-name">${th.name}</div><div class="tc-date">${th.date}</div><div class="tc-desc">${th.desc}</div></div>`).join("");
+    theatreChoices.innerHTML = THEATRES.map((th) => {
+      const c0 = SCENARIO_CONFIGS[th.scenarios[0]];
+      const a = forceStripURL(c0, c0.sides[0].id, 190, 20), b = forceStripURL(c0, c0.sides[1].id, 190, 20);
+      const pips = th.scenarios.map(() => "<i></i>").join("");
+      return `<div class="theatre-choice" data-th="${th.id}">
+        <div class="tc-head"><div class="tc-name">${th.name}</div><div class="tc-date">${th.date}</div>
+          <button class="tc-info" data-info="${th.id}" aria-label="About this theatre">i</button></div>
+        <div class="tc-force"><img src="${a}" alt=""><span class="tc-v">v</span><img src="${b}" alt=""></div>
+        <div class="tc-pips">${pips}<span>${th.scenarios.length}</span></div>
+        <div class="tc-desc" id="thd-${th.id}" style="display:none">${th.desc}</div>
+      </div>`;
+    }).join("");
+    theatreChoices.querySelectorAll(".tc-info").forEach((b) => b.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      const d = document.getElementById("thd-" + b.getAttribute("data-info"));
+      if (d) d.style.display = d.style.display === "none" ? "" : "none";
+    }));
     theatreChoices.querySelectorAll(".theatre-choice").forEach((b) => b.addEventListener("click", () => {
       const th = THEATRES.find((t) => t.id === b.getAttribute("data-th"));
       if (th) enterTheatre(th);
