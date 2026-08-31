@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="1.13" />
+<meta name="application-version" content="1.15" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -1903,6 +1903,11 @@ function gunHitScale(gun) {
   const cal = gunCalibre(gun);
   const t = (gun.type || "").toLowerCase();
   if (cal <= 57) return HIT_SCALE.light;
+  // The 75 mm, 76 mm and 12-pdr batteries were the anti-torpedo-boat armament in
+  // every navy of the period: locally laid, no place in the fire-control chain,
+  // and a light shell losing velocity fast. They hit at torpedo-boat ranges, not
+  // at six kilometres like a director-controlled 6 in. Scored as light guns.
+  if (cal < 100) return HIT_SCALE.light;
   if (t.includes("quick-firing")) return HIT_SCALE.medqf;
   if (t.includes("heavy") || cal >= 240) return HIT_SCALE.heavy;
   return HIT_SCALE.medbl;
@@ -2149,7 +2154,13 @@ function resolveHit(from, battery, target, range) {
     dmg = power * (partial ? 0.8 : 1.5);
     crewHit = 0.008;
     if (!dud) {
-      if (rnd() < (heShell ? 0.22 * quality : 0.08)) fireSet = true;
+      // Incendiary effect scales with the burster, not the hit count: the 0.22 base
+      // is the 6 in to 12 in HE record (Shimose at the Yellow Sea and Tsushima).
+      // Scaled by (calibre / 152)^2, capped at one: a 75 mm burst has a quarter of
+      // a 6 in shell's reach, and twenty of them firing a hundred rounds a turn had
+      // been setting more fires than the whole Japanese battle line.
+      const fireScale = Math.min(1, Math.pow(cal / 152, 2));
+      if (rnd() < (heShell ? 0.22 * quality * fireScale : 0.08 * fireScale)) fireSet = true;
       const c = rnd();
       if (zone === "belt") {
         if (c < 0.30) crit = "flood";
@@ -2207,7 +2218,12 @@ function resolveHit(from, battery, target, range) {
   // Ready-ammunition cook-off: ships bristling with quick-firers stack ready charges by the guns, and a
   // penetrating hit there can touch them off (the Matsushima disaster) even from a clean pass-through.
   // Deep, armoured magazines make a ship far safer, so the ironclads are largely immune.
-  if (penetrated && !dud && !isLight && (zone === "upper" || zone === "deck" || zone === "sidehull")) {
+  // Every documented disabling ready-ammunition blast (Matsushima 1894, the Russian
+  // batteries at Tsushima, the Q-turret events at Jutland) came from a heavy or
+  // medium-heavy shell. A 3 in burst cannot flash a battery's racks through their
+  // splinter screens, yet the log showed exactly that. Gate at 120 mm, and scale
+  // the blast with the shell: a 15 cm burst reaching a rack is not a 30.5 cm one.
+  if (penetrated && !dud && !isLight && cal >= 120 && (zone === "upper" || zone === "deck" || zone === "sidehull")) {
     const qfGuns = target.batteries.reduce((n, b) => n + ((gunCalibre(b.gun) >= 76 && gunCalibre(b.gun) <= 162) ? (b.count || 0) : 0), 0);
     const magShielded = zoneArmour(target, "belt") >= 150 ? 0.2 : 1;
     const stores = target.ammoStores != null ? target.ammoStores : 1;   // full racks early, near-empty by dusk
@@ -2252,7 +2268,8 @@ function resolveHit(from, battery, target, range) {
     if (live.length) live[Math.floor(rnd() * live.length)].knockedOut = true;
   }
   if (crit === "cookoff") {                            // ready ammunition goes up: a disabling secondary blast
-    target.structure -= target.structureMax * (0.28 + rnd() * 0.18);
+    const blast = clamp(cal / 305, 0.4, 1);            // scaled to the shell that lit it
+    target.structure -= target.structureMax * (0.28 + rnd() * 0.18) * blast;
     target.fires = Math.min(MAX_FIRES, target.fires + 2);
     target.crew = clamp(target.crew - 0.06, 0.2, 1);
   }
@@ -2970,7 +2987,7 @@ function sailFireBattery(from, battery, target, turn) {
     ricochets: 0, bounces: 0, duds: 0, hardHits: hits, nearPens: 0, partials: 0,
     armourHits: 0, meanObliquity: 0, zones: doct === "rig" ? { rigging: hits } : doct === "grape" ? { decks: hits } : { hull: hits },
     hitChance: hc, penetration: 0, shotsPerGun: volleys,
-    rake: rake ? (rakeStern ? "stern" : "bow") : null, rig: Math.round(rig),
+    rake: rake ? (rakeStern ? "stern" : "bow") : null, rig: Math.round(rig), crewLoss,
     heavy: battery.count >= 6,
   };
 }
@@ -3537,13 +3554,13 @@ function shipScreenLen(v, ship) { return Math.max(ship.length * v.scale, 14); } 
 // wreathe the target; each recent firer costs 8 per cent of sight, floored at 55.
 // A ship on fire betrays herself: burning hulls are sighted half again as far.
 const SCN_VISIBILITY = {
-  tsushima:          { base: 9000,  duskFrom: 1.00, duskFloor: 1.00 },
+  tsushima:          { base: 9000,  duskFrom: 1.00, duskFloor: 1.00 , smoke: 0.02 },
   tsushima_approach: { base: 9000,  duskFrom: 1.00, duskFloor: 1.00 },
-  yellow_sea:        { base: 18000, duskFrom: 0.66, duskFloor: 0.45 },
+  yellow_sea:        { base: 18000, duskFrom: 0.66, duskFloor: 0.45 , smoke: 0.02 },
   yalu:              { base: 11000, duskFrom: 1.00, duskFloor: 1.00 },
   // Campbell: about 16,000 m in the battlecruiser action, hazing through the
   // afternoon. His directional-light asymmetry awaits its own authorised build.
-  run_south:         { base: 16000, duskFrom: 0.80, duskFloor: 0.62 },
+  run_south:         { base: 16000, duskFrom: 0.80, duskFloor: 0.62, smoke: 0.03 },
 };
 function scenarioVisibility() {
   if (typeof isSailEra === "function" && isSailEra()) return null;
@@ -3564,7 +3581,14 @@ function sightLimit(from, target) {
     if (o._firedTurn !== game.turn - 1 && o._firedTurn !== game.turn) continue;
     if (rangeBetween(o, target) <= 1500) smokers++;
   }
-  lim *= Math.max(0.55, 1 - 0.08 * smokers);
+  // Per-firer smoke by era. The 0.08 figure is black and brown powder (Yalu 1894).
+  // By 1904 both fleets fired smokeless propellant (Shimose and pyroxylin), and at
+  // Jutland cordite: the residual haze is funnel smoke and cordite fume, a fraction
+  // of a broadside of brown powder. Applied at 0.08 to 1904 it blinded whichever
+  // side fired more, which the Yellow Sea log showed as Togo's line firing four
+  // rounds a turn for twenty turns.
+  const perFirer = (V.smoke != null) ? V.smoke : 0.08;
+  lim *= Math.max(0.55, 1 - perFirer * smokers);
   if ((target.fires || 0) > 0) lim *= 1.5;                                // she burns, and shows
   return lim;
 }
@@ -4718,9 +4742,15 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim, ship) {
         ctx.beginPath(); ctx.arc(mx, my, r * 1.22, 0, Math.PI * 2);
         ctx.lineWidth = Math.max(0.5, lw * 0.5); ctx.strokeStyle = ink; ctx.stroke();
       }
-      ctx.beginPath(); ctx.arc(mx, my, r, 0, Math.PI * 2);
-      ctx.fillStyle = sacc.mount; ctx.fill(); ctx.lineWidth = Math.max(0.8, lw * 0.7); ctx.strokeStyle = ink; ctx.stroke();
       const outboard = Math.abs(m.y) >= 0.5, sp = r * 0.6;
+      // From the 1890s the heavy gunhouse is a TURRET, not a barbette hood: in plan
+      // a flat armoured face with the guns through it and a rounded rear, trained
+      // with the guns. Yalu's barbettes keep the ring-and-hood disc.
+      const turretEra = cal >= 180 && typeof SCN !== "undefined" && SCN && (SCN.dataKey === "jutland" || SCN.dataKey === "tsushima");
+      if (!turretEra) {
+        ctx.beginPath(); ctx.arc(mx, my, r, 0, Math.PI * 2);
+        ctx.fillStyle = sacc.mount; ctx.fill(); ctx.lineWidth = Math.max(0.8, lw * 0.7); ctx.strokeStyle = ink; ctx.stroke();
+      }
       // Heavy guns train on the ship's ordered target instead of resting fore and
       // aft: relative bearing in the hull frame (+x bow, +y starboard), each mount
       // limited to the arc its position allows, so nothing fires through the ship.
@@ -4735,6 +4765,19 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim, ship) {
             : (m.x >= 0 ? (rel < 130 || rel > 230) : (rel > 50 && rel < 310));
           if (ok) aim = { x: Math.cos(rr), y: Math.sin(rr) };
         }
+      }
+      if (turretEra) {
+        const fd = aim || (outboard ? { x: 0, y: m.y > 0 ? 1 : -1 } : { x: m.x >= 0 ? 1 : -1, y: 0 });
+        const af = Math.atan2(fd.y, fd.x), px2 = -fd.y, py2 = fd.x;
+        const cx2 = mx + fd.x * r * 0.12, cy2 = my + fd.y * r * 0.12;
+        ctx.beginPath();
+        ctx.moveTo(cx2 + fd.x * r * 0.78 + px2 * r * 0.58, cy2 + fd.y * r * 0.78 + py2 * r * 0.58);   // face, one corner
+        ctx.lineTo(cx2 + fd.x * r * 0.78 - px2 * r * 0.58, cy2 + fd.y * r * 0.78 - py2 * r * 0.58);   // the flat armoured face
+        ctx.lineTo(cx2 + fd.x * r * 0.25 - px2 * r * 0.88, cy2 + fd.y * r * 0.25 - py2 * r * 0.88);   // cheek
+        ctx.arc(cx2, cy2, r * 0.9, af + Math.PI / 2, af + Math.PI * 1.5, false);                    // rounded rear
+        ctx.lineTo(cx2 + fd.x * r * 0.25 + px2 * r * 0.88, cy2 + fd.y * r * 0.25 + py2 * r * 0.88);
+        ctx.closePath();
+        ctx.fillStyle = sacc.mount; ctx.fill(); ctx.lineWidth = Math.max(0.8, lw * 0.7); ctx.strokeStyle = ink; ctx.stroke();
       }
       const barW = Math.max(0.7, lw * (cal >= 280 ? 1.15 : cal >= 240 ? 0.95 : cal >= 200 ? 0.8 : 0.65)), barLen = r * (cal >= 280 ? 1.55 : cal >= 240 ? 1.7 : 1.4);
       ctx.lineWidth = barW; ctx.lineCap = "round";
@@ -4898,8 +4941,12 @@ function conditionURL(cfg, w, h) {
 function drawShip(ctx, v, ship, opts) {
   if (typeof scenarioVisibility === "function" && scenarioVisibility() && game.playerSide
       && ship.side !== game.playerSide && !ship.out) {
-    if (typeof fleetSights === "function" && !fleetSights(game.playerSide, ship)) {
-      ctx.save(); ctx.globalAlpha *= 0.30;
+    // Sighting changes turn to turn, and a ship that snapped from full to 0.30 and
+    // back looked like a fault. The alpha now eases toward its target each frame.
+    const wantA = (typeof fleetSights === "function" && !fleetSights(game.playerSide, ship)) ? 0.30 : 1;
+    ship._visA = (ship._visA == null) ? wantA : ship._visA + (wantA - ship._visA) * 0.08;
+    if (ship._visA < 0.995) {
+      ctx.save(); ctx.globalAlpha *= ship._visA;
       try { return drawShipInner(ctx, v, ship, opts); } finally { ctx.restore(); }
     }
     // Sighted but distant: fade with range toward the sight limit, so the haze
@@ -6044,8 +6091,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "1.13";
-const ECHELON_BUILD_NOTE = "theatres regrouped, and the menus say it with ensigns, force strips and a wind arrow";
+const ECHELON_VERSION = "1.15";
+const ECHELON_BUILD_NOTE = "lines keep the interval they form at, a helm order leaves the line, and the sail report shows rig and crew";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
@@ -6432,8 +6479,12 @@ SCENARIO_CONFIGS.camperdown = {
     // weather division comes down on the van and centre, Onslow's lee division on
     // the rear, both from windward, both bow-on, exactly as fought.
     place(col(0, 0, 210, ["gelijkheid","beschermer","hercules_nl","devries","vrijheid","staten_generaal","wassenaar","batavier","brutus_nl","leyden","cerberus_nl","jupiter_nl","haarlem","alkmaar","delft"], 360));
-    place(col(-2500, 500, 115, ["venerable","triumph","ardent_97","bedford","lancaster","belliqueux","isis","agincourt"], 280));
-    place(col(-1300, 3300, 105, ["monarch","powerful","monmouth","director","veteran","montagu","russell_97","adamant"], 280));
+    // Gaps at 520 m: about three cables, the loose order Duncan's ships actually
+    // came down in. At 280 m they sat inside station distance, so the line-keeping
+    // held every follower back to open the gap and the rear of each division crept
+    // 62 m a turn behind a leader who had been given a short helm order.
+    place(col(-2500, 500, 115, ["venerable","triumph","ardent_97","bedford","lancaster","belliqueux","isis","agincourt"], 520));
+    place(col(-1300, 3300, 105, ["monarch","powerful","monmouth","director","veteran","montagu","russell_97","adamant"], 520));
   },
 };
 SCENARIO_CONFIGS.navarino = {
@@ -7931,6 +7982,28 @@ function redraw() {
   const visibleShips = game.ships.filter((s) => shipInView(v, s));
   const tgt = shipById(game.targetId);
   const _tSec = (typeof performance !== "undefined" ? performance.now() : Date.now()) / 1000;
+  // The weather on the water: a veil that thickens toward the sighting limit
+  // around the player's own ships, and the light itself going as the turns run
+  // out. Drawn under the ships so the range fade on the hulls is not doubled.
+  if (typeof scenarioVisibility === "function" && scenarioVisibility() && game.playerSide) {
+    const V = scenarioVisibility();
+    const own = game.ships.filter((q) => q.side === game.playerSide && !q.out);
+    if (own.length) {
+      const cx0 = own.reduce((t, q) => t + q.x, 0) / own.length, cy0 = own.reduce((t, q) => t + q.y, 0) / own.length;
+      const lim = sightLimit(own[0], own[0]);
+      if (isFinite(lim)) {
+        const sx = wx(v, cx0), sy = wy(v, cy0), rIn = lim * 0.55 * v.scale, rOut = lim * 1.15 * v.scale;
+        const gr = ctx.createRadialGradient(sx, sy, Math.max(1, rIn), sx, sy, Math.max(2, rOut));
+        gr.addColorStop(0, "rgba(150,165,170,0)"); gr.addColorStop(1, "rgba(150,165,170,0.42)");
+        ctx.save(); ctx.fillStyle = gr; ctx.fillRect(0, 0, v.w, v.h); ctx.restore();
+      }
+      const frac = game.maxTurns ? game.turn / game.maxTurns : 0;
+      if (frac > V.duskFrom) {                                              // the light going
+        const t = Math.min(1, (frac - V.duskFrom) / Math.max(0.001, 1 - V.duskFrom));
+        ctx.save(); ctx.fillStyle = "rgba(6,10,26," + (0.35 * t).toFixed(3) + ")"; ctx.fillRect(0, 0, v.w, v.h); ctx.restore();
+      }
+    }
+  }
   for (const s of visibleShips) drawShipSmoke(ctx, v, s, _tSec);
   for (const s of visibleShips) {
     let aimWorld = s._aimWorld;
@@ -8816,6 +8889,11 @@ function constrainedOrderHeading(s, wanted) {
 }
 function setOrderHeading(s, wanted) {
   if (!s || s.out || s.side !== game.playerSide || game.phase !== "plan") return false;
+  // A helm order to a ship keeping station is an order to leave the line. The old
+  // behaviour obeyed for one turn and then snapped her back to station, which read
+  // as "I ordered her and she did not move". She can be re-formed from the squadron
+  // control.
+  if (s._follow) { s._follow = null; s._inLine = false; logLine(`${s.name} hauls out of the line.`, ""); }
   if (!s.order) defaultOrder(s);
   if (isSailEra() && s.anchored && !s.aground && !s._grapple) {
     const dh0 = Math.abs(((wanted - s.heading + 540) % 360) - 180);
@@ -9037,6 +9115,19 @@ function formSquadron(ids, name, autoFormed) {
   game.squadrons = game.squadrons.filter((sq) => sq.members.length >= 2);
   game.squadrons.forEach((sq) => { if (!sq.members.includes(sq.leaderId)) sq.leaderId = sq.members[0]; });
   const sq = { id: ++game._squadSeq, members: members.slice(), leaderId: members[0], name: name || `Squadron ${game._squadSeq}`, autoFormed: !!autoFormed, formation: "line", spacing: STATION_M };
+  // A line keeps the interval it forms at. The fixed 500 m default sat wider than
+  // most deployments (a formed line of battle kept two cables), so every follower
+  // held back to open the gap and the rear of a division crept a hex a turn behind
+  // a leader on a short helm order. Measured from the members as they lie; a
+  // hand-formed squadron never opens wider than the default.
+  if (sq.members.length >= 2) {
+    let sum = 0, n = 0;
+    for (let i = 1; i < sq.members.length; i++) {
+      const a = shipById(sq.members[i - 1]), b = shipById(sq.members[i]);
+      if (a && b) { sum += rangeBetween(a, b); n++; }
+    }
+    if (n) sq.spacing = clamp(sum / n, 250, autoFormed ? 900 : STATION_M);
+  }
   game.squadrons.push(sq);
   rebuildSquadronLines();
   return sq;
@@ -10890,6 +10981,7 @@ function telShot(from, target, gun, res) {
     meanObliquity: res.meanObliquity || 0, zones: res.zones || {}, crits: (res.crits || []).slice(),
   });
   A.shots += res.shots; A.hits += res.hits; A.dmgDealt += res.totalDmg;
+  A.rigDealt = (A.rigDealt || 0) + (res.rig || 0); A.crewDealt = (A.crewDealt || 0) + (res.crewLoss || 0);
   A.rangeSum += res.range * res.shots; A.firesStarted += res.fires || 0;
   if (cal >= 240) { A.heavyShots += res.shots; A.heavyHits += res.hits; }
   const sh = res.shell || (typeof isSailEra === "function" && isSailEra() ? "Round" : "AP");
@@ -11156,7 +11248,9 @@ function buildBattleReport() {
       const hitPct = a.shots ? Math.round(100 * a.hits / a.shots) : 0;
       let line = `    ${s.name.padEnd(15)} shots ${pad(a.shots || 0, 4)} hits ${pad((a.hits || 0) + " (" + hitPct + "%)", 9)}`;
       line += a.heavyShots ? ` hvy ${pad((a.heavyHits || 0) + "/" + a.heavyShots, 6)}` : `${pad("", 11)}`;
-      line += ` dealt ${pad(Math.round(a.dmgDealt || 0), 5)} taken ${pad(Math.round(a.dmgTaken || 0), 5)} /${pad((a.hitsTaken || 0) + "h", 4)}`;
+      line += ` dealt ${pad(Math.round(a.dmgDealt || 0), 5)}`;
+      if (a.rigDealt || a.crewDealt) line += ` (rig ${Math.round(a.rigDealt || 0)}, crew ${((a.crewDealt || 0) * 100).toFixed(1)}%)`;   // chain and grape tell here, not in hull damage
+      line += ` taken ${pad(Math.round(a.dmgTaken || 0), 5)} /${pad((a.hitsTaken || 0) + "h", 4)}`;
       if (a.torpFired) line += ` torp ${a.torpHit}/${a.torpFired}`;
       let state = c.label;
       if (s.captured) state = `TAKEN AS A PRIZE by ${sideLabel(s.side)}`;
