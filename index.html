@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="1.24" />
+<meta name="application-version" content="1.26" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -493,6 +493,9 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 #logModalPre{margin:0;padding:14px 16px;overflow:auto;font-family:var(--mono);font-size:11px;line-height:1.5;color:#cfe0d8;white-space:pre;flex:1;}
 
 /* ---- admiralty chart chrome ---- */
+.objbox{font-size:11px;line-height:1.25;color:#cbb98a;max-width:230px;flex:1 1 auto;min-width:0;}
+.objbox b{color:var(--brass);font-weight:600;}
+@media (max-width:760px){.objbox{max-width:none;font-size:10px}}
 #topbar,#rail{box-shadow:inset 0 1px rgba(232,221,199,.06),inset 0 -1px rgba(200,164,92,.12);}
 #panel{box-shadow:0 20px 56px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.12),inset 0 -1px rgba(255,255,255,.035);}
 #panel.expanded::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.008) 26%,rgba(0,0,0,.018));opacity:.72;}
@@ -728,6 +731,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div id="topbar">
     <div class="brand"><span id="brandText">Echelon</span><span class="sub" id="subText">Naval Action</span></div>
     <div class="turnbox">Turn <b id="turnNum">1</b> · <span id="phaseLabel">Plan · give orders</span></div>
+    <div class="objbox" id="objBox"></div>
     <div class="strengths">
       <div class="sbar"><div class="lab"><span class="nm" id="sideAName">Side A</span><span id="chinaPct">100%</span></div><div class="track"><div id="chinaBarFill"></div></div></div>
       <div class="sbar"><div class="lab"><span class="nm" id="sideBName">Side B</span><span id="japanPct">100%</span></div><div class="track"><div id="japanBarFill"></div></div></div>
@@ -5047,19 +5051,66 @@ const SIDE_OBJECT = {
                 Ottoman: "Put six of them out of action inside your own crescent: spring your broadsides on, cut your cables and board the ones that falter." },
   yalu:       { China: "Keep the fleet in being and the transports safe.",
                 Japan: "Break the Beiyang line and drive it from the sea." },
-  yellow_sea: { Russia: "Break through and run for Vladivostok as a fleet.",
+  yellow_sea: { Russia: "Break through east-south-east and run for Vladivostok as a fleet: half your ships past the line.",
                 Japan: "Turn them back to Port Arthur." },
-  tsushima_approach: { Russia: "Get past him with your line intact.",
+  tsushima_approach: { Russia: "Get past him with your line intact and half your ships north-north-east through the line.",
                 Japan: "Cross ahead and bring your whole line to bear." },
-  tsushima:   { Russia: "Keep the squadron together and reach the north.",
+  tsushima:   { Russia: "Keep the squadron together and get half of it north-north-east past the line to Vladivostok.",
                 Japan: "Destroy the squadron: nothing less will answer." },
   second_heligoland: { Britain: "Destroy the sweepers, or two of Reuter's cruisers, and be gone before the battleships reach you.",
-                Germany: "Bring five of the eight sweepers home and lead the pursuit onto Kaiser and Kaiserin." },
-  run_north:  { Britain: "Keep three of the four Queen Elizabeths and two battlecruisers in being until Jellicoe is sighted.",
+                Germany: "Bring five of the eight sweepers home to the south-east and lead the pursuit onto Kaiser and Kaiserin." },
+  run_north:  { Britain: "Run north-north-west to Jellicoe with three of the four Queen Elizabeths and two battlecruisers still in being.",
                 Germany: "Cripple two of the Queen Elizabeths, or two battlecruisers, before the light goes." },
   run_south:  { Britain: "Put two of Hipper's five out of action before Scheer comes up.",
                 Germany: "Still be leading them south when the High Seas Fleet is sighted." },
 };
+// Where a side is trying to GET TO. Half these battles are not about destroying
+// the enemy at all, and a player told to "run for Vladivostok" had no way of
+// knowing which way that was. Each entry gives the true bearing of the objective
+// and how far along it a ship must get to have made her escape, measured from
+// where that side deploys. Distances are the in-game map, not the real chart.
+const SIDE_GOAL = {
+  yellow_sea: { Russia: { brg: 110, dist: 26000, label: "Vladivostok" } },
+  tsushima_approach: { Russia: { brg: 25, dist: 24000, label: "Vladivostok" } },
+  tsushima:   { Russia: { brg: 25, dist: 26000, label: "Vladivostok" } },
+  run_north:  { Britain: { brg: 340, dist: 24000, label: "Jellicoe" } },
+  run_south:  { Germany: { brg: 145, dist: 22000, label: "Scheer" } },
+  second_heligoland: { Germany: { brg: 130, dist: 24000, label: "The Bight" },
+                       Britain: { brg: 310, dist: 26000, label: "Home water" } },
+  yalu:       { China: { brg: 300, dist: 20000, label: "The Yalu mouth" } },
+  camperdown: { Netherlands: { brg: 95, dist: 14000, label: "The shoals" } },
+  trafalgar:  { Combined: { brg: 40, dist: 20000, label: "Cadiz" } },
+};
+function sideGoal(cfg, sideId) { return (SIDE_GOAL[cfg.id] && SIDE_GOAL[cfg.id][sideId]) || null; }
+// Fixed at deployment from the side's own centre, so the line does not wander.
+function computeGoals() {
+  game.goals = {};
+  for (const sd of SCN.sides) {
+    const G = sideGoal(SCN, sd.id); if (!G) continue;
+    const own = game.ships.filter((x) => x.side === sd.id);
+    if (!own.length) continue;
+    const cx = own.reduce((t, q) => t + q.x, 0) / own.length, cy = own.reduce((t, q) => t + q.y, 0) / own.length;
+    const rad = G.brg * Math.PI / 180, ux = Math.sin(rad), uy = -Math.cos(rad);
+    // Measured from the ship already furthest along the escape bearing, not from
+    // the fleet's centre: at Second Heligoland the covering battleships lie far
+    // down the line of retreat, and a centre-measured line started behind them,
+    // so two ships counted as escaped before a shot was fired.
+    let lead = 0;
+    for (const q of own) lead = Math.max(lead, (q.x - cx) * ux + (q.y - cy) * uy);
+    const D = lead + G.dist;
+    game.goals[sd.id] = { ux, uy, x: cx + ux * D, y: cy + uy * D, ox: cx, oy: cy, brg: G.brg, dist: D, label: G.label };
+  }
+}
+// How far a ship still has to run, and whether she is through.
+function goalProgress(ship) {
+  const g = game.goals && game.goals[ship.side]; if (!g) return null;
+  const along = (ship.x - g.ox) * g.ux + (ship.y - g.oy) * g.uy;
+  return { along, remain: Math.max(0, g.dist - along), through: along >= g.dist, g };
+}
+function goalThroughCount(sideId) {
+  const g = game.goals && game.goals[sideId]; if (!g) return 0;
+  return game.ships.filter((x) => x.side === sideId && !x.out && goalProgress(x) && goalProgress(x).through).length;
+}
 function sideObject(cfg, sideId) { return (SIDE_OBJECT[cfg.id] && SIDE_OBJECT[cfg.id][sideId]) || ""; }
 
 function sideEnsignURL(cfg, sideId, w, h) {
@@ -6325,8 +6376,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "1.24";
-const ECHELON_BUILD_NOTE = "waypoint arrowheads, marked squadron chips, and the phone controls that were hidden or dead";
+const ECHELON_VERSION = "1.26";
+const ECHELON_BUILD_NOTE = "if you are running, the game now shows you where to run and counts who gets through";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
@@ -6639,23 +6690,34 @@ SCENARIO_CONFIGS.second_heligoland = {
   defaultResolve: { Britain: 0.85, Germany: 0.85 },
   flagship: { Britain: "courageous", Germany: "de_iisg_17_1" },
   admiral: { Britain: "Vice-Admiral Napier", Germany: "Rear-Admiral von Reuter" },
-  ai: { Britain: { min: 7000, max: 13000 }, Germany: { min: 8000, max: 14000 } },
-  maxTurns: 30, maxSeconds: 8000, breakAt: 0.20,
+  // The bands are the two sides' intentions, and they are opposite here: Napier
+  // wants to close and kill the sweepers, Reuter wants to stay at arm's length and
+  // draw the chase onto the battleships. The first cut gave both sides a long band,
+  // so from 6.5 km each ran from the other and the action dissolved.
+  ai: { Britain: { min: 2500, max: 9000 }, Germany: { min: 9000, max: 15000 } },
+  maxTurns: 34, maxSeconds: 8000, breakAt: 0.20,
   intro: "Dawn haze over the Bight. The sweepers are out clearing the British minefields with Reuter's light cruisers in cover, and out of the mist to the north-west come Courageous, Glorious, two squadrons of light cruisers and, working up to full speed astern of them, Repulse. The chase will run south-east for two hours, into the smoke, through the mine barriers, toward the German battleships.",
   deploy: function (place, playerSide, key, proc, F) {
     function col(vanX, vanY, hdg, ids, gap) {
       const rad = hdg * Math.PI / 180, ax = -Math.sin(rad), ay = -Math.cos(rad);
       return { __geo: "engine", ships: ids.map((id, i) => ({ id, x: Math.round(vanX + ax * gap * i), y: Math.round(vanY + ay * gap * i), heading_deg: hdg })) };
     }
-    place(col(0, 0, 130, ["sweepers"], 0));                                    // the quarry, running for home
-    place(col(-1200, -900, 130, ["de_iisg_17"], 0));                           // Reuter between the hunters and his charges
-    place(col(600, -1600, 130, ["de_tb_17"], 0));
-    place(col(-8200, 3800, 135, ["courageous","glorious"], 600));              // Napier out of the haze
-    place(col(-6800, 5400, 135, ["lcs6_17"], 0));
-    place(col(-9600, 2400, 135, ["lcs1_17"], 0));
-    place(col(-8000, 1000, 135, ["gb_dd_17"], 0));
-    place(col(-12400, 6400, 135, ["repulse"], 0));                             // coming up at speed
-    place(col(13000, -8600, 315, ["kaiser","kaiserin"], 600));                 // the heavy cover, standing out
+    // Everything is laid out ALONG the line of retreat, 130 degrees. The first cut
+    // put the British abeam of that line instead of astern of it, so both fleets
+    // ran parallel on the same course and the range opened from nine kilometres to
+    // twenty-one: a chase in which nobody was chasing. Napier is now eight
+    // kilometres directly astern of the sweepers, who make sixteen knots to his
+    // thirty-two, so they can be run down in about sixteen turns; Reuter's twenty-
+    // seven and a half knots cannot be caught, only shot at, which is what happened.
+    place(col(0, 0, 130, ["sweepers"], 0));                                  // the quarry, running for home
+    place(col(-956, -1194, 130, ["de_iisg_17"], 0));                                // Reuter between the hunters and his charges
+    place(col(-2187, -660, 130, ["de_tb_17"], 0));
+    place(col(-6128, -5142, 130, ["courageous","glorious"], 600));                   // Napier astern, running them down
+    place(col(-6801, -3096, 130, ["lcs6_17"], 0));
+    place(col(-5238, -7137, 130, ["lcs1_17"], 0));
+    place(col(-3192, -6464, 130, ["gb_dd_17"], 0));
+    place(col(-10090, -7422, 130, ["repulse"], 0));                                   // coming up at speed from astern
+    place(col(20689, 15793, 310, ["kaiser","kaiserin"], 600));                       // the heavy cover, standing out to meet them
   },
 };
 SCENARIO_CONFIGS.second_heligoland.opening = "Second Heligoland Bight";
@@ -7357,6 +7419,7 @@ function setupScenario(playerSide, chineseFormationKey) {
   for (const s of game.ships) { s._follow = null; s._inLine = false; s._manualThisTurn = false; }
   autoFormHistoricalSquadrons();
   for (const p of pendingSquads) formSquadron(p.ids, p.name, true);   // the expanded squadrons, both sides
+  computeGoals();
   rememberSquadronOrganisation();
 
   game.phase = "plan";              // plan first, then Execute resolves both sides at once
@@ -8091,6 +8154,13 @@ function genericObjectiveOutcome(side) {
     { label: "Your fleet held together (above 50%)", met: own >= 0.50 && !ownGone },
     { label: "Half the enemy line removed from combat", met: foeLost >= Math.ceil(foeShips.length / 2) },
   ];
+  // A scenario with an escape objective is not judged only on wreckage: getting
+  // through is the point, and it is listed first so the player sees it.
+  const gG = game.goals && game.goals[side];
+  if (gG) {
+    const alive = aliveOnSide(side).length, through = goalThroughCount(side);
+    objectives.unshift({ label: `Half your force past ${gG.label} (${through} of ${alive} through)`, met: through >= Math.ceil(alive / 2) });
+  }
   let result, title;
   if (foeGone || (foe < 0.40 && own >= 0.55)) { result = "win"; title = own >= 0.75 ? "Decisive Victory" : "Victory"; }
   else if (ownGone || own < 0.40) { result = "loss"; title = own < 0.20 ? "Crushing Defeat" : "Defeat"; }
@@ -8207,7 +8277,9 @@ function runNorthObjectiveOutcome(side) {
   const broken = qeOut >= 2 || bcOut >= 2;
   const delivered = limit && !broken;
   if (side === "Britain") {
+    const through = goalThroughCount("Britain"), alive = aliveOnSide("Britain").length;
     const objectives = [
+      { label: `Half the fast wing north past Jellicoe (${through} of ${alive} through)`, met: through >= Math.ceil(alive / 2) },
       { label: "Three of the four Queen Elizabeths still in being", met: qeOut < 2 },
       { label: "Two battlecruisers still in being", met: bcOut < 2 },
       { label: "Running until Jellicoe is sighted", met: limit },
@@ -8246,8 +8318,9 @@ function heligolandObjectiveOutcome(side) {
     if (capOut > 0) return { side, result: "loss", won: false, title: "Drawn Onto the Heavy Guns", score, objectives, own: gb, foe: de, ownLost: capOut, foeLost: 8 - swAlive + clOut };
     return { side, result: "draw", won: false, title: "The Chase Broken Off", score, objectives, own: gb, foe: de, ownLost: capOut, foeLost: 8 - swAlive + clOut };
   }
+  const swThrough = game.ships.filter((x) => x.def && x.def.squadron === "sweepers" && !x.out && goalProgress(x) && goalProgress(x).through).length;
   const objectives = [
-    { label: "Five of the eight sweepers brought home", met: saved },
+    { label: `Five of the eight sweepers brought home (${swThrough} into the Bight, ${swAlive} still afloat)`, met: saved },
     { label: "A British capital ship crippled", met: capOut >= 1 },
     { label: "Reuter's squadron still in being", met: clOut < 2 },
   ];
@@ -8508,6 +8581,38 @@ function redraw() {
         ctx.save(); ctx.fillStyle = "rgba(6,10,26," + (0.35 * t).toFixed(3) + ")"; ctx.fillRect(0, 0, v.w, v.h); ctx.restore();
       }
     }
+  }
+  // The objective made visible: the line to cross, and, when it is off the screen,
+  // an arrow at the edge with its bearing and the distance still to run.
+  if (game.goals && game.playerSide && game.goals[game.playerSide]) {
+    const g = game.goals[game.playerSide];
+    const sx = wx(v, g.x), sy = wy(v, g.y);
+    const px2 = -g.uy, py2 = g.ux, half = 9000 * v.scale;
+    ctx.save();
+    ctx.setLineDash([9, 7]); ctx.lineWidth = 1.4; ctx.strokeStyle = "rgba(224,178,58,0.55)";
+    ctx.beginPath(); ctx.moveTo(sx - px2 * half, sy - py2 * half); ctx.lineTo(sx + px2 * half, sy + py2 * half); ctx.stroke();
+    ctx.setLineDash([]);
+    const inView = sx > -40 && sx < v.w + 40 && sy > -40 && sy < v.h + 40;
+    if (inView) {
+      ctx.font = "600 11px ui-sans-serif, system-ui, sans-serif"; ctx.textAlign = "center";
+      ctx.fillStyle = "rgba(232,220,192,0.9)"; ctx.fillText(g.label, sx, sy - 8);
+    } else {
+      // an arrow pinned at the edge, pointing the way out
+      const cx0 = v.w / 2, cy0 = v.h / 2, dx = sx - cx0, dy = sy - cy0;
+      const m = Math.max(Math.abs(dx) / (v.w / 2 - 34), Math.abs(dy) / (v.h / 2 - 34)) || 1;
+      const ex = cx0 + dx / m, ey = cy0 + dy / m, a2 = Math.atan2(dy, dx);
+      ctx.translate(ex, ey); ctx.rotate(a2);
+      ctx.fillStyle = "rgba(224,178,58,0.85)";
+      ctx.beginPath(); ctx.moveTo(13, 0); ctx.lineTo(-7, 8); ctx.lineTo(-3, 0); ctx.lineTo(-7, -8); ctx.closePath(); ctx.fill();
+      ctx.rotate(-a2);
+      const own0 = game.ships.filter((q) => q.side === game.playerSide && !q.out);
+      const prog = own0.length ? goalProgress(own0[0]) : null;
+      const km = prog ? Math.max(0, Math.round(prog.remain / 100) / 10) : 0;
+      ctx.font = "600 10px ui-sans-serif, system-ui, sans-serif"; ctx.textAlign = "center";
+      ctx.fillStyle = "rgba(232,220,192,0.92)";
+      ctx.fillText(g.label + "  " + km + " km", 0, a2 > 0 ? 22 : -14);
+    }
+    ctx.restore();
   }
   for (const s of visibleShips) drawShipSmoke(ctx, v, s, _tSec);
   for (const s of visibleShips) {
@@ -12364,6 +12469,21 @@ function quitToMenu() {
 function startGame(playerSide, formationKey) {
   game._lastStart = { scn: SCN.id, side: playerSide, form: formationKey };
   setupScenario(playerSide, formationKey);
+  const ob = document.getElementById("objBox");
+  if (ob && game.started) {
+    // The player's object, always on screen, with live progress where the
+    // objective is geographic: how many are through, and how far is left to run.
+    let t = (typeof sideObject === "function" ? sideObject(SCN, game.playerSide) : "") || "";
+    const g = game.goals && game.goals[game.playerSide];
+    if (g) {
+      const own = game.ships.filter((q) => q.side === game.playerSide && !q.out);
+      const through = goalThroughCount(game.playerSide);
+      let near = null;
+      for (const q of own) { const p = goalProgress(q); if (p && (!near || p.remain < near)) near = p.remain; }
+      t = `<b>${g.label}</b> ${(Math.round((near || 0) / 100) / 10)} km · ${through}/${own.length} through · ` + t;
+    }
+    ob.innerHTML = t;
+  }
   // topbar chrome from the active scenario (no-ops on shells without these ids)
   const bt = document.getElementById("brandText"); if (bt) bt.textContent = SCN.brand;
   const st = document.getElementById("subText"); if (st) st.textContent = SCN.subtitle;
