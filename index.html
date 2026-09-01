@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="1.26" />
+<meta name="application-version" content="1.27" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -493,9 +493,14 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 #logModalPre{margin:0;padding:14px 16px;overflow:auto;font-family:var(--mono);font-size:11px;line-height:1.5;color:#cfe0d8;white-space:pre;flex:1;}
 
 /* ---- admiralty chart chrome ---- */
-.objbox{font-size:11px;line-height:1.25;color:#cbb98a;max-width:230px;flex:1 1 auto;min-width:0;}
+/* The objective readout floats OVER the chart. In the topbar it was a flex child
+   that stretched the bar until the whole layout collapsed in portrait: the map was
+   squeezed to a strip and the turn counter ran off the screen. Nothing that can
+   grow with its text belongs in that row. */
+.objbox{position:absolute;top:6px;left:8px;right:8px;pointer-events:none;z-index:3;
+  font-size:11px;line-height:1.3;color:#cbb98a;text-shadow:0 1px 3px rgba(6,14,18,.9);}
 .objbox b{color:var(--brass);font-weight:600;}
-@media (max-width:760px){.objbox{max-width:none;font-size:10px}}
+@media (max-width:760px){.objbox{font-size:10px;top:4px}}
 #topbar,#rail{box-shadow:inset 0 1px rgba(232,221,199,.06),inset 0 -1px rgba(200,164,92,.12);}
 #panel{box-shadow:0 20px 56px rgba(0,0,0,.38),inset 0 1px rgba(255,255,255,.12),inset 0 -1px rgba(255,255,255,.035);}
 #panel.expanded::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.008) 26%,rgba(0,0,0,.018));opacity:.72;}
@@ -731,7 +736,6 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div id="topbar">
     <div class="brand"><span id="brandText">Echelon</span><span class="sub" id="subText">Naval Action</span></div>
     <div class="turnbox">Turn <b id="turnNum">1</b> · <span id="phaseLabel">Plan · give orders</span></div>
-    <div class="objbox" id="objBox"></div>
     <div class="strengths">
       <div class="sbar"><div class="lab"><span class="nm" id="sideAName">Side A</span><span id="chinaPct">100%</span></div><div class="track"><div id="chinaBarFill"></div></div></div>
       <div class="sbar"><div class="lab"><span class="nm" id="sideBName">Side B</span><span id="japanPct">100%</span></div><div class="track"><div id="japanBarFill"></div></div></div>
@@ -741,6 +745,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   <div id="main">
     <div id="chartWrap">
       <canvas id="chart"></canvas>
+      <div class="objbox" id="objBox"></div>
       <div class="squadron-chips" id="squadronChips" aria-label="Squadron shortcuts"></div>
       <div id="logDrawer">
         <div class="log-head"><div class="log-handle" id="logBtn">Signal log ▴</div><button class="log-analysis" id="analysisBtn">Mechanics</button></div>
@@ -4921,7 +4926,7 @@ function drawSchematic(ctx, L, B, plan, ink, sacc, dim, ship) {
 function renderedLossStatus(ship) {
   const reason = (ship && ship.outReason) || "";
   if (reason === "sunk" || reason === "foundered" || reason === "sunk after structural collapse" || reason === "wrecked beyond repair" || reason === "wrecked beyond fighting" || reason.includes("magazine explosion")) return "TOTAL LOSS";
-  const frac = ship && ship.structureMax ? Math.max(0, ship.structure / ship.structureMax) : 0;
+  const frac = displayedStructureFrac(ship);
   if (reason.includes("settling") || reason.includes("abandoned") || reason.includes("burnt out") || frac <= 0.08 || (ship.flooding || 0) >= 55) return "ABANDONED";
   return "DISABLED AFLOAT";
 }
@@ -5234,6 +5239,21 @@ function drawGroupEntity(ctx, v, ship, opts) {
   ctx.restore();
 }
 
+// Both fleets fire from where they lay when the turn was ordered: the guns are
+// resolved simultaneously at the start of execution, and the movement that follows
+// is the same turn's steaming, not a later one. That is why the arithmetic is
+// complete before the ships have finished moving. What the PLAYER should not see
+// is every hull bar dropping at once on the instant he presses the button, so the
+// bar walks from where it stood to where the salvos have left it across the
+// execution, while the underlying number is already final.
+function displayedStructureFrac(ship) {
+  if (!ship || !ship.structureMax) return 0;
+  const now = Math.max(0, ship.structure / ship.structureMax);
+  if (ship._structPrev == null || !game.exec) return now;
+  const t = Math.min(1, Math.max(0, game.exec.t / Math.max(0.001, game.exec.dur)));
+  const was = Math.max(0, ship._structPrev / ship.structureMax);
+  return was + (now - was) * t;
+}
 function drawShipInner(ctx, v, ship, opts) {
   opts = opts || {};
   if (ship.def && ship.def.plan_template === "sail") return drawSailShipTop(ctx, v, ship, opts);
@@ -5399,7 +5419,7 @@ function drawShipInner(ctx, v, ship, opts) {
       ctx.globalAlpha = 1;
     }
     if (!ship.out) {
-      const frac = Math.max(0, ship.structure / ship.structureMax);
+      const frac = displayedStructureFrac(ship);
       const bw = Math.max(tw, 22);
       ctx.fillStyle = "rgba(0,0,0,0.45)"; ctx.fillRect(cx - bw / 2, cy - yoff + 4, bw, 2.5);
       ctx.fillStyle = frac > 0.5 ? "#79b07a" : frac > 0.25 ? PALETTE.brass : PALETTE.japanRed;
@@ -6376,8 +6396,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "1.26";
-const ECHELON_BUILD_NOTE = "if you are running, the game now shows you where to run and counts who gets through";
+const ECHELON_VERSION = "1.27";
+const ECHELON_BUILD_NOTE = "portrait layout restored, one squadron designation everywhere, damage that reads across the turn";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
@@ -7414,6 +7434,8 @@ function setupScenario(playerSide, chineseFormationKey) {
   // reform or disband them manually. The Chinese Yalu arc remains ungrouped.
   game.squadrons = [];
   game._squadSeq = 0;
+  game._marks = {};   // squadron letters restart each battle: they had carried over from the last one, so the first cruiser squadron of a second game came up B
+
   game._divLines = null;
   game.multiSel = false; game.pendingSel = []; game.menuMode = "ship"; game.selSquadId = null;
   for (const s of game.ships) { s._follow = null; s._inLine = false; s._manualThisTurn = false; }
@@ -9673,9 +9695,13 @@ function playerSquadrons() {
     return lead && !lead.out && lead.side === game.playerSide && sq.members.some((id) => { const x = shipById(id); return x && !x.out; });
   });
 }
+// One designation, used by the chips, the fleet list, the squadron panel and every
+// log line. A squadron that shows "b" on the map must not show "4" in a menu.
 function squadronDisplayNumber(sq) {
-  const i = playerSquadrons().findIndex((q) => q.id === (sq && sq.id));
-  return i >= 0 ? i + 1 : (sq ? sq.id : "");
+  if (sq && sq.mark) return sq.mark;
+  const hand = playerSquadrons().filter((q) => !q.mark);
+  const i = hand.findIndex((q) => q.id === (sq && sq.id));
+  return i >= 0 ? String(i + 1) : (sq ? String(sq.id) : "");
 }
 
 // Squadron organisation is a command preference, not battle damage. Keep a clean
@@ -10061,6 +10087,7 @@ function refillReadiness() {
 function startExecute() {
   if (game.phase !== "plan" || game.exec) return;
   game._outAtTurnStart = new Set(game.ships.filter((s) => s.out).map((s) => s.id));
+  for (const s of game.ships) s._structPrev = s.structure;   // so the bars can walk down with the salvos instead of jumping
   reconcileSquadrons();                                    // hand off any flag whose leader has been lost
   // 1) decide each ship's order for the turn
   if (game._divLines) {
@@ -10728,7 +10755,7 @@ function renderMultiSelectPanel(body) {
     if (sq) {
       rememberSquadronOrganisation();
       game.selSquadId = sq.id; game.selectedId = sq.leaderId; game.menuMode = "squad";
-      logLine(`Squadron ${sq.id} formed under ${shipById(sq.leaderId).name}.`, "");
+      logLine(`Squadron ${squadronDisplayNumber(sq)} formed under ${shipById(sq.leaderId).name}.`, "");
     }
     setMultiSelBtn(); syncPanel();
   });
@@ -11529,9 +11556,8 @@ function renderSquadronChips() {
 // and small-craft divisions a b c, torpedo-boat flotillas i ii iii, and the
 // capital-ship squadrons the player forms by hand keep plain numbers. Marks are at
 // most three characters, so the row is no wider than it was.
-  let handSeq = 0;
   host.innerHTML = own.map((sq, i) => {
-    const mark = sq.mark || String(++handSeq);
+    const mark = squadronDisplayNumber(sq);
     const kind = sq.mark ? (/^[A-Z]$/.test(sq.mark) ? "cl" : /^[a-z]$/.test(sq.mark) ? "dd" : "tb") : "cap";
     return `<button class="squad-chip sc-${kind}${game.menuMode === "squad" && game.selSquadId === sq.id ? " active" : ""}" data-squad-chip="${sq.id}" aria-label="Select ${sq.name || ("Squadron " + mark)}" title="Select ${sq.name || ("Squadron " + mark)}">${mark}</button>`;
   }).join("");

@@ -1,4 +1,4 @@
-var CACHE_NAME = "echelon-v1.26";
+var CACHE_NAME = "echelon-v1.27";
 var ROOT = self.registration.scope;
 var INDEX_URL = new URL("./index.html", ROOT).toString();
 var MANIFEST_URL = new URL("./manifest.webmanifest", ROOT).toString();
