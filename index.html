@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="1.33" />
+<meta name="application-version" content="1.35" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -433,7 +433,10 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   .status-strip,.systems-strip,.target-chip,.helm-block,.formation-block,.doctrine-icons,.battery-strip,.member-grid,.command-foot,.board-odds{flex:0 0 auto;margin-top:0}
   .command-foot{display:flex;flex-wrap:wrap;gap:6px;width:100%}
   .doctrine-icons,.torp-icons{display:flex;flex-wrap:wrap;gap:5px;max-width:100%}
-  .command-head{order:0}.formation-block{order:1}.helm-block{order:2}.systems-strip{order:3}.status-strip{order:4}.target-chip{order:5}.doctrine-icons{order:6}.torp-icons{order:6}.battery-strip{order:7}.member-grid{order:8}.command-foot{order:9}
+  /* What the player reaches for every turn comes first: formation, then the shell
+     row (which carries boarding and cable under sail), then torpedoes, then the
+     helm. Readouts come after the controls. */
+  .command-head{order:0}.formation-block{order:1}.doctrine-icons{order:2}.torp-icons{order:3}.helm-block{order:4}.target-chip{order:5}.join-icons{order:6}.systems-strip{order:7}.status-strip{order:8}.battery-strip{order:9}.member-grid{order:8}.command-foot{order:9}
   .member-grid{display:flex;width:100%;max-width:none;overflow-x:auto;gap:5px;margin-top:0}
   .member-chip{width:118px;min-width:118px}
   .mini-profile{display:none!important}
@@ -606,7 +609,10 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
   .status-strip,.systems-strip,.target-chip,.helm-block,.formation-block,.doctrine-icons,.battery-strip,.member-grid,.command-foot,.board-odds{flex:0 0 auto;margin-top:0}
   .command-foot{display:flex;flex-wrap:wrap;gap:6px;width:100%}
   .doctrine-icons,.torp-icons{display:flex;flex-wrap:wrap;gap:5px;max-width:100%}
-  .command-head{order:0}.formation-block{order:1}.helm-block{order:2}.systems-strip{order:3}.status-strip{order:4}.target-chip{order:5}.doctrine-icons{order:6}.torp-icons{order:6}.battery-strip{order:7}.member-grid{order:8}.command-foot{order:9}
+  /* What the player reaches for every turn comes first: formation, then the shell
+     row (which carries boarding and cable under sail), then torpedoes, then the
+     helm. Readouts come after the controls. */
+  .command-head{order:0}.formation-block{order:1}.doctrine-icons{order:2}.torp-icons{order:3}.helm-block{order:4}.target-chip{order:5}.join-icons{order:6}.systems-strip{order:7}.status-strip{order:8}.battery-strip{order:9}.member-grid{order:8}.command-foot{order:9}
   .status-strip,.systems-strip{max-width:220px;align-content:center}
   .target-chip{width:145px}
   .member-grid{display:flex;width:100%;max-width:none;overflow-x:auto;gap:5px;margin-top:0}
@@ -633,6 +639,8 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
 .st-out .rr-class-chip,.st-sunk .rr-class-chip{color:#c98d82}.loss-name.permanent .loss-class-chip{position:relative;opacity:.35;filter:grayscale(1)}.loss-name.permanent .loss-class-chip::after{content:"";position:absolute;left:1px;right:1px;top:50%;height:1.5px;background:currentColor;transform:rotate(-27deg);transform-origin:center}.loss-name.permanent b{text-decoration:line-through;opacity:.66}.loss-name.st-out,.loss-name.st-sunk{color:#c98d82}.loss-name.st-heavy{color:#d0b46d}
 .squad-access{min-width:38px!important;width:38px!important;padding:0!important}.squad-access span{display:none!important}.squad-access svg{width:20px!important;height:20px!important}.squadron-chips{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);display:none;gap:7px;z-index:18;pointer-events:none;transition:bottom .16s ease}.squadron-chips.show{display:flex}/* The torpedo row must not read as another shell row: its own label, its own
    steel-blue accent against the shell row's brass, and a squarer button. */
+.join-icons{display:flex;flex-wrap:wrap;gap:4px;align-items:center;}
+.join-icons .text-icon{border-color:rgba(200,164,92,.4);color:var(--brass);min-width:26px;}
 .row-label{display:block;font-family:var(--mono);font-size:7px;letter-spacing:1px;color:var(--brass-dim);text-align:center;width:100%}
 .torp-icons .row-label{color:#7fa6c8}
 .torp-icons .text-icon{border-color:rgba(127,166,200,.45);color:#a9c4d6;border-radius:4px;}
@@ -676,6 +684,7 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
      shell choice could not be reached at all on a phone. */
   .squad-command{display:grid;grid-template-columns:minmax(0,1fr) 104px;grid-template-rows:30px 63px 67px;grid-template-areas:"head head" "formation doctrine" "helm helm";align-items:stretch}
   .squad-command:has(.torp-icons),.squad-command.has-torp{grid-template-columns:minmax(0,1fr) 92px 78px;grid-template-areas:"head head head" "formation doctrine torp" "helm helm helm"}
+  .join-icons{grid-area:join}
   .ship-command{display:grid;grid-template-columns:minmax(0,1fr) 104px;grid-template-rows:30px 67px 52px;grid-template-areas:"head head" "helm doctrine" "status status";align-items:stretch}
 
   .command-head{grid-area:head;width:auto!important;min-width:0!important;display:flex;align-items:center;height:30px;padding:0 2px;gap:5px;border-bottom:1px solid rgba(200,164,92,.12)}
@@ -722,11 +731,12 @@ html,body{margin:0;height:100%;overflow:hidden;background:var(--sea-deep);color:
      turn the phone on its side to reach them; the panel now scrolls sideways, which
      is what he expected it to do, with the ship's name pinned at the left so he
      knows what he is commanding while he scrolls. */
-  .squad-command,.ship-command{display:flex!important;flex-wrap:nowrap!important;overflow-x:auto!important;
+  /* Stacked two deep and scrolled across, so the same controls take half the
+     swipes they did in a single long row. */
+  .squad-command,.ship-command{display:flex!important;flex-flow:column wrap!important;max-height:152px;align-content:flex-start;overflow-x:auto!important;
     -webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;gap:8px;align-items:stretch;padding-bottom:5px}
   .squad-command > *,.ship-command > *{flex:0 0 auto;scroll-snap-align:start}
-  .squad-command .command-head,.ship-command .command-head{position:sticky;left:0;z-index:2;
-    background:linear-gradient(90deg,#0c2027 76%,rgba(12,32,39,0))}
+  .squad-command .command-head,.ship-command .command-head{max-width:52vw}
   .squad-command::-webkit-scrollbar,.ship-command::-webkit-scrollbar{height:3px}
   .squad-command::-webkit-scrollbar-thumb,.ship-command::-webkit-scrollbar-thumb{background:rgba(200,164,92,.35);border-radius:2px}
   .noscroll-never,
@@ -4755,7 +4765,9 @@ function drawSailShipTop(ctx, v, ship, opts) {
       }
     }
     const ly = cy + L * 0.62 + 9;
-    drawEnsign(ctx, cx + ldx - 6.5, ly - 7, 13, flagFor(ship), ship.out ? 0.35 : 0.9);
+    // No ensign on the chart: side is already carried by hull colour, and eighty
+    // little flags were the busiest and least useful mark on the screen. Ensigns
+    // remain on the setup, fleet and result pages, where they identify.
     if (isLead) {
       const alive = sqOf.members.filter((id) => { const m = shipById(id); return m && !m.out; }).length;
       ctx.save(); ctx.font = "600 10px ui-sans-serif, system-ui, sans-serif"; ctx.textAlign = "left"; ctx.textBaseline = "middle";
@@ -5583,8 +5595,7 @@ function drawShipInner(ctx, v, ship, opts) {
       label = (sqOfS.mark ? sqOfS.mark + "  " : "") + label + "  " + alive + "/" + sqOfS.members.length;
     }
     const tw = ctx.measureText(label).width;
-    // the ensign beside the name, as on the sail chart
-    drawEnsign(ctx, cx - tw / 2 - 20, cy - yoff - 8, 13, flagFor(ship), ship.out ? 0.35 : 0.9);
+
     // Names are always shown. v0.90 hid them below 24 px of drawn hull and that
     // was reverted: a commander reads her fleet by name at any zoom.
     const showName = true;
@@ -6633,8 +6644,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "1.33";
-const ECHELON_BUILD_NOTE = "sixteen more ships traced from the plans in hand, superfiring turrets, sinking, blasts and splash columns";
+const ECHELON_VERSION = "1.35";
+const ECHELON_BUILD_NOTE = "controls stacked two deep and kept in place, torpedoes for cruisers down, squadrons engaged as squadrons, no ensigns on the chart";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
@@ -10112,7 +10123,10 @@ function formSquadron(ids, name, autoFormed) {
   // Designation marks, per side: light cruiser squadrons A, B, C; destroyer
   // flotillas and small-craft divisions a, b, c; torpedo-boat flotillas i, ii, iii.
   // The mark rides on the leader's ensign so a busy screen still reads at a glance.
-  if (autoFormed) {
+  {
+    // The designation follows the CLASS of the squadron, not how it came to exist.
+    // It was assigned only to auto-formed squadrons, so a flotilla the player formed
+    // by hand fell back to a plain number and broke the scheme on his own screen.
     const lead0 = shipById(members[0]);
     // Peter's scheme: CAPITALS for armoured cruisers, small letters for light
     // cruisers, destroyers, minesweepers and anything of that size, small roman
@@ -10214,6 +10228,22 @@ function detachShipFromSquadron(shipId) {
 function squadronSetFormation(sq, formation) { if (sq) { sq.formation = formation || "line"; rebuildSquadronLines(); rememberSquadronOrganisation(); } }
 function squadronAdjustSpacing(sq, delta) { if (sq) { sq.spacing = clamp((sq.spacing || STATION_M) + delta, 250, 900); rememberSquadronOrganisation(); } }
 // Squadron orders write to every member; individuals are overridden because last write wins.
+// Add a ship to a squadron that already exists. Previously the only route was to
+// disband and re-form, which threw away the squadron's designation and its station
+// keeping for the sake of one ship.
+function joinSquadron(sq, id) {
+  const s = shipById(id);
+  if (!sq || !s || s.out || s.side !== game.playerSide) return false;
+  if (sq.members.includes(id)) return false;
+  for (const q of game.squadrons) if (q !== sq) q.members = q.members.filter((m) => m !== id);
+  game.squadrons = game.squadrons.filter((q) => q === sq || q.members.length >= 2);
+  game.squadrons.forEach((q) => { if (!q.members.includes(q.leaderId)) q.leaderId = q.members[0]; });
+  sq.members.push(id);
+  s._follow = null; s._inLine = false;
+  rebuildSquadronLines();
+  logLine(`${s.name} joins Squadron ${squadronDisplayNumber(sq)}.`, "");
+  return true;
+}
 function squadronSetDoctrine(sq, d) { for (const id of sq.members) { const s = shipById(id); if (s) s.doctrine = d; } }
 function squadronSetTarget(sq, tid) { for (const id of sq.members) { const s = shipById(id); if (s && !s.out) s.targetId = tid; } }
 function squadronSetCourse(sq, q, r) {            // flag steers to the hex; followers re-station behind it
@@ -11206,7 +11236,7 @@ function renderSquadronPanel(body, sq) {
         <button class="text-icon${live.every((s)=> s.doctrine === "AP") ? " active" : ""}" data-sqdoc="AP" title="Armour-piercing shells">AP</button>
         <button class="text-icon${live.every((s)=> s.doctrine === "HE") ? " active" : ""}" data-sqdoc="HE" title="High-explosive shells">HE</button>`}
       </div>
-      ${live.some((s) => s.torpedoes && s.torpedoes.count > 0) && live.every((s) => (s.length || 0) < 100) ? `<div class="torp-icons" aria-label="Torpedo mode"><span class="row-label">TORPEDO</span>
+      ${live.some((s) => s.torpedoes && s.torpedoes.count > 0) && live.every((s) => shipClassTier(s) !== "capital") ? `<div class="torp-icons" aria-label="Torpedo mode"><span class="row-label">TORPEDO</span>
         <button class="text-icon${live.every((s)=> (s._torpMode||"will") === "will") ? " active" : ""}" data-sqtorp="will" title="Torpedoes at whatever is there">Any</button>
         <button class="text-icon${live.every((s)=> s._torpMode === "capital") ? " active" : ""}" data-sqtorp="capital" title="Hold the tubes for capital ships">Cap</button>
         <button class="text-icon${live.every((s)=> s._torpMode === "light") ? " active" : ""}" data-sqtorp="light" title="Spend the tubes on small craft">Lt</button>
@@ -11268,12 +11298,23 @@ function syncPanel() {
   const body = document.getElementById("panelBody");
   const panel = document.getElementById("panel");
   if (!body || !panel) return;
+  // Choosing a shell or a torpedo mode re-renders the panel, which threw the
+  // scroll back to the first page, so the player could not see the choice he had
+  // just made without swiping back to it. Keep the place across the render.
+  const _keep = body.querySelector(".squad-command, .ship-command");
+  const _keepLeft = _keep ? _keep.scrollLeft : 0;
   renderSquadronChips();
 
   // a tapped ship (own or enemy) shows its info card in this same docked panel
   const card = shipById(game.cardId);
   if (card) { renderShipCard(body, card); setPanelExpanded(panel, true); resizeCanvas(); return; }
 
+  const _restore = () => {
+    if (!_keepLeft) return;
+    const el = body.querySelector(".squad-command, .ship-command");
+    if (el && el.scrollWidth > el.clientWidth) el.scrollLeft = _keepLeft;
+  };
+  if (typeof requestAnimationFrame === "function") requestAnimationFrame(_restore); else _restore();
   if (game.multiSel) { renderMultiSelectPanel(body); setPanelExpanded(panel, true); resizeCanvas(); return; }
   if (game.menuMode === "squad" && game.selSquadId) {
     const sq = squadronById(game.selSquadId);
@@ -11375,15 +11416,27 @@ function syncPanel() {
         <button class="text-icon${s.doctrine === "HE" ? " active" : ""}" data-shell="HE" title="High-explosive shells">HE</button>
         ${s.order ? `<button class="icon-btn" id="clearOrderBtn" title="Clear plotted course" aria-label="Clear plotted course">×</button>` : ""}
       </div>`) : ""}
-      ${s.side === game.playerSide && s.torpedoes && s.torpedoes.count > 0 && (s.length || 0) < 100 ? `
+      ${s.side === game.playerSide && s.torpedoes && s.torpedoes.count > 0 && shipClassTier(s) !== "capital" ? `
       <div class="torp-icons" aria-label="Torpedo mode"><span class="row-label">TORPEDO</span>
         <button class="text-icon${(s._torpMode||"will") === "will" ? " active" : ""}" data-shiptorp="will" title="Torpedoes at whatever is there">Any</button>
         <button class="text-icon${s._torpMode === "capital" ? " active" : ""}" data-shiptorp="capital" title="Hold the tubes for capital ships">Cap</button>
         <button class="text-icon${s._torpMode === "light" ? " active" : ""}" data-shiptorp="light" title="Spend the tubes on small craft">Lt</button>
       </div>` : ""}
+      ${(() => {
+        if (s.side !== game.playerSide || s.out) return "";
+        const own = (typeof playerSquadrons === "function" ? playerSquadrons() : []).filter((q) => !q.members.includes(s.id));
+        if (!own.length) return "";
+        return `<div class="join-icons" aria-label="Join a squadron"><span class="row-label">JOIN</span>` +
+          own.slice(0, 6).map((q) => `<button class="text-icon" data-join="${q.id}" title="Join ${q.name || ("Squadron " + squadronDisplayNumber(q))}">${squadronDisplayNumber(q)}</button>`).join("") +
+          `</div>`;
+      })()}
       <div class="battery-strip">${batChips}${torpChip}</div>
     </div>`;
 
+  body.querySelectorAll("[data-join]").forEach((btn) => btn.addEventListener("click", () => {
+    const q = (game.squadrons || []).find((x) => String(x.id) === btn.getAttribute("data-join"));
+    if (q && joinSquadron(q, s.id)) syncPanel();
+  }));
   body.querySelectorAll("[data-shiptorp]").forEach((btn) => btn.addEventListener("click", () => {
     s._torpMode = btn.getAttribute("data-shiptorp"); syncPanel();
   }));
@@ -11613,7 +11666,13 @@ function onPointerUp(e) {
           const sq = squadronById(game.selSquadId);
           if (sq) { squadronSetTarget(sq, ship.id); game.targetId = ship.id; logLine(`Squadron ${sq.id}: target ${ship.name}.`, ""); }
         } else if (sel0 && sel0.side === game.playerSide && !sel0.out && sel0.targetId !== ship.id) {
-          sel0.targetId = ship.id; game.targetId = ship.id; logLine(`${sel0.name}: target ${ship.name}.`, "");
+          // A flotilla is engaged as a flotilla: tapping one boat of a squadron aims
+          // at the squadron, and the fire is spread across it by the rule that
+          // already shares a squadron's fire among its targets.
+          const tsq = (typeof squadronOfShip === "function") ? squadronOfShip(ship) : null;
+          const aim = tsq ? (nearestAliveMemberOf(tsq, sel0) || ship) : ship;
+          sel0.targetId = aim.id; game.targetId = aim.id;
+          logLine(`${sel0.name}: target ${tsq ? (tsq.name || ("Squadron " + squadronDisplayNumber(tsq))) : ship.name}.`, "");
           if (isSailEra()) {
             // Under sail the order that follows a target is usually board, cut cable
             // or change the shot, so the command chips must stay under your hand
