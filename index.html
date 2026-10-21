@@ -870,6 +870,67 @@ body.steam-edition #panel .panel-title{height:28px;min-height:28px;font-size:10p
  .steam-help{margin:8px 0;line-height:1.45}
 }
 
+/* Alpha sixteen: the chart stays under a translucent, content-sized overlay. */
+body.steam-edition #main #panel{position:absolute;top:auto;right:8px;bottom:8px;left:auto;width:316px;min-width:0;height:auto;max-height:calc(100% - 16px);border:1px solid rgba(213,220,205,.25);border-radius:9px;background:rgba(9,32,39,.48);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);box-shadow:0 4px 18px rgba(0,0,0,.12)}
+body.steam-edition #main #panel:not(.expanded){display:none;height:0}
+body.steam-edition #panel .panel-title{background:rgba(10,33,39,.16);border-bottom-color:rgba(200,218,214,.18);padding:2px 6px;box-sizing:border-box}
+body.steam-edition #panelBody{flex:0 1 auto;min-height:0;overflow:auto}
+.steam-command button,.steam-command select{background-color:rgba(24,58,69,.36);border-color:rgba(196,216,218,.3)}
+.steam-command button.active{background:#d5c18c}
+.steam-shells{position:sticky;top:-1px;z-index:2;margin:4px 0 6px}
+.steam-shells button{background:rgba(17,43,50,.78)}
+.steam-target-row{min-height:30px;margin:0}
+.steam-target-row>span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#ecd4a0}
+.steam-target-row button{min-height:30px;height:30px}
+.steam-name span:empty{display:none}
+body.steam-edition #app #main #chartWrap #squadronChips{bottom:calc(var(--steam-panel-inset,0px) + 40px)!important;max-width:calc(100% - 20px);overflow-x:auto;transition:none}
+body.steam-edition #logDrawer{bottom:var(--steam-panel-inset,0px);max-height:45%;z-index:10}
+@media(max-width:960px) and (orientation:portrait){
+ body.steam-edition #main #panel{left:6px;right:6px;bottom:6px;width:auto;max-height:31dvh}
+ body.steam-edition #main #panel.tall,body.steam-edition #main #panel.steam-card{height:auto;max-height:42dvh}
+ body.steam-edition #main #chartWrap{min-height:0}
+ body.steam-edition #panelBody{padding:5px 8px}
+ .steam-command .steam-tabs{position:static;background:none}
+}
+@media(max-width:960px) and (orientation:landscape){
+ body.steam-edition #main{flex-direction:row}
+ body.steam-edition #main #panel{width:290px;right:6px;bottom:6px;max-height:calc(100% - 12px)}
+ body.steam-edition #main #panel.tall,body.steam-edition #main #panel.steam-card{width:min(380px,48vw);height:auto}
+ body.steam-edition #main #chartWrap{min-height:0}
+ body.steam-edition #topbar{padding:4px 10px;gap:10px}
+ body.steam-edition #topbar .strengths{display:none}
+ body.steam-edition #rail{gap:5px;padding:5px 8px}
+ body.steam-edition #rail #ffBtn,body.steam-edition #rail #ringsBtn,body.steam-edition #rail #arcsBtn,body.steam-edition #rail #labelsBtn,body.steam-edition #rail #codexBtn,body.steam-edition #rail #speedBtn,body.steam-edition #rail #recenterBtn,body.steam-edition #rail .rail-zoom{display:none!important}
+ body.steam-edition #rail #menuBtn{display:inline-flex!important}
+ body.steam-edition #app #main #chartWrap #squadronChips{left:102px;transform:none;max-width:calc(100% - 410px)}
+ body.steam-edition #logDrawer{max-width:calc(100% - 310px)}
+}
+
+/* Alpha twenty-five: one schematic icon set and quiet signal pennants. */
+.steam-icon{display:block;flex-shrink:0;pointer-events:none}
+.steam-command button:has(.steam-icon){display:inline-flex;align-items:center;justify-content:center}
+.steam-command .steam-tabs button{border-color:transparent;background:transparent;color:#b8c8c8;border-radius:4px}
+.steam-command .steam-tabs button:hover{background:rgba(213,193,140,.08);color:#efe2ba}
+.steam-command .steam-tabs button.active{color:#e4cf94;background:rgba(213,193,140,.12);border-color:rgba(213,193,140,.35);box-shadow:inset 0 -2px #d5c18c}
+.steam-name strong{white-space:normal;line-height:1.1;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.steam-helm-controls button{flex:1 0 40px}
+.steam-helm-controls select{flex:2 1 76px;min-width:76px}
+body.steam-edition #rail svg.steam-icon{width:22px;height:22px;stroke-width:1.5;fill:none}
+body.steam-edition #app #main #chartWrap #squadronChips{left:102px;transform:none;max-width:calc(100% - 442px);gap:2px;pointer-events:auto;touch-action:pan-x;overscroll-behavior-x:contain;scrollbar-width:none}
+body.steam-edition #app #main #chartWrap:not(.command-open) #squadronChips{max-width:calc(100% - 112px)}
+@media(max-width:960px) and (orientation:portrait){body.steam-edition #app #main #chartWrap #squadronChips{max-width:calc(100% - 112px)}}
+@media(max-width:960px) and (orientation:landscape){body.steam-edition #app #main #chartWrap.command-open #squadronChips{max-width:calc(100% - 410px)}}
+body.steam-edition #squadronChips::-webkit-scrollbar{display:none}
+body.steam-edition .squad-chip{display:flex;align-items:center;justify-content:center;flex:0 0 44px;min-width:44px;height:44px;padding:0;border:0;border-radius:4px;background:transparent;box-shadow:none;backdrop-filter:none;font-style:normal;color:#b4c5c9}
+body.steam-edition .squad-chip.sc-cap{color:#d7c59a}
+.steam-pennant{width:44px;height:36px;overflow:visible;pointer-events:none}
+.steam-pennant path{fill:rgba(9,32,39,.34);stroke:currentColor;stroke-width:1;stroke-opacity:.48;stroke-linejoin:round}
+.steam-pennant text{font:500 12px ui-monospace,SFMono-Regular,monospace;fill:currentColor}
+body.steam-edition .squad-chip:hover .steam-pennant path{stroke-opacity:1;fill:rgba(9,32,39,.6)}
+body.steam-edition .squad-chip.active{background:transparent;box-shadow:none;color:#172d33}
+.squad-chip.active .steam-pennant path{fill:#d5c18c;stroke:#d5c18c;stroke-opacity:1}
+body.steam-edition .squad-chip:focus-visible{outline:2px solid var(--steam-focus);outline-offset:-2px}
+
 </style>
 </head>
 <body>
@@ -2562,6 +2623,8 @@ function fireVolumeFactor(from) {
 // "auto" keeps what is already loaded unless the other type is clearly better, so captains
 // do not thrash between shell types every turn (a tolerance band around the penetration line).
 function shellToLoad(from, battery, target, range) {
+  const available=battery.gun.available_shells;
+  if(available?.length===1)return available[0];
   const doc = shellDoctrine(from);
   if (doc === "AP" || doc === "HE") return doc;
   const ideal = chooseShell(from, battery.gun, target, range);
@@ -2807,7 +2870,8 @@ function updateOutOfActionFate(s, ships, turn, log) {
     s.structure = Math.max(0, s.structure - burn);
     s.crew = clamp((s.crew || 0.2) - 0.0025 * fireLoad, 0.05, 1);
   }
-  s.engine = clamp((s.engine == null ? 1 : s.engine) - 0.008 - (s.flooding || 0) / 9000, 0.05, 1);
+  const priorEngine=s.engine??1;
+  s.engine = Math.min(priorEngine,clamp(priorEngine - 0.008 - (s.flooding || 0) / 9000, 0.05, 1));
 
   if ((s.flooding || 0) >= 85 || ((s.structure || 0) <= 0 && (s.flooding || 0) >= 55)) {
     s.flooding = Math.max(85, s.flooding || 0);
@@ -2851,7 +2915,8 @@ function upkeepTick(ships, turn, log) {
       const burn = s.fires * (s.structureMax * burnRate);
       const floor = softFloorFrac(s) * s.structureMax;
       s.structure = Math.min(s.structure, Math.max(s.structure - burn, floor));
-      s.crew = clamp(s.crew - crewRate * s.fires, 0.2, 1);
+      const burntCrew=clamp(s.crew - crewRate * s.fires, 0.2, 1);
+      s.crew = refined ? Math.min(s.crew,burntCrew) : burntCrew;
       let extinguished = 0;
       const pExtinguish = refined ? (0.14 + 0.34 * dc) : (0.50 * s.crew);
       for (let i = 0; i < s.fires; i++) if (rnd() < pExtinguish) extinguished++;
@@ -2864,7 +2929,7 @@ function upkeepTick(ships, turn, log) {
       // same water ingress and made concentrated end hits disproportionately lethal.
       if (refined) {
         const machineryErosion = 0.0025 + 0.010 * (s.flooding / 100);
-        s.engine = clamp(s.engine - machineryErosion, 0.1, s.engine);
+        s.engine = Math.min(s.engine,clamp(s.engine - machineryErosion, 0.1, s.engine));
         const pumping = 0.7 + 2.8 * dc;
         s.flooding = clamp(s.flooding - pumping, 0, 100);
       } else {
@@ -3456,6 +3521,14 @@ function resolveBoardings() {
 
 // ===== render.js =====
 // ===========================================================================
+
+// Frame-dependent paint state belongs to the renderer, not a ship or its save.
+// Weak keys discard it naturally when a battle is replaced or reloaded.
+const shipPaintStates=new WeakMap();
+function shipPaintState(ship){
+  let state=shipPaintStates.get(ship);if(!state)shipPaintStates.set(ship,state={});
+  return state;
+}
 //  render.js  - procedural top-down chart rendering for the Yalu simulator
 //  Pure canvas drawing. No game logic. Reads ship state produced by engine.js.
 //  Ships are drawn from a DISPLAY POSE (dx/dy/dh) which ui.js eases toward the
@@ -3575,7 +3648,7 @@ function drawSea(ctx, v) {
 }
 
 function drawCompass(ctx, v) {
-  const cx = 52, cy = v.h - 52, r = 28;
+  const cx = 52, cy = v.h - 52 - (typeof game!=='undefined'?game._steamOverlayInset||0:0), r = 28;
   ctx.save();
   ctx.globalAlpha = 0.5; ctx.strokeStyle = PALETTE.brass; ctx.lineWidth = 1.2;
   ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.stroke();
@@ -5023,8 +5096,9 @@ function legacyDrawSchematic(ctx, L, B, plan, ink, sacc, dim, ship) {
   // a list, and goes, leaving a spreading slick. Presentation only, clocked from the
   // first frame she is drawn as gone.
   if (ship && ship.out && typeof isSunkReason === "function" && isSunkReason(ship.outReason)) {
-    if (ship._sinkStart == null) ship._sinkStart = (typeof _tSec === "number" ? _tSec : 0);
-    const st = Math.min(1, Math.max(0, ((typeof _tSec === "number" ? _tSec : 0) - ship._sinkStart) / 9));
+    const paint=shipPaintState(ship);
+    if (paint.sinkStart == null) paint.sinkStart = (typeof _tSec === "number" ? _tSec : 0);
+    const st = Math.min(1, Math.max(0, ((typeof _tSec === "number" ? _tSec : 0) - paint.sinkStart) / 9));
     const ease = st * st * (3 - 2 * st);
     ctx.rotate(0.55 * ease);                                     // the list
     ctx.scale(1 - 0.18 * ease, 1 - 0.30 * ease);                 // going under: foreshortened as she settles
@@ -5506,9 +5580,10 @@ function drawShip(ctx, v, ship, opts) {
     // Sighting changes turn to turn, and a ship that snapped from full to 0.30 and
     // back looked like a fault. The alpha now eases toward its target each frame.
     const wantA = (typeof fleetSights === "function" && !fleetSights(game.playerSide, ship)) ? 0.30 : 1;
-    ship._visA = (ship._visA == null) ? wantA : ship._visA + (wantA - ship._visA) * 0.08;
-    if (ship._visA < 0.995) {
-      ctx.save(); ctx.globalAlpha *= ship._visA;
+    const paint=shipPaintState(ship);
+    paint.visibility = (paint.visibility == null) ? wantA : paint.visibility + (wantA - paint.visibility) * 0.08;
+    if (paint.visibility < 0.995) {
+      ctx.save(); ctx.globalAlpha *= paint.visibility;
       try { return drawShipInner(ctx, v, ship, opts); } finally { ctx.restore(); }
     }
     // Sighted but distant: fade with range toward the sight limit, so the haze
@@ -6806,7 +6881,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "2.0-alpha.14";
+const ECHELON_VERSION = "2.0-alpha.25";
 const ECHELON_BUILD_NOTE = "shell and fuze revision: timed bursts, ammunition profiles and compatible saves";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
@@ -8897,6 +8972,7 @@ function resizeCanvas() {
   }
   canvas.style.width = w + "px";
   canvas.style.height = h + "px";
+  if(typeof steamSyncOverlayInset==='function')steamSyncOverlayInset();
 }
 
 // Zoom presets for small screens: Fleet frames everything, Action frames the fight
@@ -9000,7 +9076,7 @@ function redraw() {
   // only the selected ship draws a target line, to keep the battlefield clean; the
   // fleet roster lists every ship's target in text instead of crisscrossing the map.
   if (sel && !sel.out) {
-    const planHeading = (game.phase === "plan" && sel.order) ? sel.order.heading : null;
+    const planHeading = game.phase === "plan" && sel.side === game.playerSide ? plannedMovePose(sel,1).heading : null;
     const cone = buildConeSpecs(sel, selTargetValid ? selTarget : null, planHeading);
     if (game.show.rings) drawRangeRings(ctx, v, sel, cone.solution);
     if (game.show.arcs) drawFiringCones(ctx, v, sel, cone.specs, planHeading != null ? planHeading : undefined);
@@ -11847,7 +11923,8 @@ function onPointerUp(e) {
       let acted = false;
       if (game.phase === "plan") {
         const w = screenToWorld(makeViewCss(), dragStart.x, dragStart.y);
-        if (sel0 || game.selSquadId) acted = steamSetWaypoint(w.x, w.y, !!game.plotRoute);
+        const dot=!game.plotRoute&&steamPickMoveChoice(dragStart.x,dragStart.y);
+        if (sel0 || game.selSquadId) acted = dot?steamSetMoveChoice(dot):steamSetWaypoint(w.x, w.y, !!game.plotRoute);
       }
       if (acted) { game.cardId = null; syncPanel(); }
       else { game.cardId = null; syncPanel(); }
@@ -12122,12 +12199,20 @@ function renderSquadronChips() {
 // and small-craft divisions a b c, torpedo-boat flotillas i ii iii, and the
 // capital-ship squadrons the player forms by hand keep plain numbers. Marks are at
 // most three characters, so the row is no wider than it was.
-  host.innerHTML = own.map((sq, i) => {
+  const markup = own.map((sq, i) => {
     const mark = squadronDisplayNumber(sq);
     const kind = sq.mark ? (/^[A-Z]$/.test(sq.mark) ? "ca" : /^[a-z]$/.test(sq.mark) ? "cl" : "tb") : "cap";
-    return `<button class="squad-chip sc-${kind}${game.menuMode === "squad" && game.selSquadId === sq.id ? " active" : ""}" data-squad-chip="${sq.id}" aria-label="Select ${sq.name || ("Squadron " + mark)}" title="Select ${sq.name || ("Squadron " + mark)}">${mark}</button>`;
+    const active = game.menuMode === "squad" && game.selSquadId === sq.id;
+    const label = steamEscape(sq.name || ("Squadron " + mark));
+    return `<button class="squad-chip sc-${kind}${active ? " active" : ""}" data-squad-chip="${sq.id}" aria-pressed="${active}" aria-label="Select ${label}" title="Select ${label}">${steamSquadronMark(mark)}</button>`;
   }).join("");
   host.classList.toggle("show", own.length > 0 && game.started && game.phase !== "over");
+  // Repeated panel refreshes must not replace focused buttons or restart a
+  // horizontal touch scroll. These DOM-only values never enter a battle save.
+  if(host._steamMarkup===markup)return;
+  const scroll=host.scrollLeft,focused=host.contains?.(document.activeElement)?document.activeElement?.getAttribute('data-squad-chip'):null;
+  host.innerHTML=markup;host._steamMarkup=markup;host.scrollLeft=scroll;
+  if(focused)host.querySelector(`[data-squad-chip="${focused}"]`)?.focus({preventScroll:true});
   host.querySelectorAll("[data-squad-chip]").forEach((b) => b.addEventListener("click", () => {
     const sq = squadronById(parseInt(b.getAttribute("data-squad-chip"), 10));
     if (!sq) return;
@@ -13479,17 +13564,75 @@ function steamMountFootprint(m,train){
   // Casemate walls do not rotate with the gun inside their embrasure.
   if(m.kind==='casemate')train=m.y>=0?90:-90;
   const a=train*Math.PI/180,cs=Math.cos(a),sn=Math.sin(a);
-  const pts=m.kind==='hood'?Array.from({length:24},(_,i)=>[Math.cos(i*Math.PI/12)*m.depth/2,Math.sin(i*Math.PI/12)*m.width/2]):
+  const pts=m.housing?.outline|| (m.kind==='hood'?Array.from({length:24},(_,i)=>[Math.cos(i*Math.PI/12)*m.depth/2,Math.sin(i*Math.PI/12)*m.width/2]):
     m.kind==='barbette'?Array.from({length:24},(_,i)=>[Math.cos(i*Math.PI/12)*m.width*.58,Math.sin(i*Math.PI/12)*m.width*.58]):
-    [[-.5,-.5],[.28,-.5],[.5,-.28],[.5,.28],[.28,.5],[-.5,.5]].map(([x,y])=>[x*m.depth,y*m.width]);
+    [[-.5,-.5],[.28,-.5],[.5,-.28],[.5,.28],[.28,.5],[-.5,.5]].map(([x,y])=>[x*m.depth,y*m.width]));
   return pts.map(([x,y])=>[m.x+x*cs-y*sn,m.y+x*sn+y*cs]);
 }
 function steamGunSegments(m,train,disabled=[]){
   const a=train*Math.PI/180,cs=Math.cos(a),sn=Math.sin(a),z=m.z+m.height*.65;
   return Array.from({length:m.count},(_,n)=>{
-    const y=(n-(m.count-1)/2)*Math.min(1.5,m.width/(m.count+1));
-    return [m.depth*.25,m.depth*.25+m.barrel*.65].map(x=>[m.x+x*cs-y*sn,m.y+x*sn+y*cs,z]);
+    const y=m.housing?.gunAxes[n]??(n-(m.count-1)/2)*Math.min(1.5,m.width/(m.count+1));
+    const start=m.housing?.barrelRoot??m.depth*.25,end=m.housing?.muzzle??m.muzzle??(m.depth*.25+m.barrel*.65);
+    return [start,end].map(x=>[m.x+x*cs-y*sn,m.y+x*sn+y*cs,z]);
   }).filter((_,n)=>!disabled.includes(n));
+}
+// Hide the inboard portion of a barrel behind its own housing. Drawing a line
+// across a transparent gunhouse made its edge appear to bend the barrel.
+// Rendering only: keep physical mount/damage geometry and muzzle positions.
+function steamGunDrawingSegments(m,train,disabled=[]){
+  const poly=steamMountFootprint(m,train),cross=(a,b)=>a[0]*b[1]-a[1]*b[0];
+  return steamGunSegments(m,train,disabled).map(([a,b])=>{
+    const d=[b[0]-a[0],b[1]-a[1]];let start=0;
+    for(let i=0;i<poly.length;i++){
+      const p=poly[i],q=poly[(i+1)%poly.length],e=[q[0]-p[0],q[1]-p[1]],v=[p[0]-a[0],p[1]-a[1]],den=cross(d,e);
+      if(Math.abs(den)<1e-9)continue;
+      const t=cross(v,e)/den,u=cross(v,d)/den;
+      if(t>=0&&t<1&&u>=0&&u<=1)start=Math.max(start,t);
+    }
+    return [[a[0]+d[0]*start,a[1]+d[1]*start,a[2]],b];
+  });
+}
+// Orthographic starboard profile, viewed from +y. A far-side barrel can be
+// outside its roof plan yet still hidden behind the gunhouse in elevation.
+// Split at projected polygon vertices and edges; retain only visible intervals.
+// Pure presentation: does not change physical barrel/muzzle or contact geometry.
+function steamGunProfileSegments(m,train,disabled=[]){
+  const poly=steamMountFootprint(m,train),cross=(a,b)=>a[0]*b[1]-a[1]*b[0];
+  const hidden=p=>{
+    for(let i=0;i<poly.length;i++){
+      const a=poly[i],b=poly[(i+1)%poly.length];
+      if(Math.abs(b[0]-a[0])<1e-9)continue;
+      const u=(p[0]-a[0])/(b[0]-a[0]);
+      if(u>=0&&u<=1&&a[1]+u*(b[1]-a[1])>p[1]+1e-7)return true;
+    }
+    return false;
+  };
+  return steamGunDrawingSegments(m,train,disabled).flatMap(([a,b])=>{
+    const d=[b[0]-a[0],b[1]-a[1]],cuts=[0,1];
+    for(let i=0;i<poly.length;i++){
+      const p=poly[i],q=poly[(i+1)%poly.length],e=[q[0]-p[0],q[1]-p[1]],v=[p[0]-a[0],p[1]-a[1]],den=cross(d,e);
+      if(Math.abs(d[0])>1e-9){const t=(p[0]-a[0])/d[0];if(t>0&&t<1)cuts.push(t);}
+      if(Math.abs(den)>1e-9){const t=cross(v,e)/den,u=cross(v,d)/den;if(t>0&&t<1&&u>=0&&u<=1)cuts.push(t);}
+    }
+    const at=t=>[a[0]+d[0]*t,a[1]+d[1]*t,a[2]],visible=[];
+    cuts.sort((x,y)=>x-y);
+    for(let i=1;i<cuts.length;i++)if(cuts[i]-cuts[i-1]>1e-9&&!hidden(at((cuts[i]+cuts[i-1])/2))){
+      const start=at(cuts[i-1]),end=at(cuts[i]),last=visible[visible.length-1];
+      if(last&&Math.hypot(last[1][0]-start[0],last[1][1]-start[1])<1e-7)last[1]=end;else visible.push([start,end]);
+    }
+    return visible;
+  });
+}
+function steamGunInkWidth(m,k){return Math.max((m.main?1.15:.8)/k,m.cal/1000*.7);}
+function steamRayHitsPolygon(x,y,dx,dy,poly){
+  for(let i=0;i<poly.length;i++){
+    const a=poly[i],b=poly[(i+1)%poly.length],ex=b[0]-a[0],ey=b[1]-a[1],den=dx*ey-dy*ex;
+    if(Math.abs(den)<1e-9)continue;
+    const ax=a[0]-x,ay=a[1]-y,t=(ax*ey-ay*ex)/den,u=(ax*dy-ay*dx)/den;
+    if(t>.1&&u>=-1e-8&&u<=1+1e-8)return true;
+  }
+  return false;
 }
 function steamLiveGunCount(b){return b.knockedOut?0:Math.max(0,b.count-(b.disabledBarrels?.length||0));}
 function steamRestTrain(m){const h=m.main?(m.x>=0?0:180):restTrain(m.arc);return bearingInArc(h,m.arc)?h:restTrain(m.arc);}
@@ -13553,7 +13696,8 @@ function steamGeometry(ship) {
         x:m.x*L/2,y:(m.y||0)*B/2,z,deckZ,width,depth:m.depth??(main?width*1.12:width),
         height:m.height??(main?2.5:1.7),barrel:m.barrel??cal/1000*(Number((gun.name||" ").match(/\/(\d{2})|L[ /]?(\d{2})/i)?.slice(1).find(Boolean))||(cal>=280?40:cal>=150?36:30)),
         kind:m.kind||(main?(fit.round?"barbette":"turret"):(m.t==="case"||/casemate|battery/.test(arm.mount||"")?"casemate":m.guns>1?"turret":"open")),
-        raised:!!m.raised,confidence,main,label:m.label||(main?(fit.mainLabels?.[i]||'Main '+(i+1)):null),legacyBarrels:m.legacyBarrels,
+        housing:m.housing,muzzle:m.muzzle,muzzleEvidence:m.muzzleEvidence,
+        raised:!!m.raised,confidence,main,label:m.label||(main?(fit.mainLabels?.[i]||'Main '+(i+1)):null),legacyBarrels:m.legacyBarrels,introducedRevision:m.introducedRevision,
         arc:m.arc||(main?"ALL":Math.abs(m.y||0)>.2?((m.y||0)>0?"STARBOARD":"PORT"):(m.x>0?"FORE_TURRET":"AFT_TURRET"))
       });
     });
@@ -13575,7 +13719,7 @@ function steamGeometry(ship) {
   const profile=fit.profile?{above:fit.profile.above.map(([x,z])=>[x*L/2,z]),under:fit.profile.under.map(([x,z])=>[x*L/2,z]),waterline:fit.profile.waterline.map(x=>x*L/2)}:null;
   return ship._geometry={id,L,B,freeboard,deck,draft:def.dimensions_m?.draft||B*.28,mounts,funnels,structures,masts,hull,boats,profile,
     fit:fit.family||def.class||def.type,trace:!!trace,
-    revision:fit.revision||1,secondaryRevision:batteryFit?3:0,secondaryEvidence:batteryFit?.evidence||null,configuration:fit.configuration||'Inherited class arrangement; dated fit unverified',
+    revision:fit.revision||1,gunhouseRevision:fit.gunhouseRevision||0,secondaryRevision:batteryFit?3:0,secondaryEvidence:batteryFit?.evidence||null,configuration:fit.configuration||'Inherited class arrangement; dated fit unverified',
     references:[...new Set([...(fit.references||[]),...(batteryFit?.references||[])])],checked:fit.checked||[],hullEvidence:fit.hullEvidence||(trace?'Supplied outline; original image not independently verified':'Generic reconstructed outline'),profileEvidence:fit.profileEvidence||'Generic underwater body and end profiles; not measured from a ship-specific plan',
     provenance:fit.source||"Inherited hull and station data; fitting dimensions reconstructed and pending plan verification."};
 }
@@ -13636,7 +13780,16 @@ function steamBearingClear(s,b,rel) {
   const objects=steamGeometry(s).structures.map(o=>({x:o.x,y:o.y,rx:o.length/2,ry:o.width/2,bottom:o.z,top:o.z+o.height}));
   for(const f of steamGeometry(s).funnels)objects.push({x:f.x,y:f.y,rx:f.depth/2,ry:f.width/2,bottom:f.z,top:f.z+f.height});
   // A raised turret's supporting barbette is solid down to its working deck.
-  for(const t of steamGeometry(s).mounts)if(t!==m&&t.main)objects.push({x:t.x,y:t.y,rx:t.depth/2,ry:t.width/2,bottom:Math.min(t.z,t.deckZ),top:t.z+t.height});
+  for(const t of steamGeometry(s).mounts)if(t!==m&&t.main){
+    if(t.housing){
+      const gunZ=m.z+m.height*.65;
+      if(gunZ>=t.z-.1&&gunZ<=t.z+t.height+.1&&steamRayHitsPolygon(m.x,m.y,dx,dy,steamMountFootprint(t,steamMountTrain(s,t))))return false;
+      if(gunZ<t.z&&gunZ>=Math.min(t.z,t.deckZ)-.1){
+        const radius=t.housing.barbetteRadius,ring=Array.from({length:32},(_,i)=>[t.x+Math.cos(i*Math.PI/16)*radius,t.y+Math.sin(i*Math.PI/16)*radius]);
+        if(steamRayHitsPolygon(m.x,m.y,dx,dy,ring))return false;
+      }
+    }else objects.push({x:t.x,y:t.y,rx:t.depth/2,ry:t.width/2,bottom:Math.min(t.z,t.deckZ),top:t.z+t.height});
+  }
   for(const o of objects){
     const gunZ=m.z+m.height*.65;
     if(o.top<gunZ-.1||o.bottom>gunZ+.1)continue;
@@ -13653,7 +13806,7 @@ function steamBearingClear(s,b,rel) {
 }
 function batteryCanBear(from,battery,target) {
   if(from.def?.plan_template==="sail")return legacyBatteryCanBear(from,battery,target);
-  return rangeBetween(from,target)<=maxEffectiveRange(battery.gun)&&steamBearingClear(from,battery,relativeBearing(from,target));
+  return steamFireSolutionClear(from,battery,steamBatteryFireSolution(from,battery,target));
 }
 
 // Retain supplied illustrations for ships outside the class pass.
@@ -13690,7 +13843,12 @@ function drawSchematic(c,L,B,plan,ink,accent,dim,ship) {
     layers.push({z:m.z+m.height,draw:()=>{
     const b=ship.batteries?.find(b=>b.mountId===m.id),train=steamMountTrain(ship,m);
     c.lineWidth=(m.main?.85:.5)/k;c.fillStyle=b?.knockedOut?'#262b2b':accent?.mount||'#62624c';
-    if(m.main){c.beginPath();c.arc(m.x,m.y,m.width*.48,0,Math.PI*2);c.fill();c.stroke();}
+    if(m.main){
+      // Only the exposed part of a barbette can be seen around its gunhouse.
+      c.save();c.beginPath();c.rect(-g.L,-g.L,g.L*2,g.L*2);
+      steamMountFootprint(m,train).forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));c.closePath();c.clip('evenodd');
+      c.beginPath();c.arc(m.x,m.y,m.housing?.barbetteRadius??m.width*.48,0,Math.PI*2);c.fill();c.stroke();c.restore();
+    }
     path(steamMountFootprint(m,train));c.fill();c.stroke();
     if(m.kind==='shield'){
       const a=train*Math.PI/180,cs=Math.cos(a),sn=Math.sin(a);
@@ -13699,7 +13857,9 @@ function drawSchematic(c,L,B,plan,ink,accent,dim,ship) {
       edge.forEach(([x,y],i)=>{const px=m.x+x*cs-y*sn,py=m.y+x*sn+y*cs;i?c.lineTo(px,py):c.moveTo(px,py);});c.stroke();
     }
     if(!b?.knockedOut){
-      for(const [a,z] of steamGunSegments(m,train,b?.disabledBarrels)){c.lineWidth=Math.max(.45/k,m.cal/1000*.7);c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(z[0],z[1]);c.stroke();}
+      for(const [a,z] of steamGunDrawingSegments(m,train,b?.disabledBarrels)){
+        c.lineWidth=steamGunInkWidth(m,k);c.lineCap='butt';c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(z[0],z[1]);c.stroke();
+      }
     }else{c.beginPath();c.moveTo(m.x-m.width*.4,m.y-m.width*.4);c.lineTo(m.x+m.width*.4,m.y+m.width*.4);c.stroke();}
     }});
   }
@@ -13742,7 +13902,7 @@ function sideElevationPrims(ship,L) {
       // The far-side broadside battery is hidden by the hull; wing turrets
       // remain visible where they project above the deck.
       if(!m.main&&m.y<-g.B*.15)continue;
-      if(m.main&&m.z>m.deckZ+.1)rect(m.x,m.deckZ,m.width*.88,m.z-m.deckZ,'barbette:'+m.id);
+      if(m.main&&m.z>m.deckZ+.1)rect(m.x,m.deckZ,m.housing?m.housing.barbetteRadius*2:m.width*.88,m.z-m.deckZ,'barbette:'+m.id);
       const xs=steamMountFootprint(m,train).map(p=>p[0]),lo=Math.min(...xs),hi=Math.max(...xs);
       if(m.kind==='shield'){
         rect(m.x,m.z,.5,.55,'pedestal:'+m.id);
@@ -13753,7 +13913,7 @@ function sideElevationPrims(ship,L) {
         rect((lo+hi)/2,m.z,hi-lo,m.height,'mount:'+m.id);
         if(m.kind==='casemate')line(m.x-.55,m.z+m.height*.65,m.x+.55,m.z+m.height*.65,1,'port:'+m.id);
       }
-      if(!b?.knockedOut)for(const [a,z] of steamGunSegments(m,train,b?.disabledBarrels)){
+      if(!b?.knockedOut)for(const [a,z] of steamGunProfileSegments(m,train,b?.disabledBarrels)){
         if(Math.abs(z[0]-a[0])>.2)line(a[0],a[2],z[0],z[2],m.main?.95:.45,'barrel:'+m.id);
         else {const r=Math.max(.10,m.cal/2000);poly([[z[0]-r,z[2]],[z[0],z[2]+r],[z[0]+r,z[2]],[z[0],z[2]-r]],false,.5,'muzzle:'+m.id);}
       }
@@ -13775,13 +13935,14 @@ function sideElevationPrims(ship,L) {
 }
 
 function steamArcWedges(s,b){
-  if(b._arcWedges)return b._arcWedges;
+  const housingKey=steamGeometry(s).mounts.filter(m=>m.housing).map(m=>steamMountTrain(s,m)).join(',');
+  if(b._arcWedges&&b._arcHousingKey===housingKey)return b._arcWedges;
   const out=[];let start=null;
   for(let h=-180;h<=180;h+=2){const allowed=h<180&&steamBearingClear(s,b,h+1);
     if(allowed&&start===null)start=h;
     if(!allowed&&start!==null){out.push([start,h]);start=null;}
   }
-  return b._arcWedges=out;
+  b._arcHousingKey=housingKey;return b._arcWedges=out;
 }
 
 
@@ -13898,6 +14059,7 @@ Object.assign(CAPITAL_SOURCES,{
   dingyuanSection:{catalogue:'Meyers Konversations-Lexikon, volume 14, Schiff II',date:'1890 publication; early arrangement',url:'https://commons.wikimedia.org/wiki/File:Dingyuan_(ship,_1884)_MKL_Bd._14_1890_(130535980).jpg'},
   dingyuanPhoto:{catalogue:'NH 1926, Ting-Yuen',date:'1884-1895; exact exposure date unresolved',url:'https://commons.wikimedia.org/wiki/File:Dingyuan_(ship,_1884)_-_NH_1926_-_cropped.jpg'},
   yaluInspection:{catalogue:'US Naval Institute, The Battle of the Yalu, July 1895; inspection account and corrections',date:'1895-07',url:'https://www.usni.org/magazines/proceedings/1895/july/battle-yalu'},
+  tigerForecastle:{catalogue:'NPC3374, forecastle deck',date:'1911 design',url:'https://www.rmg.co.uk/collections/objects/rmgc-object-1198193'},
   tigerDeck:{catalogue:'NPC3372, upper deck',date:'1911 design',url:'https://www.rmg.co.uk/collections/objects/rmgc-object-1198191'},
   lionPhoto:{catalogue:'N685, Lion leading Queen Mary and Princess Royal',date:'1914-07',url:'https://www.rmg.co.uk/collections/objects/rmgc-object-1028262'}
 });
@@ -13960,7 +14122,7 @@ STEAM_FITS.princess_royal={...STEAM_FITS.princess_royal,configuration:'1916 clas
 
 refineCapitalFit('tiger',{
   revision:4,family:'Tiger',configuration:'1911 profile and upper-deck design; complete 1916 fit unresolved',
-  references:['tiger','tigerDeck'],
+  references:['tiger','tigerDeck','tigerForecastle'],
   checked:['Main and funnel longitudinal stations','Q abaft all three funnels','Q on the raised working deck','Upper-deck breadth envelope','Long forecastle and short quarterdeck','Separate bridge and after control structures'],
   // NPC3372: stern 75, bow 1500, A 1180, B 1088, Q 636, X 340.
   // The profile corroborates these stations to about 2 metres.
@@ -14283,11 +14445,21 @@ refineCapitalFit('nikolai1',{
   profileEvidence:'After-deck step reconstructed from 1894 profile; absolute vertical datum and underwater body remain provisional.'
 });
 
+// The roster uses the old-pattern solid 75 mm projectile. This is an explicit
+// ammunition assumption, not certification of every ship's 1905 inventory.
+// The later HE shell is unavailable; evidence for filled 1902 AP issue remains
+// unresolved. Do not alter projectiles already in flight in an older save.
+Object.assign(SCENARIO_DATA.tsushima.guns.canet_75mm_l50,{
+  available_shells:['AP'],burster_kg:{AP:0},confidence:'provisional ammunition inventory',
+  shell_profiles:{AP:{mode:'inert',delaySeconds:0,initiationMm:0,failureChance:0,verified:false,
+    evidence:'Old-pattern 75 mm solid shot model. Filled 1902 AP issue at individual ships remains unresolved; this is not a certified 1905 inventory.'}},
+  historical_effect_note:'Old-pattern solid shot model; later HE excluded. Individual 1905 ammunition inventory unresolved.'
+});
 for(const id of ['suvorov','aleksandr3','borodino','oryol']){
   refineCapitalFit(id,{
-    revision:6,family:'Borodino',configuration:'1905 class proxy from the 1906 Slava/Orel sketch; individual fit unresolved',
+    revision:7,family:'Borodino',configuration:'1905 class proxy from the 1906 Slava/Orel sketch; individual fit unresolved',
     references:['borodino1906'],
-    checked:['Main stations and unequal deck levels','Three paired secondary turret stations with lower middle pair','Separated funnel and mast stations','Deck envelope from contemporary class sketch'],
+    checked:['Main stations and unequal deck levels','Three paired secondary turret stations with lower middle pair','Separated funnel and mast stations','Deck envelope from contemporary class sketch','Twenty 75 mm guns: two forward, six amidships, two aft per side'],
     // Deck ends 20 and 1335; main centres 1098/328; secondary 944/740/490.
     main:[[.639,0],[-.532,0]],mainLabels:['A','Y'],mainZ:[7.7,4.5],raised:[],
     mainDetails:[{kind:'hood',width:9,depth:9.5,height:2.6},{kind:'hood',width:9,depth:9.5,height:2.6}],
@@ -14307,17 +14479,194 @@ for(const id of ['suvorov','aleksandr3','borodino','oryol']){
       {x:.405,length:8,width:15,z:7.7,height:1.6,kind:'fore wing platform'},
       {x:-.285,length:8,width:15,z:7.7,height:1.6,kind:'after wing platform'}
     ],boats:[],
-    source:'Brassey 1906 plate 57, contemporary Slava/Orel class sketch, not a builder plan. Applied as an explicit class proxy. Stations read to +/- 3 m. Relative turret levels retained; absolute heights use an inherited freeboard datum. Minor fittings, light battery and 1905 individual differences remain open.',
+    source:'Brassey 1906 plate 57, contemporary Slava/Orel class sketch, not a builder plan. Applied as an explicit class proxy. Stations read to +/- 3 m. Relative turret levels retained; absolute heights use an inherited freeboard datum. The twenty 75 mm stations follow the class sketch; smaller guns, minor fittings and 1905 individual differences remain open.',
     profileEvidence:'Deck step and relative gun levels from class elevation, anchored to inherited after freeboard. Absolute loading datum and underwater hull remain provisional.'
   });
+  const def=SCENARIO_DATA.tsushima.ships.find(s=>s.id===id);
+  if(!def.armament.some(a=>a.gun_id==='canet_75mm_l50'))def.armament.push({gun_id:'canet_75mm_l50',count:20,mount:'Single casemates, ten per side'});
   // Keep every old gun identity and port/starboard ordering, preserving damage.
   STEAM_BATTERY_FITS[id]={references:['borodino1906'],
-    evidence:'Six twin 6-inch wing turrets from Brassey 1906 class sketch. Middle pair lower than end pairs; all stations approximate class proxies. Light guns remain absent from inherited roster and need a separate armament audit.',
+    evidence:'Six twin 6-inch wing turrets from Brassey 1906 class sketch. Middle pair lower than end pairs; all stations approximate class proxies. Twenty single 75 mm casemates also read from the sketch. Absolute heights and port arcs are estimates; smaller weapons remain unaudited.',
     groups:{1:[.405,.095,-.285].flatMap((x,i)=>[-1,1].map(side=>({
       x,y:side*(i===1?.77:.40),z:i===1?7.7:9.3,guns:2,kind:'turret',width:5.6,depth:5.8,height:2.5,
       arc:side<0?'PORT':'STARBOARD',label:null
-    })))}}
+    }))),2:[1260,1298,572,639,699,806,860,915,73,116].flatMap((px,i)=>[-1,1].map(side=>{
+      const x=2*(px-20)/(1335-20)-1,outline=STEAM_FITS[id].hullTop;
+      let y=0;for(let j=1;j<outline.length;j++)if(x<=outline[j-1][0]&&x>=outline[j][0]){
+        const a=outline[j-1],b=outline[j];y=b[1]+(a[1]-b[1])*(x-b[0])/(a[0]-b[0]);break;
+      }
+      return{x,y:side*y*.94,z:i<2?5.5:2.2,guns:1,kind:'casemate',width:1.4,depth:1.6,height:1.4,
+        introducedRevision:7,arc:side<0?'PORT':'STARBOARD',label:null};
+    }))}}
 }
+
+
+// Narrow, evidence-backed corrections to inherited scenario inventories.
+// Contemporary descriptions establish the listed features, not a complete
+// as-fitted survey. Other ships' generic torpedo entries remain unaudited.
+const STEAM_ROSTER_FITS = {
+  mikasa:{torpedoes:4,addedTorpedoes:true,source:'Jane, The Imperial Japanese Navy, 1904, p. 394; Brassey, Naval Annual 1906, p. 259',
+    urls:['https://www.gutenberg.org/files/74624/74624-h/74624-h.htm','https://archive.org/details/CASGA_120412/page/n273/mode/1up'],
+    checked:['Four submerged torpedo tubes'],limits:'Count only. Individual stations, sectors, weapon identity and carried reserve inventory remain unresolved; generic broadside release retained.'},
+  asahi:{torpedoes:4,addedTorpedoes:true,source:'Jane, The Imperial Japanese Navy, 1904, p. 394; Brassey, Naval Annual 1906, p. 258',
+    urls:['https://www.gutenberg.org/files/74624/74624-h/74624-h.htm','https://archive.org/details/CASGA_120412/page/n273/mode/1up'],
+    checked:['Four submerged torpedo tubes'],limits:'Count only. Individual stations, sectors, weapon identity and reserve inventory remain unresolved; generic broadside release retained.'},
+  shikishima:{torpedoes:5,addedTorpedoes:true,source:'Jane, The Imperial Japanese Navy, 1904, p. 394; Brassey, Naval Annual 1906, p. 261',
+    urls:['https://www.gutenberg.org/files/74624/74624-h/74624-h.htm','https://archive.org/details/CASGA_120412/page/n274/mode/1up'],
+    checked:['Five torpedo tubes, four submerged'],limits:'Count only. The fifth tube has no distinct directional station in the inherited generic model. Weapon identity, reserve inventory and sectors unresolved.'},
+  fuji:{torpedoes:5,addedTorpedoes:true,source:'Jane, The Imperial Japanese Navy, 1904, p. 394; Brassey, Naval Annual 1906, p. 258',
+    urls:['https://www.gutenberg.org/files/74624/74624-h/74624-h.htm','https://archive.org/details/CASGA_120412/page/n273/mode/1up'],
+    checked:['Five torpedo tubes, four submerged'],limits:'Count only. The fifth tube has no distinct directional station in the inherited generic model. Weapon identity, reserve inventory and sectors unresolved.'},
+  niitaka:{torpedoes:0,source:'USNI Proceedings, October 1901, Professional Notes, Japan: Niitaka, Tsushima; Brassey, Naval Annual 1906, p. 260',
+    urls:['https://www.usni.org/magazines/proceedings/1901/october/professional-notes','https://archive.org/details/CASGA_120412/page/n274/mode/1up'],
+    checked:['No torpedo tubes','Three funnels','Six 6-inch guns: fore and aft singles and four broadside sponsons','Ten 12-pounders: five on each broadside'],
+    limits:'Stations, dimensions, mechanical arcs and elevations remain approximate. Four smaller guns are not yet represented; their weapon data is unresolved.'},
+  tsushima_cruiser:{torpedoes:0,proxy:'Niitaka class arrangement',source:'USNI Proceedings, October 1901, Professional Notes, Japan: Niitaka, Tsushima; Brassey, Naval Annual 1906, p. 261',
+    urls:['https://www.usni.org/magazines/proceedings/1901/october/professional-notes','https://archive.org/details/CASGA_120412/page/n274/mode/1up'],
+    checked:['No torpedo tubes','Three funnels','Six 6-inch guns and ten 12-pounders in the described class arrangement'],
+    limits:'Class arrangement, not an individual 1905 survey. Stations, dimensions, arcs and elevations approximate; four smaller guns unrepresented.'},
+  otowa:{torpedoes:0,source:'Brassey, Naval Annual 1906, p. 261 (Otawa); Jane, The Imperial Japanese Navy, 1904, fleet table pp. 395-396',
+    urls:['https://archive.org/details/CASGA_120412/page/n274/mode/1up','https://www.gutenberg.org/files/74624/74624-h/74624-h.htm'],
+    checked:['No torpedo tubes'],limits:'No claim to validate the remaining inherited armament or dated layout.'}
+};
+for(const data of Object.values(SCENARIO_DATA))for(const def of data.ships||[]){
+  const fit=STEAM_ROSTER_FITS[def.id];if(!fit)continue;
+  if(fit.torpedoes===0)def.armament=def.armament.filter(a=>!a.weapon_id);
+  else if(fit.addedTorpedoes&&!def.armament.some(a=>a.weapon_id))def.armament.push({count:fit.torpedoes,
+    weapon_id:'torpedo_381_457mm',mount:'torpedo tubes; count sourced, individual stations unresolved'});
+}
+for(const id of ['niitaka','tsushima_cruiser']){
+  const layout=SHIP_LAYOUT[id];
+  layout.f=[.18,0,-.18];
+  // Six-inch guns are shielded deck/sponson mounts, not enclosed casemates.
+  for(const m of layout.m.filter(m=>m.cal===152))m.kind='shield';
+  // Preserve armament and mounting identities for saves. The description gives
+  // the sequence, not these numerical stations or dimensions.
+  const groups=[];
+  for(const [side,y] of [['Starboard',.80],['Port',-.80]])for(const [i,x] of [.36,.10,0,-.10,-.45].entries()){
+    const n=groups.length;
+    groups.push({id:'qf_12pdr_76mm:1:'+n,label:side+' 12-pounder '+(i+1),x,y,
+      guns:1,kind:'open',arc:y>0?'STARBOARD':'PORT'});
+  }
+  STEAM_BATTERY_FITS[id]={groups:{1:groups},references:[],
+    evidence:'Ten 12-pounders in the sequence described in USNI Proceedings, October 1901: a forecastle pair, six between the 6-inch sponsons, and an after cabin pair. Numerical stations and elevations reconstructed, not plan measurements.'};
+}
+
+
+// Alpha 24. Own-ship original-plan readings. These are bounded scan readings,
+// not a complete dated fit. Coordinates below are pixels in the named scans.
+Object.assign(CAPITAL_SOURCES,{
+  kaiserUpper:{catalogue:'Kaiser, ventilation arrangement, upper deck and upper view',date:'Early arrangement, archived under 1912; exact sheet/alteration dates unresolved',url:'https://www.dreadnoughtproject.org/plans/SM_Kaiser_1912/luftungseinrichtung_100dpi.jpg'},
+  friedrichUpper:{catalogue:'Friedrich der Grosse, Blatt 4, obere Ansicht',date:'Early arrangement, archived under 1912; complete 1916 alterations unresolved',url:'https://www.dreadnoughtproject.org/plans/SM_Friedrich_der_Grosse_1912/obere_ansicht_100dpi.jpg'},
+  friedrichDeck:{catalogue:'Friedrich der Grosse, Blatt 5, Oberdeck',date:'Early arrangement; exact alteration dates unresolved',url:'https://www.dreadnoughtproject.org/plans/SM_Friedrich_der_Grosse_1912/oberdeck_100dpi.jpg'},
+  friedrichProfile:{catalogue:'Friedrich der Grosse, Blatt 3, Langsschnitt',date:'Early arrangement; complete 1916 alterations unresolved',url:'https://www.dreadnoughtproject.org/plans/SM_Friedrich_der_Grosse_1912/langsschnitt_100dpi.jpg'}
+});
+const STEAM_KAISER_PLAN_READINGS={
+  kaiser:{source:'kaiserUpper',stern:[277,2225],bow:[6995,2250],
+    main:[[5398,2252],[4100,2520],[3596,1958],[2326,2243],[1856,2242]],
+    basis:'Own ventilation upper view, 7315 by 3371 pixels. Deck-end datums exclude the stern boom. Rotation axes read from circular supports; about one metre station uncertainty, including paper/scan skew.'},
+  friedrich_der_grosse:{source:'friedrichUpper',stern:[497,1352],bow:[7279,1338],
+    main:[[5628,1338],[4416,1620],[3820,1068],[2548,1348],[2084,1348]],
+    basis:'Own Blatt 4 upper view, 7777 by 2353 pixels. Deck-end datums exclude the stern boom. Rotation axes cross-checked against Blatt 5 and the longitudinal section; about one metre station uncertainty, including paper/scan skew.'}
+};
+for(const [id,r] of Object.entries(STEAM_KAISER_PLAN_READINGS)){
+  const span=r.bow[0]-r.stern[0],k=172.4/span;
+  const main=r.main.map(([x,y])=>{const u=(x-r.stern[0])/span,centre=r.stern[1]+u*(r.bow[1]-r.stern[1]);return[2*u-1,2*(y-centre)*k/29];});
+  refineCapitalFit(id,{revision:6,family:'Kaiser',
+    configuration:'Own early original-plan main stations and gunhouse readings; complete 1916 fit unresolved',
+    references:id==='kaiser'?['kaiserUpper']:['friedrichUpper','friedrichDeck','friedrichProfile'],
+    main,mainLabels:['A','B','E','C','D'],raised:[3],mainEvidence:r.basis,
+    checked:['Own five main-turret stations','Starboard-forward wing stagger','Raised inner after turret'],
+    source:r.basis+' Hull trace, secondary stations, superstructures, vertical dimensions and later fittings otherwise remain inherited or reconstructed.'});
+}
+for(const id of ['kaiserin','prinzregent_luitpold']){
+  STEAM_FITS[id]={...STEAM_FITS.kaiser,
+    configuration:'Declared Kaiser class proxy for main stations and gunhouses; individual 1916 fit unresolved',
+    checked:['Kaiser main-station readings applied as a declared class proxy'],
+    mainEvidence:STEAM_FITS.kaiser.mainEvidence+' Applied as a class proxy, not an inspected individual plan.',
+    source:STEAM_FITS.kaiser.source+' Main stations and gunhouses use a declared Kaiser class proxy.'};
+}
+
+
+// Alpha 17/20/24: source readings, not a generic calibre-to-gunhouse template.
+// Roof plans are approximate traces of the OUTER housing, in metres relative
+// to its rotation axis, +x along the barrels. See GUNHOUSE-AUDIT.txt for datums.
+// Flat roof height and armour thickness remain inherited, not surveyed here.
+const STEAM_GUNHOUSE_READINGS={
+  kaiser:{
+    source:'kaiserUpper',metresPerPixel:172.4/(6995-277),axis:[5398,2252],forward:1,
+    outline:[[5140,2252],[5154,2176],[5192,2097],[5457,2097],[5500,2126],[5528,2167],[5540,2200],[5547,2230],[5549,2252],[5547,2274],[5540,2304],[5528,2337],[5500,2378],[5457,2408],[5192,2408],[5154,2328]],
+    muzzle:5914,gunCentres:[2197,2303],barbetteRadiusPixels:177,
+    uncertainty:.4,barbetteBasis:'Circular support outside the roof at A, approximately 177 pixels radius; wall section remains estimated',
+    basis:'Own early ventilation upper view, 7315-pixel scan. Approximate A roof, paired axes and muzzle projection. Other main positions use this same-ship mounting-family proxy; roof slopes and individual 1916 fittings are unverified.'
+  },
+  friedrich_der_grosse:{
+    source:'friedrichUpper',metresPerPixel:172.4/(7279-497),axis:[5628,1338],forward:1,
+    outline:[[5367,1338],[5381,1260],[5420,1182],[5665,1182],[5710,1204],[5748,1242],[5774,1287],[5784,1338],[5774,1389],[5748,1434],[5710,1474],[5665,1496],[5420,1496],[5381,1416]],
+    muzzle:6144,gunCentres:[1285,1393],barbetteRadiusPixels:180,
+    uncertainty:.4,barbetteBasis:'Inner circular support indication, about 180 pixels radius, cross-checked against Blatt 5. The larger approximately 200-pixel deck apron is not used as an armour cylinder.',
+    basis:'Own Blatt 4 upper view, 7777-pixel scan. Approximate A roof, paired axes and muzzle projection; support separated from the outer deck apron using Blatt 5. Other positions use this same-ship mounting-family proxy; complete 1916 fittings and vertical section are unverified.'
+  },
+  indefatigable:{
+    source:'indefatigableDeck',metresPerPixel:179.8/(1238-41),axis:[234,133.5],forward:-1,
+    outline:[[269.5,118],[237,106.5],[219,110],[205,122],[204,133.5],[205,145],[219,157],[237,160.5],[269.5,149]],
+    muzzle:145,gunCentres:[125.9,141.1],barbetteRadius:3.84,
+    uncertainty:.5,barbetteBasis:'Inherited support radius; not measured from the roof outline',
+    basis:'RMG NPB4363, 2 May 1911, aft roof and barrel projection; hull/profile scale from NPB4359. Approximate pixel trace, including an uncertain rotation-axis reading. Applied to the other main positions as a same-ship mounting-family proxy.'
+  },
+  tiger:{
+    source:'tigerForecastle',metresPerPixel:214.6/(1500-75),axis:[1173.5,129.5],forward:1,
+    outline:[[1126.5,129.5],[1129,110],[1167,100.5],[1181,100.5],[1195,107],[1204,119],[1207,129.5],[1204,140],[1195,152],[1181,158.5],[1167,158.5],[1129,149]],
+    muzzle:1265,gunCentres:[122,136],barbetteRadiusPixels:30.5,
+    uncertainty:.6,barbetteBasis:'Stationary circular support in NPC3374, approximately 30.5 pixels radius',
+    basis:'RMG NPC3374 forecastle deck, 1911 design. Approximate A gunhouse roof, paired gun axes and muzzle projection at 1560-pixel viewing resolution; outer hull scale cross-checked against NPC3372. Applied to B, Q and X as same-ship mounting-family proxies, not certified 1916 roof fittings.'
+  },
+  seydlitz:{
+    source:'seydlitzDeck',metresPerPixel:200.6/((1952-94)*8693/2048),axis:[6434,1327],forward:1,
+    outline:[[6188,1327],[6194,1262],[6210,1215],[6235,1178],[6478,1178],[6520,1190],[6560,1223],[6580,1265],[6585,1327],[6580,1389],[6560,1431],[6520,1464],[6478,1476],[6235,1476],[6210,1439],[6194,1392]],
+    muzzle:6915,gunCentres:[1274,1380],barbetteRadiusPixels:166,
+    uncertainty:.35,barbetteBasis:'Visible stationary ring in the upper view',
+    basis:'Original 1913 ventilation drawing, upper view, 8693-pixel scan. Fore gunhouse outline, ring, paired axes and muzzle positions; not a gun-manufacturing drawing. Applied to the remaining main positions as a same-ship mounting-family proxy.'
+  }
+};
+function steamReadGunhouse(r){
+  const k=r.metresPerPixel,f=r.forward;
+  const outline=r.outline.map(([x,y])=>[(x-r.axis[0])*f*k,(y-r.axis[1])*f*k]);
+  return{outline,muzzle:(r.muzzle-r.axis[0])*f*k,barrelRoot:0,
+    gunAxes:r.gunCentres.map(y=>(y-r.axis[1])*f*k).sort((a,b)=>a-b),
+    barbetteRadius:r.barbetteRadiusPixels?r.barbetteRadiusPixels*k:r.barbetteRadius,
+    source:r.source,basis:r.basis,uncertainty:r.uncertainty,barbetteBasis:r.barbetteBasis};
+}
+for(const [id,reading] of Object.entries(STEAM_GUNHOUSE_READINGS)){
+  const housing=steamReadGunhouse(reading),xs=housing.outline.map(p=>p[0]),ys=housing.outline.map(p=>p[1]);
+  const fit=STEAM_FITS[id];
+  fit.mainDetails=fit.main.map((_,i)=>({...fit.mainDetails?.[i],housing,
+    width:Math.max(...ys)-Math.min(...ys),depth:Math.max(...xs)-Math.min(...xs)}));
+  fit.gunhouseRevision=1;
+  fit.checked=[...(fit.checked||[]),'Source-read gunhouse roof contour, paired gun axes and muzzle projection'];
+  fit.source+=' Gunhouse plan/projection reading: '+reading.basis;
+}
+// Preserve this as a class proxy. This is not an inspected New Zealand roof.
+STEAM_FITS.new_zealand={...STEAM_FITS.new_zealand,
+  mainDetails:STEAM_FITS.indefatigable.mainDetails,gunhouseRevision:1,
+  checked:[...STEAM_FITS.new_zealand.checked,'Indefatigable gunhouse roof and gun projection applied as class proxy'],
+  source:STEAM_FITS.new_zealand.source+' Gunhouse dimensions use the NPB4363 class proxy; individual New Zealand details remain unverified.'};
+for(const id of ['kaiserin','prinzregent_luitpold']){
+  STEAM_FITS[id]={...STEAM_FITS[id],mainDetails:STEAM_FITS.kaiser.mainDetails,gunhouseRevision:1,
+    checked:[...STEAM_FITS[id].checked,'Kaiser roof and gun projection applied as a declared class proxy'],
+    source:STEAM_FITS[id].source+' Kaiser gunhouse readings are a class proxy, not an individual survey.'};
+}
+
+// NPN7801 profile: A axis ~998, muzzle ~1058; X axis ~465, muzzle ~406,
+// hull stern/bow ~320/1195 at 214.4 metres. These independently give ~14.7
+// and ~14.5 metres. Adopt the rounded 14.7-metre projection, uncertainty 0.5 m.
+// A side view cannot establish the roof contour or transverse gun spacing.
+STEAM_FITS.queen_mary.mainDetails=STEAM_FITS.queen_mary.main.map((_,i)=>({
+  ...STEAM_FITS.queen_mary.mainDetails?.[i],muzzle:14.7,
+  muzzleEvidence:'RMG NPN7801 own-ship profile: axis-to-muzzle approximately 14.7 metres, uncertainty 0.5 metres. Roof and gun spacing remain inherited.'
+}));
+STEAM_FITS.queen_mary.gunhouseRevision=1;
+STEAM_FITS.queen_mary.checked.push('Own-profile axis-to-muzzle projection; roof contour remains provisional');
 
 
 // Persistent steam orders and a shared continuous-motion clock.
@@ -14345,6 +14694,8 @@ function steamUndoOrder(){
 }
 function snapToHex(s){s.hex=worldToHex(s.x,s.y);}
 function steamMaxSpeed(s){return Math.max(0,s.maxSpeed*(s.engine??1)*(1-.4*(s.flooding||0)/100));}
+function steamCanKeepStation(s){return !!s&&!s.out&&steamMaxSpeed(s)>1&&(s.steering??1)>0;}
+function steamMovesHull(s){return !s.out||!s._escaped&&steamHullAfloat(s);}
 function steamMotionParameters(s){
   const light=s.length<100;
   return {radius:Math.max(s.length*2.5,70),acceleration:s.maxSpeed*STEAM_KNOT/(light?90:210),
@@ -14385,7 +14736,7 @@ function setupScenario(side,formation){
     s.command={kind:"course",heading:s.heading,speedKn:s.speedKn};
     s._detached=s.side===game.playerSide&&shipClassTier(s)==="capital";
     s._controlStatus=s._detached?"Individual command":"Maintaining course";
-    s._manualTarget=false;s.yawRate=0;s._torpMode="hold";
+    s._manualTarget=false;s.yawRate=0;s._torpMode="hold";s._torpSpent=[];s._torpRetryAt=0;
     if(s.torpedoes){s.torpedoes.initialCount=s.torpedoes.count;s.torpedoes.cooldownLeft=0;}
     steamInitWake(s);
   }
@@ -14428,10 +14779,10 @@ function steamSetScopeCommand(c){
   if(!q){return steamSetCommand(shipById(game.selectedId),c,true);}
   const members=q.members.map(shipById).filter(s=>s&&!s.out);
   if(game.exec||!members.length||members.some(s=>s.side!==game.playerSide))return false;
-  const mobile=members.filter(s=>steamMaxSpeed(s)>1);
+  const mobile=members.filter(steamCanKeepStation);
   const speed=Math.min(c.speedKn??Infinity,...(mobile.length?mobile:members).map(steamMaxSpeed));
   q.command={...steamClone(c),speedKn:speed};q.attack=null;
-  const leader=members.find(s=>s.id===q.leaderId&&steamMaxSpeed(s)>1)||members.find(s=>steamMaxSpeed(s)>1)||members[0];
+  const leader=members.find(s=>s.id===q.leaderId&&steamCanKeepStation(s))||members.find(steamCanKeepStation)||members[0];
   q.leaderId=leader.id;
   for(const s of members){
     if(c.kind!=="attack"&&s._torpMode==="ordered")s._torpMode="hold";
@@ -14496,7 +14847,7 @@ function setOrderHeading(s,h){return steamSetCommand(s,{kind:"course",heading:st
 function squadronSetCourse(q,x,y){const p=hexToWorld(x,y),s=shipById(q.leaderId);return steamSetScopeCommand({kind:"route",points:[p],index:0,start:{x:s.x,y:s.y},heading:absBearing(s,p),speedKn:q.command?.speedKn??s.speedKn});}
 function orderedSpeedKn(s){return s.command?.speedKn??s.speedKn??0;}
 function steamRejoin(s){
-  if(!s||s.out||s.side!==game.playerSide||game.exec||game.phase!=='plan'||steamMaxSpeed(s)<=1)return false;
+  if(!steamCanKeepStation(s)||s.side!==game.playerSide||game.exec||game.phase!=='plan')return false;
   const q=squadronOf(s.id);if(!q)return false;
   if(!s._detached&&q.command)return true;
   const attached=steamLineOrder(q).filter(id=>{const a=shipById(id);return a&&!a.out&&!a._detached&&a.id!==s.id;});
@@ -14539,15 +14890,15 @@ function steamReconcileGroups(ships,squadrons,byId,notify){
   let changed=false;
   for(const q of squadrons||[]){
     const lead=byId.get(q.leaderId),members=steamLineOrder(q).map(id=>byId.get(id)).filter(Boolean);
-    if(q.command&&!q.attack)for(const s of members)if(!s._detached&&(s.out||steamMaxSpeed(s)<=1)){
+    if(q.command&&!q.attack)for(const s of members)if(!s._detached&&!steamCanKeepStation(s)){
       s._detached=true;changed=true;
       if(notify&&!s.out)logLine(s.name+' can no longer keep station.','sys');
     }
-    if(lead&&!lead.out&&steamMaxSpeed(lead)>1&&(!q.command||!lead._detached))continue;
+    if(steamCanKeepStation(lead)&&(!q.command||!lead._detached))continue;
     // Prefer a ship already under the group order. An individually handled
     // capital must not silently become the guide and redirect its squadron.
-    const attached=members.filter(s=>!s.out&&!s._detached&&steamMaxSpeed(s)>1);
-    const next=attached[0]||members.find(s=>!s.out&&steamMaxSpeed(s)>1)||members.find(s=>!s.out);
+    const attached=members.filter(s=>!s._detached&&steamCanKeepStation(s));
+    const next=attached[0]||members.find(steamCanKeepStation)||members.find(s=>!s.out);
     if(!attached.length&&q.command){q.command=null;changed=true;}
     if(next&&next.id!==q.leaderId){
       if(lead)lead._detached=true;
@@ -14611,7 +14962,8 @@ function steamDesired(s,byId,squadrons){
     if(!t||t.out||!s.torpedoes?.count||s.structure/s.structureMax<.28)c.phase="withdraw";
     if(!t||t.out){c.kind='course';c.heading=s.heading;c.speedKn=speed;s._torpMode='hold';status="Attack ended";heading=s.heading;}
     else if(c.phase==="withdraw"){
-      heading=steamNorm(absBearing(s,t)+180);speed=max;status="Withdrawing after attack";
+      if(c.withdrawHeading==null)c.withdrawHeading=steamAttackWithdrawalHeading(s,t);
+      heading=c.withdrawHeading;speed=max;status="Withdrawing after attack";
       if(rangeBetween(s,t)>profile.run*1.3){c.kind="course";c.heading=heading;c.speedKn=speed;s._torpMode="hold";status="Attack complete";}
     }else if((s.torpedoes?.cooldownLeft||0)>0){
       heading=s.heading;status='Reloading tubes';
@@ -14622,10 +14974,15 @@ function steamDesired(s,byId,squadrons){
       // track, and no holding a valid shot while other boats catch up.
       if(c.releaseSide==null)c.releaseSide=wrap180(bearing-s.heading)>=0?1:-1;
       heading=bearing;status="Closing to torpedo range";
-      const ready=steamTorpedoSolution(s,t,[...byId.values()]);
+      const check=steamTorpedoCheck(s,t,[...byId.values()]),ready=check.solution;
       if(ready){heading=s.heading;c.phase="release";status="Tubes ready";}
-      else if(d<profile.run*.82){
-        heading=steamNorm(bearing-(steamBowTorpedoes(s)?0:c.releaseSide*90));
+      else if(d<(s.length+t.length)/2+steamMotionParameters(s).radius){
+        c.phase='withdraw';c.withdrawHeading=steamAttackWithdrawalHeading(s,t);heading=c.withdrawHeading;status='Breaking off attack';
+      }else if(check.reason==='Friendly crossing'){
+        heading=s.heading;status='Waiting for clear water';
+      }else if(d<profile.run*.82){
+        const tubes=steamTorpedoTubeOptions(s),tube=tubes.reduce((a,b)=>Math.abs(wrap180(bearing-s.heading-b.centre))<Math.abs(wrap180(bearing-s.heading-a.centre))?b:a,tubes[0]);
+        heading=steamNorm(bearing-(tube?.centre??c.releaseSide*90));
         c.phase="approach";status="Unmasking tubes";
       }
 
@@ -14673,14 +15030,18 @@ function steamDesired(s,byId,squadrons){
 }
 function steamPoseAdvance(s,desired,dt){
   const p=steamMotionParameters(s),v0=Math.max(0,s.speedKn||0)*STEAM_KNOT;
-  const target=Math.max(0,desired.speed)*STEAM_KNOT;
+  // Fighting disablement removes active propulsion/helm control, not existing
+  // headway. The inherited braking rate is still a provisional coast proxy.
+  const target=(s.out?0:Math.max(0,desired.speed))*STEAM_KNOT;
   const v=v0+clamp(target-v0,-p.braking*dt,p.acceleration*dt);
   const diff=wrap180(desired.heading-s.heading);
   const limit=(v/p.radius)*180/Math.PI*clamp(s.steering??1,0,1);
-  const wanted=clamp(diff/Math.max(3,p.rudderResponse),-limit,limit);
-  s.yawRate=(s.yawRate||0)+(wanted-(s.yawRate||0))*(1-Math.exp(-dt/p.rudderResponse));
-  if(v<.02)s.yawRate=0;
-  const change=clamp(s.yawRate*dt,-Math.abs(diff),Math.abs(diff));
+  const wanted=s.out?0:clamp(diff/Math.max(3,p.rudderResponse),-limit,limit);
+  const yaw=s.yawRate||0,decay=Math.exp(-dt/p.rudderResponse);
+  s.yawRate=wanted+(yaw-wanted)*decay;
+  // Integrate the existing first-order rate response. Clipping to the heading
+  // error froze the bow at the setpoint while leaving a nonzero stored rate.
+  const change=wanted*dt+(yaw-wanted)*p.rudderResponse*(1-decay);
   const h=(s.heading+change*.5)*Math.PI/180,travel=(v+v0)*.5*dt;
   s.x+=Math.sin(h)*travel;s.y-=Math.cos(h)*travel;s.heading=steamNorm(s.heading+change);
   s.speedKn=v/STEAM_KNOT;s.throttle=s.maxSpeed?clamp(s.speedKn/s.maxSpeed,0,1):0;s._controlStatus=desired.status;
@@ -14692,7 +15053,7 @@ function steamAvoid(s,desired,ships){
   for(const other of ships){
     if(other.id===s.id||other.out&&isSunkReason(other.outReason))continue;
     const dx=other.x-s.x,dy=other.y-s.y;
-    const ov=other.out?0:(other.speedKn||0)*STEAM_KNOT;
+    const ov=(other.speedKn||0)*STEAM_KNOT;
     const reach=(v+ov)*horizon+s.length+other.length;
     if(Math.abs(dx)>reach||Math.abs(dy)>reach)continue;
     const distance=Math.hypot(dx,dy);if(distance>reach)continue;
@@ -14729,7 +15090,7 @@ function steamAvoid(s,desired,ships){
   // loses speed early and passes astern; the stand-on ship keeps its course.
   if(!giveWay&&!active&&t>12&&distance>clearance)return desired;
   if(!active||stationary&&!s._avoidTurn&&other._avoidId!==s.id){s._avoidId=other.id;s._avoidTurn=headOn||overtaking||stationary;s._avoidHeading=steamNorm(s.heading+(s._avoidTurn?35:0));}
-  const speed=s._avoidTurn?Math.min(desired.speed,Math.max(stationary?4:0,(other.out?0:other.speedKn||0)*.8,s.speedKn*.55)):0;
+  const speed=s._avoidTurn?Math.min(desired.speed,Math.max(stationary?4:0,(other.speedKn||0)*.8,s.speedKn*.55)):0;
   return{...desired,heading:s._avoidHeading,speed,status:'Giving room to '+other.name};
 }
 function steamSegmentDistance(a,b,c,d){
@@ -14747,7 +15108,7 @@ function steamKeel(s){
 function steamContacts(ships,old,physical,dt=1){
   for(let i=0;i<ships.length;i++)for(let j=i+1;j<ships.length;j++){
     const a=ships[i],b=ships[j];
-    if(a.out&&b.out||a.out&&isSunkReason(a.outReason)||b.out&&isSunkReason(b.outReason))continue;
+    if(!steamMovesHull(a)||!steamMovesHull(b))continue;
     const reach=(a.length+b.length)*.55+40;
     if(Math.abs(a.x-b.x)>reach||Math.abs(a.y-b.y)>reach||rangeBetween(a,b)>reach)continue;
     const A=steamKeel(a),B=steamKeel(b),gap=steamSegmentDistance(A[0],A[1],B[0],B[1]);
@@ -14772,8 +15133,8 @@ function steamContacts(ships,old,physical,dt=1){
     // repeatedly remove 35% of both ships' forward speed. This surge-only
     // response omits sway/yaw impulse and remains an approximation.
     const impulse=closing*ma*mb/(ma+mb),ha=a.heading*Math.PI/180,hb=b.heading*Math.PI/180;
-    a.speedKn=a.out?0:Math.max(0,a.speedKn+impulse/ma*(nx*Math.sin(ha)-ny*Math.cos(ha))/STEAM_KNOT);
-    b.speedKn=b.out?0:Math.max(0,b.speedKn-impulse/mb*(nx*Math.sin(hb)-ny*Math.cos(hb))/STEAM_KNOT);
+    a.speedKn=Math.max(0,a.speedKn+impulse/ma*(nx*Math.sin(ha)-ny*Math.cos(ha))/STEAM_KNOT);
+    b.speedKn=Math.max(0,b.speedKn-impulse/mb*(nx*Math.sin(hb)-ny*Math.cos(hb))/STEAM_KNOT);
     a._controlStatus="Hull contact";b._controlStatus="Hull contact";
     if(physical&&closing>1&&a._contactTurn!==game.turn){
       a._contactTurn=b._contactTurn=game.turn;
@@ -14789,11 +15150,14 @@ function steamMoveAll(ships,squadrons,dt,physical){
   if(steamReconcileGroups(ships,squadrons,byId,physical)&&ships===game.ships){steamSyncGroupSelection();rebuildSquadronLines();}
   for(const s of ships)s._stepStart=old.get(s.id);
   const orders=new Map(),desired=new Map();
-  const observed=ships.map(s=>({id:s.id,name:s.name,x:s.x,y:s.y,heading:s.heading,speedKn:s.speedKn,length:s.length,beam:s.beam,out:s.out,outReason:s.outReason,_avoidId:s._avoidId,_avoidTurn:s._avoidTurn}));
+  const observed=ships.filter(steamMovesHull).map(s=>({id:s.id,name:s.name,x:s.x,y:s.y,heading:s.heading,speedKn:s.speedKn,length:s.length,beam:s.beam,out:s.out,outReason:s.outReason,_avoidId:s._avoidId,_avoidTurn:s._avoidTurn}));
   for(const s of ships)if(!s.out)desired.set(s.id,steamDesired(s,byId,squadrons));
   for(const s of ships)if(!s.out)orders.set(s.id,steamAvoid(s,desired.get(s.id),observed));
   steamGuardOrders(ships,orders,desired);
-  for(const s of ships)if(!s.out){s._stepStart=old.get(s.id);steamPoseAdvance(s,orders.get(s.id),dt);steamRecordWake(s,old.get(s.id));s.movedThisTurn=rangeBetween(s,old.get(s.id))>.01;snapToHex(s);}
+  for(const s of ships){
+    if(steamMovesHull(s)){s._stepStart=old.get(s.id);steamPoseAdvance(s,s.out?{heading:s.heading,speed:0,status:s.speedKn>0?'Coasting disabled':'Disabled afloat'}:orders.get(s.id),dt);steamRecordWake(s,old.get(s.id));s.movedThisTurn=rangeBetween(s,old.get(s.id))>.01;snapToHex(s);}
+    else{s.speedKn=0;s.yawRate=0;s.movedThisTurn=false;}
+  }
   steamContacts(ships,old,physical,dt);
   for(const q of squadrons){
     const leader=byId.get(q.leaderId);
@@ -14839,22 +15203,24 @@ function steamEnemyOrders(){
 }
 function steamPreview(){
   if(game._steamPreview?.revision===game._steamRevision)return game._steamPreview;
-  const ships=game.ships.map(s=>({...s,command:steamClone(s.command||{}),torpedoes:s.torpedoes?{...s.torpedoes}:null,_wake:(s._wake||[]).map(p=>({...p}))}));
+  const ships=game.ships.map(s=>({...s,command:steamClone(s.command||{}),torpedoes:s.torpedoes?{...s.torpedoes}:null,_torpSpent:[...(s._torpSpent||[])],_wake:(s._wake||[]).map(p=>({...p}))}));
   const paths=new Map(ships.map(s=>[s.id,[{x:s.x,y:s.y,heading:s.heading,speedKn:s.speedKn}]]));
   const sq=steamClone(game.squadrons||[]);
   for(let t=0;t<GAME_TURN_SECONDS;t+=STEAM_STEP){
     steamMoveAll(ships,sq,STEAM_STEP,false);
     for(const s of ships){
+      s._previewSeconds=(game.simSeconds||0)+t+STEAM_STEP;
       if(s.torpedoes)s.torpedoes.cooldownLeft=Math.max(0,(s.torpedoes.cooldownLeft||0)-STEAM_STEP);
       if(s.command?.kind==="attack"&&s.command.phase!=="withdraw"&&s.torpedoes?.count&&s.torpedoes.cooldownLeft<=0){
         const target=ships.find(x=>x.id===s.command.targetId);
-        if(steamTorpedoSolution(s,target,ships)){s.torpedoes.count-=Math.min(2,s.torpedoes.count);s.command.phase="withdraw";}
+        const sol=steamTorpedoSolution(s,target,ships);if(sol){steamConsumeTorpedoTubes(s,sol.tubes.slice(0,steamTorpedoReleaseCount(s,sol)));s.command.phase="withdraw";}
       }
       paths.get(s.id).push({x:s.x,y:s.y,heading:s.heading,speedKn:s.speedKn});
     }
   }
   game._steamPreview={revision:game._steamRevision,paths};
-  for(const s of game.ships){const e=paths.get(s.id).at(-1);s.order={...worldToHex(e.x,e.y),heading:e.heading};}
+  // This is a forecast, not a new order. Its endpoint stays in the preview
+  // cache; painting must not rewrite legacy hex orders inside a live save.
   return game._steamPreview;
 }
 function previewStationKeeping(){if(!game.exec)steamPreview();}
@@ -14864,11 +15230,58 @@ function plannedMovePose(s,p){
   return{x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f,heading:steamNorm(a.heading+wrap180(b.heading-a.heading)*f)};
 }
 function movementPose(s,p){return game.exec?{x:s.x,y:s.y,heading:s.heading}:plannedMovePose(s,p);}
+// A dot is the free-water endpoint of a real helm order over one turn.
+// Keep acceleration, braking and rudder lag; never snap a ship to a hex.
+function steamMoveChoices(s){
+  if(!s||s.out||s.side!==game.playerSide||game.exec||game.phase!=='plan')return[];
+  const members=steamScopeShips(),mobile=members.filter(a=>game.menuMode==='squad'?steamCanKeepStation(a):steamMaxSpeed(a)>1);
+  const max=Math.min(...(mobile.length?mobile:members.length?members:[s]).map(steamMaxSpeed));
+  const key=[game._steamRevision,s.id,s.x,s.y,s.heading,s.speedKn,s.yawRate,s.engine,s.steering,s.flooding,max].join(':');
+  if(game._steamChoices?.key===key)return game._steamChoices.choices;
+  const choices=[];
+  for(const f of [0,1,.5,.25,.75,.125,.375,.625,.875])for(const offset of [0,-15,15,-30,30,-45,45,-60,60,-90,90,-135,135,180]){
+    if(f===0&&offset!==0)continue;
+    const heading=steamNorm(s.heading+offset),speedKn=max*f,p={...s};
+    for(let t=0;t<GAME_TURN_SECONDS;t+=STEAM_STEP)steamPoseAdvance(p,{heading,speed:speedKn,status:'Preview'},STEAM_STEP);
+    choices.push({x:p.x,y:p.y,heading,speedKn,endHeading:p.heading,endSpeedKn:p.speedKn,fraction:f});
+  }
+  game._steamChoices={key,choices};return choices;
+}
+function steamVisibleMoveChoices(v,s){
+  if(game.cardId||game.multiSel||game.plotRoute)return[];
+  const boxes=typeof steamChartObstacles==='function'?steamChartObstacles():[],shown=[];
+  const ships=game.ships.filter(a=>steamVisible(a)&&(!a.out||disabledButAfloat(a))),hulls=ships.map(a=>({x:wx(v,a.x),y:wy(v,a.y),r:Math.max(22,shipScreenLen(v,a)*.55)}));
+  const ids=new Set(ships.map(a=>a.id)),labels=(game._chartLabels||[]).filter(p=>ids.has(p.id));
+  for(const p of steamMoveChoices(s)){
+    const x=wx(v,p.x),y=wy(v,p.y);
+    if(x<12||y<28||x>v.w-12||y>v.h-12||boxes.some(b=>x>b.x-12&&x<b.x+b.w+12&&y>b.y-12&&y<b.y+b.h+12))continue;
+    if(hulls.some(a=>Math.hypot(x-a.x,y-a.y)<a.r)||labels.some(p=>x>=p.x&&x<=p.x+p.w&&y>=p.y&&y<=p.y+p.h)||shown.some(a=>Math.hypot(a.sx-x,a.sy-y)<20))continue;
+    shown.push({...p,sx:x,sy:y});
+  }
+  return shown;
+}
+function steamPickMoveChoice(x,y){
+  const q=game.menuMode==='squad'?squadronById(game.selSquadId):null,s=shipById(q?.leaderId||game.selectedId);
+  let closest=null,distance=11;
+  for(const p of steamVisibleMoveChoices(makeViewCss(),s)){const d=Math.hypot(p.sx-x,p.sy-y);if(d<distance){closest=p;distance=d;}}
+  return closest;
+}
+function steamSetMoveChoice(p){
+  if(!p||game.exec||game.phase!=='plan')return false;
+  steamRememberOrder();
+  return steamSetScopeCommand({kind:'course',heading:p.heading,speedKn:p.speedKn});
+}
+function steamDrawMoveHex(c,x,y,r=6){
+  c.beginPath();for(let i=0;i<6;i++){const a=Math.PI/3*i-Math.PI/2;const px=x+Math.cos(a)*r,py=y+Math.sin(a)*r;i?c.lineTo(px,py):c.moveTo(px,py);}c.closePath();c.stroke();
+}
 function drawReachable(c,v,s){
-  if(!s||s.side!==game.playerSide)return;
+  if(!s||s.side!==game.playerSide||game.exec)return;
   steamPreview();
+  c.save();c.fillStyle='rgba(221,201,145,.55)';
+  for(const p of steamVisibleMoveChoices(v,s)){c.beginPath();c.arc(p.sx,p.sy,2.3,0,Math.PI*2);c.fill();}
+  c.restore();
   const com=s.command;
-  if(com?.kind==="route"){c.save();c.strokeStyle="#8acbd0";c.fillStyle="#c5e1df";c.lineWidth=1;c.setLineDash([2,5]);
+  if(com?.kind==="route"){c.save();c.strokeStyle="rgba(138,203,208,.4)";c.fillStyle="#c5e1df";c.lineWidth=.7;c.setLineDash([2,5]);
     c.beginPath();c.moveTo(wx(v,s.x),wy(v,s.y));for(const p of com.points.slice(com.index||0))c.lineTo(wx(v,p.x),wy(v,p.y));c.stroke();c.setLineDash([]);
     com.points.slice(com.index||0).forEach((p,i)=>{const x=wx(v,p.x),y=wy(v,p.y);c.beginPath();c.arc(x,y,5,0,Math.PI*2);c.stroke();c.font="11px sans-serif";c.fillText(String(i+1),x+8,y-6);});c.restore();}
 }
@@ -14876,14 +15289,15 @@ function steamDrawArrow(c,v,p,length,colour){
   const h=p.heading*Math.PI/180,x=wx(v,p.x),y=wy(v,p.y);
   const dx=wx(v,p.x+Math.sin(h))-x,dy=wy(v,p.y-Math.cos(h))-y,n=Math.hypot(dx,dy)||1,ux=dx/n,uy=dy/n;
   const tx=x+ux*length,ty=y+uy*length;
-  c.strokeStyle=colour;c.fillStyle=colour;c.lineWidth=1.2;c.beginPath();c.moveTo(x,y);c.lineTo(tx,ty);c.stroke();
-  c.beginPath();c.moveTo(tx,ty);c.lineTo(tx-ux*6-uy*3,ty-uy*6+ux*3);c.lineTo(tx-ux*6+uy*3,ty-uy*6-ux*3);c.closePath();c.fill();
+  c.strokeStyle=colour;c.lineWidth=.75;c.beginPath();c.moveTo(tx-ux*7,ty-uy*7);c.lineTo(tx,ty);
+  c.moveTo(tx-ux*3-uy*2,ty-uy*3+ux*2);c.lineTo(tx,ty);c.lineTo(tx-ux*3+uy*2,ty-uy*3-ux*2);c.stroke();
 }
 function drawOrderGhost(c,v,s,highlight){
   const path=steamPreview().paths.get(s.id);if(!path)return;
-  c.save();c.strokeStyle=highlight?'#bbdfe5':'rgba(132,199,219,.70)';c.lineWidth=highlight?1.6:1;c.setLineDash([4,4]);
+  c.save();c.strokeStyle=highlight?'rgba(187,223,229,.46)':'rgba(132,199,219,.26)';c.lineWidth=highlight?.85:.65;c.setLineDash([2,5]);
   c.beginPath();path.forEach((p,i)=>{if(i%4&&i!==path.length-1)return;const x=wx(v,p.x),y=wy(v,p.y);i?c.lineTo(x,y):c.moveTo(x,y);});c.stroke();c.setLineDash([]);
-  steamDrawArrow(c,v,path.at(-1),12,highlight?'#d6f1f0':'#94c8d3');c.restore();
+  const end=path.at(-1);if(highlight){c.strokeStyle='rgba(232,211,153,.8)';c.lineWidth=.9;steamDrawMoveHex(c,wx(v,end.x),wy(v,end.y));}
+  else steamDrawArrow(c,v,end,4,'rgba(148,200,211,.4)');c.restore();
 }
 function steamOrderVisibility(s){
   if(s.out||s.side!==game.playerSide)return'none';
@@ -14896,7 +15310,7 @@ function steamDrawOrders(c,v){
   for(const s of game.ships){
     const kind=steamOrderVisibility(s);if(kind==='none')continue;
     if(game.phase==='plan'&&kind==='track')drawOrderGhost(c,v,s,s.id===game.selectedId);
-    steamDrawArrow(c,v,s,Math.max(17,shipScreenLen(v,s)*.7+10),'rgba(164,215,222,.80)');
+    steamDrawArrow(c,v,s,Math.max(13,shipScreenLen(v,s)*.5+9),'rgba(164,215,222,.48)');
   }
   c.restore();
 }
@@ -14957,11 +15371,12 @@ function advanceTorpedoes(){/* Shared clock owns torpedoes. */}
 // correction. Friendly orders can be coordinated; opposing future orders are
 // not read. The latter are extrapolated from observed speed and yaw only.
 function steamTrafficTrack(s,order){
-  const p={x:s.x,y:s.y,heading:s.heading,speedKn:s.out?0:s.speedKn,yawRate:s.out?0:s.yawRate,
+  const moving=steamMovesHull(s);
+  const p={x:s.x,y:s.y,heading:s.heading,speedKn:moving?s.speedKn:0,yawRate:moving?s.yawRate:0,out:s.out,
     length:s.length,beam:s.beam,maxSpeed:s.maxSpeed,steering:s.steering};
   const points=[],r=s.length*.5;let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
   for(let t=0;t<=60;t++){
-    if(t&&!s.out)steamPoseAdvance(p,order,1);
+    if(t&&moving)steamPoseAdvance(p,order,1);
     const keel=steamKeel(p);points.push({x:p.x,y:p.y,a:keel[0],b:keel[1]});
     minX=Math.min(minX,p.x-r);maxX=Math.max(maxX,p.x+r);minY=Math.min(minY,p.y-r);maxY=Math.max(maxY,p.y+r);
   }
@@ -14984,10 +15399,10 @@ function steamTrafficRisk(a,A,b,B){
 function steamTrafficMayMeet(a,ao,b,bo){
   const dx=b.x-a.x,dy=b.y-a.y,margin=Math.max(6,Math.max(a.beam,b.beam)*.4);
   const radius=(a.length+b.length)*.5+margin+.01;
-  const av=a.out?0:a.speedKn||0,bv=b.out?0:b.speedKn||0,at=a.out?0:ao.speed,bt=b.out?0:bo.speed;
+  const av=steamMovesHull(a)?a.speedKn||0:0,bv=steamMovesHull(b)?b.speedKn||0:0,at=a.out?0:ao.speed,bt=b.out?0:bo.speed;
   const travel=(Math.max(av,at)+Math.max(bv,bt))*STEAM_KNOT*60;
   if(Math.hypot(dx,dy)>radius+travel)return false;
-  const straight=(s,o)=>s.out||Math.abs(wrap180(o.heading-s.heading))<1e-7&&Math.abs(s.yawRate||0)<1e-7;
+  const straight=(s,o)=>!steamMovesHull(s)||(s.out||Math.abs(wrap180(o.heading-s.heading))<1e-7)&&Math.abs(s.yawRate||0)<1e-7;
   if(straight(a,ao)&&straight(b,bo)){
     const h=a.heading*Math.PI/180;
     if(Math.abs(wrap180(a.heading-b.heading))<1e-7){
@@ -15004,7 +15419,7 @@ function steamTrafficMayMeet(a,ao,b,bo){
   return true;
 }
 function steamGuardOrders(ships,orders,desired){
-  const afloat=ships.filter(s=>!s.out||!isSunkReason(s.outReason));
+  const afloat=ships.filter(steamMovesHull);
   const planned=new Map(),observed=new Map(),observedOrders=new Map();
   for(const s of afloat){
     const p=steamMotionParameters(s);
@@ -15231,7 +15646,9 @@ function steamShellScene(s){
     // The exposed support ring is a separate stationary component. It cannot
     // lend its armour to the rotating gunhouse or to another gun on the ship.
     if(m.main&&m.z>m.deckZ+.05){
-      const ring=Array.from({length:16},(_,i)=>[m.x+Math.cos(i*Math.PI/8)*m.width*.48,m.y+Math.sin(i*Math.PI/8)*m.width*.48]);
+      const radius=m.housing?.barbetteRadius??m.width*.48;
+      const count=m.housing?32:16;
+      const ring=Array.from({length:count},(_,i)=>[m.x+Math.cos(i*Math.PI*2/count)*radius,m.y+Math.sin(i*Math.PI*2/count)*radius]);
       steamPrism(out,ring,m.deckZ,m.z-m.deckZ,{kind:'barbette',id:m.id,mount:m});
     }
   }
@@ -15360,7 +15777,7 @@ function steamShellProfile(from,battery){
     failureChance:clamp(fit?.failureChance??(from.side==='China'?.18:from.side==='Russia'?.12:0),0,1),
     penetrationFactor:Math.max(0,fit?.penetrationFactor??(he?.2:1)),
     verified:!!fit?.verified,evidence:fit?.evidence||'Provisional generic fuze: armour-piercing delay and initiation threshold estimated; high-explosive contact action retained. Failure rates inherited, unverified.',
-    ballisticBasis:'Inherited shell-specific mass and muzzle speed where available; aliases and calibre estimates otherwise. Striking speed uses the provisional drag curve.'};
+    ballisticBasis:'Inherited shell-specific mass and muzzle speed where available; aliases and calibre estimates otherwise. New launches use a provisional horizontal quadratic-drag trajectory; earlier saved projectiles retain their launch model.'};
 }
 function steamPointInPolygon(point,polygon){
   let inside=false;
@@ -15466,12 +15883,12 @@ function steamPlatePassage(impact,basePen,energy,random=rnd){
   return {...result,penetrated:passed,partial:passed&&ratio<1.12,nearPen:!passed&&ratio>=.86,penRatio:ratio,
     energyAfter:passed?Math.max(0,energy*(1-cost)):0};
 }
-function steamTraceShellPath(from,battery,target,range,entry){
+function steamTraceShellPath(from,battery,target,range,entry,flightImpactSpeed){
   const shell=battery.loadedShell||chooseShell(from,battery.gun,target,range),profile=steamShellProfile(from,{...battery,loadedShell:shell});
   const immediate=profile.mode==='impact',contacts=steamShellPathContacts(target,entry),steps=[];
   if(!contacts.length)contacts.push({...entry,distance:0});
   const base=penAt(battery.gun,range)*profile.penetrationFactor;
-  const initialSpeed=Math.max(1,profile.muzzleMps*decay(range,decayLength(battery.gun,shell)));
+  const initialSpeed=Number.isFinite(flightImpactSpeed)&&flightImpactSpeed>0?flightImpactSpeed:Math.max(1,profile.muzzleMps*decay(range,decayLength(battery.gun,shell)));
   const fuze={profile,initialSpeed,status:profile.mode==='inert'?'Inert projectile':'Not initiated',initiatedAt:null,initiatedTime:null,failed:false,burst:null};
   let energy=1,decisive=null,largest=-1,waterBreach=null,stopped=false,distance=0,elapsed=0,due=Infinity;
   for(const contact of contacts.slice(0,64)){
@@ -15518,6 +15935,92 @@ function steamTraceShellPath(from,battery,target,range,entry){
 }
 
 
+// Horizontal exterior ballistics, revision 1. Still a provisional model:
+// inherited sectional-density drag length, no vertical integration or wind.
+// Quadratic drag in still air: dv/dt=-v*v/L, hence r=L*log(1+v0*t/L).
+function steamBallisticDistance(speed,length,time){return length*Math.log1p(speed*Math.max(0,time)/length);}
+function steamBallisticTime(speed,length,range){return length/speed*Math.expm1(range/length);}
+function steamShipVelocity(s){const h=s.heading*Math.PI/180,v=(s.speedKn||0)*STEAM_KNOT;return{x:Math.sin(h)*v,y:-Math.cos(h)*v};}
+function steamBallisticIntercept(origin,target,firer,muzzle,length){
+  if(!(muzzle>0&&length>0)||!Number.isFinite(muzzle+length))return null;
+  const own=steamShipVelocity(firer),tv=steamShipVelocity(target);
+  if(Math.hypot(own.x,own.y)>=muzzle)return null;
+  let flight=rangeBetween(origin,target)/muzzle;
+  // Fixed-point contraction for naval target speeds. Reject non-convergence,
+  // rather than emitting an unverified aim for an unreachable synthetic target.
+  for(let i=0;i<64;i++){
+    const aim={x:target.x+tv.x*flight,y:target.y+tv.y*flight};
+    const dx=aim.x-origin.x,dy=aim.y-origin.y,range=Math.hypot(dx,dy);
+    if(!Number.isFinite(range)||range>200000)return null;
+    const nx=range?dx/range:0,ny=range?dy/range:-1;
+    const along=nx*own.x+ny*own.y,across=nx*own.y-ny*own.x;
+    const launchSpeed=along+Math.sqrt(muzzle*muzzle-across*across);
+    const next=steamBallisticTime(launchSpeed,length,range);
+    if(!Number.isFinite(next)||next>600)return null;
+    if(Math.abs(next-flight)<1e-9){
+      const barrel={x:nx*launchSpeed-own.x,y:ny*launchSpeed-own.y};
+      return{flight:next,aim,range,barrel,ballistics:{revision:1,dragLength:length,launchSpeed,impactSpeed:launchSpeed*Math.exp(-range/length),ownVelocity:own,launchVelocity:{x:nx*launchSpeed,y:ny*launchSpeed}}};
+    }
+    flight=next;
+  }
+  return null;
+}
+function steamShellProgress(e,time){
+  if(e.ballistics?.revision===1){
+    if(!e.range)return 1;
+    return clamp(steamBallisticDistance(e.ballistics.launchSpeed,e.ballistics.dragLength,time-e.launchAt)/e.range,0,1);
+  }
+  // Preserve trajectories already airborne in earlier saves.
+  return clamp((time-e.launchAt)/Math.max(.01,e.arriveAt-e.launchAt),0,1);
+}
+
+
+// Tube groups are layout constraints, not certified individual weapon fits.
+// Only Fulong has directional groups in the inherited roster. Its stations and
+// 20-degree sectors are declared estimates; generic ships retain prior sectors.
+function steamTorpedoTubeOptions(s){
+  if(!s.torpedoes)return[];
+  if(s.id==='fulong')return[
+    {id:'bow-port',x:s.length*.40,y:-s.beam*.22,centre:0,half:20},
+    {id:'bow-starboard',x:s.length*.40,y:s.beam*.22,centre:0,half:20},
+    {id:'stern',x:-s.length*.40,y:0,centre:180,half:20}
+  ].filter(t=>!(s._torpSpent||[]).includes(t.id));
+  const half=shipClassTier(s)==='capital'?25:70;
+  return[-90,90].map(centre=>({id:null,x:0,y:0,centre,half}));
+}
+function steamTorpedoTubeAllows(s,tube,heading){return Math.abs(wrap180(heading-s.heading-tube.centre))<=tube.half+1e-7;}
+function steamTorpedoTrainHeading(s,tube,heading){return steamNorm(s.heading+tube.centre+clamp(wrap180(heading-s.heading-tube.centre),-tube.half,tube.half));}
+function steamTorpedoReleaseCount(s,sol){return Math.min(s.torpedoes?.count||0,s.command?.kind==='attack'?2:1,sol?.tubes?.length??2);}
+function steamConsumeTorpedoTubes(s,tubes){
+  s._torpSpent=[...(s._torpSpent||[]),...tubes.map(t=>t?.id).filter(Boolean)];
+  s.torpedoes.count=Math.max(0,s.torpedoes.count-tubes.length);
+}
+function steamTorpedoLaneClear(s,origin,heading,speed,run,ships){
+  const time=run/speed,dx=Math.sin(heading)*run,dy=-Math.cos(heading)*run;
+  for(const f of ships){
+    if(f.id===s.id||f.side!==s.side||!steamHullAfloat(f))continue;
+    const v=steamShipVelocity(f),end={x:origin.x+dx-v.x*time,y:origin.y+dy-v.y*time};
+    if(steamTorpedoContact({...f,length:f.length+4,beam:f.beam+4},origin,end))return false;
+  }
+  return true;
+}
+function steamAttackWithdrawalHeading(s,target){
+  const away=steamNorm(absBearing(s,target)+180),v=steamShipVelocity(target);
+  const candidates=[s.heading,away,steamNorm(away+90),steamNorm(away-90)];
+  let best=null;
+  for(const heading of candidates){
+    const a={...s};let closest=Infinity;
+    for(let i=1;i<=60;i++){
+      steamPoseAdvance(a,{heading,speed:steamMaxSpeed(s),status:'Withdrawal forecast'},1);
+      closest=Math.min(closest,Math.hypot(a.x-target.x-v.x*i,a.y-target.y-v.y*i));
+    }
+    const distance=Math.hypot(a.x-target.x-v.x*60,a.y-target.y-v.y*60);
+    if(!best||closest>best.closest+.01||Math.abs(closest-best.closest)<=.01&&distance>best.distance)best={heading,closest,distance};
+  }
+  return best.heading;
+}
+
+
 // Combat runs on the same seconds as motion. Shots already in flight survive
 // their firer; a destroyed mount cannot schedule another shot.
 function usesRefinedDamageModel(){return !isSailEra();}
@@ -15556,30 +16059,38 @@ function steamIntercept(from,target,speed,maxRun){
   if(!Number.isFinite(time)||time*speed>maxRun)return null;
   return{time,x:target.x+tx*time,y:target.y+ty*time,run:time*speed};
 }
-// The inherited traversing arcs remain provisional. Explicit bow-tube entries
-// may also fire ahead; the old generic arc wrongly masked those tubes.
-function steamBowTorpedoes(s){return /bow/i.test(JSON.stringify(s.def?.armament||[]));}
+// Directional tubes are selected before evaluating their own launch station.
+function steamBowTorpedoes(s){return steamTorpedoTubeOptions(s).some(t=>t.id&&t.centre===0);}
 function steamTorpedoCheck(s,t,ships=game.ships){
   if(!s.torpedoes?.count)return{reason:"Empty"};
   if(s.out)return{reason:"Disabled"};
   if((s.torpedoes.cooldownLeft||0)>0)return{reason:"Reloading"};
+  const now=s._previewSeconds??game.simSeconds??0;
+  if((s._torpRetryAt||0)>now&&t?.id===s._torpRetryTarget)return{reason:'Friendly crossing'};
   if(!t||t.out||s.side===t.side)return{reason:"No target"};
   if(!canSight(s,t))return{reason:"Target unseen"};
-  const profile=steamTorpedoProfile(s),solution=steamIntercept(s,t,profile.speed,profile.run);
-  if(!solution)return{reason:"Out of range"};
-  const rel=Math.abs(relativeBearing(s,solution));
-  const capital=shipClassTier(s)==="capital";
-  const bow=steamBowTorpedoes(s)&&rel<=20;
-  if(!bow&&(capital?(rel<65||rel>115):(rel<20||rel>160)))return{reason:"Tubes masked"};
-  for(const f of ships){
-    if(f===s||f.side!==s.side||f.out)continue;
-    // Relative motion: a friendly may enter the firing lane after launch, or
-    // clear it before the torpedo arrives. Current position alone is misleading.
-    const h=f.heading*Math.PI/180,v=(f.speedKn||0)*STEAM_KNOT;
-    const end={x:solution.x-Math.sin(h)*v*solution.time,y:solution.y+Math.cos(h)*v*solution.time};
-    if(steamTorpedoContact({...f,length:f.length+4,beam:f.beam+4},s,end))return{reason:"Friendly crossing"};
+  const profile=steamTorpedoProfile(s),ready=[];let reason='Out of range';
+  for(const tube of steamTorpedoTubeOptions(s)){
+    let origin=steamMountWorld(s,tube),solution=steamIntercept(origin,t,profile.speed,Infinity);
+    if(!solution)continue;
+    for(let i=0;i<3;i++){
+      const heading=absBearing(origin,solution);
+      origin=steamTorpedoLaunchPoint(s,heading*Math.PI/180,tube);
+      solution=steamIntercept(origin,t,profile.speed,profile.run);if(!solution)break;
+    }
+    if(!solution)continue;
+    const heading=absBearing(origin,solution);
+    if(!steamTorpedoTubeAllows(s,tube,heading)){if(reason!=='Friendly crossing')reason='Tubes masked';continue;}
+    if(!steamTorpedoLaneClear(s,origin,heading*Math.PI/180,profile.speed,profile.run,ships)){reason='Friendly crossing';continue;}
+    ready.push({tube,origin,solution});
   }
-  return{reason:"Ready",solution:{...solution,profile}};
+  if(!ready.length)return{reason};
+  // Shared-inventory generic mounts can supply a pair. Named tubes are single
+  // loaded weapons, so the stern group cannot release two bow torpedoes.
+  const selected=ready.filter(r=>r.tube.id||r===ready[0]);
+  if(!selected[0].tube.id)selected.push(selected[0]);
+  const first=selected[0];
+  return{reason:'Ready',solution:{...first.solution,profile,origin:first.origin,tubes:selected.map(r=>r.tube)}};
 }
 function steamTorpedoSolution(s,t,ships=game.ships){return steamTorpedoCheck(s,t,ships).solution||null;}
 function steamTorpedoErrorModel(){
@@ -15596,26 +16107,41 @@ function steamObservedTorpedoAim(s,t,profile){
     heading:steamNorm(t.heading+steamNormalError()*e.courseDegrees),speedKn:Math.max(0,(t.speedKn||0)+steamNormalError()*e.speedKn)};
   return steamIntercept(s,observed,profile.speed,Infinity)||observed;
 }
+function steamTorpedoLaunchPoint(s,heading,tube){
+  // Known directional groups start at their estimated station; unresolved fits
+  // retain the centre-ray boundary fallback. Never start inside the capsule.
+  const base=tube?steamMountWorld(s,tube):s,dx=Math.sin(heading),dy=-Math.cos(heading);
+  const far={x:base.x+dx*(s.length+s.beam)*2,y:base.y+dy*(s.length+s.beam)*2};
+  const edge=steamTorpedoContact(s,far,base)||base;
+  return{x:edge.x+dx*.05,y:edge.y+dy*.05};
+}
 function steamLaunchTorpedoes(s,t,sol){
-  const order=s.command,coordinated=order?.kind==="attack";
-  const count=Math.min(s.torpedoes.count,coordinated?2:1);
-  if(count<1)return;
-  const profile=sol.profile,aim=steamObservedTorpedoAim(s,t,profile),errors=steamTorpedoErrorModel();
-  const bearing=Math.atan2(aim.x-s.x,-(aim.y-s.y));
+  if(!sol)return 0;
+  sol={...sol,tubes:sol.tubes.filter(t=>!t.id||!(s._torpSpent||[]).includes(t.id))};
+  const order=s.command,coordinated=order?.kind==='attack',count=steamTorpedoReleaseCount(s,sol);
+  if(count<1)return 0;
+  const profile=sol.profile,aim=steamObservedTorpedoAim({...s,...sol.origin},t,profile),errors=steamTorpedoErrorModel();
+  const used=[];
   for(let i=0;i<count;i++){
-    // Aiming error is an explicit estimated control error; it is independent of
-    // the geometric lead. No target-seeking steering after release.
-    const error=steamNormalError()*errors.runningDegrees+(i-(count-1)/2)*1.4;
-    const hr=bearing+error*Math.PI/180;
-    const torp={physical:true,side:s.side,sourceId:s.id,targetId:t.id,x:s.x,y:s.y,hr,speed:profile.speed*clamp(1+steamNormalError()*errors.runningSpeedFraction,.75,1.25),
-      travelled:0,runDist:profile.run,charge:profile.charge,period:profile.id,life:1,trail:[],dead:false,resolved:false};
+    const tube=sol.tubes[i],observed=absBearing(sol.origin,aim)+(i-(count-1)/2)*1.4;
+    const trained=steamTorpedoTrainHeading(s,tube,observed)*Math.PI/180;
+    // Running deviation is distinct from tube train. Mechanical stops constrain
+    // the launch train even when the observation points outside its sector.
+    const hr=trained+steamNormalError()*errors.runningDegrees*Math.PI/180;
+    const speed=profile.speed*clamp(1+steamNormalError()*errors.runningSpeedFraction,.75,1.25);
+    const origin=steamTorpedoLaunchPoint(s,trained,tube);
+    if(!steamTorpedoLaneClear(s,origin,hr,speed,profile.run,game.ships))continue;
+    const torp={physical:true,side:s.side,sourceId:s.id,targetId:t.id,x:origin.x,y:origin.y,sourceCleared:true,hr,speed,
+      launchOrigin:{...origin},tubeId:tube.id,tubeTrain:trained,travelled:0,runDist:profile.run,charge:profile.charge,period:profile.id,life:1,trail:[],dead:false,resolved:false};
     torp.telId=telTorpedoLaunch(s,t,{runDist:sol.run,flightSec:sol.time,launchFrac:game.exec?game.exec.simulated/GAME_TURN_SECONDS:0},null,i,count);
-    game.torpedoes.push(torp);telAgg(s.id).torpFired++;
+    game.torpedoes.push(torp);telAgg(s.id).torpFired++;used.push(tube);
+    game.effects.push({type:'torpLaunch',x:origin.x,y:origin.y,hr:trained,life:1,fade:2});
   }
-  s.torpedoes.count-=count;s.torpedoes.cooldownLeft=30;s.torpedoes.ready=s.torpedoes.count>0;
-  if(coordinated){order.phase="withdraw";const q=squadronOf(s.id);if(q?.attack&&q.attack.releaseAt==null)q.attack.releaseAt=game.simSeconds;}
-  logLine(s.name+" releases "+count+" torpedo"+(count===1?"":"es")+" at "+t.name+".","fire");
-  game.effects.push({type:"torpLaunch",x:s.x,y:s.y,hr:bearing,life:1,fade:2});
+  if(!used.length){s._torpRetryAt=(game.simSeconds||0)+5;s._torpRetryTarget=t.id;return 0;}
+  steamConsumeTorpedoTubes(s,used);s._torpRetryAt=0;s._torpRetryTarget=null;s.torpedoes.cooldownLeft=30;s.torpedoes.ready=s.torpedoes.count>0;
+  if(coordinated){order.phase='withdraw';const q=squadronOf(s.id);if(q?.attack&&q.attack.releaseAt==null)q.attack.releaseAt=game.simSeconds;}
+  logLine(s.name+' releases '+used.length+' torpedo'+(used.length===1?'':'es')+' at '+t.name+'.','fire');
+  return used.length;
 }
 function steamResolveTorpedo(t,hit,contactPose){
   t.dead=true;t.resolved=true;t.life=0;
@@ -15633,13 +16159,29 @@ function steamResolveTorpedo(t,hit,contactPose){
 }
 function steamMovingTorpedoContact(s,from,to,start){
   if(!start)return steamTorpedoContact(s,from,to);
-  const angle=wrap180(s.heading-start.heading),steps=Math.max(1,Math.ceil(Math.abs(angle)/2));
-  for(let i=0;i<steps;i++){
-    const a=i/steps,b=(i+1)/steps,pose={...s,x:start.x+(s.x-start.x)*a,y:start.y+(s.y-start.y)*a,heading:steamNorm(start.heading+angle*(a+b)/2)};
-    const p={x:from.x+(to.x-from.x)*a,y:from.y+(to.y-from.y)*a};
-    const q={x:from.x+(to.x-from.x)*b-(s.x-start.x)*(b-a),y:from.y+(to.y-from.y)*b-(s.y-start.y)*(b-a)};
-    const hit=steamTorpedoContact(pose,p,q);
-    if(hit){const t=a+(b-a)*hit.t;return{...hit,t,x:from.x+(to.x-from.x)*t,y:from.y+(to.y-from.y)*t,pose:{...s,x:start.x+(s.x-start.x)*t,y:start.y+(s.y-start.y)*t,heading:steamNorm(start.heading+angle*t)}};}
+  const angle=wrap180(s.heading-start.heading),dx=s.x-start.x,dy=s.y-start.y;
+  const q={x:to.x-dx,y:to.y-dy},initial={...s,...start};
+  const result=t=>({t,x:from.x+(to.x-from.x)*t,y:from.y+(to.y-from.y)*t,
+    pose:{...s,x:start.x+dx*t,y:start.y+dy*t,heading:steamNorm(start.heading+angle*t)}});
+  if(Math.abs(angle)<1e-9){const hit=steamTorpedoContact(initial,from,q);return hit?result(hit.t):null;}
+  // Broad phase uses the circumscribing circle in the translating frame.
+  if(!steamTorpedoContact({...initial,beam:s.length},from,q))return null;
+  // A midpoint orientation can sweep over a newly released torpedo before the
+  // hull has actually turned. Advance by a distance/speed bound instead. Both
+  // translation and rotation are evaluated at the same contact time.
+  const k=Math.max(0,(s.length-s.beam)/2),radius=s.beam/2;
+  const vx=to.x-from.x-dx,vy=to.y-from.y-dy;
+  const bound=Math.hypot(vx,vy)+Math.abs(angle*Math.PI/180)*k;
+  let t=0;
+  for(let i=0;i<4096;i++){
+    const h=(start.heading+angle*t)*Math.PI/180,x=from.x-start.x+vx*t,y=from.y-start.y+vy*t;
+    const u=x*Math.sin(h)-y*Math.cos(h),v=x*Math.cos(h)+y*Math.sin(h);
+    const gap=Math.hypot(u-clamp(u,-k,k),v)-radius;
+    if(gap<=.00001)return result(t);
+    if(t>=1||bound<1e-12)return null;
+    const step=gap/bound;
+    if(t+step>1)return null;
+    t+=step;
   }
   return null;
 }
@@ -15650,7 +16192,16 @@ function steamStepTorpedoes(dt,movingHulls=false){
     const end={x:t.x+Math.sin(t.hr)*distance,y:t.y-Math.cos(t.hr)*distance};
     let first=null;
     for(const s of game.ships){
-      if(s.id===t.sourceId&&t.travelled+distance<s.length)continue;
+      if(s.id===t.sourceId&&!t.sourceCleared){
+        // Older saves may begin inside their source. Ignore that initial exit,
+        // then permit a genuine later crossing of the launcher's hull.
+        const start=movingHulls&&s._stepStart?{...s,...s._stepStart}:s;
+        if(steamTorpedoContact(start,old,old)){
+          if(!steamTorpedoContact(s,end,end))t.sourceCleared=true;
+          continue;
+        }
+        t.sourceCleared=true;
+      }
       if(!steamHullAfloat(s))continue;
       const touch=steamMovingTorpedoContact(s,old,end,movingHulls?s._stepStart:null);
       if(touch&&(!first||touch.t<first.touch.t||(touch.t===first.touch.t&&s.id<first.ship.id)))first={ship:s,touch};
@@ -15672,7 +16223,7 @@ function steamTorpedoOrders(){
     const candidates=any?[assigned,...game.ships.filter(t=>t!==assigned&&t.side!==s.side&&!t.out).sort((a,b)=>rangeBetween(s,a)-rangeBetween(s,b))]:[assigned];
     for(const target of candidates){
       const sol=steamTorpedoSolution(s,target);
-      if(sol){steamLaunchTorpedoes(s,target,sol);break;}
+      if(sol&&steamLaunchTorpedoes(s,target,sol))break;
     }
   }
 }
@@ -15716,28 +16267,90 @@ function sightLimit(from,target){
   }
   return limit*Math.exp(-Math.min(2,opacity))*((target.fires||0)>0?1.15:1);
 }
+function steamLightDefenceGun(s,b){
+  return shipClassTier(s)==='capital'&&!b.geometry?.main&&gunCalibre(b.gun)<=105;
+}
+function steamClosingThreat(s,t){
+  // Use observable class, position and motion, never enemy orders or stores.
+  if(shipClassTier(t)!=='torpedo')return false;
+  const dx=t.x-s.x,dy=t.y-s.y,r=Math.hypot(dx,dy);
+  const limit=['run_south','run_north','second_heligoland'].includes(SCN.id)?3000:2000;
+  if(r>limit)return false;
+  if(r<500)return true;
+  const sh=s.heading*Math.PI/180,th=t.heading*Math.PI/180;
+  const vx=(Math.sin(th)*t.speedKn-Math.sin(sh)*s.speedKn)*STEAM_KNOT;
+  const vy=(-Math.cos(th)*t.speedKn+Math.cos(sh)*s.speedKn)*STEAM_KNOT;
+  return -(dx*vx+dy*vy)/r>.5;
+}
 function steamBatteryTarget(s,b){
   const candidates=s._fireCandidates||[],primary=shipById(s.targetId);
   const valid=t=>t&&!t.out&&t.side!==s.side&&candidates.includes(t)&&batteryCanBear(s,b,t);
+  if(steamLightDefenceGun(s,b)){
+    const threat=candidates.find(t=>valid(t)&&steamClosingThreat(s,t));
+    if(threat)return threat;
+  }
   if(valid(primary))return primary;
   if(s._manualTarget&&b.geometry?.main&&primary&&!primary.out)return null;
   return candidates.find(t=>!t.out&&batteryCanBear(s,b,t))||null;
 }
-function steamLaunchBattery(s,b,t){
+// Shared horizontal fire-control solution. Ballistic coefficients remain
+// provisional, not a measured ballistic range table.
+// No enemy orders are read. A course change after launch can still evade fire.
+const STEAM_TRAIN_TOLERANCE=.05;
+function steamShellIntercept(origin,target,speed){
+  if(!Number.isFinite(speed)||speed<=0)return null;
+  const h=target.heading*Math.PI/180,v=(target.speedKn||0)*STEAM_KNOT;
+  const vx=Math.sin(h)*v,vy=-Math.cos(h)*v,dx=target.x-origin.x,dy=target.y-origin.y;
+  const a=vx*vx+vy*vy-speed*speed,b=2*(dx*vx+dy*vy),c=dx*dx+dy*dy;
+  let time;
+  if(c<1e-12)time=0;
+  else if(Math.abs(a)<1e-9){if(b>=0)return null;time=-c/b;}
+  else{
+    const d=b*b-4*a*c;if(d<0)return null;
+    // Stable quadratic roots, including nearly head-on closing targets.
+    const q=-.5*(b+(b>=0?1:-1)*Math.sqrt(d));
+    const roots=[q/a,q?c/q:Infinity].filter(t=>Number.isFinite(t)&&t>=0);
+    if(!roots.length)return null;time=Math.min(...roots);
+  }
+  // Resolution advances in one-second steps; retain the existing minimum.
+  const flight=Math.max(1,time),aim={x:target.x+vx*flight,y:target.y+vy*flight};
+  return{flight,aim,range:rangeBetween(origin,aim)};
+}
+function steamBatteryFireSolution(s,b,t){
+  if(!t)return null;
+  const muzzles=b.geometry.housing||b.geometry.muzzle?steamGunSegments(b.geometry,b.train,b.disabledBarrels).map(seg=>steamMountWorld(s,{x:seg[1][0],y:seg[1][1]})):null;
+  // A battery salvo still uses its established aggregate dispersion model.
+  // Its launch station is the mean of its surviving, measured muzzle tips.
+  if(muzzles&&!muzzles.length)return null;
+  const origin=muzzles?muzzles.reduce((p,v)=>({x:p.x+v.x/muzzles.length,y:p.y+v.y/muzzles.length}),{x:0,y:0}):steamMountWorld(s,b.geometry);
+  const targetRange=rangeBetween(origin,t),shell=shellToLoad(s,b,t,targetRange);
+  const shellProfile=steamShellProfile(s,{...b,loadedShell:shell});
+  const intercept=steamBallisticIntercept(origin,t,s,shellProfile.muzzleMps,decayLength(b.gun,shell));
+  if(!intercept)return null;
+  const desired=wrap180(Math.atan2(intercept.barrel.x,-intercept.barrel.y)*180/Math.PI-s.heading);
+  return{...intercept,origin,muzzles,targetRange,shell,shellProfile,desired,
+    inRange:intercept.range<=maxEffectiveRange(b.gun)};
+}
+function steamFireSolutionClear(s,b,f){return !!f&&f.inRange&&steamBearingClear(s,b,f.desired);}
+function steamBatteryTrained(s,b,f){
+  return steamFireSolutionClear(s,b,f)&&Math.abs(wrap180(f.desired-b.train))<=STEAM_TRAIN_TOLERANCE&&steamBearingClear(s,b,b.train);
+}
+// Launch primitive: the combat loop checks range, clearance, training and reload.
+// Projectile/contact fixtures can also exercise it independently of gun laying.
+function steamLaunchBattery(s,b,t,solution){
   const live=steamLiveGunCount(b);if(!live)return;
-  const range=rangeBetween(s,t),cal=gunCalibre(b.gun),origin=steamMountWorld(s,b.geometry);
-  const shell=shellToLoad(s,b,t,range),shellProfile=steamShellProfile(s,{...b,loadedShell:shell});
-  const flight=Math.max(1,range/Math.max(100,shellProfile.muzzleMps*.72));
-  const h=t.heading*Math.PI/180,velocity=(t.speedKn||0)*STEAM_KNOT;
-  const aim={x:t.x+Math.sin(h)*velocity*flight,y:t.y-Math.cos(h)*velocity*flight};
+  const f=solution||steamBatteryFireSolution(s,b,t);if(!f)return;
+  const {origin,muzzles,range,shell,shellProfile,flight,aim}=f,cal=gunCalibre(b.gun);
   const count=Math.max(1,Math.round(live*fireVolumeFactor(s)));
   b.loadedShell=shell;b.readiness=0;b.lastFiredTurn=game.turn;
   const same=b.rangeTargetId===t.id;b.rangeTargetId=t.id;if(!same)b.rangeLevel=0;
   const hc=hitChance(s,b,t,range)*fireMoraleFactor(s);
-  game.shells.push({fromId:s.id,targetId:t.id,from:{id:s.id,name:s.name,side:s.side,def:s.def,x:s.x,y:s.y,heading:s.heading,crew:s.crew,morale:s.morale,doctrine:s.doctrine,ammoStores:s.ammoStores,movedThisTurn:s.movedThisTurn,turnedHard:s.turnedHard,out:false},battery:{...b,gun:steamClone(b.gun),shellProfile},origin,aim,range,count,hc,cal,
+  game.shells.push({fromId:s.id,targetId:t.id,from:{id:s.id,name:s.name,side:s.side,def:s.def,x:s.x,y:s.y,heading:s.heading,crew:s.crew,morale:s.morale,doctrine:s.doctrine,ammoStores:s.ammoStores,movedThisTurn:s.movedThisTurn,turnedHard:s.turnedHard,out:false},battery:{...b,gun:steamClone(b.gun),shellProfile},origin,aim,range,count,hc,cal,ballistics:steamClone(f.ballistics),
     launchAt:game.simSeconds,arriveAt:game.simSeconds+flight,turn:game.turn});
   s.firedThisTurn=true;s._firedTurn=game.turn;
-  if(cal>=100||s.id===game.selectedId)game.effects.push({type:"muzzle",x:origin.x,y:origin.y,fromId:s.id,toId:t.id,set:true,life:1,fade:7,heavy:cal>=200});
+  if(cal>=100||s.id===game.selectedId){
+    for(const p of muzzles||[origin])game.effects.push({type:"muzzle",x:p.x,y:p.y,fromId:s.id,toId:t.id,set:true,life:1,fade:7,heavy:cal>=200});
+  }
   steamSmokeAdd(s,b.geometry);
 }
 function steamResolveShell(e){
@@ -15749,7 +16362,7 @@ function steamResolveShell(e){
   const onPattern=target&&!target.out&&rangeBetween(target,e.aim)<Math.max(target.length*.8,60);
   for(let i=0;i<e.count;i++){
     if(onPattern&&rnd()<e.hc){
-      const entry=steamChooseShellImpact(e.origin||e.from,target,e.range),impact=steamTraceShellPath(e.from,e.battery,target,e.range,entry);
+      const entry=steamChooseShellImpact(e.origin||e.from,target,e.range),impact=steamTraceShellPath(e.from,e.battery,target,e.range,entry,e.ballistics?.impactSpeed);
       const ev=resolveHit(e.from,e.battery,target,e.range,impact);lastImpact=impact;
       res.hits++;res.totalDmg+=ev.dmg;res.fires+=ev.fireSet?1:0;res.pens+=ev.penetrated?1:0;res.ricochets+=ev.ricochet?1:0;res.bounces+=!ev.penetrated&&!ev.ricochet?1:0;
       res.obliquitySum=(res.obliquitySum||0)+ev.obliquity;
@@ -15798,9 +16411,13 @@ function steamCombatStep(dt){
       const reload=reloadMid(b.gun)*(2-s.crew);
       b.readiness=Math.min(reload,b.readiness+dt);
       const t=steamBatteryTarget(s,b);if(!t)continue;
-      const desired=relativeBearing(s,t);steamTrainBattery(s,b,desired,dt);
-      if(b.readiness+1e-6<reload||Math.abs(wrap180(desired-b.train))>2)continue;
-      steamLaunchBattery(s,b,t);
+      const solution=steamBatteryFireSolution(s,b,t);if(!steamFireSolutionClear(s,b,solution))continue;
+      steamTrainBattery(s,b,solution.desired,dt);
+      // Training moves measured muzzle tips. Recompute from their actual launch
+      // positions before checking alignment, masks or recording the projectile.
+      const trained=steamBatteryFireSolution(s,b,t);
+      if(b.readiness+1e-6<reload||!steamBatteryTrained(s,b,trained))continue;
+      steamLaunchBattery(s,b,t,trained);
     }
   }
   // Existing weapons cover this second; weapons released at its end start
@@ -15811,18 +16428,21 @@ function steamCombatStep(dt){
   for(const e of due)steamResolveShell(e);
 }
 function drawTorpedoes(c,v,torpedoes){
-  c.save();c.lineWidth=1;
+  c.save();c.lineWidth=.75;
   for(const t of torpedoes){
     if(t.dead)continue;
     const seen=t.side===game.playerSide||game.ships.some(s=>!s.out&&s.side===game.playerSide&&rangeBetween(s,t)<1800);
     if(!seen)continue;
-    c.strokeStyle=t.side===game.playerSide?"rgba(150,224,218,.7)":"rgba(231,191,159,.65)";
+    const tail=t.trail[0]||t,x=wx(v,t.x),y=wy(v,t.y),rgb=t.side===game.playerSide?'150,224,218':'231,191,159';
+    const fade=c.createLinearGradient(wx(v,tail.x),wy(v,tail.y),x,y);
+    for(const [stop,a] of [[0,0],[.2,.04],[.75,.28],[1,.14]])fade.addColorStop(stop,`rgba(${rgb},${a})`);
+    c.strokeStyle=fade;c.lineWidth=.75;
     c.beginPath();t.trail.forEach((p,i)=>i?c.lineTo(wx(v,p.x),wy(v,p.y)):c.moveTo(wx(v,p.x),wy(v,p.y)));c.stroke();
-    const x=wx(v,t.x),y=wy(v,t.y);c.fillStyle="#eee3c1";c.beginPath();c.arc(x,y,1.5,0,Math.PI*2);c.fill();
+    c.fillStyle="rgba(238,227,193,.7)";c.beginPath();c.arc(x,y,1.1,0,Math.PI*2);c.fill();
   }
   // Shell tracers use the same launch and arrival times as damage.
   for(const e of game.shells||[]){
-    const p=clamp((game.simSeconds-e.launchAt)/Math.max(.01,e.arriveAt-e.launchAt),0,1),q=Math.max(0,p-.025);
+    const p=steamShellProgress(e,game.simSeconds),q=Math.max(0,p-.025);
     c.strokeStyle=e.cal>=200?"rgba(238,216,166,.70)":"rgba(208,224,226,.32)";c.lineWidth=e.cal>=200?1:.55;
     c.beginPath();c.moveTo(wx(v,e.origin.x+(e.aim.x-e.origin.x)*q),wy(v,e.origin.y+(e.aim.y-e.origin.y)*q));
     c.lineTo(wx(v,e.origin.x+(e.aim.x-e.origin.x)*p),wy(v,e.origin.y+(e.aim.y-e.origin.y)*p));c.stroke();
@@ -15915,11 +16535,8 @@ function steamChartLabel(s){
   return{text,selected};
 }
 function steamLayoutChartLabels(c,v,ships){
-  const labels=[],occupied=[{x:0,y:0,w:v.w,h:22},{x:0,y:v.h-31,w:v.w,h:31},{x:8,y:v.h-94,w:85,h:88}],hulls=ships.map(s=>({id:s.id,x:wx(v,s.x),y:wy(v,s.y),r:Math.max(5,shipScreenLen(v,s)*.45)}));
-  if(typeof canvas!=='undefined'&&canvas){
-    const chart=canvas.getBoundingClientRect(),chips=document.getElementById('squadronChips');
-    if(chips?.classList.contains('show')){const box=chips.getBoundingClientRect();occupied.push({x:box.left-chart.left,y:box.top-chart.top,w:box.width,h:box.height});}
-  }
+  const labels=[],occupied=[{x:0,y:0,w:v.w,h:22},{x:0,y:v.h-31,w:v.w,h:31}],hulls=ships.map(s=>({id:s.id,x:wx(v,s.x),y:wy(v,s.y),r:Math.max(5,shipScreenLen(v,s)*.45)}));
+  if(typeof steamChartObstacles==='function')occupied.push(...steamChartObstacles());
   c.font='600 10px ui-monospace, SFMono-Regular, monospace';
   const ordered=ships.slice().sort((a,b)=>((b.id===game.selectedId?8:b.id===game.targetId?6:0)+(b.side===game.playerSide?2:0)) - ((a.id===game.selectedId?8:a.id===game.targetId?6:0)+(a.side===game.playerSide?2:0)));
   const overlap=(a,b)=>a.x<b.x+b.w+3&&a.x+a.w+3>b.x&&a.y<b.y+b.h+3&&a.y+a.h+3>b.y;
@@ -15969,7 +16586,6 @@ function steamDrawChartLabels(c,v,ships){
     const anchor={x:clamp(p.cx,p.x+3,p.x+p.w-3),y:clamp(p.cy,p.y+3,p.y+p.h-3)};
     c.strokeStyle=p.selected?'rgba(218,210,173,.6)':'rgba(158,181,184,.35)';c.lineWidth=.7;
     c.beginPath();c.moveTo(p.cx,p.cy);c.lineTo(anchor.x,anchor.y);c.stroke();
-    c.fillStyle='rgba(7,20,24,.82)';c.fillRect(p.x,p.y,p.w,p.h-2);
     c.fillStyle=s.out?'#849b9f':p.selected?'#f1e2b9':accent;
     c.font='600 10px ui-monospace, SFMono-Regular, monospace';c.textAlign='left';c.textBaseline='middle';
     c.fillText(p.text,p.x+19,p.y+10);drawClassIcon(c,p.x+9,p.y+10,shipClassTier(s),c.fillStyle,7);
@@ -16002,8 +16618,59 @@ function pickShip(x,y){
   return best;
 }
 function steamIcon(id){
-  const paths={helm:'<circle cx="12" cy="12" r="8"/><path d="m15 5-1 9-7 5 3-9Z"/>',fire:'<circle cx="12" cy="12" r="6"/><path d="M12 1v7m0 8v7M1 12h7m8 0h7"/>',torpedoes:'<path d="m4 15 11-11 5 1-1 5-11 11-1-5Z M13 6l5 5M3 21l3-3"/>',condition:'<path d="M2 12h5l3-7 4 14 3-7h5"/>'};
-  return `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">${paths[id]||''}</svg>`;
+  // One optical size and stroke system. These are symbols, not scale drawings
+  // of a particular mounting. No font-dependent arrows or emoji in the helm.
+  const paths={
+    helm:'<circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="1.5"/><path d="M12 2v8.5m0 3V22M2 12h8.5m3 0H22M5 5l6 6m2 2 6 6M5 19l6-6m2-2 6-6"/>',
+    fire:'<path d="M8.5 11V2.5m7 8.5V2.5M7 10.5l-2 3v5l3 3h8l3-3v-5l-2-3Z M9 17.5h6"/>',
+    torpedoes:'<g transform="rotate(40 12 12)"><path d="M9.5 17V6c0-2 1-3.5 2.5-4 1.5.5 2.5 2 2.5 4v11Z M9.5 7h5M9.5 14l-3 5h11l-3-5M12 17v5"/></g>',
+    condition:'<path d="M7.5 3.5h9l4 3v9l-4 5h-9l-4-5v-9Z M12 7v10M7 12h10"/>',
+    route:'<path d="M5 18V9a3 3 0 0 1 3-3h9m-3-3 3 3-3 3"/><circle cx="5" cy="19" r="2"/>',
+    hold:'<path d="M12 21V3m-5 5 5-5 5 5"/>',
+    stop:'<rect x="7" y="7" width="10" height="10" rx=".5" fill="currentColor" stroke="none"/>',
+    undo:'<path d="m8 4-5 5 5 5M3 9h10a6 6 0 0 1 0 12h-3"/>',
+    rejoin:'<path d="M17 21V3m-4 4 4-4 4 4M3 20v-5a5 5 0 0 1 5-5h9"/>',
+    withdraw:'<path d="M18 21V8a5 5 0 0 0-10 0v11m-4-4 4 4 4-4"/>',
+    fleet:'<path d="M9 5h12M9 12h12M9 19h12"/><circle cx="4" cy="5" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="19" r="1"/>',
+    squad:'<path d="M4 4h10l4 3-4 3H4ZM7 14h10l4 3-4 3H7Z"/>',
+    zoom:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M7.5 10.5h6m-3-3v6"/>'
+  };
+  return `<svg class="steam-icon" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${paths[id]||''}</svg>`;
+}
+function steamSquadronMark(mark){
+  return `<svg class="steam-pennant" viewBox="0 0 44 36" aria-hidden="true" focusable="false"><path d="M5 5.5h34L34 18l5 12.5H5Z"/><text x="20" y="18" dominant-baseline="central" text-anchor="middle">${steamEscape(mark)}</text></svg>`;
+}
+function steamGunneryStatus(s,target){
+  const largest=Math.max(...s.batteries.map(b=>gunCalibre(b.gun))),main=s.batteries.filter(b=>b.geometry?.main||gunCalibre(b.gun)===largest);
+  const live=main.reduce((n,b)=>n+steamLiveGunCount(b),0);
+  if(!live)return'Main guns disabled';
+  if(!target)return'Map target · automatic fire if clear';
+  const solutions=new Map(main.filter(b=>steamLiveGunCount(b)).map(b=>[b,steamBatteryFireSolution(s,b,target)]));
+  const bearing=main.filter(b=>steamFireSolutionClear(s,b,solutions.get(b)));
+  const count=bearing.reduce((n,b)=>n+steamLiveGunCount(b),0);
+  if(!count)return [...solutions.values()].every(f=>!f?.inRange)?'Out of range':'Main guns masked';
+  const trained=bearing.filter(b=>steamBatteryTrained(s,b,solutions.get(b)));
+  const ready=trained.some(b=>b.readiness>=reloadMid(b.gun)*(2-s.crew));
+  return count+'/'+live+' bearing · '+(ready?'Ready':trained.length?'Reloading':'Training');
+}
+// Measure the overlay without shrinking or clearing the chart beneath it.
+function steamSyncOverlayInset(){
+  const chart=document.getElementById('chartWrap'),panel=document.getElementById('panel');
+  if(!chart||!panel)return;
+  const narrow=window.innerWidth<=960&&window.innerHeight>window.innerWidth;
+  const h=narrow&&panel.classList.contains('expanded')?panel.getBoundingClientRect().height+12:0;
+  game._steamOverlayInset=h;
+  chart.style.setProperty?.('--steam-panel-inset',h+'px');
+}
+function steamChartObstacles(){
+  if(typeof canvas==='undefined'||!canvas)return[];
+  const chart=canvas.getBoundingClientRect(),boxes=[];
+  for(const [id,visible] of [['panel','expanded'],['squadronChips','show'],['logDrawer',null]]){
+    const el=document.getElementById(id);if(!el||visible&&!el.classList.contains(visible))continue;
+    const r=el.getBoundingClientRect();if(r.width&&r.height)boxes.push({x:r.left-chart.left,y:r.top-chart.top,w:r.width,h:r.height});
+  }
+  const h=chart.height;boxes.push({x:8,y:h-94-(game._steamOverlayInset||0),w:85,h:88});
+  return boxes;
 }
 function steamPanelAction(action,value){
   if(action==='inspect'){game.cardId=game.menuMode==='squad'?squadronById(game.selSquadId)?.leaderId:game.selectedId;syncPanel();return;}
@@ -16017,6 +16684,7 @@ function steamPanelAction(action,value){
   if(action==="speed")steamSetScopeSpeed(Number(value));
   if(action==="plot")game.plotRoute=!game.plotRoute;
   if(action==="hold")steamSetScopeCommand({kind:"course",heading:s.heading,speedKn:current.speedKn});
+  if(action==="stop")steamSetScopeCommand({kind:"course",heading:s.heading,speedKn:0});
   if(action==="rejoin")steamRejoin(s);
   if(action==="turn"&&q)steamSetTurnMode(q,value);
   if(action==="formation"&&q){q.formation=value;rebuildSquadronLines();steamInvalidate();}
@@ -16057,23 +16725,20 @@ function syncPanel(){
   const members=q?q.members.map(shipById).filter(a=>a&&!a.out):[s],command=s.command;
   const target=shipById(game.targetId||s.targetId),valid=target&&!target.out&&steamVisible(target);
   const controlled=q?.command?members.filter(a=>!a._detached):members;
-  const max=Math.min(...(controlled.length?controlled:members).map(steamMaxSpeed)),speed=command?.speedKn??s.speedKn;
   const disabled=game.exec?' disabled':'',tab=game.commandTab||"helm",E=steamEscape;
   const select=(id,options,value)=>`<select id="${id}" aria-label="${id.replace('steam','')}"${disabled}>${options.map(([v,t])=>`<option value="${E(v)}"${v===value?' selected':''}>${E(t)}</option>`).join('')}</select>`;
   const button=(action,label,value="",active=false,title=label,extra="")=>`<button data-steam="${action}" data-value="${E(value)}" class="${active?'active':''}" aria-label="${E(title)}" title="${E(title)}" ${extra}${['inspect','ship'].includes(action)?'':disabled}>${label}</button>`;
   const enemies=game.ships.filter(a=>a.side!==game.playerSide&&!a.out&&steamVisible(a));
-  const targetControl=()=>`<div class="steam-row steam-target-row">${select('steamTarget',[["","Target: Auto"],...enemies.map(a=>[a.id,a.name+" · "+(rangeBetween(s,a)/1000).toFixed(1)+" km"])],valid?target.id:"")}${button('target','×','',false,'Clear target')}</div>`;
+  const targetControl=()=>`<div class="steam-row steam-target-row"><span>${valid?E(target.name)+' · '+(rangeBetween(s,target)/1000).toFixed(1)+' km':'Tap an enemy'}</span>${valid?button('target','×','',false,'Clear target'):''}</div>`;
+  const shells=['auto',...['AP','HE'].filter(t=>members.some(a=>a.batteries.some(b=>!b.gun.available_shells||b.gun.available_shells.includes(t))))];
+  const shellControl=`<div class="steam-row steam-shells" aria-label="Shell selection">${shells.map(t=>button('shell',t==='auto'?'Auto':t,t,(shells.includes(s.doctrine)?s.doctrine:'auto')===t,t==='auto'?'Automatic shell selection':t==='AP'?'Armour piercing shells':'High explosive shells')).join('')}</div>`;
   let content='';
   if(tab==="helm"){
-    content=`<div class="steam-row steam-speed" aria-label="Ordered speed">${button('speed','−',Math.max(0,speed-.5).toFixed(2),false,'Reduce speed by half a knot')}${[[0,'0'],[.25,'¼'],[.5,'½'],[.75,'¾'],[1,'Full']].map(([f,t])=>button('speed',t,(max*f).toFixed(2),Math.abs(speed-max*f)<.1,t==='0'?'Stop':t+' speed · '+(max*f).toFixed(1)+' knots')).join('')}${button('speed','+',Math.min(max,speed+.5).toFixed(2),false,'Increase speed by half a knot')}</div><div class="steam-row">${button('plot','+ Route','',game.plotRoute,'Append route points')}${button('hold','↗ Hold','',false,'Hold present course')}${button('undo','↶','',false,'Undo last order',game._orderHistory?.length?'':'disabled')}${q?select('steamTurn',[["succession","Follow"],["together","Together"]],q.turnMode||'succession'):squadronOf(s.id)?button('rejoin','↩','',false,'Rejoin '+squadronOf(s.id).name):''}</div><div class="steam-status">${game.exec?'Orders locked during resolution':game.plotRoute?'Tap chart to add waypoints':q&&q.command?E((q.turnMode==='together'?'Together · ':'Follow · ')+s.name):'Tap chart to steer'} · ${speed.toFixed(1)} kn ordered</div>`;
+    content=`<div class="steam-row steam-helm-controls">${button('plot',steamIcon('route'),'',game.plotRoute,'Append route points')}${button('hold',steamIcon('hold'),'',false,'Hold present course')}${button('stop',steamIcon('stop'),'',false,'Stop engines')}${button('undo',steamIcon('undo'),'',false,'Undo last order',game._orderHistory?.length?'':'disabled')}${q?select('steamTurn',[["succession","Follow"],["together","Together"]],q.turnMode||'succession'):squadronOf(s.id)?button('rejoin',steamIcon('rejoin'),'',false,'Rejoin '+squadronOf(s.id).name):''}</div>${q?'':`<div class="steam-status">${game.exec?'Orders locked':game.plotRoute?'Tap chart to add waypoints':'Tap a dot for course and speed'}</div>`}`;
     if(q)content+=`<details class="steam-details"><summary>Formation</summary><div class="steam-row">${select('steamFormation',[["line","Line ahead"],["abreast","Line abreast"],["echelon_port","Port echelon"],["echelon_starboard","Starboard echelon"]],q.formation||'line')}${select('steamSpacing',[[200,'200 m'],[350,'350 m'],[500,'500 m'],[750,'750 m'],[1000,'1,000 m']].map(([v,t])=>[String(v),t]).concat([[String(q.spacing||300),'Current · '+(q.spacing||300)+' m']]),String(q.spacing||300))}</div><p class="steam-help">Follow: turns in succession. Together: parallel routes. ↩ joins astern. Chart orders command the group; individual helms detach.</p></details>`;
   }
   if(tab==="fire"){
-    content=targetControl()+`<div class="steam-row" aria-label="Shell selection">${['auto','AP','HE'].map(t=>button('shell',t==='auto'?'Auto':t,t,(s.doctrine||'auto')===t)).join('')}</div><details class="steam-details"><summary>Gun status</summary><div class="steam-mounts">${s.batteries.filter(b=>gunCalibre(b.gun)>=100).map(b=>{
-      const state=b.knockedOut?'Disabled':valid&&!batteryCanBear(s,b,target)?'Masked / out of range':b.readiness>=reloadMid(b.gun)*(2-s.crew)?'Loaded':Math.ceil(reloadMid(b.gun)*(2-s.crew)-b.readiness)+' s';
-      const live=steamLiveGunCount(b),guns=live===b.count?String(b.count):live+'/'+b.count;
-      return`<div><span>${b.geometry?.label?E(b.geometry.label)+' · ':''}${guns} × ${Math.round(gunCalibre(b.gun))} mm</span><span>${state}</span></div>`;
-    }).join('')}</div></details>`;
+    content=targetControl()+`<div class="steam-status">${E(steamGunneryStatus(s,valid?target:null))}</div>`;
   }
   if(tab==="torpedoes"){
     const armed=members.filter(a=>a.torpedoes?.count>0),count=armed.reduce((n,a)=>n+a.torpedoes.count,0),attacking=members.some(a=>a.command?.kind==='attack'),mode=s._torpMode||'hold';
@@ -16085,30 +16750,31 @@ function syncPanel(){
     const ready=checks.filter(c=>c.solution).length;
     const check={reason:ready?(armed.length>1?ready+' ready':'Ready'):checks[0]?.reason||'Empty'};
     if(mode==='auto'&&check.reason==='No target')check.reason='Waiting';
-    content=targetControl()+`<div class="steam-row steam-torp-controls">${[['hold','Hold'],['target','Target'],['auto','Any']].map(([v,t])=>button('torpedoes',t,v,!attacking&&mode===v,v==='hold'?'Hold torpedo fire':v==='target'?'Fire at the selected target when able':'Fire at any visible enemy when able')).join('')}${attacking?button('abort','↩','',false,'Withdraw from attack'):button('attack','Attack','',false,'Approach, fire, withdraw',!valid||!count?'disabled':'')}</div><div class="steam-status">${count} left · ${attacking?E(s.command?.phase==='withdraw'?'Withdrawing':check.reason):mode==='hold'?'Holding fire':E(check.reason)}${mode==='auto'?' · any enemy':''}</div>`;
+    content=members.some(a=>a.torpedoes)?targetControl()+`<div class="steam-row steam-torp-controls">${[['hold','Hold'],['target','Target'],['auto','Any']].map(([v,t])=>button('torpedoes',t,v,!attacking&&mode===v,v==='hold'?'Hold torpedo fire':v==='target'?'Fire at the selected target when able':'Fire at any visible enemy when able')).join('')}${attacking?button('abort',steamIcon('withdraw'),'',false,'Withdraw from attack'):button('attack','Attack','',false,'Approach, fire, withdraw',!valid||!count?'disabled':'')}</div><div class="steam-status">${count} left · ${attacking?E(s.command?.phase==='withdraw'?'Withdrawing':check.reason):mode==='hold'?'Holding fire':E(check.reason)}${mode==='auto'?' · any enemy':''}</div>`:
+      targetControl()+'<div class="steam-status">No tubes</div>';
     if(['run_south','run_north','second_heligoland'].includes(SCN.id))content+=`<details class="steam-details"><summary>Run setting</summary><div class="steam-row">${['fast','long'].map(v=>button('setting',v==='fast'?'Fast':'Long',v,(s._torpSetting||'fast')===v)).join('')}</div></details>`;
   }
   if(tab==="condition"){
     content=`<div class="steam-condition"><div>Hull <strong>${Math.round(s.structure/s.structureMax*100)}%</strong></div><div>Flood <strong>${Math.round(s.flooding||0)}%</strong></div><div>Fires <strong>${s.fires||0}</strong></div><div>Engine <strong>${Math.round(s.engine*100)}%</strong></div><div>Rudder <strong>${Math.round(s.steering*100)}%</strong></div><div>Crew <strong>${Math.round(s.crew*100)}%</strong></div></div>${button('inspect','Ship plan')}${steamDamageSummary(s)}${steamShellDamageSummary(s)}`;
     if(q)content+=`<div class="steam-members">${members.map(a=>button('ship',E(a.name)+' · '+(a.speedKn||0).toFixed(1)+' kn',a.id)).join('')}</div>`;
   }
-  body.innerHTML=`<div class="steam-command"><header class="steam-command-head"><div class="steam-name"><strong title="${E(q?q.name:s.name)}">${E(q?q.name:s.name)}</strong><span>${q?(q.command?controlled.length+'/'+members.length:members.length)+' ships · ':''}${(s.speedKn||0).toFixed(1)} kn · ${Math.round(s.heading).toString().padStart(3,'0')}°</span></div><nav class="steam-tabs" aria-label="Command pages">${[['helm','Helm'],['fire','Guns'],['torpedoes','Torpedoes'],['condition','Condition']].map(([id,label])=>`<button data-tab="${id}" title="${label}" aria-label="${label}" class="${tab===id?'active':''}" aria-pressed="${tab===id}">${steamIcon(id)}</button>`).join('')}</nav></header><div class="steam-content">${content}</div></div>`;
+  body.innerHTML=`<div class="steam-command"><header class="steam-command-head"><div class="steam-name"><strong title="${E(q?q.name:s.name)}">${E(q?q.name:s.name)}</strong><span>${q?(q.command?controlled.length+'/'+members.length:members.length)+' ships':''}</span></div><nav class="steam-tabs" aria-label="Command pages">${[['helm','Helm'],['fire','Guns'],['torpedoes','Torpedoes'],['condition','Condition']].map(([id,label])=>`<button data-tab="${id}" title="${label}" aria-label="${label}" class="${tab===id?'active':''}" aria-pressed="${tab===id}">${steamIcon(id)}</button>`).join('')}</nav></header>${shellControl}<div class="steam-content">${content}</div></div>`;
   body.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{game.commandTab=b.dataset.tab;syncPanel();}));
   body.querySelectorAll('[data-steam]').forEach(b=>b.addEventListener('click',()=>steamPanelAction(b.dataset.steam,b.dataset.value)));
   body.querySelectorAll('.steam-details').forEach(d=>d.addEventListener('toggle',()=>{panel.classList.toggle('tall',[...body.querySelectorAll('.steam-details')].some(x=>x.open));resizeCanvas();}));
-  for(const [id,action] of [['steamTurn','turn'],['steamFormation','formation'],['steamSpacing','spacing'],['steamTarget','target']]){
+  for(const [id,action] of [['steamTurn','turn'],['steamFormation','formation'],['steamSpacing','spacing']]){
     const el=document.getElementById(id);if(el)el.addEventListener('change',()=>steamPanelAction(action,el.value));
   }
   setPanelExpanded(panel,true);resizeCanvas();
   }finally{game._steamPanelRendering=false;}
 }
 function serializeGame(){
-  const sv=JSON.parse(b64dec(legacySerializeGame()));sv.v=3;sv.commandRevision=12;sv.geometryRevision=6;sv.damageRevision=STEAM_DAMAGE_REVISION;sv.shellRevision=STEAM_SHELL_REVISION;sv.simSeconds=game.simSeconds||0;sv.seed=simulationSeed;sv.goals=game.goals;sv.tel=game.tel;
+  const sv=JSON.parse(b64dec(legacySerializeGame()));sv.v=3;sv.commandRevision=14;sv.motionRevision=1;sv.torpedoRevision=1;sv.rosterRevision=1;sv.geometryRevision=11;sv.damageRevision=STEAM_DAMAGE_REVISION;sv.shellRevision=STEAM_SHELL_REVISION;sv.simSeconds=game.simSeconds||0;sv.seed=simulationSeed;sv.goals=game.goals;sv.tel=game.tel;
   sv.squads=steamClone(game.squadrons);
   sv.ships.forEach(d=>{
     const s=shipById(d.i);d.x=s.x;d.y=s.y;d.h=s.heading;
-    d.steam={state:Object.fromEntries(Object.entries(s).filter(([k,v])=>v===null||["string","number","boolean"].includes(typeof v))),command:s.command,speedKn:s.speedKn,yawRate:s.yawRate,detached:s._detached,manualTarget:s._manualTarget,
-      torpMode:s._torpMode,torpSetting:s._torpSetting,wake:s._wake,distance:s._distance,lastTorpedoImpact:s.lastTorpedoImpact,lastShellImpact:s.lastShellImpact,breaches:s._breaches};
+    d.steam={state:Object.fromEntries(Object.entries(s).filter(([k,v])=>!['_visA','_sinkStart'].includes(k)&&(v===null||["string","number","boolean"].includes(typeof v)))),command:s.command,speedKn:s.speedKn,yawRate:s.yawRate,detached:s._detached,manualTarget:s._manualTarget,
+      torpMode:s._torpMode,torpSetting:s._torpSetting,torpSpent:s._torpSpent,wake:s._wake,distance:s._distance,lastTorpedoImpact:s.lastTorpedoImpact,lastShellImpact:s.lastShellImpact,breaches:s._breaches};
     d.b=s.batteries.map(b=>({id:b.mountId,r:b.readiness,k:b.knockedOut,db:b.disabledBarrels,l:b.loadedShell,t:b.train,rt:b.rangeTargetId,rl:b.rangeLevel}));
   });
   sv.torpedoes=game.torpedoes;sv.smoke=game.smoke;
@@ -16138,6 +16804,7 @@ function loadGameFromCode(code){
     for(const d of sv.ships){const s=shipById(d.i);if(!s)continue;const p=d.steam||{};
       Object.assign(s,p.state||{});
       Object.assign(s,{command:p.command||s.command,speedKn:p.speedKn??s.speedKn,yawRate:p.yawRate||0,_detached:!!p.detached,_manualTarget:!!p.manualTarget,_torpMode:p.torpMode||'hold',_torpSetting:p.torpSetting||'fast',_wake:p.wake||s._wake,_distance:p.distance||0});
+      s._torpSpent=Array.isArray(p.torpSpent)?p.torpSpent.filter(id=>['bow-port','bow-starboard','stern'].includes(id)):[];
       s.lastTorpedoImpact=p.lastTorpedoImpact||null;s.lastShellImpact=p.lastShellImpact||null;s._breaches=p.breaches||[];
       const savedMounts=new Map((d.b||[]).filter(b=>typeof b.id==='string').map(b=>[b.id,b]));
       for(const b of s.batteries){
@@ -16146,6 +16813,8 @@ function loadGameFromCode(code){
           if(saved.r!=null)b.readiness=saved.r;b.knockedOut=!!saved.k;b.loadedShell=saved.l||null;
           b.disabledBarrels=[...new Set((saved.db||[]).filter(n=>Number.isInteger(n)&&n>=0&&n<b.count))];
           if(saved.t!=null)b.train=bearingInArc(saved.t,b.arc)?saved.t:steamRestTrain(b.geometry);b.rangeTargetId=saved.rt||null;b.rangeLevel=saved.rl||0;b.shotsThisTurn=0;
+        }else if(b.geometry.introducedRevision&&(sv.geometryRevision||1)<b.geometry.introducedRevision){
+          b.readiness=0;b.loadedShell=null;b.knockedOut=false;b.rangeTargetId=null;
         }else if((sv.geometryRevision||1)<3&&b.geometry.legacyBarrels){
           // Old single mounts cannot be identified with a real triple. The
           // published mapping conserves lost barrels and uses the least-ready
@@ -16179,6 +16848,16 @@ function loadGameFromCode(code){
     for(const s of game.ships){if(["run_south","run_north"].includes(SCN.id)){s.x/=.58;s.y/=.58;snapToHex(s);}s.speedKn=s.throttle*s.maxSpeed;s.command={kind:'course',heading:s.orderHeading??s.heading,speedKn:s.speedKn};steamInitWake(s);}
     logLine('Legacy save migrated: individual mount readiness and damage reset because the older save has no mount identities.','sys');
   }
+  if((sv.rosterRevision||0)<1){
+    // An armament correction must not refill a running battle. Earlier saves
+    // did not model these batteries and contain no remaining-ammunition record.
+    let added=false,removed=false;
+    for(const d of sv.ships){const s=shipById(d.i),fit=STEAM_ROSTER_FITS[d.i];if(!s||!fit)continue;
+      if(fit.addedTorpedoes&&!d.tp){s.torpedoes={count:0,initialCount:fit.torpedoes,ready:false,cooldownLeft:0};added=true;}
+      if(fit.torpedoes===0){s.torpedoes=null;if(d.tp?.c>0)removed=true;}
+    }
+    if(added||removed)logLine('Armament corrected: unsupported cruiser torpedo stores removed. Newly represented battleship tubes start empty in this saved battle. Torpedoes already running are retained.','sys');
+  }
   if((sv.commandRevision||0)<8){
     for(const s of game.ships){
       if(['capital','light'].includes(s._torpMode))s._torpMode=s.targetId?'target':'hold';
@@ -16206,6 +16885,9 @@ function loadGameFromCode(code){
 function init(){
   for(let i=THEATRES.length-1;i>=0;i--)if(THEATRES[i].id==='sail')THEATRES.splice(i,1);
   document.body.classList.add('steam-edition');legacyInit();
+  for(const [id,icon,text] of [['fleetBtn','fleet','Ships'],['multiSelBtn','squad',''],['zoomBtn','zoom','']]){
+    const b=document.getElementById(id);if(b)b.innerHTML=steamIcon(icon)+(text?`<span>${text}</span>`:'');
+  }
   const title=document.querySelector('#panelTitle span');if(title)title.textContent='Command';
   const menu=document.querySelector('#gameMenu .gm-card');
   if(menu){const controls=document.createElement('div');controls.className='steam-menu-controls';
@@ -16213,7 +16895,7 @@ function init(){
       const b=document.createElement('button');b.className='gm-btn';b.textContent=label;b.addEventListener('click',()=>{document.getElementById(id)?.click();ohOv('gameMenu');});controls.appendChild(b);
     }menu.appendChild(controls);
   }
-  const stamp=document.getElementById('buildStamp');if(stamp)stamp.textContent='Russian capitals · 2.0 alpha 14';
+  const stamp=document.getElementById('buildStamp');if(stamp)stamp.textContent='Bulk playtest · 2.0 alpha 25';
   const notes=document.getElementById('theatrePanel');
   if(notes){const p=document.createElement('p');p.className='steam-release-note';p.textContent='Steam campaigns · Command revision 2.0 · Sail campaigns parked';notes.appendChild(p);}
 }
