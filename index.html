@@ -942,6 +942,28 @@ body.steam-edition .squad-chip:focus-visible{outline:2px solid var(--steam-focus
 .steam-language button.active{border-color:var(--brass);color:var(--brass);background:rgba(200,164,92,.12)}
 html[lang="zh-Hans"] .steam-status,html[lang="zh-Hans"] .steam-condition,html[lang="zh-Hans"] .steam-name{letter-spacing:0;font-family:system-ui,"PingFang SC","Microsoft YaHei",sans-serif}
 
+/* Alpha 29: fixed command pages; only the page body scrolls. */
+body.steam-edition #main #panel{display:flex;flex-direction:column}
+body.steam-edition #panel .panel-title{flex:0 0 30px;height:30px;min-height:30px}
+body.steam-edition #steamTabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;flex:0 0 48px;padding:0 5px 3px;margin:0;border-bottom:1px solid rgba(200,218,214,.18);background:rgba(9,32,39,.8);position:relative;z-index:3}
+body.steam-edition #steamTabs button{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:1px;width:auto;height:45px;min-height:44px;padding:2px;border:1px solid transparent;border-radius:4px;background:transparent;color:#b8c8c8;font:9px/1.1 system-ui,sans-serif;white-space:nowrap}
+body.steam-edition #steamTabs button.active{color:#ecd59c;border-color:rgba(213,193,140,.4);background:rgba(213,193,140,.1);box-shadow:inset 0 -2px #d5c18c}
+body.steam-edition #steamTabs button:disabled{opacity:.4}
+body.steam-edition #steamTabs button:focus-visible{outline:2px solid #d5c18c;outline-offset:-2px}
+body.steam-edition #panelBody{flex:0 1 auto;overflow:auto;overscroll-behavior:contain}
+.steam-command-head{min-height:24px;margin-bottom:5px}
+.steam-condition{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 14px;padding:5px 0}
+.steam-condition .steam-health{display:flex;align-items:center;justify-content:space-between;gap:7px;border:0;padding:3px 0;font-size:11px}
+.steam-health-track{display:block;position:relative;width:58%;height:7px;flex-shrink:0;border-radius:3px;background:#243c40;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(211,224,216,.12)}
+.steam-health-track i{display:block;height:100%;background:var(--health-colour)}
+.steam-health-track.hazard{background:rgba(146,191,157,.18)}
+#steamLanguageToggle{flex:0 0 40px;min-height:36px;padding:3px;border:1px solid rgba(200,164,92,.35);border-radius:5px;color:var(--brass);background:rgba(8,28,34,.45);font:12px system-ui,sans-serif;cursor:pointer}
+#steamNavHint{position:absolute;left:9px;bottom:calc(var(--steam-panel-inset,0px) + 5px);max-width:calc(100% - 24px);font:10px/1.4 system-ui,sans-serif;color:#c1d5d4;pointer-events:none;text-shadow:0 1px 3px #071c23;z-index:2}
+@media(max-width:960px) and (orientation:portrait){body.steam-edition #main #panel{max-height:35dvh}body.steam-edition #main #panel.tall,body.steam-edition #main #panel.steam-card{max-height:46dvh}}
+@media(orientation:landscape){#steamNavHint{max-width:calc(100% - 332px)}}
+#steamNavHint{bottom:calc(var(--steam-panel-inset,0px) + 100px);max-width:290px}
+@media(orientation:landscape){#steamNavHint{max-width:calc(100% - 332px)}}
+
 </style>
 </head>
 <body>
@@ -951,6 +973,7 @@ html[lang="zh-Hans"] .steam-status,html[lang="zh-Hans"] .steam-condition,html[la
   <div id="topbar">
     <div class="brand"><span id="brandText">Echelon</span><span class="sub" id="subText">Naval Action</span></div>
     <div class="turnbox">Turn <b id="turnNum">1</b> · <span id="phaseLabel">Plan · give orders</span></div>
+    <button id="steamLanguageToggle" data-no-localize title="Language / 语言" aria-label="Switch language / 切换语言">中文</button>
     <div class="strengths">
       <div class="sbar"><div class="lab"><span class="nm" id="sideAName">Side A</span><span id="chinaPct">100%</span></div><div class="track"><div id="chinaBarFill"></div></div></div>
       <div class="sbar"><div class="lab"><span class="nm" id="sideBName">Side B</span><span id="japanPct">100%</span></div><div class="track"><div id="japanBarFill"></div></div></div>
@@ -962,6 +985,7 @@ html[lang="zh-Hans"] .steam-status,html[lang="zh-Hans"] .steam-condition,html[la
       <canvas id="chart"></canvas>
       <div class="objbox" id="objBox"></div>
       <div class="squadron-chips" id="squadronChips" aria-label="Squadron shortcuts"></div>
+      <div id="steamNavHint" role="status" aria-live="polite"></div>
       <div id="logDrawer">
         <div class="log-head"><div class="log-handle" id="logBtn">Signal log ▴</div><button class="log-analysis" id="analysisBtn">Mechanics</button></div>
         <div id="logList"></div>
@@ -970,6 +994,7 @@ html[lang="zh-Hans"] .steam-status,html[lang="zh-Hans"] .steam-condition,html[la
 
     <div id="panel">
       <div class="panel-title" id="panelTitle"><button class="panel-head-btn" id="panelFleetBtn" title="Fleet roster" aria-label="Fleet roster">☰</button><span>Command</span><button class="panel-head-btn" id="panelCloseBtn" title="Close command pane" aria-label="Close command pane">×</button></div>
+      <nav id="steamTabs" class="steam-tabs" aria-label="Command pages"></nav>
       <div id="panelBody"></div>
     </div>
   </div>
@@ -1274,6 +1299,66 @@ const STEAM_ZH_OTHER_SHIPS={
 };
 
 
+// Complete phrases for command help, objectives and after-action verdicts.
+// Display only; the scoring, model strings and save payload remain English.
+const STEAM_ZH_EXTRA={
+'Navigation':'航海','Ship systems':'舰体系统','Course':'航向','hex':'六边格','Clear':'无异常','Minor':'轻微','Serious':'严重','Critical':'危急','Disabled':'失效',
+'Route tool: tap water to add waypoints. Tap again to leave route mode.':'航线工具：点选海面添加航路点，再点一次按钮退出。',
+'Route tool off. Tap a dot to set course and speed.':'已退出航线工具。点选圆点可同时设置航向与航速。',
+'Hold course: keep the current heading and ordered speed.':'保持航向：沿当前航向航行，维持已设航速。',
+'Stop engines: slow to a halt. The ship still coasts and turns.':'停止引擎：逐渐减速至停止，舰艇仍会滑行和转向。',
+'Undo: restored the previous order.':'撤销：已恢复上一命令。','Rejoin: follow your squadron leader again.':'归队：重新跟随分队领舰。',
+'Follow: each ship turns through the leader’s wake.':'依次转向：各舰沿领舰航迹通过转向点。','Together: all ships turn onto parallel courses.':'同时转向：各舰同时转入平行航向。',
+'Line ahead: ships follow one behind another.':'单纵队：各舰前后跟随。','Line abreast: ships sail side by side.':'单横队：各舰并排行进。',
+'Port echelon: each follower is behind and to port.':'左梯队：后舰位于前舰左后方。','Starboard echelon: each follower is behind and to starboard.':'右梯队：后舰位于前舰右后方。','Spacing: distance between ships in the formation.':'编队间距：调整编队内各舰之间的距离。',
+'Selection starts empty. Tap only the ships to include. The first selected ship is the flagship. Ships already assigned transfer only when you tap them. ✓ creates the squadron.':'初始不选舰艇。点选要编入的舰艇，首艘为领舰。已有徽号表示该舰已属分队；确认后才会调入新队。点✓完成组建。',
+'Squadron selection help':'编队选择说明','Create squadron':'建立分队','Cancel squadron selection':'取消编队选择','Tap ships · ✓ to form':'点选舰艇 · ✓完成组建',
+'Tactical':'战术','Strategic':'战略','Strategic · Hold':'战略 · 守成','Command of the sea':'制海权','Contested':'争夺中','Lost':'丧失','Disaster':'灾难','Trade':'互有损失','Setback':'受挫','Gain':'优势扩大','Erosion':'实力削弱','Cost':'代价高昂','Triumph':'大捷','Partial':'部分成功','Stalemate':'僵局',
+'Crushing Defeat':'惨败','Decisive Victory':'决定性胜利','Honourable Victory':'光荣的胜利','Costly Victory':'惨胜','Defensive Victory':'防御胜利','Costly Defeat':'损失惨重的失败','A Bloody Draw':'血战未分胜负','Indecisive Action':'胜负未定','The Enemy Escaped':'敌舰脱离','Victory at the Yalu':'黄海大捷',
+'Through to Open Water':'突破至开阔海域','The Breakout Holds':'突围得以继续','Driven Back on Port Arthur':'被迫退回旅顺','The Flag Goes Down':'旗舰失去战斗力','Still Running at Dusk':'黄昏仍在突围','The Flag Falls at Dusk':'旗舰在黄昏失去战斗力','The Squadron Turns Back':'舰队掉头返航','They Are Through':'敌舰成功突围','Contact Lost in the Dark':'夜色中失去接触',
+'The Scouting Group Broken':'侦察舰队遭击溃','Led Onto the High Seas Fleet':'被引向公海舰队','Running Fight Unresolved':'追逐战未分胜负','Delivered Onto Scheer':'将敌舰引向舍尔','The Group Broken Short of the Fleet':'会合前遭击溃','Contact Holds at the Limit':'极限距离上保持接触',
+'Scheer Led Onto the Grand Fleet':'将舍尔引向大舰队','The Fast Wing Broken':'高速舰队遭击溃','Still Running North':'仍在向北撤离','Drawn Onto Jellicoe':'被引向杰利科','The Chase Unresolved':'追击未分胜负','The Bight Swept Clean':'扫雷编队被歼','Drawn Onto the Heavy Guns':'被引入重炮火网','The Chase Broken Off':'追击中断','The Sweepers Brought Home':'扫雷舰成功撤离','The Covering Force Broken':'掩护舰队被击溃','Smoke Over the Bight':'海湾烟幕弥漫',
+'Your charge: bring the ironclads through, hold to nightfall, make them pay':'任务：保全铁甲舰，坚持至黄昏，使敌舰付出代价','Your charge: break the Beiyang fleet':'任务：击溃北洋舰队','Your charge: break the enemy line and bring your fleet through':'任务：突破敌方战列，保存己方舰队',
+'Both ironclads brought through':'两艘铁甲舰均存续','Fleet held to nightfall':'舰队坚持至黄昏','Losses held below the historic five':'损失少于历史上的五艘','Enemy flagship crippled':'敌方旗舰遭重创','Drew blood (sink a ship or cripple the flag)':'取得战果（击沉一舰或重创旗舰）',
+'Beiyang cruiser force broken (four or more destroyed or disabled)':'击溃北洋巡洋舰队（四艘以上被毁或失能）','Command of the sea taken: the Beiyang Fleet driven off':'夺取制海权：迫使北洋舰队退出战场','Fleet brought through without loss, as in 1894':'如1894年一样，舰队无舰艇损失','Beyond the record: a Chinese ironclad put under':'超越历史：击沉一艘中国铁甲舰',
+'Enemy fighting strength broken (below 40%)':'敌方战斗力遭击溃（低于40%）','Your fleet held together (above 50%)':'己方舰队保持战力（高于50%）','Half the enemy line removed from combat':'敌方半数战列舰艇退出战斗',
+'Still a fleet at nightfall (above 55%)':'黄昏时仍保持舰队战力（高于55%）','Tsesarevich and the flag still in action':'皇太子号与旗舰指挥仍有效','The enemy made to pay (Japan under 75%)':'使敌军付出代价（日方战力低于75%）','The breakout stopped (Russia under 40% or her flag down)':'阻止突围（俄方战力低于40%或旗舰失能）','Your battle line preserved (above 60%)':'保全己方战列（高于60%）','No Russian battleship past the line at nightfall':'黄昏前无俄国战列舰通过目标线',
+"Two of Hipper's five put out of action":'使希佩尔五舰中的两艘退出战斗','Your own line still in being (above 55%)':'己方战列仍保持战力（高于55%）','No magazine lost':'无弹药库殉爆','The group in being at the sighting (above 60%)':'接敌时仍保持分队战力（高于60%）','Beatty still following south':'贝蒂仍在向南追击','A British magazine spoken for':'引爆一艘英舰的弹药库',
+'Three of the four Queen Elizabeths still in being':'四艘伊丽莎白女王级中三艘仍保持战力','Two battlecruisers still in being':'两艘战列巡洋舰仍保持战力','Running until Jellicoe is sighted':'持续撤离直至发现杰利科','Two Queen Elizabeths crippled':'重创两艘伊丽莎白女王级','Or two battlecruisers crippled':'或重创两艘战列巡洋舰','The van still in being (above 60%)':'前锋仍保持战力（高于60%）',
+"Four of the eight sweepers destroyed, or two of Reuter's cruisers":'摧毁八艘扫雷舰中的四艘，或罗伊特的两艘巡洋舰','No capital ship lost to the trap':'未在诱敌陷阱中损失主力舰','A British capital ship crippled':'重创一艘英国主力舰',"Reuter's squadron still in being":'罗伊特分队仍保持战力',
+'you broke the enemy line and held the sea.':'你击溃敌方战列，控制了战场海域。','both fleets drew off bloodied; neither broke.':'双方均受损后撤离，但均未被击溃。','your fleet was beaten and driven from the field.':'你的舰队战败，被迫退出战场。',
+'you held the field and the Combined Fleet paid a price it never paid in 1894.':'你守住战场，使联合舰队承受了超出1894年历史战果的损失。','neither fleet broke; both drew off bloodied at nightfall.':'双方舰队均未溃散，黄昏时各自带伤撤离。','the fleet was driven from the field.':'舰队被迫退出战场。',
+'with both battleships gone the Beiyang Fleet is finished as a deterrent. Japan takes uncontested command of the Yellow Sea and the landings proceed.':'两艘战列舰均损失，北洋舰队失去威慑力。日本获得黄海制海权，登陆行动继续。',
+"a battleship lost, but the Combined Fleet gutted with it. Japan's command of the sea is no longer assured and the naval war reopens.":'虽损失一艘战列舰，联合舰队也遭到重创。日本的制海权不再稳固，海战局势重新打开。',
+"losing a battleship halves the fleet's striking core; Japan presses toward command of the sea, as it did historically.":'损失一艘战列舰，使舰队核心打击力量减半。日本如历史上一样逐步夺取制海权。',
+'both battleships intact and the enemy fleet mauled. Japan must refit before it can move; the invasion timetable slips and the sea stays contested.':'两艘战列舰均保全，敌舰队遭重创。日军必须先整修，登陆进度延后，制海权仍在争夺。',
+"the fleet comes through largely whole and stays a fleet-in-being. Japan cannot yet command the Yellow Sea unopposed.":'舰队大体保存，继续构成海上威慑。日本尚不能独占黄海制海权。',
+'the battleships survive but the cruiser screen is spent. The fleet slips toward coast defence and cedes the open sea, as the real Beiyang Fleet did after the Yalu.':'战列舰虽幸存，巡洋舰掩护力量已耗尽。舰队转入岸防，放弃外海，接近历史上黄海海战后的处境。',
+'you broke the Beiyang line and held the field.':'你击溃北洋战列并控制战场。','you broke them, but at a cost the real Combined Fleet never bore.':'你击败敌军，但承受了历史上联合舰队未曾付出的代价。','the Beiyang Fleet slipped away in better order than history allowed.':'北洋舰队以比历史上更完整的状态撤离。',
+'you hold the field, but a gutted cruiser line blunts the blockade and your timetable slips.':'你控制战场，但巡洋舰队损失严重，封锁能力减弱，行动进度延后。',
+"the Beiyang cruiser force destroyed and a battleship under, which is more than Ito managed. Command of the sea is secured and the convoys flow.":'北洋巡洋舰队被摧毁，另有一艘战列舰沉没，战果超越伊东。制海权得到确保，运输队可继续通行。',
+"the Beiyang cruiser force is destroyed and the fleet driven back to Weihaiwei. The ironclads' belts hold, as they held in 1894, but they never contest the Yellow Sea again and the landings proceed.":'北洋巡洋舰队被摧毁，舰队被迫退往威海卫。铁甲舰装甲带如1894年一样守住，但无力再争夺黄海，日军登陆继续。',
+'the Beiyang Fleet is hurt but still a fleet. It withdraws in order and the sea stays contested.':'北洋舰队受创但仍有战力，有序撤退后继续威胁制海权。','the Beiyang Fleet draws off in good order; command of the sea stays contested.':'北洋舰队有序撤离，制海权仍在争夺。',
+'Both ironclads brought through unbroken.':'两艘铁甲舰均保持完整战力。','Held the line, not one of your ships broke off and ran.':'稳住战列，己方无舰临阵脱离。','Not a ship sunk.':'无舰沉没。','Put a Chinese ironclad under, more than history allowed.':'击沉中国铁甲舰，战果超越历史。','Avenged the Yalu, the day went the other way.':'扭转黄海战局，改写历史结果。',
+'Historically the battle was a decisive Japanese victory. The Combined Fleet lost no ships sunk, though several were badly damaged. The Beiyang Fleet lost five vessels, including Zhiyuan and Jingyuan, but both ironclads, Dingyuan and Zhenyuan, survived: Japanese quick-firers could not penetrate their belts.':'历史上日军取得决定性胜利。联合舰队没有舰艇沉没，但数舰重创。北洋舰队损失五舰，包括致远、经远；定远与镇远幸存，日军速射炮未能击穿其装甲带。',
+'Both ironclads came through and the Combined Fleet was gutted in exchange, but your cruiser line paid for it: a bloodier, more even day than 1894.':'两艘铁甲舰幸存，联合舰队也付出代价，但己方巡洋舰战列受损。双方损失比1894年更加接近。',
+'An ironclad lost, but the Combined Fleet gutted in exchange: a bloodier and more even day than 1894, and a hard call either way.':'虽损失一艘铁甲舰，联合舰队也遭重创。比1894年更为惨烈，双方战果接近，难分胜负。',
+'You did what the Beiyang Fleet did in 1894 and held it as an honourable day: the ironclads come through and the enemy is made to pay, rather than a rout.':'你保全了铁甲舰，并使敌军付出代价，为北洋舰队争得胜利。','The ironclads came through as they did historically, but the cruiser line paid a heavy price.':'铁甲舰如历史上一样幸存，但巡洋舰战列付出了沉重代价。','Worse than history: an ironclad was lost, the one thing the real Beiyang Fleet avoided.':'局势比历史上更糟：损失了一艘北洋舰队在真实战役中保住的铁甲舰。',
+'You broke the Beiyang Fleet, but lost your flagship and best ships doing it: far costlier than the real Combined Fleet, which lost none sunk.':'你击溃北洋舰队，却损失旗舰和精锐舰艇。代价远超历史上无舰沉没的联合舰队。','Beyond history: you put under an ironclad the real Combined Fleet never could.':'超越历史：你击沉了一艘联合舰队未能击沉的铁甲舰。',
+"A decisive day, as in 1894: the Beiyang Fleet is broken, though the ironclads' belts keep them afloat.":'如1894年一样取得决定性战果：北洋舰队被击溃，铁甲舰则凭装甲带保全。','The Beiyang Fleet slipped away in better order than history allowed.':'北洋舰队以比历史上更完整的状态撤离。',
+'Both deterrent hulls survive, but their condition determines whether this is a genuine strategic hold or only survival.':'两艘威慑核心舰仍在，但能否维持战略作用取决于其剩余舰况。','The loss of an ironclad changes the strategic result more than several cruiser losses.':'损失一艘铁甲舰，对战略结果的影响超过损失数艘巡洋舰。','breaking cruisers without neutralising that core is a tactical success but an incomplete strategic one.':'仅击溃巡洋舰而未消除铁甲舰核心，属于战术成功，战略成果仍不完整。',
+'Most enemy loss was disablement rather than sinking. The battle line was degraded even though few hulls went under.':'敌方损失主要是失能而非沉没。尽管沉舰不多，战列战力已被削弱。','You sank more visible hulls but lost more effective tonnage overall; the spectacular result was not the better exchange.':'虽然击沉较多敌舰，己方却损失更多有效战斗吨位，交换比并不有利。','These extra system or ammunition effects are not included fully in the simple direct-damage total.':'额外的系统损伤和弹药事故未完全计入直接伤害总量。',
+'Your fleet landed almost no fire this action.':'本次交战中，己方舰队几乎没有有效命中。','HE/common delivered substantially more damage per hit, consistent with fire against thin-sided ships.':'高爆弹／普通弹的单发命中损伤更大，符合攻击薄弱防护舰艇的表现。','AP earned its keep through armour penetrations rather than volume of fire.':'穿甲弹通过击穿装甲取得战果。','AP was mostly defeated by armour or angle; more HE or a better broadside aspect would have paid better.':'多数穿甲弹受装甲或角度阻碍；改用高爆弹或争取更好的侧射角度可能更有效。',
+'Time elapsed':'时间结束','Annihilation':'一方全灭','annihilation':'一方全灭','Fighting strength broken':'舰队战力崩溃','fighting strength broken':'舰队战力崩溃','Disengagement at nightfall':'黄昏脱离交战','disengagement at nightfall':'黄昏脱离交战',
+'Material exchange':'战损交换','Hull states':'舰体状态','Shell performance':'炮弹表现','Critical events':'关键损伤','Fleet-in-being':'存在舰队','Command result':'指挥战果','Systems damage':'系统损伤','Torpedo action':'鱼雷战果','Nature of the victory':'胜利性质','Nature of the action':'交战性质','Nature of the defeat':'失败性质','Cost of the sinkings':'击沉战果的代价',
+'Combat strength remaining':'剩余战斗力','Practical permanent losses':'实际永久损失','Effective fighting tonnage lost':'损失的有效战斗吨位','No ships removed or crippled':'无舰失能或重创','No losses':'无损失','destroyed':'被毁','taken by enemy':'被敌俘获','prizes taken':'俘获敌舰','effective':'有效','Captains lost':'舰长阵亡','Flag struck':'旗舰失去指挥','Broke off under fire':'遭火力打击后脱离','total losses':'全损','abandoned wrecks':'弃舰残骸','abandoned':'弃舰','Yours':'己方','Enemy afloat':'尚在水面的敌舰','hull':'船体','flood':'进水',
+'machinery-impaired':'动力系统受损','steering-impaired':'操舵系统受损','severe':'严重','mean':'平均','guns disabled':'火炮失效','boiler casualties':'锅炉损伤','respectively':'分别如此','damage control overwhelmed aboard':'损管失控舰数','machinery':'动力系统','steering':'操舵系统','hits':'命中','weapon failures':'武器故障','penetrations':'击穿','failed on armour':'未穿透装甲','fires':'火灾','gun':'火炮','class':'级','own class':'独立舰级',
+'Friendly crossing':'友舰横穿射线','Target unseen':'目标不可见','Tubes masked':'发射管射界受阻','Outside tube arc':'目标不在发射管射界','Beyond run':'超出航程','No interception':'无法截击','No tubes bear':'无发射管可瞄准','Closing to torpedo range':'接近鱼雷射程','Individual command':'独立指挥','Maintaining course':'保持航向','Order set':'命令已设定','Following wake':'跟随航迹','Holding station':'保持阵位','Speed limited by squadron':'航速受分队限制',
+'potentially repairable':'可能修复','doubtful salvage':'打捞前景未定','abandoned wreck':'弃舰残骸','not repairable':'无法修复','sunk after structural collapse':'结构崩溃后沉没','magazine explosion':'弹药库爆炸','combat disablement':'战损失能',
+'6-inch/40 Elswick quick-firing gun':'埃尔斯维克152毫米40倍径速射炮','QF 4.7-inch Mk I-IV naval gun':'120毫米Mk I至IV型速射舰炮','Hotchkiss 3-pounder QF':'哈乞开斯3磅速射炮','12 in/40 Obukhov Pattern 1895':'奥布霍夫1895式305毫米40倍径炮','6 in/45 Canet Pattern 1892':'加纳1892式152毫米45倍径炮','75 mm/50 Canet Pattern 1892':'加纳1892式75毫米50倍径炮','12 in/40 EOC (Elswick) type 41':'埃尔斯维克四一式305毫米40倍径炮','6 in/40 QF Elswick pattern':'埃尔斯维克152毫米40倍径速射炮','QF 4 in Mk VII':'102毫米Mk VII型速射炮','BL 4 in /45 Mark IX':'102毫米45倍径Mk IX型后装炮','Minesweeper group':'扫雷舰群','Sperrbrecher and M-boats':'破障舰及M型扫雷艇'
+};
+
+
 // Presentation only. Never translate simulation IDs, orders, save codes or ship
 // objects. Store the language separately from battle saves, including old saves.
 let steamLocale='en';
@@ -1372,7 +1457,7 @@ const STEAM_ZH={
   'Fighting tonnage retained':'剩余战斗吨位','You inflicted':'造成敌方损失','You lost':'己方损失',
   'Net':'净值','Battle log & statistics':'战斗日志与统计','Calculated battle reading':'战斗评析',
   'Honours':'战绩','Battle report':'战斗报告','Statistics':'统计','Return to battle':'返回战斗',
-  'Controls · 2.0 alpha 28':'舰名汉化 · 2.0 alpha 28',
+  'Controls · 2.0 alpha 29':'航海与指挥 · 2.0 alpha 29',
   'Steam campaigns · Command revision 2.0 · Sail campaigns parked':'蒸汽舰战役 · 指挥系统修订 2.0 · 风帆战役暂缓',
   'Offline check':'检查离线状态','Offline ready':'可离线使用','Offline':'离线','Online':'在线',
   'Language':'语言','Rejoin':'归队','ships':'艘','left':'剩余','any enemy':'任意敌舰','kn':'节','km':'千米','mm':'毫米',
@@ -1517,12 +1602,32 @@ Object.assign(STEAM_ZH,STEAM_ZH_OTHER_SHIPS,{
   '1st Light Cruiser Squadron (1917)':'第一轻巡洋舰分队（1917）',
   'Destroyers, Grand Fleet':'大舰队驱逐舰群','Torpedo Boats (escort)':'护航鱼雷艇群','Minesweeping Force':'扫雷舰队'
 });
+Object.assign(STEAM_ZH,STEAM_ZH_EXTRA);
 // Whole phrases take priority over word substitutions. One pass prevents a
 // translation from being translated again, and preserves model/unit symbols.
 const steamLocaleCache=new Map();
 const steamLocaleKeys=Object.keys(STEAM_ZH).sort((a,b)=>b.length-a.length);
 const steamLocalePattern=new RegExp('(^|[^A-Za-zÀ-ž0-9])('+steamLocaleKeys.map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')(?=$|[^A-Za-zÀ-ž0-9])','g');
 const steamLocaleSentences=[
+  [/^Half your force past (.+) \((\d+) of (\d+) through\)$/,(_,place,n,total)=>`半数舰队通过${steamText(place)}（${total}艘中${n}艘已通过）`],
+  [/^Half the fast wing north past (.+) \((\d+) of (\d+) through\)$/,(_,place,n,total)=>`高速舰队半数向北通过${steamText(place)}（${total}艘中${n}艘已通过）`],
+  [/^Five of the eight sweepers brought home \((\d+) into the Bight, (\d+) still afloat\)$/,(_,n,live)=>`八艘扫雷舰中五艘撤回（${n}艘已进入海湾，${live}艘仍在水面）`],
+  [/^You inflicted ([\d,]+) effective tons and suffered ([\d,]+); net ([+−\-\d,]+) t\. Fighting strength finished (\d+)% to (\d+)%\.$/,(_,a,b,net,own,foe)=>`造成敌方有效吨位损失${a}吨，己方损失${b}吨；净交换${net}吨。交战结束时己方与敌方战力分别为${own}%和${foe}%。`],
+  [/^(.+): (\d+)% hull\. China retained (\d+) ironclads?; (.+)$/,(_,ship,hull,n,end)=>`${steamText(ship)}：船体${hull}%。中国保留${n}艘铁甲舰；${steamText(end)}`],
+  [/^(.+): (.+)\. China retained (\d+) ironclads?; (.+)$/,(_,ship,state,n,end)=>`${steamText(ship)}：${steamText(state)}。中国保留${n}艘铁甲舰；${steamText(end)}`],
+  [/^Range (\d+) m average; overall gunnery (\d+)\/(\d+) hits \((\d+)%\)\.$/,(_,range,hits,shots,pct)=>`平均交战距离${range}米；炮击命中${hits}/${shots}（${pct}%）。`],
+  [/^The two main targets absorbed (\d+)% of damage(.*)$/,(_,pct,end)=>`两个主要目标承受${pct}%伤害${end.includes('concentrated')?'，火力集中。':end.includes('dispersed')?'，火力较为分散。':'。'}`],
+  [/^AP: (\d+)\/(\d+) hits \((\d+)%\), (\d+) material penetrations, (\d+) ricochets, (\d+) other armour failures; ([\d.]+) direct damage per hit\.$/,(_,h,s,p,pen,ric,bounce,damage)=>`穿甲弹：${h}/${s}命中（${p}%），${pen}次击穿，${ric}次跳弹，${bounce}次其他未穿透；每次命中直接伤害${damage}。`],
+  [/^HE\/common: (\d+)\/(\d+) hits \((\d+)%\), (\d+) fires; ([\d.]+) damage per hit\.$/,(_,h,s,p,f,d)=>`高爆弹／普通弹：${h}/${s}命中（${p}%），引发${f}处火灾；每次命中伤害${d}。`],
+  [/^Heavy guns: (\d+)\/(\d+) hits \((\d+)%\)\.$/,(_,h,s,p)=>`重炮：${h}/${s}命中（${p}%）。`],
+  [/^Torpedoes: (\d+)\/(\d+) hits(?:; (\d+) misruns, depth failures or duds)?\.$/,(_,h,s,f)=>`鱼雷：${h}/${s}命中${f?`；${f}枚航迹、深度故障或哑弹`:''}。`],
+  [/^Sank (\d+) enemy ships?\.$/,(_,n)=>`击沉${n}艘敌舰。`],
+  [/^Disabled or forced the abandonment of (\d+) more ships?\.$/,(_,n)=>`另使${n}艘舰艇失能或被迫弃舰。`],
+  [/^Broke the enemy's nerve: (\d+) ships sheered off\.$/,(_,n)=>`击溃敌方士气：${n}艘舰艇脱离。`],
+  [/^Struck down (.+) aboard (.+)\.$/,(_,name,ship)=>`使${steamText(ship)}上的${steamText(name)}阵亡。`],
+  [/^Crippled the enemy flagship (.+)\.$/,(_,ship)=>`重创敌方旗舰${steamText(ship)}。`],
+  [/^(.+): transfer from Squadron (.+) if confirmed$/,(_,ship,n)=>`${steamText(ship)}：确认后从分队${n}调入。`],
+  [/^Squadron (.+) formed under (.+)\.$/,(_,n,ship)=>`分队${n}已组建，由${steamText(ship)}领航。`],
   [/^Turn (\d+)\. You command (.+)\.$/,(_,n,fleet)=>`第${n}回合。你指挥${steamText(fleet)}。`],
   [/^(.+)\. Plot your line, then End Turn\.$/,(_,date)=>`${steamText(date)}。设置航线后，结束回合。`],
   [/^(.+) releases (\d+) torpedo(?:es)? at (.+)\.$/,(_,s,n,t)=>`${steamText(s)}向${steamText(t)}发射${n}枚鱼雷。`],
@@ -1535,6 +1640,9 @@ const steamLocaleSentences=[
 function steamText(value){
   const source=String(value??'');if(steamLocale!=='zh-Hans'||!/[A-Za-z]/.test(source))return source;
   if(steamLocaleCache.has(source))return steamLocaleCache.get(source);
+  const trimmed=source.trim();if(trimmed!==source)return source.slice(0,source.indexOf(trimmed))+steamText(trimmed)+source.slice(source.indexOf(trimmed)+trimmed.length);
+  if(source.includes('\n'))return source.split('\n').map(steamText).join('\n');
+  if(source.startsWith('★ '))return '★ '+steamText(source.slice(2));
   let result=STEAM_ZH[source];
   if(result==null)for(const [pattern,format] of steamLocaleSentences){if(pattern.test(source)){result=source.replace(pattern,format);break;}}
   if(result==null)result=source.replace(steamLocalePattern,(all,prefix,key)=>prefix+STEAM_ZH[key]);
@@ -1557,13 +1665,14 @@ function steamTranslateDom(root=document.body){
   if(root.nodeType!==1||root.closest('script,style,textarea,input,[data-no-localize]'))return;
   const walker=document.createTreeWalker(root,4);let node;
   while((node=walker.nextNode()))if(!ignored(node))translate(node,'text',node.nodeValue);
-  for(const el of [root,...root.querySelectorAll('[title],[aria-label],[placeholder]')]){
+  for(const el of [root,...root.querySelectorAll('[title],[aria-label],[aria-valuetext],[placeholder]')]){
     if(el.closest('[data-no-localize]'))continue;
-    for(const key of ['title','aria-label','placeholder'])if(el.hasAttribute(key))translate(el,key,el.getAttribute(key));
+    for(const key of ['title','aria-label','aria-valuetext','placeholder'])if(el.hasAttribute(key))translate(el,key,el.getAttribute(key));
   }
 }
 function steamUpdateLanguageButtons(){
   document.documentElement.lang=steamLocale;
+  const toggle=document.getElementById('steamLanguageToggle');if(toggle)toggle.textContent=steamLocale==='zh-Hans'?'EN':'中文';
   document.querySelectorAll('[data-language]').forEach(b=>{const active=b.dataset.language===steamLocale;b.setAttribute('aria-pressed',String(active));b.classList.toggle('active',active);});
 }
 function steamSetLocale(locale){
@@ -1574,6 +1683,7 @@ function steamSetLocale(locale){
   game._chartLabels=[];redraw();steamSyncOverlayInset();
 }
 function steamInitLocale(){
+  document.getElementById('steamLanguageToggle')?.addEventListener('click',()=>steamSetLocale(steamLocale==='zh-Hans'?'en':'zh-Hans'));
   for(const parent of [document.querySelector('#startScreen .overlay-card'),document.querySelector('#gameMenu .gm-card')]){
     if(!parent)continue;const bar=document.createElement('div');bar.className='steam-language';bar.setAttribute('data-no-localize','');bar.setAttribute('aria-label','Language / 语言');
     for(const [value,label] of [['en','English'],['zh-Hans','简体中文']]){const b=document.createElement('button');b.type='button';b.dataset.language=value;b.textContent=label;b.addEventListener('click',()=>steamSetLocale(value));bar.appendChild(b);}
@@ -1589,9 +1699,9 @@ function steamInitLocale(){
         if(r.type==='childList')for(const n of r.addedNodes)roots.add(n);
         else roots.add(r.target);
       }for(const root of roots)if(root.isConnected)steamTranslateDom(root);}
-      finally{steamLocaleObserver.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['title','aria-label','placeholder']});}
+      finally{steamLocaleObserver.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['title','aria-label','aria-valuetext','placeholder']});}
     });
-    steamLocaleObserver.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['title','aria-label','placeholder']});
+    steamLocaleObserver.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['title','aria-label','aria-valuetext','placeholder']});
   }
 }
 
@@ -6348,16 +6458,20 @@ function drawEffects(ctx, v, effects) {
       ctx.beginPath(); ctx.arc(sx, sy, 5 + p * 5, 0, Math.PI * 2); ctx.stroke();
     } else if (e.type === "torpHit") {
       const sx = wx(v, e.x), sy = wy(v, e.y), p = 1 - e.life;
-      const r = 4 + p * 14;
-      ctx.globalAlpha = e.life * 0.46;
-      ctx.fillStyle = "rgba(232,241,242,0.58)";
-      ctx.beginPath(); ctx.arc(sx, sy, r * 0.68, 0, Math.PI * 2); ctx.fill();
-      ctx.globalAlpha = e.life * 0.68;
-      ctx.strokeStyle = "rgba(244,248,248,0.72)"; ctx.lineWidth = 1.35;
-      ctx.beginPath(); ctx.arc(sx, sy, r, 0, Math.PI * 2); ctx.stroke();
-      ctx.globalAlpha = e.life * 0.28;
-      ctx.strokeStyle = "rgba(177,207,214,0.62)"; ctx.lineWidth = 0.9;
-      ctx.beginPath(); ctx.arc(sx, sy, r * 1.55, 0, Math.PI * 2); ctx.stroke();
+      const R=clamp(24*Math.pow((e.charge||90)/90,.22),20,38),rise=Math.sin(Math.min(1,p/.72)*Math.PI),r=R*(.2+p*1.45);
+      // A brief waterline flash, tall white spray and spreading foam. Purely
+      // visual: deterministic droplets never consume the combat random stream.
+      if(p<.13){ctx.globalAlpha=(1-p/.13)*.95;ctx.fillStyle='#fff3cf';ctx.beginPath();ctx.arc(sx,sy,R*(.3+p*3),0,Math.PI*2);ctx.fill();}
+      ctx.globalAlpha=e.life*.8;ctx.strokeStyle='#d9eff3';ctx.lineWidth=2;
+      ctx.beginPath();ctx.ellipse(sx,sy,r,r*.45,0,0,Math.PI*2);ctx.stroke();
+      ctx.globalAlpha=e.life*.3;ctx.fillStyle='#c8e1e6';ctx.beginPath();ctx.ellipse(sx,sy,r*.8,r*.32,0,0,Math.PI*2);ctx.fill();
+      for(let i=0;i<9;i++){
+        const a=i*2.39996,spread=Math.sin(a)*R*(.18+p*.65),height=R*rise*(.6+(.5+.5*Math.cos(i*3.1))*1.5);
+        ctx.globalAlpha=e.life*(.35+.35*(1-p));ctx.fillStyle=i%2?'#e8f5f5':'#adcdd5';
+        ctx.beginPath();ctx.ellipse(sx+spread,sy-height*.48,Math.max(1.4,R*(.055+p*.1)),Math.max(2,height*.55),Math.sin(a)*.22,0,Math.PI*2);ctx.fill();
+      }
+      ctx.strokeStyle='#effafa';ctx.lineWidth=1.2;ctx.globalAlpha=e.life*.7;
+      for(let i=0;i<12;i++){const a=i*2.39996,d=R*(.3+p*1.3),x=sx+Math.cos(a)*d,y=sy+Math.sin(a)*d*.4-R*rise*(.2+.3*Math.abs(Math.cos(a)));ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+Math.cos(a)*3,y+4);ctx.stroke();}
     } else if (e.type === "steamBurst") {
       const sx = wx(v, e.x), sy = wy(v, e.y), p = 1 - e.life;
       ctx.globalAlpha = e.life * 0.34;
@@ -7267,8 +7381,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "2.0-alpha.28";
-const ECHELON_BUILD_NOTE = "Chinese ship names · all steam campaigns";
+const ECHELON_VERSION = "2.0-alpha.29";
+const ECHELON_BUILD_NOTE = "Navigation · clear commands · torpedo stores";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
@@ -9359,6 +9473,7 @@ function resizeCanvas() {
   canvas.style.width = w + "px";
   canvas.style.height = h + "px";
   if(typeof steamSyncOverlayInset==='function')steamSyncOverlayInset();
+  if(typeof steamFrameNavigation==='function')steamFrameNavigation();
 }
 
 // Zoom presets for small screens: Fleet frames everything, Action frames the fight
@@ -9596,6 +9711,8 @@ function redraw() {
 
   drawTorpedoes(ctx, v, game.torpedoes);
   steamDrawChartLabels(ctx,v,visibleShips);
+  if(sel&&!game.multiSel)steamDrawNavigationMarker(ctx,v,sel);
+  if(game.multiSel)steamDrawAssignmentBadges(ctx,v,visibleShips);
   if (sel && !sel.out && selTargetValid) steamDrawGunReadiness(ctx,v,sel,selTarget);
   drawEffects(ctx, v, game.effects);
   drawCompass(ctx, v);
@@ -12371,12 +12488,12 @@ function renderShipCard(body, s) {
   if (!body || !s) return;
   const dims = s.def.dimensions_m || {};
   let arm = s.batteries.map((b) => `<li class="${b.knockedOut ? "gun-out" : ""}">${b.count} × ${Math.round(gunCalibre(b.gun))} mm · ${b.gun.name} <span class="muted">(${b.arc.replace(/_/g, " ").toLowerCase()})</span>${b.knockedOut ? ' <span class="gun-tag">✗ disabled</span>' : ""}</li>`).join("");
-  if (s.torpedoes) arm += `<li>${s.torpedoes.count} × torpedo tubes</li>`;
+  if (s.torpedoes) arm += `<li>${steamTorpedoTubeCount(s)} × torpedo tubes · ${s.torpedoes.count} torpedoes left</li>`;
   const mach = machineryLabel(s), steer = steeringLabel(s), dc = dcLabel(s);
   const disabledGuns = s.batteries.filter((b) => b.knockedOut).reduce((n, b) => n + (b.count || 0), 0);
   const cond = s.out
     ? `<div class="card-out"><b>${lossDisposition(s).label}</b><small>Cause: ${s.outReason || "combat damage"}</small></div>`
-    : `<div class="card-cond">
+    : !isSailEra() ? steamHealthBars(s) + `<div class="steam-status">Damage control: ${dc.name} · ${disabledGuns ? `${disabledGuns} guns disabled` : "All batteries operating"}</div>` : `<div class="card-cond">
          <div>Hull ${Math.round(100 * s.structure / s.structureMax)}%</div>
          <div>Flooding ${Math.round(s.flooding)}%</div>
          <div>Fires ${s.fires}</div>
@@ -15075,6 +15192,7 @@ function setupScenario(side,formation){
   simulationSeed=game.nextSeed!=null?game.nextSeed>>>0:(Math.random()*4294967296)>>>0;delete game.nextSeed;
   legacySetupScenario(side,formation);
   game.plotRoute=false;game._orderHistory=[];game._chartLabels=[];game.simSeconds=0;game.shells=[];game.smoke=[];game.contacts={};game._steamRevision=0;game._steamPreview=null;game.commandTab="helm";
+  game._steamHelp=null;game._steamNavFrameKey=null;
   // Undo the old world-coordinate compression at the deployment boundary.
   if(SCN.id==="run_south"||SCN.id==="run_north")for(const s of game.ships){s.x/=.58;s.y/=.58;snapToHex(s);}
   for(const s of game.ships){
@@ -15083,6 +15201,7 @@ function setupScenario(side,formation){
     s._detached=s.side===game.playerSide&&shipClassTier(s)==="capital";
     s._controlStatus=s._detached?"Individual command":"Maintaining course";
     s._manualTarget=false;s.yawRate=0;s._torpMode="hold";s._torpSpent=[];s._torpRetryAt=0;
+    steamApplyTorpedoStores(s);
     if(s.torpedoes){s.torpedoes.initialCount=s.torpedoes.count;s.torpedoes.cooldownLeft=0;}
     steamInitWake(s);
   }
@@ -15654,7 +15773,9 @@ function steamPickMoveChoice(x,y){
 function steamSetMoveChoice(p){
   if(!p||game.exec||game.phase!=='plan')return false;
   steamRememberOrder();
-  return steamSetScopeCommand({kind:'course',heading:p.heading,speedKn:p.speedKn,chartCell:{q:p.q,r:p.r,turn:game.turn}});
+  const ok=steamSetScopeCommand({kind:'course',heading:p.heading,speedKn:p.speedKn,chartCell:{q:p.q,r:p.r,turn:game.turn}});
+  game._steamHelp={id:game.selectedId,text:`Course ${Math.round(steamNorm(p.heading))}° · ${p.speedKn.toFixed(1)} kn · hex ${p.q}, ${p.r}`};
+  return ok;
 }
 function steamDrawMoveHex(c,x,y,r=6){
   c.beginPath();for(let i=0;i<6;i++){const a=Math.PI/3*i-Math.PI/2;const px=x+Math.cos(a)*r,py=y+Math.sin(a)*r;i?c.lineTo(px,py):c.moveTo(px,py);}c.closePath();c.stroke();
@@ -15666,13 +15787,42 @@ function drawReachable(c,v,s){
   for(const p of steamVisibleMoveChoices(v,s)){c.beginPath();c.arc(p.sx,p.sy,2.3,0,Math.PI*2);c.fill();}
   c.restore();
   const com=s.command;
-  if(com?.chartCell?.turn===game.turn&&(game.commandTab||'helm')==='helm'){
-    const p=hexToWorld(com.chartCell.q,com.chartCell.r);c.save();c.strokeStyle='#e8d399';c.lineWidth=1.5;
-    steamDrawMoveHex(c,wx(v,p.x),wy(v,p.y),clamp(HEX_R*v.scale,7,20));c.restore();
-  }
   if(com?.kind==="route"){c.save();c.strokeStyle="rgba(138,203,208,.4)";c.fillStyle="#c5e1df";c.lineWidth=.7;c.setLineDash([2,5]);
     c.beginPath();c.moveTo(wx(v,s.x),wy(v,s.y));for(const p of com.points.slice(com.index||0))c.lineTo(wx(v,p.x),wy(v,p.y));c.stroke();c.setLineDash([]);
     com.points.slice(com.index||0).forEach((p,i)=>{const x=wx(v,p.x),y=wy(v,p.y);c.beginPath();c.arc(x,y,5,0,Math.PI*2);c.stroke();c.font="11px sans-serif";c.fillText(steamText(String(i+1)),x+8,y-6);});c.restore();}
+}
+function steamNavigationMarker(s){
+  if(!s||s.out||s.side!==game.playerSide)return null;
+  const cell=s.command?.chartCell;
+  if(cell?.turn===game.turn)return{...hexToWorld(cell.q,cell.r),q:cell.q,r:cell.r,ordered:true};
+  if(game.exec)return null;
+  const end=steamPreview().paths.get(s.id)?.at(-1);if(!end)return null;
+  const h=worldToHex(end.x,end.y);return{...hexToWorld(h.q,h.r),...h,ordered:false};
+}
+function steamDrawNavigationMarker(c,v,s){
+  const p=steamNavigationMarker(s);if(!p)return;
+  c.save();c.strokeStyle=p.ordered?'#f0dca2':'rgba(193,231,237,.8)';c.lineWidth=1.6;
+  steamDrawMoveHex(c,wx(v,p.x),wy(v,p.y),clamp(HEX_R*v.scale,7,20));
+  c.fillStyle=c.strokeStyle;c.beginPath();c.arc(wx(v,p.x),wy(v,p.y),1.7,0,Math.PI*2);c.fill();c.restore();
+}
+// On selection/rotation fit the actual ship and one-turn helm area into the
+// unobscured chart. Never shift a hex on screen away from its world coordinate.
+// Free panning remains free; this runs once per navigation context.
+function steamFrameNavigation(force=false){
+  if(typeof document==='undefined'||!game.started||game.exec||game.cardId||game.multiSel||(game.commandTab||'helm')!=='helm')return;
+  const s=shipById(game.selectedId);if(!s||s.out||s.side!==game.playerSide)return;
+  const v=makeViewCss(),key=[s.id,game.menuMode,game.selSquadId,v.w,v.h,game.commandTab].join(':');
+  const hint=document.getElementById('steamNavHint');if(hint)hint.textContent=game._steamHelp?.id===s.id?game._steamHelp.text:'Dots: course + speed · hexagon: selected order';
+  if(!force&&game._steamNavFrameKey===key)return;game._steamNavFrameKey=key;
+  const panel=document.getElementById('panel'),r=panel?.getBoundingClientRect(),rect=canvas?.getBoundingClientRect();
+  if(!r||!rect)return;
+  const portrait=innerHeight>innerWidth,left=30,top=36,right=portrait?v.w-30:Math.max(150,r.left-rect.left-28),bottom=portrait?Math.max(150,r.top-rect.top-104):v.h-48;
+  const marker=steamNavigationMarker(s),points=[s,...steamMoveChoices(s),...(marker?[marker]:[])];
+  const x0=Math.min(...points.map(p=>p.x)),x1=Math.max(...points.map(p=>p.x)),y0=Math.min(...points.map(p=>p.y)),y1=Math.max(...points.map(p=>p.y));
+  const scale=Math.min(Math.max(.14,game.cam.scale),Math.max(.015,(right-left)/Math.max(250,x1-x0)),Math.max(.015,(bottom-top)/Math.max(250,y1-y0)));
+  game._camGoal=null;game._zoomGoal=null;game.cam.scale=scale;
+  game.cam.x=(x0+x1)/2-((left+right)/2-v.w/2)/scale;
+  game.cam.y=(y0+y1)/2-((top+bottom)/2-v.h/2)/scale;
 }
 function steamDrawArrow(c,v,p,length,colour){
   const h=p.heading*Math.PI/180,x=wx(v,p.x),y=wy(v,p.y);
@@ -15685,8 +15835,13 @@ function drawOrderGhost(c,v,s,highlight){
   const path=steamPreview().paths.get(s.id);if(!path)return;
   c.save();c.strokeStyle=highlight?'rgba(193,231,237,.65)':'rgba(147,209,225,.4)';c.lineWidth=highlight?1.2:.9;c.setLineDash([5,4]);
   c.beginPath();path.forEach((p,i)=>{if(i%4&&i!==path.length-1)return;const x=wx(v,p.x),y=wy(v,p.y);i?c.lineTo(x,y):c.moveTo(x,y);});c.stroke();c.setLineDash([]);
-  // A round forecast endpoint cannot stack a second arrowhead on the current heading.
-  const end=path.at(-1);c.beginPath();c.arc(wx(v,end.x),wy(v,end.y),highlight?2.7:2,0,Math.PI*2);c.stroke();c.restore();
+  // The forecast hull uses the endpoint's actual integrated heading, not the
+  // ordered heading or the tangent of a coarsely sampled dashed track.
+  const end=path.at(-1),L=shipScreenLen(v,s),g=steamGeometry(s),k=L/g.L;
+  c.translate(wx(v,end.x),wy(v,end.y));rotateBowMinusY(c,end.heading);
+  c.fillStyle=highlight?'rgba(193,231,237,.13)':'rgba(147,209,225,.07)';
+  c.beginPath();g.hull.forEach(([x,y],i)=>{i?c.lineTo(y*k,-x*k):c.moveTo(y*k,-x*k);});c.closePath();c.fill();c.stroke();
+  if(L>22){c.beginPath();c.moveTo(0,-L*.25);c.lineTo(0,L*.25);c.stroke();}c.restore();
 }
 function steamOrderVisibility(s){
   if(s.out||s.side!==game.playerSide)return'none';
@@ -15955,7 +16110,7 @@ function steamApplyTorpedoHit(s,t,p){
     floodAdded:s.flooding-before.flooding,structureLost:before.structure-s.structure,engineLost,steeringLost};
   s._breaches=(s._breaches||[]).slice(-5);
   s._breaches.push({t:response.station.fraction,turn:game.turn,mag:false});
-  game.effects.push({type:'torpHit',x:p.x,y:p.y,life:1,fade:1.45,heavy:true});
+  game.effects.push({type:'torpHit',x:p.x,y:p.y,life:1,fade:.32,heavy:true,charge:response.charge});
   // Already disabled ships can still founder when hit. They must then cease to
   // be collision targets; do not leave them as an immortal "disabled afloat".
   if(before.out&&(s.flooding>=85||s.structure<=0)){
@@ -16407,6 +16562,48 @@ function steamAttackWithdrawalHeading(s,target){
     if(!best||closest>best.closest+.01||Math.abs(closest-best.closest)<=.01&&distance>best.distance)best={heading,closest,distance};
   }
   return best.heading;
+}
+
+
+// Carried weapons are not tube counts. Nominal peacetime/war outfit evidence
+// does not prove the rounds on board at an individual scenario's opening.
+// See TORPEDO-COMPLEMENTS.json for sources, dates and unresolved inventories.
+const STEAM_TORPEDO_STORES={};
+function steamDefineTorpedoStores(names,tubes,total,source,basis='carried complement'){
+  for(const name of names.split('|'))STEAM_TORPEDO_STORES[name]={tubes,total,source,basis};
+}
+steamDefineTorpedoStores('Lion|Princess Royal',2,14,'https://en.wikipedia.org/wiki/HMS_Lion_(1910)');
+steamDefineTorpedoStores('Queen Mary',2,14,'https://en.wikipedia.org/wiki/HMS_Queen_Mary');
+steamDefineTorpedoStores('Tiger',4,20,'https://en.wikipedia.org/wiki/HMS_Tiger_(1913)');
+steamDefineTorpedoStores('New Zealand|Indefatigable',2,12,'https://naval-encyclopedia.com/ww1/uk/indefatigable-class-battlecruisers.php');
+steamDefineTorpedoStores('Barham|Valiant|Warspite|Malaya',4,20,'https://en.wikipedia.org/wiki/Queen_Elizabeth-class_battleship');
+steamDefineTorpedoStores('Repulse',2,10,'https://en.wikipedia.org/wiki/Renown-class_battlecruiser');
+steamDefineTorpedoStores('Seydlitz',4,11,'https://en.wikipedia.org/wiki/SMS_Seydlitz');
+steamDefineTorpedoStores('Moltke',4,11,'https://en.wikipedia.org/wiki/Moltke-class_battlecruiser');
+steamDefineTorpedoStores('Von der Tann',4,11,'https://en.wikipedia.org/wiki/SMS_Von_der_Tann');
+steamDefineTorpedoStores('Koenig|Grosser Kurfurst|Kronprinz|Markgraf',5,16,'https://en.wikipedia.org/wiki/K%C3%B6nig-class_battleship');
+steamDefineTorpedoStores('Kaiser|Kaiserin|Friedrich der Grosse|Prinzregent Luitpold',5,16,'https://ncisahistory.org/wp-content/uploads/2019/11/No.-15-German-Navy-Battleships-and-Battle-Cruisers-June-1917.pdf');
+steamDefineTorpedoStores('Matsushima|Itsukushima|Hashidate',4,20,'https://en.wikipedia.org/wiki/Matsushima-class_cruiser');
+steamDefineTorpedoStores('Tsesarevich',4,14,'https://en.wikipedia.org/wiki/Russian_battleship_Tsesarevich');
+steamDefineTorpedoStores('Retvizan',6,17,'https://en.wikipedia.org/wiki/Russian_battleship_Retvizan');
+steamDefineTorpedoStores('Peresvet|Pobeda|Oslyabya',5,12,'https://en.wikipedia.org/wiki/Peresvet-class_battleship');
+steamDefineTorpedoStores('Knyaz Suvorov|Imperator Aleksandr III|Borodino|Oryol',4,10,'https://en.wikipedia.org/wiki/Borodino-class_battleship');
+steamDefineTorpedoStores('Frankfurt|Wiesbaden',4,8,'https://en.wikipedia.org/wiki/Wiesbaden-class_cruiser');
+// The numbered boats present in these scenarios belong to the Type 1913/14/15
+// family. Do not apply this reserve to the unrelated B97/G101 export designs.
+steamDefineTorpedoStores('V26|V27|V28|V29|V30|S33|S34|S35|S36|G37|G41|V43|V44|V45|V46|S50|S51|S52|S62|S63|V69|G86|G87',6,8,'https://en.wikipedia.org/wiki/V25-class_torpedo_boat');
+steamDefineTorpedoStores('Gloucester|Falmouth|Yarmouth',2,7,'https://en.wikipedia.org/wiki/Town-class_cruiser_(1910)');
+// These entries correct demonstrably missing loaded tubes. No unsourced
+// reserve is invented; a full carried complement is not established here.
+steamDefineTorpedoStores('Galatea|Phaeton|Inconstant|Royalist',4,4,'https://en.wikipedia.org/wiki/Arethusa-class_cruiser_(1913)','loaded tubes only; reserve unverified');
+steamDefineTorpedoStores('Cordelia',4,4,'https://en.wikipedia.org/wiki/HMS_Cordelia_(1914)','1916 loaded tubes only; reserve unverified');
+steamDefineTorpedoStores('Caledon|Calypso|Caradoc|Cardiff|Ceres',8,8,'https://en.wikipedia.org/wiki/C-class_cruiser','loaded tubes only; reserve unverified');
+steamDefineTorpedoStores('Courageous|Glorious',14,14,'https://en.wikipedia.org/wiki/Courageous-class_battlecruiser','1917: two submerged plus twelve deck tubes; reserve unverified');
+function steamTorpedoStoreFit(s){return STEAM_TORPEDO_STORES[s.name]||null;}
+function steamTorpedoTubeCount(s){return steamTorpedoStoreFit(s)?.tubes||s.def.armament.filter(a=>a.weapon_id).reduce((n,a)=>n+(a.count||1),0);}
+function steamApplyTorpedoStores(s){
+  const fit=steamTorpedoStoreFit(s);if(!fit)return;
+  s.torpedoes={count:fit.total,initialCount:fit.total,ready:true,cooldownLeft:0};
 }
 
 
@@ -16956,7 +17153,7 @@ function steamChartLabel(s){
   const q=squadronOf(s.id);
   const selected=s.id===game.selectedId||s.id===game.targetId;
   const major=['capital','heavy_cruiser'].includes(steamDisplayClass(s)),active=game.menuMode==='squad'&&game.selSquadId===q?.id;
-  if(q&&q.leaderId!==s.id&&!selected&&!major&&!active&&game.ships.filter(a=>a.side===game.playerSide&&!a.out).length>24)return null;
+  if(!game.multiSel&&q&&q.leaderId!==s.id&&!selected&&!major&&!active&&game.ships.filter(a=>a.side===game.playerSide&&!a.out).length>24)return null;
   let text=steamShipName(s).replace(/\s*\(.*\)/,'');
   if(q&&(q.leaderId===s.id||game.menuMode==='squad'&&game.selSquadId===q.id))text=(q.mark?q.mark+' ':'')+text;
   return{text,selected};
@@ -17005,16 +17202,26 @@ function steamDrawChartLabels(c,v,ships){
     const s=shipById(p.id),accent=s.side===sideA()?PALETTE.china:PALETTE.japan;
     c.fillStyle=s.out?'#849b9f':p.selected?'#f1e2b9':accent;
     c.font='600 10px ui-monospace, SFMono-Regular, monospace';c.textAlign='left';c.textBaseline='middle';
-    c.fillText(p.text,p.x+19,p.y+10);drawClassIcon(c,p.x+9,p.y+10,steamDisplayClass(s),c.fillStyle,7);
+    const left=p.x+p.w<=p.cx,nameX=left?p.x+19:p.x+2,classX=left?p.x+9:p.x+p.w-9;
+    c.fillText(p.text,nameX,p.y+10);drawClassIcon(c,classX,p.y+10,steamDisplayClass(s),c.fillStyle,7);
     const fraction=displayedStructureFrac(s);
     if(!s.out&&(fraction<.98||p.selected)){
-      c.fillStyle='#243c40';c.fillRect(p.x+19,p.y+19,p.w-22,2);
-      c.fillStyle=fraction>.5?'#79b07a':fraction>.25?PALETTE.brass:PALETTE.japanRed;c.fillRect(p.x+19,p.y+19,(p.w-22)*fraction,2);
+      c.fillStyle='#243c40';c.fillRect(nameX,p.y+19,p.w-22,2);
+      c.fillStyle=fraction>.5?'#79b07a':fraction>.25?PALETTE.brass:PALETTE.japanRed;c.fillRect(nameX,p.y+19,(p.w-22)*fraction,2);
     }
     if(s.out){c.strokeStyle='#849b9f';c.beginPath();c.moveTo(p.x+18,p.y+10);c.lineTo(p.x+p.w-3,p.y+10);c.stroke();}
   }
   if(!game.show.labels)for(const s of ships){if(s.out||labels.some(p=>p.id===s.id))continue;const x=wx(v,s.x),y=wy(v,s.y);drawClassIcon(c,x,y-Math.max(15,shipScreenLen(v,s)*.6),steamDisplayClass(s),s.side===sideA()?PALETTE.china:PALETTE.japan,6);}
   c.restore();
+}
+function steamDrawAssignmentBadges(c,v,ships){
+  c.save();c.font='600 10px ui-monospace,monospace';c.textAlign='center';c.textBaseline='middle';
+  for(const s of ships){
+    if(s.out||s.side!==game.playerSide)continue;const q=squadronOf(s.id);if(!q)continue;
+    const mark=String(squadronDisplayNumber(q)),x=wx(v,s.x),y=wy(v,s.y)-Math.max(13,shipScreenLen(v,s)*.55)-9,w=Math.max(18,c.measureText(mark).width+8);
+    c.fillStyle='rgba(14,37,44,.9)';c.strokeStyle='#d5c18c';c.lineWidth=1;c.beginPath();c.roundRect(x-w/2,y-9,w,18,4);c.fill();c.stroke();
+    c.fillStyle='#ebd8a8';c.fillText(mark,x,y);
+  }c.restore();
 }
 
 
@@ -17044,7 +17251,7 @@ function steamIcon(id){
     helm:'<circle cx="12" cy="12" r="6.5"/><circle cx="12" cy="12" r="1.5"/><path d="M12 2v8.5m0 3V22M2 12h8.5m3 0H22M5 5l6 6m2 2 6 6M5 19l6-6m2-2 6-6"/>',
     fire:'<path d="M8.5 11V2.5m7 8.5V2.5M7 10.5l-2 3v5l3 3h8l3-3v-5l-2-3Z M9 17.5h6"/>',
     torpedoes:'<g transform="rotate(40 12 12)"><path d="M9.5 17V6c0-2 1-3.5 2.5-4 1.5.5 2.5 2 2.5 4v11Z M9.5 7h5M9.5 14l-3 5h11l-3-5M12 17v5"/></g>',
-    condition:'<path d="M7.5 3.5h9l4 3v9l-4 5h-9l-4-5v-9Z M12 7v10M7 12h10"/>',
+    condition:'<path d="M12 2 17 8v12H7V8Z M7 10h10M7 15h10M12 10v10"/><path d="m3 9 2 2-2 2m18-4-2 2 2 2"/>',
     route:'<path d="M5 18V9a3 3 0 0 1 3-3h9m-3-3 3 3-3 3"/><circle cx="5" cy="19" r="2"/>',
     hold:'<path d="M12 21V3m-5 5 5-5 5 5"/>',
     stop:'<rect x="7" y="7" width="10" height="10" rx=".5" fill="currentColor" stroke="none"/>',
@@ -17092,18 +17299,49 @@ function steamSyncOverlayInset(){
 function steamChartObstacles(){
   if(typeof canvas==='undefined'||!canvas)return[];
   const chart=canvas.getBoundingClientRect(),boxes=[];
-  for(const [id,visible] of [['panel','expanded'],['squadronChips','show'],['logDrawer',null]]){
-    const el=document.getElementById(id);if(!el||visible&&!el.classList.contains(visible))continue;
+  for(const [id,visible] of [['panel','expanded'],['squadronChips','show'],['logDrawer',null],['steamNavHint',null]]){
+    const el=document.getElementById(id);if(!el||el.hidden||visible&&!el.classList.contains(visible))continue;
     const r=el.getBoundingClientRect();if(r.width&&r.height)boxes.push({x:r.left-chart.left,y:r.top-chart.top,w:r.width,h:r.height});
   }
   const h=chart.height;boxes.push({x:8,y:h-94-(game._steamOverlayInset||0),w:85,h:88});
   return boxes;
 }
+const STEAM_COMMAND_PAGES=[['helm','Navigation'],['fire','Guns'],['torpedoes','Torpedoes'],['condition','Ship systems']];
+function steamSyncCommandTabs(){
+  const host=document.getElementById('steamTabs');if(!host)return;
+  const title=document.querySelector('#panelTitle span'),tab=game.commandTab||'helm';
+  const s=shipById(game.selectedId),card=shipById(game.cardId),own=card?.side===game.playerSide?card:s;
+  const hint=document.getElementById('steamNavHint');if(hint)hint.hidden=!!(game.multiSel||game.cardId||tab!=='helm'||!own||game.exec);
+  if(title)title.textContent=game.multiSel?'Form squadron':game.cardId?'Ship plan':STEAM_COMMAND_PAGES.find(p=>p[0]===tab)?.[1]||'Navigation';
+  if(!host.children.length){
+    host.innerHTML=STEAM_COMMAND_PAGES.map(([id,label])=>`<button data-tab="${id}" title="${label}" aria-label="${label}">${steamIcon(id)}<span>${label}</span></button>`).join('');
+    host.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{
+      const card=shipById(game.cardId);if(card?.side===game.playerSide&&!card.out){game.selectedId=card.id;game.menuMode='ship';game.selSquadId=null;}
+      game.cardId=null;game.multiSel=false;game.pendingSel=[];setMultiSelBtn();
+      game.commandTab=b.dataset.tab;if(game.commandTab!=='helm')game.plotRoute=false;
+      document.getElementById('panelBody').scrollTop=0;syncPanel();
+      if(game.commandTab==='helm')steamFrameNavigation(true);
+    }));
+  }
+  host.querySelectorAll('[data-tab]').forEach(b=>{const active=!game.cardId&&!game.multiSel&&tab===b.dataset.tab;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));b.disabled=!own||own.out||own.side!==game.playerSide;});
+}
+function steamNavigationHelp(action,value){
+  const help={plot:game.plotRoute?'Route tool: tap water to add waypoints. Tap again to leave route mode.':'Route tool off. Tap a dot to set course and speed.',hold:'Hold course: keep the current heading and ordered speed.',stop:'Stop engines: slow to a halt. The ship still coasts and turns.',undo:'Undo: restored the previous order.',rejoin:'Rejoin: follow your squadron leader again.',
+    succession:'Follow: each ship turns through the leader’s wake.',together:'Together: all ships turn onto parallel courses.',line:'Line ahead: ships follow one behind another.',abreast:'Line abreast: ships sail side by side.',echelon_port:'Port echelon: each follower is behind and to port.',echelon_starboard:'Starboard echelon: each follower is behind and to starboard.',spacing:'Spacing: distance between ships in the formation.'};
+  const text=help[value]||help[action];if(text){game._steamHelp={id:game.selectedId,text};const el=document.getElementById('steamNavHint');if(el)el.textContent=text;}
+}
+function steamHealthBars(s){
+  const rows=[['Hull',s.structure/s.structureMax,false],['Flooding',(s.flooding||0)/100,true],['Fires',Math.min(1,(s.fires||0)/5),true],['Engine',s.engine,false],['Rudder',s.steering,false],['Crew',s.crew,false]];
+  return '<div class="steam-condition">'+rows.map(([label,value,hazard])=>{
+    const f=clamp(value??1,0,1),state=hazard?(f===0?'Clear':f<.3?'Minor':f<.65?'Serious':'Critical'):(f>.75?'Sound':f>.4?'Damaged':f>0?'Critical':'Disabled');
+    return `<div class="steam-health"><span>${label}</span><span class="steam-health-track ${hazard?'hazard':''}" role="meter" aria-label="${label}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(f*100)}" aria-valuetext="${state}" title="${label}: ${state}"><i style="width:${f*100}%;--health-colour:${hazard?'#db9c63':f>.5?'#92bf9d':f>.25?'#ddbd77':'#dc8878'}"></i></span></div>`;
+  }).join('')+'</div>';
+}
 function steamPanelAction(action,value){
   if(action==='inspect'){game.cardId=game.menuMode==='squad'?squadronById(game.selSquadId)?.leaderId:game.selectedId;syncPanel();return;}
   if(action==='ship'){game.plotRoute=false;game.selectedId=value;game.menuMode='ship';game.selSquadId=null;game.targetId=shipById(value)?.targetId||null;syncPanel();return;}
   if(game.exec||game.phase!=="plan")return;
-  if(action==='undo'){steamUndoOrder();syncPanel();return;}
+  if(action==='undo'){steamUndoOrder();steamNavigationHelp(action,value);syncPanel();return;}
   const q=game.menuMode==="squad"?squadronById(game.selSquadId):null,s=shipById(q?.leaderId||game.selectedId);
   if(!s||s.side!==game.playerSide)return;
   if(!['plot','inspect','ship'].includes(action))steamRememberOrder();
@@ -17135,6 +17373,7 @@ function steamPanelAction(action,value){
     if(q)q.attack=null;rebuildSquadronLines();steamInvalidate();
   }
   if(action==="setting"){for(const a of steamScopeShips())a._torpSetting=value;steamInvalidate();}
+  steamNavigationHelp(action,value);
   if(action==="inspect")game.cardId=s.id;
   if(action==="ship"){game.selectedId=value;game.menuMode="ship";game.selSquadId=null;game.targetId=shipById(value)?.targetId||null;}
   if(!game._steamPanelFrame)game._steamPanelFrame=requestAnimationFrame(()=>{game._steamPanelFrame=null;syncPanel();});
@@ -17143,6 +17382,7 @@ function syncPanel(){
   if(typeof document==="undefined"||game._steamPanelRendering)return;
   game._steamPanelRendering=true;try{
   const body=document.getElementById("panelBody"),panel=document.getElementById("panel");if(!body||!panel)return;
+  steamSyncCommandTabs();
   panel.classList.toggle('steam-card',!!(game.cardId||game.multiSel));
   if(game.cardId||game.multiSel){legacySyncPanel();return;}
   panel.classList.remove('tall');renderSquadronChips();
@@ -17162,7 +17402,7 @@ function syncPanel(){
   if(tab==="helm"){
     content=`<div class="steam-row steam-helm-controls">${button('plot',steamIcon('route'),'',game.plotRoute,'Route tool: add round waypoints')}${button('hold',steamIcon('hold'),'',false,'Hold present course')}${button('stop',steamIcon('stop'),'',false,'Stop engines')}${button('undo',steamIcon('undo'),'',false,'Undo last order',game._orderHistory?.length?'':'disabled')}${q?['succession','together'].map(v=>button('turn',steamFormationIcon(v),v,(q.turnMode||'succession')===v,v==='succession'?'Follow: turn in the leader’s wake':'Together: turn on parallel courses')).join(''):squadronOf(s.id)?button('rejoin',steamIcon('rejoin'),'',false,'Rejoin '+squadronOf(s.id).name):''}</div>`;
     if(q)content+=`<div class="steam-row steam-formations" aria-label="Formation">${[['line','Line ahead'],['abreast','Line abreast'],['echelon_port','Port echelon'],['echelon_starboard','Starboard echelon']].map(([v,t])=>button('formation',steamFormationIcon(v),v,(q.formation||'line')===v,t)).join('')}<div class="steam-spacing" aria-label="Formation interval">${button('spacing','−',Math.max(100,Math.round((q.spacing||300)/50)*50-50),false,'Reduce interval by fifty metres')}<span>${Math.round(q.spacing||300)} m</span>${button('spacing','+',Math.min(2000,Math.round((q.spacing||300)/50)*50+50),false,'Increase interval by fifty metres')}</div></div>`;
-    content+=`<div class="steam-status">${game.exec?'Orders locked':game.plotRoute?'Route tool · tap water to add a round waypoint':'Dots: course + speed · hexagon: selected order'}</div>`;
+    content+=`<div class="steam-status">${game.exec?'Orders locked':game._steamHelp?.id===s.id?E(game._steamHelp.text):game.plotRoute?'Route tool · tap water to add a round waypoint':'Dots: course + speed · hexagon: selected order'}</div>`;
   }
   if(tab==="fire"){
     content=shellControl+targetControl()+`<div class="steam-status">${E(steamGunneryStatus(s,valid?target:null,members))}</div>`;
@@ -17182,18 +17422,17 @@ function syncPanel(){
     if(['run_south','run_north','second_heligoland'].includes(SCN.id))content+=`<div class="steam-row" aria-label="Torpedo run setting">${['fast','long'].map(v=>button('setting',v==='fast'?'Fast':'Long',v,(s._torpSetting||'fast')===v)).join('')}</div>`;
   }
   if(tab==="condition"){
-    content=`<div class="steam-condition"><div>Hull <strong>${Math.round(s.structure/s.structureMax*100)}%</strong></div><div>Flood <strong>${Math.round(s.flooding||0)}%</strong></div><div>Fires <strong>${s.fires||0}</strong></div><div>Engine <strong>${Math.round(s.engine*100)}%</strong></div><div>Rudder <strong>${Math.round(s.steering*100)}%</strong></div><div>Crew <strong>${Math.round(s.crew*100)}%</strong></div></div>${button('inspect','Ship plan')}${steamDamageSummary(s)}${steamShellDamageSummary(s)}`;
+    content=steamHealthBars(s)+`${button('inspect','Ship plan')}${steamDamageSummary(s)}${steamShellDamageSummary(s)}`;
     if(q)content+=`<div class="steam-members">${members.map(a=>button('ship',E(a.name)+' · '+(a.speedKn||0).toFixed(1)+' kn',a.id)).join('')}</div>`;
   }
-  body.innerHTML=`<div class="steam-command"><header class="steam-command-head"><div class="steam-name"><strong title="${E(q?q.name:s.name)}">${E(q?squadronDisplayNumber(q)+' · '+q.name:s.name)}</strong><span>${q?(q.command?controlled.length+'/'+members.length:members.length)+' ships':''}</span></div><nav class="steam-tabs" aria-label="Command pages">${[['helm','Helm'],['fire','Guns'],['torpedoes','Torpedoes'],['condition','Condition']].map(([id,label])=>`<button data-tab="${id}" title="${label}" aria-label="${label}" class="${tab===id?'active':''}" aria-pressed="${tab===id}">${steamIcon(id)}</button>`).join('')}</nav></header><div class="steam-content">${content}</div></div>`;
-  body.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{game.commandTab=b.dataset.tab;if(game.commandTab!=='helm')game.plotRoute=false;syncPanel();}));
+  body.innerHTML=`<div class="steam-command"><header class="steam-command-head"><div class="steam-name"><strong title="${E(q?q.name:s.name)}">${E(q?squadronDisplayNumber(q)+' · '+q.name:s.name)}</strong><span>${q?(q.command?controlled.length+'/'+members.length:members.length)+' ships':''}</span></div></header><div class="steam-content">${content}</div></div>`;
   body.querySelectorAll('[data-steam]').forEach(b=>b.addEventListener('click',()=>steamPanelAction(b.dataset.steam,b.dataset.value)));
   body.querySelectorAll('.steam-details').forEach(d=>d.addEventListener('toggle',()=>{panel.classList.toggle('tall',[...body.querySelectorAll('.steam-details')].some(x=>x.open));resizeCanvas();}));
-  setPanelExpanded(panel,true);resizeCanvas();
+  setPanelExpanded(panel,true);resizeCanvas();steamFrameNavigation();
   }finally{game._steamPanelRendering=false;}
 }
 function serializeGame(){
-  const sv=JSON.parse(b64dec(legacySerializeGame()));sv.v=3;sv.commandRevision=14;sv.displayRevision=1;sv.motionRevision=1;sv.torpedoRevision=1;sv.rosterRevision=1;sv.geometryRevision=11;sv.damageRevision=STEAM_DAMAGE_REVISION;sv.shellRevision=STEAM_SHELL_REVISION;sv.simSeconds=game.simSeconds||0;sv.seed=simulationSeed;sv.goals=game.goals;sv.tel=game.tel;
+  const sv=JSON.parse(b64dec(legacySerializeGame()));sv.v=3;sv.commandRevision=14;sv.displayRevision=1;sv.motionRevision=1;sv.torpedoRevision=2;sv.rosterRevision=1;sv.geometryRevision=11;sv.damageRevision=STEAM_DAMAGE_REVISION;sv.shellRevision=STEAM_SHELL_REVISION;sv.simSeconds=game.simSeconds||0;sv.seed=simulationSeed;sv.goals=game.goals;sv.tel=game.tel;
   sv.squads=steamClone(game.squadrons);
   sv.ships.forEach(d=>{
     const s=shipById(d.i);d.x=s.x;d.y=s.y;d.h=s.heading;
@@ -17302,6 +17541,17 @@ function loadGameFromCode(code){
     logLine('Command update: old target-class filters replaced by selected-target fire. Attack routes use the nearest firing side.','sys');
   }
   if(SCN.id==='yalu'&&!sv.displayRevision){for(const q of game.squadrons){delete q.mark;delete q.markKind;}for(const q of game.squadrons)steamAssignSquadronMark(q);}
+  // Never grant a newly represented torpedo fit ammunition in an existing battle.
+  for(const d of sv.ships){
+    const s=shipById(d.i);if(!s)continue;
+    // Older primitive-state snapshots contain torpedoes:null. Reconstruct the
+    // newly represented outfit, but never invent ammunition for that save.
+    if(!s.torpedoes&&steamTorpedoStoreFit(s)){
+      const fit=steamTorpedoStoreFit(s),count=d.tp?.c??0,cooldownLeft=d.tp?.cd||0;
+      s.torpedoes={count,initialCount:fit.total,ready:count>0&&cooldownLeft<=0,cooldownLeft};
+    }
+    if(s.torpedoes&&!d.tp){s.torpedoes.count=0;s.torpedoes.ready=false;}
+  }
   game.plotRoute=false;game._orderHistory=[];game._chartLabels=[];game.cardId=null;game.multiSel=null;
   if((sv.damageRevision||0)<STEAM_DAMAGE_REVISION)logLine('Impact model updated: existing ship damage retained. Torpedoes still running will use their saved warhead charge and the revised damage response.','sys');
   if((sv.shellRevision||0)<STEAM_SHELL_REVISION)logLine('Shell fuzes updated: existing damage retained. Flying shells keep their saved weapon and arrival time; missing fuze profiles use provisional defaults. Future hits use timed bursts. Armour and fuze fits remain provisional.','sys');
@@ -17320,7 +17570,7 @@ function init(){
       const b=document.createElement('button');b.className='gm-btn';b.textContent=label;b.addEventListener('click',()=>{document.getElementById(id)?.click();ohOv('gameMenu');});controls.appendChild(b);
     }menu.appendChild(controls);
   }
-  const stamp=document.getElementById('buildStamp');if(stamp)stamp.textContent='Controls · 2.0 alpha 28';
+  const stamp=document.getElementById('buildStamp');if(stamp)stamp.textContent='Controls · 2.0 alpha 29';
   steamInitLocale();
   const notes=document.getElementById('theatrePanel');
   if(notes){const p=document.createElement('p');p.className='steam-release-note';p.textContent='Steam campaigns · Command revision 2.0 · Sail campaigns parked';notes.appendChild(p);}
