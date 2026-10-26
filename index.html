@@ -1221,6 +1221,59 @@ html[lang="zh-Hans"] .steam-status,html[lang="zh-Hans"] .steam-condition,html[la
 </div>
 
 <script>
+// Chinese display names for every named ship in the playable steam campaigns.
+// English model names and numbered designations are never rewritten. See the
+// per-name basis and source notes in docs/CHINESE-SHIP-NAMES.json/.txt.
+const STEAM_ZH_OTHER_SHIPS={
+  // Imperial Japanese Navy. Use Chinese characters, not phonetic romaji.
+  'Mikasa':'三笠','Asahi':'朝日','Fuji':'富士','Shikishima':'敷岛',
+  'Kasuga':'春日','Nisshin':'日进','Asama':'浅间','Tokiwa':'常磐',
+  'Izumo':'出云','Iwate':'磐手','Azuma':'吾妻','Yakumo':'八云',
+  'Kasagi':'笠置','Chitose':'千岁','Niitaka':'新高','Otowa':'音羽',
+  'Tsushima':'对马','Suma':'须磨','Akashi':'明石',
+  // Imperial Russian Navy.
+  'Tsesarevich':'皇太子','Retvizan':'列特维赞','Pobeda':'胜利',
+  'Peresvet':'佩列斯韦特','Sevastopol':'塞瓦斯托波尔','Poltava':'波尔塔瓦',
+  'Knyaz Suvorov':'苏沃洛夫公爵','Imperator Aleksandr III':'亚历山大三世皇帝',
+  'Borodino':'博罗季诺','Oryol':'鹰','Oslyabya':'奥斯利雅比亚',
+  'Sisoy Veliky':'伟大的西索伊','Navarin':'纳瓦林','Imperator Nikolai I':'尼古拉一世皇帝',
+  'General-Admiral Apraksin':'阿普拉克辛海军大将','Admiral Senyavin':'谢尼亚文海军上将',
+  'Admiral Ushakov':'乌沙科夫海军上将','Admiral Nakhimov':'纳希莫夫海军上将',
+  'Vladimir Monomakh':'弗拉基米尔·莫诺马赫','Dmitrii Donskoi':'德米特里·顿斯科伊',
+  'Oleg':'奥列格','Aurora':'阿芙乐尔','Svetlana':'斯维特兰娜',
+  'Zhemchug':'珍珠','Izumrud':'绿宝石','Almaz':'金刚石',
+  // Royal Navy capitals and cruisers.
+  'Lion':'狮','Princess Royal':'长公主','Queen Mary':'玛丽王后','Tiger':'虎',
+  'New Zealand':'新西兰','Indefatigable':'不倦','Barham':'巴勒姆','Valiant':'勇士',
+  'Warspite':'厌战','Malaya':'马来亚','Courageous':'勇敢','Glorious':'光荣','Repulse':'反击',
+  'Southampton':'南安普敦','Birmingham':'伯明翰','Nottingham':'诺丁汉','Dublin':'都柏林',
+  'Galatea':'伽拉忒亚','Phaeton':'法厄同','Inconstant':'善变','Cordelia':'科迪莉娅',
+  'Falmouth':'法尔茅斯','Yarmouth':'雅茅斯','Birkenhead':'伯肯黑德','Gloucester':'格洛斯特',
+  'Cardiff':'加的夫','Ceres':'刻瑞斯','Calypso':'卡吕普索','Caradoc':'卡拉多克',
+  'Caledon':'卡利登','Royalist':'保皇党',
+  // Destroyer names: established renderings where found; consistent editorial
+  // translations/transliterations for names without a verified Chinese entry.
+  'Nestor':'内斯特','Nomad':'游牧民','Nicator':'尼卡托','Narborough':'纳博勒',
+  'Obdurate':'顽固','Petard':'爆竹','Pelican':'鹈鹕','Nerissa':'妮莉莎',
+  'Onslow':'昂斯洛','Moresby':'莫尔斯比','Lydiard':'利迪亚德','Liberty':'自由',
+  'Landrail':'秧鸡','Laurel':'月桂','Moorsom':'穆尔索姆','Morris':'莫里斯',
+  'Turbulent':'动荡','Termagant':'忒尔马甘特','Vendetta':'复仇','Vanquisher':'征服者',
+  'Valentine':'瓦伦丁','Medway':'梅德韦','Vehement':'猛烈','Ursa':'大熊',
+  'Urchin':'海胆','Umpire':'裁判',
+  // Kaiserliche Marine.
+  'Lutzow':'吕措','Derfflinger':'德夫林格','Seydlitz':'塞德利茨','Moltke':'毛奇',
+  'Von der Tann':'冯·德·坦恩','Frankfurt':'法兰克福','Wiesbaden':'威斯巴登',
+  'Pillau':'皮劳','Elbing':'埃尔宾','Koenig':'国王','Grosser Kurfurst':'大选帝侯',
+  'Kronprinz':'王储','Markgraf':'藩侯','Kaiser':'皇帝','Kaiserin':'皇后',
+  'Prinzregent Luitpold':'柳特波德摄政王','Friedrich der Grosse':'腓特烈大帝',
+  'Koenigsberg':'柯尼斯堡','Nuernberg':'纽伦堡',
+  // Orthographic aliases used by some older data/saves and historical sources.
+  'Lützow':'吕措','König':'国王','Großer Kurfürst':'大选帝侯','Grosser Kurfürst':'大选帝侯',
+  'Königsberg':'柯尼斯堡','Nürnberg':'纽伦堡','Friedrich der Große':'腓特烈大帝',
+  'Dmitri Donskoi':'德米特里·顿斯科伊','Orel':'鹰'
+};
+
+
 // Presentation only. Never translate simulation IDs, orders, save codes or ship
 // objects. Store the language separately from battle saves, including old saves.
 let steamLocale='en';
@@ -1233,7 +1286,7 @@ const STEAM_ZH_SHIPS={
   matsushima:'松島',itsukushima:'厳島',hashidate:'橋立',chiyoda:'千代田',
   fuso:'扶桑',hiei:'比叡',akagi:'赤城',saikyo_maru:'西京丸'
 };
-function steamShipName(s){return steamLocale==='zh-Hans'&&STEAM_ZH_SHIPS[s.id]||s.name;}
+function steamShipName(s){return steamLocale==='zh-Hans'&&(STEAM_ZH_SHIPS[s.id]||STEAM_ZH_OTHER_SHIPS[s.name])||s.name;}
 const STEAM_ZH={
   'Battle of the Yalu River':'黄海海战（大东沟海战）','Yalu River, 1894':'黄海 · 1894',
   'Yalu River':'黄海海战','Sino-Japanese Naval Action':'甲午海战',
@@ -1319,7 +1372,7 @@ const STEAM_ZH={
   'Fighting tonnage retained':'剩余战斗吨位','You inflicted':'造成敌方损失','You lost':'己方损失',
   'Net':'净值','Battle log & statistics':'战斗日志与统计','Calculated battle reading':'战斗评析',
   'Honours':'战绩','Battle report':'战斗报告','Statistics':'统计','Return to battle':'返回战斗',
-  'Controls · 2.0 alpha 27':'操控修订 · 2.0 alpha 27',
+  'Controls · 2.0 alpha 28':'舰名汉化 · 2.0 alpha 28',
   'Steam campaigns · Command revision 2.0 · Sail campaigns parked':'蒸汽舰战役 · 指挥系统修订 2.0 · 风帆战役暂缓',
   'Offline check':'检查离线状态','Offline ready':'可离线使用','Offline':'离线','Online':'在线',
   'Language':'语言','Rejoin':'归队','ships':'艘','left':'剩余','any enemy':'任意敌舰','kn':'节','km':'千米','mm':'毫米',
@@ -1457,11 +1510,18 @@ Object.assign(STEAM_ZH,{
   'Operational':'运作正常','No target selected':'未选择目标','Automatic':'自动',
   'Torpedo':'鱼雷','torpedo':'鱼雷','torpedoes':'鱼雷','kg':'千克','cm':'厘米'
 });
+Object.assign(STEAM_ZH,STEAM_ZH_OTHER_SHIPS,{
+  'II Scouting Group':'第二侦察集群','II Scouting Group (1917)':'第二侦察集群（1917）',
+  'II Torpedo Boat Flotilla':'第二鱼雷艇区舰队','VI Torpedo Boat Flotilla':'第六鱼雷艇区舰队',
+  'IX Torpedo Boat Flotilla':'第九鱼雷艇区舰队','6th Light Cruiser Squadron':'第六轻巡洋舰分队',
+  '1st Light Cruiser Squadron (1917)':'第一轻巡洋舰分队（1917）',
+  'Destroyers, Grand Fleet':'大舰队驱逐舰群','Torpedo Boats (escort)':'护航鱼雷艇群','Minesweeping Force':'扫雷舰队'
+});
 // Whole phrases take priority over word substitutions. One pass prevents a
 // translation from being translated again, and preserves model/unit symbols.
 const steamLocaleCache=new Map();
 const steamLocaleKeys=Object.keys(STEAM_ZH).sort((a,b)=>b.length-a.length);
-const steamLocalePattern=new RegExp('(^|[^A-Za-zÀ-ž])('+steamLocaleKeys.map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')(?=$|[^A-Za-zÀ-ž])','g');
+const steamLocalePattern=new RegExp('(^|[^A-Za-zÀ-ž0-9])('+steamLocaleKeys.map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')(?=$|[^A-Za-zÀ-ž0-9])','g');
 const steamLocaleSentences=[
   [/^Turn (\d+)\. You command (.+)\.$/,(_,n,fleet)=>`第${n}回合。你指挥${steamText(fleet)}。`],
   [/^(.+)\. Plot your line, then End Turn\.$/,(_,date)=>`${steamText(date)}。设置航线后，结束回合。`],
@@ -7207,8 +7267,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "2.0-alpha.27";
-const ECHELON_BUILD_NOTE = "persistent tactical overlays · English / 简体中文";
+const ECHELON_VERSION = "2.0-alpha.28";
+const ECHELON_BUILD_NOTE = "Chinese ship names · all steam campaigns";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
@@ -17260,7 +17320,7 @@ function init(){
       const b=document.createElement('button');b.className='gm-btn';b.textContent=label;b.addEventListener('click',()=>{document.getElementById(id)?.click();ohOv('gameMenu');});controls.appendChild(b);
     }menu.appendChild(controls);
   }
-  const stamp=document.getElementById('buildStamp');if(stamp)stamp.textContent='Controls · 2.0 alpha 27';
+  const stamp=document.getElementById('buildStamp');if(stamp)stamp.textContent='Controls · 2.0 alpha 28';
   steamInitLocale();
   const notes=document.getElementById('theatrePanel');
   if(notes){const p=document.createElement('p');p.className='steam-release-note';p.textContent='Steam campaigns · Command revision 2.0 · Sail campaigns parked';notes.appendChild(p);}
