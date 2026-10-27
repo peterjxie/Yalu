@@ -961,6 +961,12 @@ body.steam-edition #panelBody{flex:0 1 auto;overflow:auto;overscroll-behavior:co
 #steamNavHint{position:absolute;left:9px;bottom:calc(var(--steam-panel-inset,0px) + 5px);max-width:calc(100% - 24px);font:10px/1.4 system-ui,sans-serif;color:#c1d5d4;pointer-events:none;text-shadow:0 1px 3px #071c23;z-index:2}
 @media(max-width:960px) and (orientation:portrait){body.steam-edition #main #panel{max-height:35dvh}body.steam-edition #main #panel.tall,body.steam-edition #main #panel.steam-card{max-height:46dvh}}
 @media(orientation:landscape){#steamNavHint{max-width:calc(100% - 332px)}}
+/* Keep report actions reachable on narrow phones; long report rows scroll inside. */
+body.steam-edition .logmodal-card{min-width:0;max-width:100%}
+body.steam-edition .logmodal-head{flex-wrap:wrap;gap:8px}
+body.steam-edition .logmodal-btns{flex-wrap:wrap;min-width:0}
+body.steam-edition #logModalPre{min-height:0;min-width:0}
+@media(max-width:600px){body.steam-edition .logmodal-btns{width:100%}body.steam-edition .logmodal-btns button{flex:1 0 auto;min-height:44px}}
 #steamNavHint{bottom:calc(var(--steam-panel-inset,0px) + 100px);max-width:290px}
 @media(orientation:landscape){#steamNavHint{max-width:calc(100% - 332px)}}
 
@@ -1302,6 +1308,12 @@ const STEAM_ZH_OTHER_SHIPS={
 // Complete phrases for command help, objectives and after-action verdicts.
 // Display only; the scoring, model strings and save payload remain English.
 const STEAM_ZH_EXTRA={
+'Hold: keep torpedoes loaded.':'停射：保留已装填的鱼雷。',
+'Target: fire when the selected enemy is in range and tubes bear. Helm unchanged.':'指定目标：目标进入射程且发射管对准后发射。保持航行命令。',
+'Any: fire at a visible enemy when able. Helm unchanged.':'自由射击：条件允许时向可见敌舰发射。保持航行命令。',
+'Attack: close, expose tubes, fire, withdraw.':'攻击：接近目标，调整发射角度，发射后撤离。',
+'Mixed orders: choose a mode to apply it to all selected ships.':'命令不一致：选择模式后统一应用于所选舰艇。',
+'friendly torpedo hits':'鱼雷误击友舰',
 'Navigation':'航海','Ship systems':'舰体系统','Course':'航向','hex':'六边格','Clear':'无异常','Minor':'轻微','Serious':'严重','Critical':'危急','Disabled':'失效',
 'Route tool: tap water to add waypoints. Tap again to leave route mode.':'航线工具：点选海面添加航路点，再点一次按钮退出。',
 'Route tool off. Tap a dot to set course and speed.':'已退出航线工具。点选圆点可同时设置航向与航速。',
@@ -1339,7 +1351,7 @@ const STEAM_ZH_EXTRA={
 "the Beiyang cruiser force destroyed and a battleship under, which is more than Ito managed. Command of the sea is secured and the convoys flow.":'北洋巡洋舰队被摧毁，另有一艘战列舰沉没，战果超越伊东。制海权得到确保，运输队可继续通行。',
 "the Beiyang cruiser force is destroyed and the fleet driven back to Weihaiwei. The ironclads' belts hold, as they held in 1894, but they never contest the Yellow Sea again and the landings proceed.":'北洋巡洋舰队被摧毁，舰队被迫退往威海卫。铁甲舰装甲带如1894年一样守住，但无力再争夺黄海，日军登陆继续。',
 'the Beiyang Fleet is hurt but still a fleet. It withdraws in order and the sea stays contested.':'北洋舰队受创但仍有战力，有序撤退后继续威胁制海权。','the Beiyang Fleet draws off in good order; command of the sea stays contested.':'北洋舰队有序撤离，制海权仍在争夺。',
-'Both ironclads brought through unbroken.':'两艘铁甲舰均保持完整战力。','Held the line, not one of your ships broke off and ran.':'稳住战列，己方无舰临阵脱离。','Not a ship sunk.':'无舰沉没。','Put a Chinese ironclad under, more than history allowed.':'击沉中国铁甲舰，战果超越历史。','Avenged the Yalu, the day went the other way.':'扭转黄海战局，改写历史结果。',
+'Both ironclads brought through.':'两艘铁甲舰均幸存。','Both ironclads brought through unbroken.':'两艘铁甲舰均保持完整战力。','Held the line, not one of your ships broke off and ran.':'稳住战列，己方无舰临阵脱离。','Not a ship sunk.':'无舰沉没。','Put a Chinese ironclad under, more than history allowed.':'击沉中国铁甲舰，战果超越历史。','Avenged the Yalu, the day went the other way.':'扭转黄海战局，改写历史结果。',
 'Historically the battle was a decisive Japanese victory. The Combined Fleet lost no ships sunk, though several were badly damaged. The Beiyang Fleet lost five vessels, including Zhiyuan and Jingyuan, but both ironclads, Dingyuan and Zhenyuan, survived: Japanese quick-firers could not penetrate their belts.':'历史上日军取得决定性胜利。联合舰队没有舰艇沉没，但数舰重创。北洋舰队损失五舰，包括致远、经远；定远与镇远幸存，日军速射炮未能击穿其装甲带。',
 'Both ironclads came through and the Combined Fleet was gutted in exchange, but your cruiser line paid for it: a bloodier, more even day than 1894.':'两艘铁甲舰幸存，联合舰队也付出代价，但己方巡洋舰战列受损。双方损失比1894年更加接近。',
 'An ironclad lost, but the Combined Fleet gutted in exchange: a bloodier and more even day than 1894, and a hard call either way.':'虽损失一艘铁甲舰，联合舰队也遭重创。比1894年更为惨烈，双方战果接近，难分胜负。',
@@ -1355,7 +1367,17 @@ const STEAM_ZH_EXTRA={
 'machinery-impaired':'动力系统受损','steering-impaired':'操舵系统受损','severe':'严重','mean':'平均','guns disabled':'火炮失效','boiler casualties':'锅炉损伤','respectively':'分别如此','damage control overwhelmed aboard':'损管失控舰数','machinery':'动力系统','steering':'操舵系统','hits':'命中','weapon failures':'武器故障','penetrations':'击穿','failed on armour':'未穿透装甲','fires':'火灾','gun':'火炮','class':'级','own class':'独立舰级',
 'Friendly crossing':'友舰横穿射线','Target unseen':'目标不可见','Tubes masked':'发射管射界受阻','Outside tube arc':'目标不在发射管射界','Beyond run':'超出航程','No interception':'无法截击','No tubes bear':'无发射管可瞄准','Closing to torpedo range':'接近鱼雷射程','Individual command':'独立指挥','Maintaining course':'保持航向','Order set':'命令已设定','Following wake':'跟随航迹','Holding station':'保持阵位','Speed limited by squadron':'航速受分队限制',
 'potentially repairable':'可能修复','doubtful salvage':'打捞前景未定','abandoned wreck':'弃舰残骸','not repairable':'无法修复','sunk after structural collapse':'结构崩溃后沉没','magazine explosion':'弹药库爆炸','combat disablement':'战损失能',
-'6-inch/40 Elswick quick-firing gun':'埃尔斯维克152毫米40倍径速射炮','QF 4.7-inch Mk I-IV naval gun':'120毫米Mk I至IV型速射舰炮','Hotchkiss 3-pounder QF':'哈乞开斯3磅速射炮','12 in/40 Obukhov Pattern 1895':'奥布霍夫1895式305毫米40倍径炮','6 in/45 Canet Pattern 1892':'加纳1892式152毫米45倍径炮','75 mm/50 Canet Pattern 1892':'加纳1892式75毫米50倍径炮','12 in/40 EOC (Elswick) type 41':'埃尔斯维克四一式305毫米40倍径炮','6 in/40 QF Elswick pattern':'埃尔斯维克152毫米40倍径速射炮','QF 4 in Mk VII':'102毫米Mk VII型速射炮','BL 4 in /45 Mark IX':'102毫米45倍径Mk IX型后装炮','Minesweeper group':'扫雷舰群','Sperrbrecher and M-boats':'破障舰及M型扫雷艇'
+'6-inch/40 Elswick quick-firing gun':'埃尔斯维克152毫米40倍径速射炮','QF 4.7-inch Mk I-IV naval gun':'120毫米Mk I至IV型速射舰炮','Hotchkiss 3-pounder QF':'哈乞开斯3磅速射炮','12 in/40 Obukhov Pattern 1895':'奥布霍夫1895式305毫米40倍径炮','6 in/45 Canet Pattern 1892':'加纳1892式152毫米45倍径炮','75 mm/50 Canet Pattern 1892':'加纳1892式75毫米50倍径炮','12 in/40 EOC (Elswick) type 41':'埃尔斯维克四一式305毫米40倍径炮','6 in/40 QF Elswick pattern':'埃尔斯维克152毫米40倍径速射炮','QF 4 in Mk VII':'102毫米Mk VII型速射炮','BL 4 in /45 Mark IX':'102毫米45倍径Mk IX型后装炮','Minesweeper group':'扫雷舰群','Sperrbrecher and M-boats':'破障舰及M型扫雷艇',
+"Qualified gain":"有限战略收益",
+"Strategic balance":"战略实力对比",
+"both battleships survive, most of the modern cruiser screen remains serviceable and the enemy fighting core is badly reduced. Beiyang has improved its position; future sea control still depends on repairs and further operations.":"两艘战列舰幸存，多数近代巡洋舰仍可作战，敌方主力已遭严重削弱。北洋的战略处境有所改善；后续制海权仍取决于修复与进一步作战。",
+"both battleships survive and most of the modern cruiser screen remains serviceable. Japan has lost a modern cruiser and more permanent tonnage than Beiyang. This is a strategic gain with limits; command of the sea remains unresolved.":"两艘战列舰幸存，多数近代巡洋舰仍可作战。日方损失了近代巡洋舰，永久损失吨位也高于北洋。这是有限的战略收益，制海权归属仍未确定。",
+"both battleships survive and most of the modern cruiser screen remains serviceable. Beiyang retains a force with which to contest the sea, without a clear strategic advantage.":"两艘战列舰幸存，多数近代巡洋舰仍可作战。北洋保有争夺海上控制权的力量，但尚未取得明确战略优势。",
+"the battleships and much of the cruiser screen survive, but the fleet has lost the action. Its ability to contest the sea is weakened; subsequent withdrawal and repairs are not determined by this battle alone.":"战列舰与大部分巡洋舰幸存，但舰队在此次交战中失利。争夺制海权的能力有所削弱；后续撤退与修复不能仅凭本次战斗确定。",
+"the battleships survive, but fewer than half of the modern cruiser screen remain serviceable. The fleet needs substantial recovery before sustained operations; this does not by itself decide later sea control.":"战列舰幸存，但尚可作战的近代巡洋舰已不足半数。舰队需要大规模恢复才能持续行动；这本身并不能决定后续制海权归属。",
+"The damaged ironclad force needs repairs before sustained operations.":"受重创的铁甲舰需要修复后才能持续行动。",
+"Both ironclads survive, and Japan has suffered permanent ship losses absent from the historical battle. The surviving fleets' condition determines how far this improves Beiyang's position.":"两艘铁甲舰幸存，且日方遭受了历史上此次海战未曾出现的舰艇永久损失。北洋处境改善的程度，仍取决于双方幸存舰艇的实际状态。",
+"Both ironclads survive, as they did historically. The remaining cruiser force and repair needs determine whether that survival is a strategic success.":"两艘铁甲舰如历史上一样幸存。剩余巡洋舰实力与修复需求，决定了这种幸存是否构成战略成功。"
 };
 
 
@@ -1610,6 +1632,11 @@ const steamLocaleCache=new Map();
 const steamLocaleKeys=Object.keys(STEAM_ZH).sort((a,b)=>b.length-a.length);
 const steamLocalePattern=new RegExp('(^|[^A-Za-zÀ-ž0-9])('+steamLocaleKeys.map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')(?=$|[^A-Za-zÀ-ž0-9])','g');
 const steamLocaleSentences=[
+  // Report prefixes must not defeat whole-sentence translation. Keep canonical
+  // report text in English so the DOM adapter can also switch back mid-report.
+  [/^- (Material exchange|Hull states|Strategic balance|Shell performance|Critical events|Fleet-in-being|Command result|Systems damage|Torpedo action|Nature of the victory|Nature of the action|Nature of the defeat|Cost of the sinkings): (.+)$/,(_,title,body)=>`- ${steamText(title)}: ${steamText(body)}`],
+  [/^- (.+)$/,(_,body)=>`- ${steamText(body)}`],
+  [/^Modern cruisers serviceable: Beiyang (\d+)\/(\d+); Japan (\d+)\/(\d+)\. Modern cruisers permanently lost: Beiyang (\d+); Japan (\d+)\. Practical permanent tonnage lost: Beiyang ([\d,]+) t; Japan ([\d,]+) t\. Repairable damage is separate; repair times and later sea control are not simulated\.$/,(_,cr,ct,jr,jt,cl,jl,cn,jp)=>`尚可作战的近代巡洋舰：北洋${cr}/${ct}艘；日方${jr}/${jt}艘。近代巡洋舰永久损失：北洋${cl}艘；日方${jl}艘。实际永久损失吨位：北洋${cn}吨；日方${jp}吨。可修复损伤另计；修复时间与后续制海权并未模拟。`],
   [/^(.+) can no longer keep station\.$/,(_,ship)=>`${steamText(ship)}已无法保持阵位。`],
   [/^(.+) assumes the squadron lead\.$/,(_,ship)=>`${steamText(ship)}接任分队领舰。`],
   [/^Half your force past (.+) \((\d+) of (\d+) through\)$/,(_,place,n,total)=>`半数舰队通过${steamText(place)}（${total}艘中${n}艘已通过）`],
@@ -1623,7 +1650,8 @@ const steamLocaleSentences=[
   [/^AP: (\d+)\/(\d+) hits \((\d+)%\), (\d+) material penetrations, (\d+) ricochets, (\d+) other armour failures; ([\d.]+) direct damage per hit\.$/,(_,h,s,p,pen,ric,bounce,damage)=>`穿甲弹：${h}/${s}命中（${p}%），${pen}次击穿，${ric}次跳弹，${bounce}次其他未穿透；每次命中直接伤害${damage}。`],
   [/^HE\/common: (\d+)\/(\d+) hits \((\d+)%\), (\d+) fires; ([\d.]+) damage per hit\.$/,(_,h,s,p,f,d)=>`高爆弹／普通弹：${h}/${s}命中（${p}%），引发${f}处火灾；每次命中伤害${d}。`],
   [/^Heavy guns: (\d+)\/(\d+) hits \((\d+)%\)\.$/,(_,h,s,p)=>`重炮：${h}/${s}命中（${p}%）。`],
-  [/^Torpedoes: (\d+)\/(\d+) hits(?:; (\d+) misruns, depth failures or duds)?\.$/,(_,h,s,f)=>`鱼雷：${h}/${s}命中${f?`；${f}枚航迹、深度故障或哑弹`:''}。`],
+  [/^(Torpedoes|Enemy torpedoes): (\d+)\/(\d+) hits(?:; (\d+) misruns, depth failures or duds)?\.$/,(_,side,h,s,f)=>`${side==='Torpedoes'?'己方鱼雷':'敌方鱼雷'}：${h}/${s}命中${f?`；${f}枚航迹、深度故障或哑弹`:''}。`],
+  [/^(Torpedoes|Enemy torpedoes): (\d+) friendly hits, excluded from enemy hits\.$/,(_,side,n)=>`${side==='Torpedoes'?'己方鱼雷':'敌方鱼雷'}：误击友舰${n}次，未计入对敌命中。`],
   [/^Sank (\d+) enemy ships?\.$/,(_,n)=>`击沉${n}艘敌舰。`],
   [/^Disabled or forced the abandonment of (\d+) more ships?\.$/,(_,n)=>`另使${n}艘舰艇失能或被迫弃舰。`],
   [/^Broke the enemy's nerve: (\d+) ships sheered off\.$/,(_,n)=>`击溃敌方士气：${n}艘舰艇脱离。`],
@@ -7322,7 +7350,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "2.0-alpha.33";
+const ECHELON_VERSION = "2.0-alpha.35";
 const ECHELON_BUILD_NOTE = "Direct controls · squadron manoeuvres";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
@@ -10256,10 +10284,10 @@ function telTorpedoLaunch(shooter, target, sol, failure, salvoIndex, salvoSize) 
     salvoIndex: salvoIndex + 1, salvoSize });
   return id;
 }
-function telTorpedoResolve(t, result) {
+function telTorpedoResolve(t, result, contact) {
   if (!game.tel || !game.tel.torpedoes || !t || !t.telId) return;
   const ev = game.tel.torpedoes.find((x) => x.id === t.telId);
-  if (ev) ev.result = result;
+  if (ev) { ev.result = result; if(contact)Object.assign(ev,contact); }
 }
 
 function resolveTorpedoes() {
@@ -12761,7 +12789,7 @@ function telAgg(id) {
     heavyShots: 0, heavyHits: 0, rangeSum: 0, firesStarted: 0,
     apShots: 0, apHits: 0, apDmg: 0, apPens: 0, apRicochets: 0, apBounces: 0,
     heShots: 0, heHits: 0, heDmg: 0, heFires: 0,
-    torpFired: 0, torpHit: 0, torpFailures: 0, torpHitTaken: 0, byTarget: {},
+    torpFired: 0, torpHit: 0, torpFriendlyHit: 0, torpFailures: 0, torpHitTaken: 0, byTarget: {},
   });
 }
 function telShot(from, target, gun, res) {
@@ -12817,9 +12845,32 @@ function telSnapshotTurn(mv) {
   game.tel.turns.push(rec);
 }
 
-// Strategic vs tactical reading. Tactical = who held the field today. Strategic = what
-// the day's losses do to the war, which for 1894 turns almost entirely on the two Chinese
-// ironclads (the fleet-in-being) and on how badly the enemy's fighting core was hurt.
+// Yalu strategic interpretation, separate from the unchanged tactical score.
+// These are role groups, not the chart's deliberately broader "major ship" marks.
+// A torpedo boat loss must never stand in for a destroyed modern cruiser screen.
+function yaluStrategicBalance() {
+  const cnIds = ["jiyuan", "zhiyuan", "laiyuan", "jingyuan_1887", "jingyuan_1886"];
+  const jpIds = ["yoshino", "takachiho", "akitsushima", "naniwa", "matsushima", "chiyoda", "itsukushima", "hashidate"];
+  const permanent = s => !!s && !s._escaped && (s.captured || (s.out && ["total", "abandoned"].includes(lossDisposition(s).key)));
+  // Reuse existing heavy-hull and serious system-damage boundaries. This is a
+  // cautious readiness proxy, not a forecast of repair time or campaign outcomes.
+  const serviceable = s => !!s && !s.out && !s.captured && shipCondition(s).cls !== "st-heavy"
+    && (s.engine ?? 1) >= 0.65 && (s.steering ?? 1) >= 0.60;
+  const cn = cnIds.map(shipById).filter(Boolean), jp = jpIds.map(shipById).filter(Boolean);
+  const losses = side => game.ships.filter(s => homeSide(s) === side && permanent(s));
+  const cnLost = losses("China"), jpLost = losses("Japan");
+  return {
+    chinaCruisersReady: cn.filter(serviceable).length, chinaCruisersTotal: cnIds.length,
+    japanCruisersReady: jp.filter(serviceable).length, japanCruisersTotal: jpIds.length,
+    chinaCruisersLost: cn.filter(permanent).length, japanCruisersLost: jp.filter(permanent).length,
+    chinaPermanentTons: cnLost.reduce((n,s) => n + shipTons(s), 0),
+    japanPermanentTons: jpLost.reduce((n,s) => n + shipTons(s), 0),
+    ironcladsNeedRepair: ["dingyuan", "zhenyuan"].map(shipById).filter(s => s && !s.out && !s.captured && !serviceable(s)).length,
+  };
+}
+
+// Tactical = the action's result. Strategic = the surviving force and lasting
+// losses. Neither establishes unmodelled repairs, later orders or landings.
 function warVerdict(outcome) {
   if (SCN.id !== "yalu") {
     const tacMap = { win: "Victory", draw: "Draw", loss: "Defeat" };
@@ -12837,13 +12888,10 @@ function warVerdict(outcome) {
   const tacTag = tacMap[outcome.result] || "Draw";
   let tacLine, stratTag, stratLine;
   if (me === "China") {
-    // Classification shape is the sanctioned one: ironclads surviving is the primary
-    // gate, then a single enemy-damage threshold within each gate. An additional
-    // override branch and loosened thresholds were trialled and reverted, because
-    // they shifted which verdict a given result reported rather than reporting it.
-    // The refinement asked for is in the detail below the verdict (named losses,
-    // material summary, telemetry), not in the boundaries.
-    const ic = outcome.ironcladsAlive, cl = outcome.chinaLost, ed = outcome.enemyDamage || 0;
+    // Alpha 34: the player's report demonstrates that total hull count was an
+    // invalid proxy for cruiser losses. Recalibrate only the two-ironclad reading;
+    // keep tactical scoring, combat and the zero/one-ironclad gates unchanged.
+    const ic = outcome.ironcladsAlive, ed = outcome.enemyDamage || 0;
     tacLine = outcome.result === "win" ? "you held the field and the Combined Fleet paid a price it never paid in 1894."
       : outcome.result === "draw" ? "neither fleet broke; both drew off bloodied at nightfall."
       : "the fleet was driven from the field.";
@@ -12852,9 +12900,25 @@ function warVerdict(outcome) {
       if (ed >= 45) { stratTag = "Trade"; stratLine = "a battleship lost, but the Combined Fleet gutted with it. Japan's command of the sea is no longer assured and the naval war reopens."; }
       else { stratTag = "Setback"; stratLine = "losing a battleship halves the fleet's striking core; Japan presses toward command of the sea, as it did historically."; }
     } else {
-      if (ed >= 50) { stratTag = "Gain"; stratLine = "both battleships intact and the enemy fleet mauled. Japan must refit before it can move; the invasion timetable slips and the sea stays contested."; }
-      else if (cl <= 2) { stratTag = "Hold"; stratLine = "the fleet comes through largely whole and stays a fleet-in-being. Japan cannot yet command the Yellow Sea unopposed."; }
-      else { stratTag = "Erosion"; stratLine = "the battleships survive but the cruiser screen is spent. The fleet slips toward coast defence and cedes the open sea, as the real Beiyang Fleet did after the Yalu."; }
+      const balance = yaluStrategicBalance();
+      const screenHolds = balance.chinaCruisersReady > balance.chinaCruisersTotal / 2;
+      const favourableExchange = balance.japanCruisersLost > 0 && balance.japanPermanentTons > balance.chinaPermanentTons;
+      if (outcome.result !== "loss" && screenHolds && ed >= 50) {
+        stratTag = "Gain";
+        stratLine = "both battleships survive, most of the modern cruiser screen remains serviceable and the enemy fighting core is badly reduced. Beiyang has improved its position; future sea control still depends on repairs and further operations.";
+      } else if (outcome.result !== "loss" && screenHolds && favourableExchange) {
+        stratTag = "Qualified gain";
+        stratLine = "both battleships survive and most of the modern cruiser screen remains serviceable. Japan has lost a modern cruiser and more permanent tonnage than Beiyang. This is a strategic gain with limits; command of the sea remains unresolved.";
+      } else if (outcome.result !== "loss" && screenHolds) {
+        stratTag = "Hold";
+        stratLine = "both battleships survive and most of the modern cruiser screen remains serviceable. Beiyang retains a force with which to contest the sea, without a clear strategic advantage.";
+      } else {
+        stratTag = "Erosion";
+        stratLine = screenHolds
+          ? "the battleships and much of the cruiser screen survive, but the fleet has lost the action. Its ability to contest the sea is weakened; subsequent withdrawal and repairs are not determined by this battle alone."
+          : "the battleships survive, but fewer than half of the modern cruiser screen remain serviceable. The fleet needs substantial recovery before sustained operations; this does not by itself decide later sea control.";
+      }
+      if (balance.ironcladsNeedRepair) stratLine += " The damaged ironclad force needs repairs before sustained operations.";
     }
   } else {
     const cl = outcome.chinaLost, jl = outcome.japanLost, ic = outcome.ironcladsAlive, cd = outcome.chineseDamage || 0;
@@ -12873,13 +12937,13 @@ function warVerdict(outcome) {
 
 // A few grounded observations on how the player fought, drawn straight from the telemetry.
 function sideShellStats(side) {
-  const out = { shots: 0, hits: 0, rangeSum: 0, heavyShots: 0, heavyHits: 0, torpFired: 0, torpHit: 0, torpFailures: 0,
+  const out = { shots: 0, hits: 0, rangeSum: 0, heavyShots: 0, heavyHits: 0, torpFired: 0, torpHit: 0, torpFriendlyHit: 0, torpFailures: 0,
     apShots: 0, apHits: 0, apDmg: 0, apPens: 0, apRicochets: 0, apBounces: 0,
     heShots: 0, heHits: 0, heDmg: 0, heFires: 0, byTarget: {} };
   if (!game.tel) return out;
   for (const [id, a] of Object.entries(game.tel.agg || {})) {
     const s = shipById(id); if (!s || s.side !== side) continue;
-    for (const k of ["shots","hits","rangeSum","heavyShots","heavyHits","torpFired","torpHit","torpFailures","apShots","apHits","apDmg","apPens","apRicochets","apBounces","heShots","heHits","heDmg","heFires"]) out[k] += a[k] || 0;
+    for (const k of ["shots","hits","rangeSum","heavyShots","heavyHits","torpFired","torpHit","torpFriendlyHit","torpFailures","apShots","apHits","apDmg","apPens","apRicochets","apBounces","heShots","heHits","heDmg","heFires"]) out[k] += a[k] || 0;
     for (const [tid, d] of Object.entries(a.byTarget || {})) out.byTarget[tid] = (out.byTarget[tid] || 0) + d;
   }
   return out;
@@ -12888,7 +12952,13 @@ function tacticalNotes() {
   if (!game.tel) return [];
   const me = game.playerSide, st = sideShellStats(me);
   const notes = [];
-  if (!st.shots) { notes.push("Your fleet landed almost no fire this action."); return notes; }
+  const torpedoNotes=[];
+  for(const side of [me,otherSide(me)]){
+    const a=sideShellStats(side),label=side===me?'Torpedoes':'Enemy torpedoes';
+    if(a.torpFired)torpedoNotes.push(`${label}: ${a.torpHit}/${a.torpFired} hits${a.torpFailures?`; ${a.torpFailures} misruns, depth failures or duds`:''}.`);
+    if(a.torpFriendlyHit)torpedoNotes.push(`${label}: ${a.torpFriendlyHit} friendly hits, excluded from enemy hits.`);
+  }
+  if (!st.shots) { notes.push("Your fleet landed almost no fire this action."); return notes.concat(torpedoNotes); }
   const avgRange = st.rangeSum / Math.max(1, st.shots);
   const hitPct = Math.round(100 * st.hits / st.shots);
   const dmgVals = Object.values(st.byTarget).sort((a, b) => b - a);
@@ -12912,8 +12982,7 @@ function tacticalNotes() {
     else if (st.apRicochets + st.apBounces > st.apPens * 2) notes.push("AP was mostly defeated by armour or angle; more HE or a better broadside aspect would have paid better.");
   }
   if (st.heavyShots > 0) notes.push(`Heavy guns: ${st.heavyHits}/${st.heavyShots} hits (${Math.round(100 * st.heavyHits / st.heavyShots)}%).`);
-  if (st.torpFired > 0) notes.push(`Torpedoes: ${st.torpHit}/${st.torpFired} hits${st.torpFailures ? `; ${st.torpFailures} misruns, depth failures or duds` : ""}.`);
-  return notes;
+  return notes.concat(torpedoNotes);
 }
 
 function sideSystemSummary(side) {
@@ -12941,6 +13010,10 @@ function calculatedReadings(outcome) {
   const readings = [];
   readings.push({ title: "Material exchange", text: `You inflicted ${theirs.effectiveLost.toLocaleString()} effective tons and suffered ${mine.effectiveLost.toLocaleString()}; net ${net >= 0 ? "+" : ""}${net.toLocaleString()} t. Fighting strength finished ${ownRet}% to ${foeRet}%.` });
   readings.push({ title: "Hull states", text: `Enemy: ${theirs.sunkCount} total losses, ${theirs.abandonedCount} abandoned wrecks, ${theirs.disabledCount} disabled afloat, ${theirs.crippledCount} crippled. Yours: ${mine.sunkCount} total losses, ${mine.abandonedCount} abandoned, ${mine.disabledCount} disabled afloat, ${mine.crippledCount} crippled.` });
+  if (SCN.id === "yalu") {
+    const b = yaluStrategicBalance();
+    readings.push({ title: "Strategic balance", text: `Modern cruisers serviceable: Beiyang ${b.chinaCruisersReady}/${b.chinaCruisersTotal}; Japan ${b.japanCruisersReady}/${b.japanCruisersTotal}. Modern cruisers permanently lost: Beiyang ${b.chinaCruisersLost}; Japan ${b.japanCruisersLost}. Practical permanent tonnage lost: Beiyang ${b.chinaPermanentTons.toLocaleString()} t; Japan ${b.japanPermanentTons.toLocaleString()} t. Repairable damage is separate; repair times and later sea control are not simulated.` });
+  }
   const st = sideShellStats(me);
   if (st.apShots || st.heShots) {
     const parts = [];
@@ -12977,7 +13050,7 @@ function calculatedReadings(outcome) {
   if (st.torpFired || foeTorp.torpFired) readings.push({ title: "Torpedo action", text: `Yours: ${st.torpHit}/${st.torpFired} hits${st.torpFailures ? `, ${st.torpFailures} weapon failures` : ""}. Enemy: ${foeTorp.torpHit}/${foeTorp.torpFired} hits${foeTorp.torpFailures ? `, ${foeTorp.torpFailures} weapon failures` : ""}.` });
   if (theirs.sunkCount === 0 && (theirs.outCount + theirs.crippledCount) >= 2) readings.push({ title: outcome.result === "win" ? "Nature of the victory" : outcome.result === "draw" ? "Nature of the action" : "Nature of the defeat", text: "Most enemy loss was disablement rather than sinking. The battle line was degraded even though few hulls went under." });
   else if (theirs.sunkCount >= 2 && net < 0) readings.push({ title: "Cost of the sinkings", text: "You sank more visible hulls but lost more effective tonnage overall; the spectacular result was not the better exchange." });
-  return readings.slice(0, 6);
+  return readings.slice(0, SCN.id === "yalu" ? 7 : 6);
 }
 
 function lossSummaryHTML(side, label) {
@@ -13048,6 +13121,7 @@ function buildBattleReport() {
       if (a.rigDealt || a.crewDealt) line += ` (rig ${Math.round(a.rigDealt || 0)}, crew ${((a.crewDealt || 0) * 100).toFixed(1)}%)`;   // chain and grape tell here, not in hull damage
       line += ` taken ${pad(Math.round(a.dmgTaken || 0), 5)} /${pad((a.hitsTaken || 0) + "h", 4)}`;
       if (a.torpFired) line += ` torp ${a.torpHit}/${a.torpFired}`;
+      if (a.torpFriendlyHit) line += ` friendly torpedo hits ${a.torpFriendlyHit}`;
       let state = c.label;
       if (s.captured) state = `TAKEN AS A PRIZE by ${sideLabel(s.side)}`;
       else if (s._escaped) state = "stood away, out of the action";
@@ -13322,12 +13396,9 @@ function showResult(verdict) {
 
   let compare;
   if (game.playerSide === "China") {
-    if (outcome.result === "draw") compare = outcome.ironcladsAlive === 2
-      ? `Both ironclads came through and the Combined Fleet was gutted in exchange, but your cruiser line paid for it: a bloodier, more even day than 1894.`
-      : `An ironclad lost, but the Combined Fleet gutted in exchange: a bloodier and more even day than 1894, and a hard call either way.`;
-    else if (outcome.ironcladsAlive === 2) compare = outcome.won
-      ? `You did what the Beiyang Fleet did in 1894 and held it as an honourable day: the ironclads come through and the enemy is made to pay, rather than a rout.`
-      : `The ironclads came through as they did historically, but the cruiser line paid a heavy price.`;
+    if (outcome.ironcladsAlive === 2) compare = yaluStrategicBalance().japanPermanentTons > 0
+      ? `Both ironclads survive, and Japan has suffered permanent ship losses absent from the historical battle. The surviving fleets' condition determines how far this improves Beiyang's position.`
+      : `Both ironclads survive, as they did historically. The remaining cruiser force and repair needs determine whether that survival is a strategic success.`;
     else compare = `Worse than history: an ironclad was lost, the one thing the real Beiyang Fleet avoided.`;
   } else {
     if (outcome.result === "draw") compare = `You broke the Beiyang Fleet, but lost your flagship and best ships doing it: far costlier than the real Combined Fleet, which lost none sunk.`;
@@ -13364,7 +13435,7 @@ function showResult(verdict) {
   const honours = [];
   if (enemyFlagCrippled) honours.push(enemyFlag.admiralAlive === false ? `Struck down ${ADMIRAL_NAME[foe]} aboard ${enemyFlag.name}.` : `Crippled the enemy flagship ${enemyFlag.name}.`);
   if (me === "Japan" && (!live("dingyuan") || !live("zhenyuan"))) honours.push("Put a Chinese ironclad under, more than history allowed.");
-  if (me === "China" && live("dingyuan") && live("zhenyuan")) honours.push("Both ironclads brought through unbroken.");
+  if (me === "China" && live("dingyuan") && live("zhenyuan")) honours.push("Both ironclads brought through.");
   if (enemySunk.length >= 1) honours.push(`Sank ${enemySunk.length} enemy ship${enemySunk.length > 1 ? "s" : ""}.`);
   if (enemyDisabled.length >= 1) honours.push(`Disabled or forced the abandonment of ${enemyDisabled.length} more ship${enemyDisabled.length > 1 ? "s" : ""}.`);
   if (enemyBroke.length >= 3) honours.push(`Broke the enemy's nerve: ${enemyBroke.length} ships sheered off.`);
@@ -15413,7 +15484,7 @@ function steamDesired(s,byId,squadrons){
     if(!t||t.out||!s.torpedoes?.count||s.structure/s.structureMax<.28)c.phase="withdraw";
     if(!t||t.out){c.kind='course';c.heading=s.heading;c.speedKn=speed;s._torpMode='hold';status="Attack ended";heading=s.heading;}
     else if(c.phase==="withdraw"){
-      if(c.withdrawHeading==null)c.withdrawHeading=steamAttackWithdrawalHeading(s,t);
+      if(c.withdrawHeading==null)c.withdrawHeading=steamAttackWithdrawalHeading(s,t,[...byId.values()]);
       heading=c.withdrawHeading;speed=max;status="Withdrawing after attack";
       if(rangeBetween(s,t)>profile.run*1.3){c.kind="course";c.heading=heading;c.speedKn=speed;s._torpMode="hold";status="Attack complete";}
     }else if((s.torpedoes?.cooldownLeft||0)>0){
@@ -15428,10 +15499,13 @@ function steamDesired(s,byId,squadrons){
       const check=steamTorpedoCheck(s,t,[...byId.values()]),ready=check.solution;
       if(ready){heading=s.heading;c.phase="release";status="Tubes ready";}
       else if(d<(s.length+t.length)/2+steamMotionParameters(s).radius){
-        c.phase='withdraw';c.withdrawHeading=steamAttackWithdrawalHeading(s,t);heading=c.withdrawHeading;status='Breaking off attack';
+        c.phase='withdraw';c.withdrawHeading=steamAttackWithdrawalHeading(s,t,[...byId.values()]);heading=c.withdrawHeading;status='Breaking off attack';
       }else if(check.reason==='Friendly crossing'){
         heading=s.heading;status='Waiting for clear water';
-      }else if(d<profile.run*.82){
+      }else if(check.reason==='Tubes masked'&&d<profile.run*.82){
+        // Centre distance is not the required torpedo run against a moving
+        // target. Keep closing until an interception is actually in range;
+        // turning broadside early can prevent a slower ship ever releasing.
         const tubes=steamTorpedoTubeOptions(s),tube=tubes.reduce((a,b)=>Math.abs(wrap180(bearing-s.heading-b.centre))<Math.abs(wrap180(bearing-s.heading-a.centre))?b:a,tubes[0]);
         heading=steamNorm(bearing-(tube?.centre??c.releaseSide*90));
         c.phase="approach";status="Unmasking tubes";
@@ -15991,11 +16065,24 @@ function steamTargetScope(id,pursue=true){
   if(q){q.pursuitTargetId=pursue&&t?t.id:null;q._pursuitAppliedTurn=null;}
   for(const s of members){
     s.targetId=t?.id||null;s._manualTarget=!!t;
+    if(!pursue&&s.command?.kind==='attack'){
+      if(!t){
+        s.command={kind:'course',heading:s.heading,speedKn:s.speedKn};s._torpMode='hold';
+        steamMarkMovement(s,!q);
+      }else if(s.command.phase!=='withdraw'){
+        s.command.targetId=t.id;s.command.phase='approach';
+        delete s.command.releaseSide;delete s.command.withdrawHeading;
+      }
+    }
     if(!t||!pursue){steamCancelPursuit(s);continue;}
     s._pursuitTargetId=t.id;
     // A deliberately individual order keeps its own helm. Its pursuit can
     // resume next turn without being silently pulled back into a formation.
     s._pursuitGroupId=q&&!(s._detached&&(steamMovementOrdered(s)||steamHasWaypointOrder(s)))?q.id:null;
+  }
+  if(!pursue&&q?.attack){
+    if(!t)q.attack=null;
+    else if(members.some(s=>s.command?.kind==='attack'&&s.command.phase!=='withdraw'))q.attack.targetId=t.id;
   }
   if(q&&(!t||!pursue)&&q.command?.kind==='pursue')q.command=steamClone(shipById(q.leaderId)?.command||{});
   game.targetId=t?.id||null;steamApplyTargetPursuit();steamInvalidate();return true;
@@ -16666,18 +16753,33 @@ function steamTorpedoLaneClear(s,origin,heading,speed,run,ships){
   }
   return true;
 }
-function steamAttackWithdrawalHeading(s,target){
+function steamAttackWithdrawalHeading(s,target,ships=game.ships){
   const away=steamNorm(absBearing(s,target)+180),v=steamShipVelocity(target);
   const candidates=[s.heading,away,steamNorm(away+90),steamNorm(away-90)];
+  // A turn away from the enemy can cut across the next boat's approach.
+  // Screen the same physical withdrawal forecasts against nearby friendly
+  // hulls on their observed courses. This is a helm heuristic, not foresight
+  // of future orders; normal collision avoidance still runs every second.
+  const neighbours=ships.filter(f=>f.id!==s.id&&f.side===s.side&&steamHullAfloat(f)&&rangeBetween(s,f)<(steamMaxSpeed(s)+(f.speedKn||0))*STEAM_KNOT*60+s.length+f.length)
+    .map(f=>({ship:f,velocity:steamShipVelocity(f)}));
   let best=null;
   for(const heading of candidates){
-    const a={...s};let closest=Infinity;
+    const a={...s};let closest=Infinity,clearance=Infinity;
     for(let i=1;i<=60;i++){
       steamPoseAdvance(a,{heading,speed:steamMaxSpeed(s),status:'Withdrawal forecast'},1);
       closest=Math.min(closest,Math.hypot(a.x-target.x-v.x*i,a.y-target.y-v.y*i));
+      for(const {ship:f,velocity:w} of neighbours){
+        const pose={...f,x:f.x+w.x*i,y:f.y+w.y*i};
+        clearance=Math.min(clearance,steamSegmentDistance(...steamKeel(a),...steamKeel(pose)).distance-(a.beam+f.beam)/2);
+      }
     }
     const distance=Math.hypot(a.x-target.x-v.x*60,a.y-target.y-v.y*60);
-    if(!best||closest>best.closest+.01||Math.abs(closest-best.closest)<=.01&&distance>best.distance)best={heading,closest,distance};
+    clearance=Math.min(clearance,closest-(s.length+target.length)/2);
+    const safe=clearance>=Math.max(5,s.beam);
+    const safer=best&&(safe&&!best.safe||!safe&&!best.safe&&clearance>best.clearance+.01);
+    const comparable=best&&safe===best.safe&&(safe||Math.abs(clearance-best.clearance)<=.01);
+    const betterEscape=best&&(closest>best.closest+.01||Math.abs(closest-best.closest)<=.01&&distance>best.distance);
+    if(!best||safer||comparable&&betterEscape)best={heading,closest,distance,clearance,safe};
   }
   return best.heading;
 }
@@ -16855,7 +16957,7 @@ function steamResolveTorpedo(t,hit,contactPose){
   // A hull contact before the war nose has armed expends the weapon without
   // counting an explosive hit. Airborne legacy saves keep their saved model.
   if(t.travelled<(t.armingRun||0)){
-    telTorpedoResolve(t,"unarmed contact "+hit.name);
+    telTorpedoResolve(t,"unarmed contact "+hit.name,{hitId:hit.id,friendly:hit.side===t.side,contactRun:t.travelled,armed:false});
     logLine(hit.name+': torpedo struck before arming.','sys');return;
   }
   const before=hit.out;
@@ -16865,8 +16967,12 @@ function steamResolveTorpedo(t,hit,contactPose){
     point=steamMountWorld(hit,{x:station.longitudinal,y:station.transverse});
   }
   steamApplyTorpedoHit(hit,t,point);
-  telAgg(t.sourceId).torpHit++;telAgg(hit.id).torpHitTaken++;
-  telTorpedoResolve(t,"hit "+hit.name);
+  // A friendly collision still damages its actual hull, but is not a success
+  // against the enemy. Preserve old recorded totals rather than guessing them.
+  if(hit.side!==t.side)telAgg(t.sourceId).torpHit++;
+  else telAgg(t.sourceId).torpFriendlyHit=(telAgg(t.sourceId).torpFriendlyHit||0)+1;
+  telAgg(hit.id).torpHitTaken++;
+  telTorpedoResolve(t,(hit.side===t.side?'friendly hit ':'hit ')+hit.name,{hitId:hit.id,friendly:hit.side===t.side,contactRun:t.travelled,armed:true});
   if(!before&&hit.out)hit._lossAt=game.simSeconds;
 }
 function steamMovingTorpedoContact(s,from,to,start){
@@ -17585,6 +17691,8 @@ function steamSyncCommandTabs(){
   host.querySelectorAll('[data-tab]').forEach(b=>{const active=!game.cardId&&!game.multiSel&&tab===b.dataset.tab;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));b.disabled=!own||own.out||own.side!==game.playerSide;});
 }
 function steamNavigationHelp(action,value){
+  // Torpedo Hold is a fire order, not the navigation Hold-course control.
+  if(['torpedoes','attack','abort'].includes(action))return;
   const help={plot:game.plotRoute?'Route tool: tap water to add waypoints. Tap again to leave route mode.':'Route tool off. Tap a dot to set course and speed.',hold:'Hold course: keep the current heading and ordered speed.',stop:'Stop engines: slow to a halt. The ship still coasts and turns.',clearRoute:'Waypoints cleared: holding course this turn.',undo:'Undo: restored the previous order.',rejoin:'Rejoin: follow your squadron leader again.',
     succession:'Follow: each ship turns through the leader’s wake.',together:'Together: all ships turn onto parallel courses.',line:'Line ahead: ships follow one behind another.',abreast:'Line abreast: ships sail side by side.',echelon_port:'Port echelon: each follower is behind and to port.',echelon_starboard:'Starboard echelon: each follower is behind and to starboard.',spacing:'Spacing: distance between ships in the formation.'};
   const text=help[value]||help[action];if(text){game._steamHelp={id:game.selectedId,text};const el=document.getElementById('steamNavHint');if(el)el.textContent=text;}
@@ -17647,7 +17755,7 @@ function syncPanel(){
   if(s&&s.side!==game.playerSide){game.cardId=s.id;legacySyncPanel();return;}
   if(!s||s.out){setPanelExpanded(panel,false);resizeCanvas();return;}
   const members=q?q.members.map(shipById).filter(a=>a&&!a.out):[s],command=s.command;
-  const target=shipById(game.targetId||s.targetId),valid=target&&!target.out&&steamVisible(target);
+  const target=shipById(game.commandTab==='torpedoes'&&s.command?.kind==='attack'?s.command.targetId:game.targetId||s.targetId),valid=target&&!target.out&&steamVisible(target);
   const controlled=q?.command?members.filter(a=>!a._detached):members;
   const disabled=game.exec?' disabled':'',tab=game.commandTab||"helm",E=steamEscape;
   const button=(action,label,value="",active=false,title=label,extra="")=>`<button data-steam="${action}" data-value="${E(value)}" class="${active?'active':''}" aria-pressed="${active}" aria-label="${E(title)}" title="${E(title)}" ${extra}${['inspect','ship'].includes(action)?'':disabled}>${label}</button>`;
@@ -17668,10 +17776,13 @@ function syncPanel(){
     content=shellControl+(members.some(a=>a._pendingDoctrine!=null)?'<div class="steam-status steam-shell-pending">Shell choice applies on Execute</div>':'')+targetControl()+(steamPursuitStatus(s,q)?`<div class="steam-status">${E(steamPursuitStatus(s,q))}</div>`:'')+`<div class="steam-status">${E(steamGunneryStatus(s,valid?target:null,members))}</div>`;
   }
   if(tab==="torpedoes"){
-    const armed=members.filter(a=>a.torpedoes?.count>0),count=armed.reduce((n,a)=>n+a.torpedoes.count,0),attacking=members.some(a=>a.command?.kind==='attack'),mode=s._torpMode||'hold';
+    const armed=members.filter(a=>a.torpedoes?.count>0),count=armed.reduce((n,a)=>n+a.torpedoes.count,0),attacking=members.some(a=>a.command?.kind==='attack');
+    const modes=new Set(members.filter(a=>a.torpedoes).map(a=>a._torpMode||'hold')),mode=modes.size===1?[...modes][0]:'mixed';
     const checks=armed.map(a=>{
-      let aim=valid?target:shipById(a.targetId);
-      if(mode==='auto'&&!steamTorpedoSolution(a,aim))aim=enemies.find(t=>steamTorpedoSolution(a,t));
+      if(a.command?.kind==='attack'&&a.command.phase==='withdraw')return{reason:'Withdrawing'};
+      if((a._torpMode||'hold')==='hold')return{reason:'Holding fire'};
+      let aim=shipById(a.command?.kind==='attack'?a.command.targetId:a.targetId);
+      if(a._torpMode==='auto'&&!steamTorpedoSolution(a,aim))aim=enemies.find(t=>steamTorpedoSolution(a,t));
       return steamTorpedoCheck(a,aim);
     });
     const ready=checks.filter(c=>c.solution).length;
@@ -17679,6 +17790,15 @@ function syncPanel(){
     if(mode==='auto'&&check.reason==='No target')check.reason='Waiting';
     content=members.some(a=>a.torpedoes)?targetControl()+`<div class="steam-row steam-torp-controls">${[['hold','Hold'],['target','Target'],['auto','Any']].map(([v,t])=>button('torpedoes',t,v,!attacking&&mode===v,v==='hold'?'Hold torpedo fire':v==='target'?'Fire at the selected target when able':'Fire at any visible enemy when able')).join('')}${attacking?button('abort',steamIcon('withdraw'),'',false,'Withdraw from attack'):button('attack','Attack','',false,'Approach, fire, withdraw',!valid||!count?'disabled':'')}</div><div class="steam-status">${count} left · ${attacking?E(s.command?.phase==='withdraw'?'Withdrawing':check.reason):mode==='hold'?'Holding fire':E(check.reason)}${mode==='auto'?' · any enemy':''}</div>`:
       targetControl()+'<div class="steam-status">No tubes</div>';
+    if(members.some(a=>a.torpedoes)){
+      const help=attacking?'Attack: close, expose tubes, fire, withdraw.':{
+        hold:'Hold: keep torpedoes loaded.',
+        target:'Target: fire when the selected enemy is in range and tubes bear. Helm unchanged.',
+        auto:'Any: fire at a visible enemy when able. Helm unchanged.',
+        mixed:'Mixed orders: choose a mode to apply it to all selected ships.'
+      }[mode];
+      if(help)content+=`<div class="steam-status steam-torp-help">${help}</div>`;
+    }
     if(['run_south','run_north','second_heligoland'].includes(SCN.id))content+=`<div class="steam-row" aria-label="Torpedo run setting">${['fast','long'].map(v=>button('setting',v==='fast'?'Fast':'Long',v,(s._torpSetting||'fast')===v)).join('')}</div>`;
   }
   if(tab==="condition"){
@@ -17831,7 +17951,7 @@ function init(){
       const b=document.createElement('button');b.className='gm-btn';b.textContent=label;b.addEventListener('click',()=>{document.getElementById(id)?.click();ohOv('gameMenu');});controls.appendChild(b);
     }menu.appendChild(controls);
   }
-  const stamp=document.getElementById('buildStamp');if(stamp)stamp.textContent='Orders · 2.0 alpha 33';
+  const stamp=document.getElementById('buildStamp');if(stamp)stamp.textContent='Orders · 2.0 alpha 35';
   steamInitLocale();
   const notes=document.getElementById('theatrePanel');
   if(notes){const p=document.createElement('p');p.className='steam-release-note';p.textContent='Steam campaigns · Command revision 2.0 · Sail campaigns parked';notes.appendChild(p);}
