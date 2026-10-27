@@ -1420,7 +1420,7 @@ const STEAM_ZH={
   'Hold':'待命','Target':'目标','Any':'任意','Attack':'攻击','Hold torpedo fire':'暂不发射鱼雷',
   'Fire at the selected target when able':'条件允许时向指定目标发射','Fire at any visible enemy when able':'条件允许时攻击任意可见敌舰',
   'Withdraw from attack':'退出攻击','Approach, fire, withdraw':'接近、发射、撤离','Withdrawing':'撤离中',
-  'Pursuing target':'追击目标','Engaging at gun range':'保持炮战距离','Pursuit ended':'追击结束','Target lost from sight':'目标脱离视线','Movement order takes priority this turn':'本回合优先执行航行命令','Torpedo manoeuvre takes priority':'优先执行鱼雷机动',
+  'Cancel waypoints':'取消航路点','Waypoints cleared: holding course this turn.':'已取消航路点：本回合保持当前航向。','Waypoints take priority over pursuit':'优先执行航路点，暂停追击','Shell choice applies on Execute':'开始执行回合时应用弹种选择','Pursuing target':'追击目标','Engaging at gun range':'保持炮战距离','Pursuit ended':'追击结束','Target lost from sight':'目标脱离视线','Movement order takes priority this turn':'本回合优先执行航行命令','Torpedo manoeuvre takes priority':'优先执行鱼雷机动',
   'Falling behind squadron':'掉队（仍属本分队）','Engines stopped':'停车（仍可能滑行）','Holding fire':'暂缓开火','No tubes':'无鱼雷发射管','No target':'未指定目标','Empty':'已用尽',
   'Ready':'就绪','Waiting':'等待','Fast':'高速','Long':'长航程','Torpedo run setting':'鱼雷航速设置',
   'Hull':'船体','Flood':'进水','Flooding':'进水','Fires':'火灾','Engine':'引擎','Rudder':'舵机','Crew':'舰员',
@@ -7322,7 +7322,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "2.0-alpha.32";
+const ECHELON_VERSION = "2.0-alpha.33";
 const ECHELON_BUILD_NOTE = "Direct controls · squadron manoeuvres";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
@@ -10877,7 +10877,7 @@ function joinSquadron(sq, id) {
   logLine(`${s.name} joins Squadron ${squadronDisplayNumber(sq)}.`, "");
   return true;
 }
-function squadronSetDoctrine(sq, d) { for (const id of sq.members) { const s = shipById(id); if (s) s.doctrine = d; } }
+function squadronSetDoctrine(sq, d) { for (const id of sq.members) { const s = shipById(id); if (s) { if(isSailEra())s.doctrine=d;else steamSetShellOrder(s,d); } } }
 function legacySquadronSetTarget(sq, tid) { for (const id of sq.members) { const s = shipById(id); if (s && !s.out) s.targetId = tid; } }
 function legacySquadronSetCourse(sq, q, r) {            // flag steers to the hex; followers re-station behind it
   const lead = shipById(sq.leaderId); if (!lead || lead.out) return false;
@@ -11528,6 +11528,7 @@ function wrapText(ctx, text, x, y, maxW, lh) {
 // target. Main guns are larger dots, secondaries small; green = will tell (HE, or AP that
 // pierces at this range), red = AP that bounces. Torpedoes that can reach show a triangle.
 function drawGunDots(ctx, v, ship, target) {
+  ship=steamShellPreviewShip(ship);
   const hd = (game.phase === "plan" && ship.order) ? ship.order.heading : (ship.dh != null ? ship.dh : ship.heading);
   const range = rangeBetween(ship, target);
   const rel = ((absBearing(ship, target) - hd + 540) % 360) - 180;
@@ -11582,6 +11583,7 @@ const ARC_WEDGES = {
   STARBOARD: [[35, 145]], PORT: [[-145, -35]],
 };
 function buildConeSpecs(ship, target, headingForArcs) {
+  ship=steamShellPreviewShip(ship);
   const specs = [];
   let solution = null;
   const hd = headingForArcs != null ? headingForArcs : (ship.dh != null ? ship.dh : ship.heading);
@@ -11861,14 +11863,14 @@ function renderSquadronPanel(body, sq) {
       </div>
       ${headingButtonsHtml("squad", lead)}
       <div class="doctrine-icons" aria-label="Shell doctrine"><span class="row-label">${isSailEra() ? "SHOT" : "SHELL"}</span>${isSailEra() ? `
-        <button class="text-icon${live.every((s)=> (s.doctrine||"auto") === "auto") ? " active" : ""}" data-sqdoc="auto" title="Auto for the whole squadron">A</button>
+        <button class="text-icon${live.every((s)=> steamPlannedDoctrine(s) === "auto") ? " active" : ""}" data-sqdoc="auto" title="Auto for the whole squadron">A</button>
         <button class="text-icon${live.every((s)=> s.doctrine === "hull") ? " active" : ""}" data-sqdoc="hull" title="Round shot">Round</button>
         <button class="text-icon${live.every((s)=> s.doctrine === "rig") ? " active" : ""}" data-sqdoc="rig" title="Chain at the rig">Chain</button>
         <button class="text-icon${live.every((s)=> s.doctrine === "grape") ? " active" : ""}" data-sqdoc="grape" title="Grape at the crews">Grape</button>
         <button class="text-icon${live.every((s)=> s.doctrine === "double") ? " active" : ""}" data-sqdoc="double" title="Double-shotted">Double</button>` : `
-        <button class="text-icon${live.every((s)=> (s.doctrine||"auto") === "auto") ? " active" : ""}" data-sqdoc="auto" title="Automatic shell selection">A</button>
-        <button class="text-icon${live.every((s)=> s.doctrine === "AP") ? " active" : ""}" data-sqdoc="AP" title="Armour-piercing shells">AP</button>
-        <button class="text-icon${live.every((s)=> s.doctrine === "HE") ? " active" : ""}" data-sqdoc="HE" title="High-explosive shells">HE</button>`}
+        <button class="text-icon${live.every((s)=> steamPlannedDoctrine(s) === "auto") ? " active" : ""}" data-sqdoc="auto" title="Automatic shell selection">A</button>
+        <button class="text-icon${live.every((s)=> steamPlannedDoctrine(s) === "AP") ? " active" : ""}" data-sqdoc="AP" title="Armour-piercing shells">AP</button>
+        <button class="text-icon${live.every((s)=> steamPlannedDoctrine(s) === "HE") ? " active" : ""}" data-sqdoc="HE" title="High-explosive shells">HE</button>`}
       </div>
       ${live.some((s) => s.torpedoes && s.torpedoes.count > 0) && live.every((s) => shipClassTier(s) !== "capital") ? `<div class="torp-icons" aria-label="Torpedo mode"><span class="row-label">TORPEDO</span>
         <button class="text-icon${live.every((s)=> (s._torpMode||"will") === "will") ? " active" : ""}" data-sqtorp="will" title="Torpedoes at whatever is there">Any</button>
@@ -12045,9 +12047,9 @@ function legacySyncPanel() {
         ${isSailEra() && !s._grapple && !s.aground && !(s.def && s.def.fort) ? (s.anchored ? `<button class="text-icon active" id="cableBtn" title="Cut the cable and get under way">Cut cable</button>` : `<button class="text-icon" id="cableBtn" title="Let go and bring up: hold this berth, a spring trains the battery">Anchor</button>`) : ""}
         ${s.order ? `<button class="icon-btn" id="clearOrderBtn" title="Clear plotted course" aria-label="Clear plotted course">×</button>` : ""}
       </div>` : `<div class="doctrine-icons" aria-label="Shell doctrine"><span class="row-label">SHELL</span>
-        <button class="text-icon${(s.doctrine||"auto") === "auto" ? " active" : ""}" data-shell="auto" title="Automatic shell selection">A</button>
-        <button class="text-icon${s.doctrine === "AP" ? " active" : ""}" data-shell="AP" title="Armour-piercing shells">AP</button>
-        <button class="text-icon${s.doctrine === "HE" ? " active" : ""}" data-shell="HE" title="High-explosive shells">HE</button>
+        <button class="text-icon${steamPlannedDoctrine(s) === "auto" ? " active" : ""}" data-shell="auto" title="Automatic shell selection">A</button>
+        <button class="text-icon${steamPlannedDoctrine(s) === "AP" ? " active" : ""}" data-shell="AP" title="Armour-piercing shells">AP</button>
+        <button class="text-icon${steamPlannedDoctrine(s) === "HE" ? " active" : ""}" data-shell="HE" title="High-explosive shells">HE</button>
         ${s.order ? `<button class="icon-btn" id="clearOrderBtn" title="Clear plotted course" aria-label="Clear plotted course">×</button>` : ""}
       </div>`) : ""}
       ${s.side === game.playerSide && s.torpedoes && s.torpedoes.count > 0 && shipClassTier(s) !== "capital" ? `
@@ -12079,11 +12081,11 @@ function legacySyncPanel() {
     // Picking a shot takes the gun out of Auto by itself; A hands it back. The old
     // guard made Auto a one-way lock with no way out: A re-armed Auto and every
     // other chip was refused while Auto held, so shot could never be chosen by hand.
-    s.doctrine = v; syncPanel();
+    if(isSailEra())s.doctrine=v;else steamSetShellOrder(s,v); syncPanel();
   }));
   const fa = body.querySelector("[data-fleetauto]");
   if (fa) fa.addEventListener("click", () => {
-    for (const x of game.ships) if (x.side === game.playerSide) x.doctrine = "auto";
+    for (const x of game.ships) if (x.side === game.playerSide) {if(isSailEra())x.doctrine="auto";else steamSetShellOrder(x,"auto");}
     showToast("Fleet shell selection to Auto"); syncPanel();
   });
   const bb = document.getElementById("boardBtn");
@@ -15085,7 +15087,7 @@ function steamClone(v){return JSON.parse(JSON.stringify(v));}
 function steamInvalidate(){game._steamRevision=(game._steamRevision||0)+1;game._steamPreview=null;}
 function steamRememberOrder(){
   if(game.exec||game.phase!=='plan')return;
-  const fields=['command','_moveOrderTurn','_pursuitTargetId','_pursuitGroupId','_detached','_formationStraggler','_manualTarget','_manualThisTurn','_torpMode','_torpSetting','targetId','doctrine'];
+  const fields=['command','_moveOrderTurn','_pursuitTargetId','_pursuitGroupId','_detached','_formationStraggler','_manualTarget','_manualThisTurn','_torpMode','_torpSetting','targetId','doctrine','_pendingDoctrine'];
   const ships=game.ships.map(s=>({id:s.id,state:Object.fromEntries(fields.map(k=>[k,s[k]??null]))}));
   const squads=game.squadrons.map(q=>({id:q.id,leaderId:q.leaderId,moveOrderTurn:q.moveOrderTurn??null,pursuitTargetId:q.pursuitTargetId??null,_pursuitAppliedTurn:q._pursuitAppliedTurn??null,followOrder:q.followOrder||null,command:q.command,attack:q.attack,formation:q.formation,spacing:q.spacing,turnMode:q.turnMode}));
   const history=game._orderHistory||(game._orderHistory=[]);history.push(steamClone({ships,squads}));if(history.length>20)history.shift();
@@ -15850,6 +15852,7 @@ function steamTogglePlayback(){
 function startExecute(){
   if(game.phase!=="plan"||game.exec)return;
   game._orderHistory=[];
+  steamCommitShellOrders();
   steamApplyTargetPursuit();reconcileSquadrons();steamEnemyOrders();
   game._outAtTurnStart=new Set(game.ships.filter(s=>s.out).map(s=>s.id));
   game._keepSel=game.selectedId;game._keepTgt=game.targetId;
@@ -15896,9 +15899,36 @@ function skipExecute(){
 function advanceTorpedoes(){/* Shared clock owns torpedoes. */}
 
 
-// Targeting is also a pursuit intent. Only an explicit movement order stamped
-// with this turn suppresses it; older orders do not become permanent vetoes.
+// Targeting supplies a fallback pursuit intent. Unfinished waypoint routes
+// remain authoritative across turns; ordinary helm overrides last this turn.
 function steamMovementOrdered(s){return s._moveOrderTurn===game.turn;}
+function steamRouteHasWaypoints(c){return c?.kind==='route'&&Array.isArray(c.points)&&(c.index||0)<c.points.length;}
+function steamGroupHasWaypoints(q){
+  if(!q)return false;
+  if(steamRouteHasWaypoints(q.command))return true;
+  // Together ships each advance their own offset route. Follow ships share
+  // the guide's route progress, so stale follower copies cannot block forever.
+  return q.turnMode==='together'&&q.members.some(id=>{const s=shipById(id);return s&&!s.out&&!s._detached&&steamRouteHasWaypoints(s.command);});
+}
+function steamHasWaypointOrder(s,q=squadronOf(s.id)){
+  if(q?.command&&!s._detached)return steamGroupHasWaypoints(q);
+  return steamRouteHasWaypoints(s.command);
+}
+function steamClearWaypoints(){
+  if(game.exec||game.phase!=='plan')return false;
+  const q=game.menuMode==='squad'?squadronById(game.selSquadId):null,members=steamScopeShips();
+  if(!members.length||members.some(s=>s.side!==game.playerSide))return false;
+  const groupRoute=steamGroupHasWaypoints(q),affected=members.filter(s=>steamHasWaypointOrder(s));
+  if(!affected.length&&!groupRoute)return false;
+  if(!q){
+    const s=members[0];steamSetCommand(s,{kind:'course',heading:s.heading,speedKn:s.command?.speedKn??s.speedKn},true);
+  }else{
+    for(const s of affected){s.command={kind:'course',heading:s.heading,speedKn:s.command?.speedKn??s.speedKn};steamMarkMovement(s,false);}
+    if(groupRoute){q.command=steamClone(shipById(q.leaderId)?.command||{});q.moveOrderTurn=game.turn;q._pursuitAppliedTurn=null;}
+    reconcileSquadrons();steamInvalidate();
+  }
+  game.plotRoute=false;return true;
+}
 function steamMarkMovement(s,individual=true){
   s._moveOrderTurn=game.turn;
   if(s.command?.kind==='pursue')s.command={kind:'course',heading:s.command.heading??s.heading,speedKn:s.command.speedKn};
@@ -15936,8 +15966,8 @@ function steamApplyTargetPursuit(){
     const target=shipById(q.pursuitTargetId);if(!target||target.out)continue;
     const members=q.members.map(shipById).filter(s=>s&&!s.out&&s.side===game.playerSide&&s._pursuitGroupId===q.id&&s._pursuitTargetId===target.id);
     members.forEach(s=>grouped.add(s.id));
-    if(q.moveOrderTurn===game.turn||q.attack)continue;
-    const eligible=members.filter(s=>!steamMovementOrdered(s)&&s.command?.kind!=='attack');
+    if(steamGroupHasWaypoints(q)||q.moveOrderTurn===game.turn||q.attack)continue;
+    const eligible=members.filter(s=>!steamHasWaypointOrder(s)&&!steamMovementOrdered(s)&&s.command?.kind!=='attack');
     if(!eligible.length)continue;
     const pace=steamGroupSpeedLimit(eligible),lead=eligible.find(s=>s.id===q.leaderId&&steamCanKeepPace(s,pace))||eligible.find(s=>steamCanKeepPace(s,pace))||eligible[0];
     if(q._pursuitAppliedTurn===game.turn&&q.command?.kind==='pursue'&&q.command.targetId===target.id)continue;
@@ -15946,7 +15976,7 @@ function steamApplyTargetPursuit(){
     q._pursuitAppliedTurn=game.turn;
   }
   for(const s of game.ships){
-    if(s.out||s.side!==game.playerSide||grouped.has(s.id)||steamMovementOrdered(s)||s.command?.kind==='attack')continue;
+    if(s.out||s.side!==game.playerSide||grouped.has(s.id)||steamHasWaypointOrder(s)||steamMovementOrdered(s)||s.command?.kind==='attack')continue;
     const t=steamPursuitTarget(s);if(!t)continue;
     if(s.command?.kind==='pursue'&&s.command.targetId===t.id)continue;
     s.command={kind:'pursue',targetId:t.id,heading:s.heading,speedKn:steamMaxSpeed(s)};
@@ -15965,16 +15995,36 @@ function steamTargetScope(id,pursue=true){
     s._pursuitTargetId=t.id;
     // A deliberately individual order keeps its own helm. Its pursuit can
     // resume next turn without being silently pulled back into a formation.
-    s._pursuitGroupId=q&&!(s._detached&&steamMovementOrdered(s))?q.id:null;
+    s._pursuitGroupId=q&&!(s._detached&&(steamMovementOrdered(s)||steamHasWaypointOrder(s)))?q.id:null;
   }
   if(q&&(!t||!pursue)&&q.command?.kind==='pursue')q.command=steamClone(shipById(q.leaderId)?.command||{});
   game.targetId=t?.id||null;steamApplyTargetPursuit();steamInvalidate();return true;
 }
 function steamPursuitStatus(s,q){
   if(!steamPursuitTarget(s))return '';
+  if(steamHasWaypointOrder(s))return 'Waypoints take priority over pursuit';
   if(steamMovementOrdered(s)||q?.moveOrderTurn===game.turn)return 'Movement order takes priority this turn';
   if(s.command?.kind==='attack'||q?.attack)return 'Torpedo manoeuvre takes priority';
   return s.command?.kind==='pursue'?'Pursuing target':'';
+}
+
+
+// Planning choices affect previews only. Execute commits the final selection;
+// no preview, undo or language/page change touches loaded rounds or reload time.
+function steamPlannedDoctrine(s){
+  return game.phase==='plan'&&!game.exec&&s._pendingDoctrine!=null?s._pendingDoctrine:s.doctrine||'auto';
+}
+function steamShellPreviewShip(s){
+  return game.phase==='plan'&&!game.exec&&s._pendingDoctrine!=null?{...s,doctrine:s._pendingDoctrine}:s;
+}
+function steamSetShellOrder(s,value){
+  if(!s||s.out||s.side!==game.playerSide||game.exec||game.phase!=='plan'||!['auto','AP','HE'].includes(value))return false;
+  s._pendingDoctrine=value===(s.doctrine||'auto')?null:value;return true;
+}
+function steamCommitShellOrders(){
+  for(const s of game.ships)if(!s.out&&s.side===game.playerSide&&['auto','AP','HE'].includes(s._pendingDoctrine)){
+    s.doctrine=s._pendingDoctrine;s._pendingDoctrine=null;
+  }
 }
 
 
@@ -16996,7 +17046,7 @@ function steamBatteryFireSolution(s,b,t){
   // Its launch station is the mean of its surviving, measured muzzle tips.
   if(muzzles&&!muzzles.length)return null;
   const origin=muzzles?muzzles.reduce((p,v)=>({x:p.x+v.x/muzzles.length,y:p.y+v.y/muzzles.length}),{x:0,y:0}):steamMountWorld(s,b.geometry);
-  const targetRange=rangeBetween(origin,t),shell=shellToLoad(s,b,t,targetRange);
+  const targetRange=rangeBetween(origin,t),shell=shellToLoad(steamShellPreviewShip(s),b,t,targetRange);
   const shellProfile=steamShellProfile(s,{...b,loadedShell:shell});
   const intercept=steamBallisticIntercept(origin,t,s,shellProfile.muzzleMps,decayLength(b.gun,shell));
   if(!intercept)return null;
@@ -17460,6 +17510,7 @@ function steamIcon(id){
     fire:'<path d="M8.5 11V2.5m7 8.5V2.5M7 10.5l-2 3v5l3 3h8l3-3v-5l-2-3Z M9 17.5h6"/>',
     torpedoes:'<g transform="rotate(40 12 12)"><path d="M9.5 17V6c0-2 1-3.5 2.5-4 1.5.5 2.5 2 2.5 4v11Z M9.5 7h5M9.5 14l-3 5h11l-3-5M12 17v5"/></g>',
     condition:'<path d="M12 2 17 8v12H7V8Z M7 10h10M7 15h10M12 10v10"/><path d="m3 9 2 2-2 2m18-4-2 2 2 2"/>',
+    clearRoute:'<path d="M5 18V9a3 3 0 0 1 3-3h7M15 12l7 7m0-7-7 7"/><circle cx="5" cy="19" r="2"/>',
     route:'<path d="M5 18V9a3 3 0 0 1 3-3h9m-3-3 3 3-3 3"/><circle cx="5" cy="19" r="2"/>',
     hold:'<path d="M12 21V3m-5 5 5-5 5 5"/>',
     stop:'<rect x="7" y="7" width="10" height="10" rx=".5" fill="currentColor" stroke="none"/>',
@@ -17534,7 +17585,7 @@ function steamSyncCommandTabs(){
   host.querySelectorAll('[data-tab]').forEach(b=>{const active=!game.cardId&&!game.multiSel&&tab===b.dataset.tab;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));b.disabled=!own||own.out||own.side!==game.playerSide;});
 }
 function steamNavigationHelp(action,value){
-  const help={plot:game.plotRoute?'Route tool: tap water to add waypoints. Tap again to leave route mode.':'Route tool off. Tap a dot to set course and speed.',hold:'Hold course: keep the current heading and ordered speed.',stop:'Stop engines: slow to a halt. The ship still coasts and turns.',undo:'Undo: restored the previous order.',rejoin:'Rejoin: follow your squadron leader again.',
+  const help={plot:game.plotRoute?'Route tool: tap water to add waypoints. Tap again to leave route mode.':'Route tool off. Tap a dot to set course and speed.',hold:'Hold course: keep the current heading and ordered speed.',stop:'Stop engines: slow to a halt. The ship still coasts and turns.',clearRoute:'Waypoints cleared: holding course this turn.',undo:'Undo: restored the previous order.',rejoin:'Rejoin: follow your squadron leader again.',
     succession:'Follow: each ship turns through the leader’s wake.',together:'Together: all ships turn onto parallel courses.',line:'Line ahead: ships follow one behind another.',abreast:'Line abreast: ships sail side by side.',echelon_port:'Port echelon: each follower is behind and to port.',echelon_starboard:'Starboard echelon: each follower is behind and to starboard.',spacing:'Spacing: distance between ships in the formation.'};
   const text=help[value]||help[action];if(text){game._steamHelp={id:game.selectedId,text};const el=document.getElementById('steamNavHint');if(el)el.textContent=text;}
 }
@@ -17557,13 +17608,14 @@ function steamPanelAction(action,value){
   const current=s.command||{kind:"course",heading:s.heading,speedKn:s.speedKn};
   if(action==="speed")steamSetScopeSpeed(Number(value));
   if(action==="plot")game.plotRoute=!game.plotRoute;
+  if(action==="clearRoute")steamClearWaypoints();
   if(action==="hold")steamSetScopeCommand({kind:"course",heading:s.heading,speedKn:current.speedKn});
   if(action==="stop")steamSetScopeCommand({kind:"course",heading:s.heading,speedKn:0});
   if(action==="rejoin")steamRejoin(s);
   if(action==="turn"&&q)steamSetTurnMode(q,value);
   if(action==="formation"&&q){q.formation=value;rebuildSquadronLines();steamInvalidate();}
   if(action==="spacing"&&q){q.spacing=clamp(Number(value),100,2000);steamInvalidate();}
-  if(action==="shell")for(const a of steamScopeShips())a.doctrine=value;
+  if(action==="shell")for(const a of steamScopeShips())steamSetShellOrder(a,value);
   if(action==='target')steamTargetScope(value,game.commandTab!=='torpedoes');
   if(action==="attack")steamAttackScope(game.targetId||s.targetId);
   if(action==="abort"){
@@ -17601,18 +17653,19 @@ function syncPanel(){
   const button=(action,label,value="",active=false,title=label,extra="")=>`<button data-steam="${action}" data-value="${E(value)}" class="${active?'active':''}" aria-pressed="${active}" aria-label="${E(title)}" title="${E(title)}" ${extra}${['inspect','ship'].includes(action)?'':disabled}>${label}</button>`;
   const enemies=game.ships.filter(a=>a.side!==game.playerSide&&!a.out&&steamVisible(a));
   const targetControl=()=>`<div class="steam-row steam-target-row"><span>${valid?E(target.name)+' · '+(rangeBetween(s,target)/1000).toFixed(1)+' km':'Tap an enemy'}</span>${valid?button('target','×','',false,'Clear target'):''}</div>`;
+  const hasWaypoints=steamGroupHasWaypoints(q)||members.some(a=>steamHasWaypointOrder(a));
   const shells=['auto',...['AP','HE'].filter(t=>members.some(a=>a.batteries.some(b=>!b.gun.available_shells||b.gun.available_shells.includes(t))))];
-  const shellControl=`<div class="steam-row steam-shells" aria-label="Shell selection">${shells.map(t=>button('shell',t==='auto'?'Auto':t,t,(shells.includes(s.doctrine)?s.doctrine:'auto')===t,t==='auto'?'Automatic shell selection':t==='AP'?'Armour piercing shells':'High explosive shells')).join('')}</div>`;
+  const shellControl=`<div class="steam-row steam-shells" aria-label="Shell selection">${shells.map(t=>button('shell',t==='auto'?'Auto':t,t,(shells.includes(steamPlannedDoctrine(s))?steamPlannedDoctrine(s):'auto')===t,t==='auto'?'Automatic shell selection':t==='AP'?'Armour piercing shells':'High explosive shells')).join('')}</div>`;
   let content='';
   if(tab==="helm"){
-    content=`<div class="steam-row steam-helm-controls">${button('plot',steamIcon('route'),'',game.plotRoute,'Route tool: add round waypoints')}${button('hold',steamIcon('hold'),'',false,'Hold present course')}${button('stop',steamIcon('stop'),'',false,'Stop engines')}${button('undo',steamIcon('undo'),'',false,'Undo last order',game._orderHistory?.length?'':'disabled')}${q?['succession','together'].map(v=>button('turn',steamFormationIcon(v),v,(q.turnMode||'succession')===v,v==='succession'?'Follow: turn in the leader’s wake':'Together: turn on parallel courses')).join(''):squadronOf(s.id)?button('rejoin',steamIcon('rejoin'),'',false,'Rejoin '+squadronOf(s.id).name):''}</div>`;
+    content=`<div class="steam-row steam-helm-controls">${button('plot',steamIcon('route'),'',game.plotRoute,'Route tool: add round waypoints')}${hasWaypoints?button('clearRoute',steamIcon('clearRoute'),'',false,'Cancel waypoints'):''}${button('hold',steamIcon('hold'),'',false,'Hold present course')}${button('stop',steamIcon('stop'),'',false,'Stop engines')}${button('undo',steamIcon('undo'),'',false,'Undo last order',game._orderHistory?.length?'':'disabled')}${q?['succession','together'].map(v=>button('turn',steamFormationIcon(v),v,(q.turnMode||'succession')===v,v==='succession'?'Follow: turn in the leader’s wake':'Together: turn on parallel courses')).join(''):squadronOf(s.id)?button('rejoin',steamIcon('rejoin'),'',false,'Rejoin '+squadronOf(s.id).name):''}</div>`;
     if(q)content+=`<div class="steam-row steam-formations" aria-label="Formation">${[['line','Line ahead'],['abreast','Line abreast'],['echelon_port','Port echelon'],['echelon_starboard','Starboard echelon']].map(([v,t])=>button('formation',steamFormationIcon(v),v,(q.formation||'line')===v,t)).join('')}<div class="steam-spacing" aria-label="Formation interval">${button('spacing','−',Math.max(100,Math.round((q.spacing||300)/50)*50-50),false,'Reduce interval by fifty metres')}<span>${Math.round(q.spacing||300)} m</span>${button('spacing','+',Math.min(2000,Math.round((q.spacing||300)/50)*50+50),false,'Increase interval by fifty metres')}</div></div>`;
     const stragglers=members.filter(a=>a._formationStraggler);
     if(q&&stragglers.length)content+=`<div class="steam-status steam-stragglers"><span>Falling behind squadron</span>: ${stragglers.map(a=>E(a.name)).join(' · ')}</div>`;
     content+=`<div class="steam-status">${game.exec?'Orders locked':game._steamHelp?.id===s.id?E(game._steamHelp.text):game.plotRoute?'Route tool · tap water to add a round waypoint':'Dots: course + speed · hexagon: selected order'}</div>`;
   }
   if(tab==="fire"){
-    content=shellControl+targetControl()+(steamPursuitStatus(s,q)?`<div class="steam-status">${E(steamPursuitStatus(s,q))}</div>`:'')+`<div class="steam-status">${E(steamGunneryStatus(s,valid?target:null,members))}</div>`;
+    content=shellControl+(members.some(a=>a._pendingDoctrine!=null)?'<div class="steam-status steam-shell-pending">Shell choice applies on Execute</div>':'')+targetControl()+(steamPursuitStatus(s,q)?`<div class="steam-status">${E(steamPursuitStatus(s,q))}</div>`:'')+`<div class="steam-status">${E(steamGunneryStatus(s,valid?target:null,members))}</div>`;
   }
   if(tab==="torpedoes"){
     const armed=members.filter(a=>a.torpedoes?.count>0),count=armed.reduce((n,a)=>n+a.torpedoes.count,0),attacking=members.some(a=>a.command?.kind==='attack'),mode=s._torpMode||'hold';
@@ -17639,7 +17692,7 @@ function syncPanel(){
   }finally{game._steamPanelRendering=false;}
 }
 function serializeGame(){
-  const sv=JSON.parse(b64dec(legacySerializeGame()));sv.v=3;sv.commandRevision=15;sv.displayRevision=1;sv.motionRevision=1;sv.torpedoRevision=2;sv.rosterRevision=1;sv.geometryRevision=11;sv.damageRevision=STEAM_DAMAGE_REVISION;sv.shellRevision=STEAM_SHELL_REVISION;sv.simSeconds=game.simSeconds||0;sv.seed=simulationSeed;sv.goals=game.goals;sv.tel=game.tel;
+  const sv=JSON.parse(b64dec(legacySerializeGame()));sv.v=3;sv.commandRevision=16;sv.displayRevision=1;sv.motionRevision=1;sv.torpedoRevision=2;sv.rosterRevision=1;sv.geometryRevision=11;sv.damageRevision=STEAM_DAMAGE_REVISION;sv.shellRevision=STEAM_SHELL_REVISION;sv.simSeconds=game.simSeconds||0;sv.seed=simulationSeed;sv.goals=game.goals;sv.tel=game.tel;
   sv.squads=steamClone(game.squadrons);
   sv.ships.forEach(d=>{
     const s=shipById(d.i);d.x=s.x;d.y=s.y;d.h=s.heading;
@@ -17778,7 +17831,7 @@ function init(){
       const b=document.createElement('button');b.className='gm-btn';b.textContent=label;b.addEventListener('click',()=>{document.getElementById(id)?.click();ohOv('gameMenu');});controls.appendChild(b);
     }menu.appendChild(controls);
   }
-  const stamp=document.getElementById('buildStamp');if(stamp)stamp.textContent='Pursuit · 2.0 alpha 32';
+  const stamp=document.getElementById('buildStamp');if(stamp)stamp.textContent='Orders · 2.0 alpha 33';
   steamInitLocale();
   const notes=document.getElementById('theatrePanel');
   if(notes){const p=document.createElement('p');p.className='steam-release-note';p.textContent='Steam campaigns · Command revision 2.0 · Sail campaigns parked';notes.appendChild(p);}
