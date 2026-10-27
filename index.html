@@ -1420,7 +1420,8 @@ const STEAM_ZH={
   'Hold':'待命','Target':'目标','Any':'任意','Attack':'攻击','Hold torpedo fire':'暂不发射鱼雷',
   'Fire at the selected target when able':'条件允许时向指定目标发射','Fire at any visible enemy when able':'条件允许时攻击任意可见敌舰',
   'Withdraw from attack':'退出攻击','Approach, fire, withdraw':'接近、发射、撤离','Withdrawing':'撤离中',
-  'Holding fire':'暂缓开火','No tubes':'无鱼雷发射管','No target':'未指定目标','Empty':'已用尽',
+  'Pursuing target':'追击目标','Engaging at gun range':'保持炮战距离','Pursuit ended':'追击结束','Target lost from sight':'目标脱离视线','Movement order takes priority this turn':'本回合优先执行航行命令','Torpedo manoeuvre takes priority':'优先执行鱼雷机动',
+  'Falling behind squadron':'掉队（仍属本分队）','Engines stopped':'停车（仍可能滑行）','Holding fire':'暂缓开火','No tubes':'无鱼雷发射管','No target':'未指定目标','Empty':'已用尽',
   'Ready':'就绪','Waiting':'等待','Fast':'高速','Long':'长航程','Torpedo run setting':'鱼雷航速设置',
   'Hull':'船体','Flood':'进水','Flooding':'进水','Fires':'火灾','Engine':'引擎','Rudder':'舵机','Crew':'舰员',
   'ready':'就绪','training':'转炮中','reloading':'装填中','masked':'被遮挡','out of range':'超出射程',
@@ -1609,6 +1610,8 @@ const steamLocaleCache=new Map();
 const steamLocaleKeys=Object.keys(STEAM_ZH).sort((a,b)=>b.length-a.length);
 const steamLocalePattern=new RegExp('(^|[^A-Za-zÀ-ž0-9])('+steamLocaleKeys.map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')(?=$|[^A-Za-zÀ-ž0-9])','g');
 const steamLocaleSentences=[
+  [/^(.+) can no longer keep station\.$/,(_,ship)=>`${steamText(ship)}已无法保持阵位。`],
+  [/^(.+) assumes the squadron lead\.$/,(_,ship)=>`${steamText(ship)}接任分队领舰。`],
   [/^Half your force past (.+) \((\d+) of (\d+) through\)$/,(_,place,n,total)=>`半数舰队通过${steamText(place)}（${total}艘中${n}艘已通过）`],
   [/^Half the fast wing north past (.+) \((\d+) of (\d+) through\)$/,(_,place,n,total)=>`高速舰队半数向北通过${steamText(place)}（${total}艘中${n}艘已通过）`],
   [/^Five of the eight sweepers brought home \((\d+) into the Bight, (\d+) still afloat\)$/,(_,n,live)=>`八艘扫雷舰中五艘撤回（${n}艘已进入海湾，${live}艘仍在水面）`],
@@ -1631,6 +1634,7 @@ const steamLocaleSentences=[
   [/^Turn (\d+)\. You command (.+)\.$/,(_,n,fleet)=>`第${n}回合。你指挥${steamText(fleet)}。`],
   [/^(.+)\. Plot your line, then End Turn\.$/,(_,date)=>`${steamText(date)}。设置航线后，结束回合。`],
   [/^(.+) releases (\d+) torpedo(?:es)? at (.+)\.$/,(_,s,n,t)=>`${steamText(s)}向${steamText(t)}发射${n}枚鱼雷。`],
+  [/^(.+): torpedo struck before arming\.$/,(_,s)=>`${steamText(s)}：鱼雷在引信解除保险前撞击，未爆炸。`],
   [/^(.+) hits (.+) with (\d+) millimetre fire\.$/,(_,s,t,cal)=>`${steamText(s)}以${cal}毫米炮命中${steamText(t)}。`],
   [/^Torpedo strikes (.+), (port|starboard) (.+) \((\d+) kg charge\)\. Flooding \+(\d+) points; now (\d+)%\.$/,(_,s,side,pos,kg,add,total)=>`鱼雷命中${steamText(s)}${steamText(side)}${steamText(pos)}（装药${kg}千克）。进水增加${add}点，现为${total}%。`],
   [/^(.+) is cut down at his post aboard (.+)\.$/,(_,captain,s)=>`${steamText(captain)}在${steamText(s)}岗位上阵亡。`],
@@ -6209,18 +6213,7 @@ function drawShipInner(ctx, v, ship, opts) {
     ctx.beginPath(); ctx.arc(cx, cy, pr, 0, Math.PI * 2); ctx.stroke();
     ctx.restore();
   }
-  if (moving) {
-    ctx.save(); ctx.translate(cx, cy); rotateBowMinusY(ctx, ph);
-    const wlen = Math.min(L * (0.5 + speed / 26), L * 1.8);   // a faint fan of hairlines astern, no filled wedge or bow wave
-    const y0 = L * 0.45, lines = 5;
-    ctx.lineWidth = 0.8;
-    for (let i = 0; i < lines; i++) {
-      const t = lines === 1 ? 0 : (i / (lines - 1)) * 2 - 1;   // -1..1 across the fan
-      ctx.strokeStyle = "rgba(219,238,242," + (0.10 - Math.abs(t) * 0.03).toFixed(3) + ")";
-      ctx.beginPath(); ctx.moveTo(t * B * 0.10, y0); ctx.lineTo(t * B * 0.85, y0 + wlen); ctx.stroke();
-    }
-    ctx.restore();
-  }
+  steamDrawHullWake(ctx,v,ship);
 
   // ---- hull: clean engineering-drawing schematic from the ship's armament ----
   const sacc = isSideA
@@ -6253,23 +6246,7 @@ function drawShipInner(ctx, v, ship, opts) {
     }
   }
 
-  // ---- fire / smoke columns (screen space) ----
-  if (ship.fires > 0 && !ship.out) {
-    ctx.save();
-    for (let i = 0; i < Math.min(ship.fires, 4); i++) {
-      const ang = (i / 4) * Math.PI * 2;
-      const fx = cx + Math.cos(ang) * B * 0.3, fy = cy + Math.sin(ang) * B * 0.3;
-      for (let p = 0; p < 3; p++) {
-        const t = (time * 0.8 + i * 0.4 + p * 0.33) % 1;
-        ctx.globalAlpha = (1 - t) * 0.22; ctx.fillStyle = PALETTE.smoke;
-        ctx.beginPath(); ctx.arc(fx, fy - t * 14, 2 + t * 6, 0, Math.PI * 2); ctx.fill();
-      }
-      ctx.globalAlpha = 0.6 + Math.random() * 0.4;
-      ctx.fillStyle = i % 2 ? PALETTE.fire : PALETTE.fireHot;
-      ctx.beginPath(); ctx.arc(fx, fy, Math.max(B * 0.16, 1.6), 0, Math.PI * 2); ctx.fill();
-    }
-    ctx.restore();
-  }
+  steamDrawShipFires(ctx,v,ship,v.time||0);
 
   // ---- selection / target rings (screen space) ----
   if (opts.selected) {
@@ -6407,35 +6384,9 @@ function drawEffects(ctx, v, effects) {
       ctx.fillStyle = "rgba(255,252,244,0.92)";
       ctx.beginPath(); ctx.arc(wx(v, xh), wy(v, yh), e.heavy ? 0.72 : 0.46, 0, Math.PI * 2); ctx.fill();
     } else if (e.type === "muzzle") {
-      const sx = wx(v, e.x), sy = wy(v, e.y);
-      ctx.globalAlpha = e.life; ctx.fillStyle = PALETTE.fireHot;
-      ctx.beginPath(); ctx.arc(sx, sy, 2.5 + (1 - e.life) * (e.heavy ? 6 : 3), 0, Math.PI * 2); ctx.fill();
+      steamDrawMuzzleFlash(ctx,v,e);
     } else if (e.type === "splash") {
-      const sx = wx(v, e.x), sy = wy(v, e.y), p = 1 - e.life;
-      const cal = Math.max(40, e.calibre || 120);
-      const foam = Math.min(5.8, 1.4 + cal / 95 + p * 1.2);
-      // the column: a heavy shell throws water higher than a mast, and from above
-      // that is a bright compact plume that leans off downwind before it collapses
-      if (p < 0.45) {
-        const wf2 = (SCN && SCN.wind && SCN.wind.from) || 300, wa2 = (wf2 + 180) * Math.PI / 180;
-        const h = (cal / 305) * 9 * Math.max(0.5, Math.min(1.5, v.scale * 12)) * (0.4 + Math.sin(p / 0.45 * Math.PI) * 0.6);
-        ctx.save(); ctx.translate(sx, sy); ctx.rotate(wa2);
-        ctx.globalAlpha = (1 - p / 0.45) * 0.85; ctx.fillStyle = "rgba(250,253,255,0.9)";
-        ctx.beginPath(); ctx.ellipse(0, -h * 0.5, Math.max(1, foam * 0.55), h, 0, 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
-      }
-      ctx.globalAlpha = Math.min(1, e.life * 1.1);
-      ctx.fillStyle = "rgba(239,247,249,0.58)";
-      ctx.beginPath(); ctx.arc(sx, sy, foam, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = "rgba(247,251,252,0.34)";
-      ctx.beginPath(); ctx.arc(sx, sy, Math.max(1.2, foam * 0.42), 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = "rgba(228,243,247,0.62)";
-      ctx.lineWidth = Math.max(0.9, cal / 240);
-      for (let i = 0; i < 2; i++) {
-        const rr = foam + 2.5 + p * (5.5 + i * 2.5) + i * 2.4;
-        ctx.globalAlpha = e.life * (0.48 - i * 0.12);
-        ctx.beginPath(); ctx.arc(sx, sy, rr, 0, Math.PI * 2); ctx.stroke();
-      }
+      steamDrawShellSplash(ctx,v,e);
     } else if (e.type === "torpLaunch") {
       const sx = wx(v, e.x), sy = wy(v, e.y), p = 1 - e.life;
       ctx.globalAlpha = e.life * 0.34;
@@ -6632,6 +6583,7 @@ function hash01(n) { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return 
 // Coal smoke from each funnel (researched funnel positions), streaming astern and
 // downwind; a burning ship adds a darker, denser column and a flame flicker.
 function drawShipSmoke(ctx, v, s, tSec) {
+  steamDrawFireSmoke(ctx,v,s,tSec);
   if (s.out) return;
   // Previously read only SHIP_LAYOUT, so no Tsushima ship made any smoke at all,
   // and a ship stopped made as much as one at full speed. Funnels now resolve the
@@ -6662,24 +6614,6 @@ function drawShipSmoke(ctx, v, s, tSec) {
       ctx.globalAlpha = a * (0.35 + 0.85 * boil);
       ctx.fillStyle = "#1a2226";
       steamSmokeCloud(ctx,wx(v,px),wy(v,py),Math.max(2,rWorld*scl),1,seed+i+fi*3);
-    }
-  }
-  if (s.fires > 0) {                                            // she burns: flicker + a leaning black column
-    const n = Math.min(s.fires, 4);
-    for (let i = 0; i < n; i++) {
-      const along = ((hash01(seed + i * 17) - 0.5) * 0.7) * (Lm / 2);
-      const fxw = s.x + bx * along, fyw = s.y + by * along;
-      const flick = 0.55 + 0.45 * Math.sin(tSec * (7 + i * 2.3) + i * 2.1);
-      ctx.globalAlpha = 0.5 * flick;
-      ctx.fillStyle = i % 2 ? "#ff7a2e" : "#ffce5c";
-      ctx.beginPath(); ctx.arc(wx(v, fxw), wy(v, fyw), Math.max(1.2, 3.2 * scl * (1 + flick)), 0, Math.PI * 2); ctx.fill();
-      for (let k = 1; k <= 5; k++) {                            // the column leans downwind as it climbs
-        const cx2 = fxw + wind.x * k * 11 + (hash01(seed + i * 5 + k + Math.floor(tSec)) - 0.5) * 8;
-        const cy2 = fyw + wind.y * k * 11;
-        ctx.globalAlpha = 0.10 * (1 - k / 6) * (0.6 + 0.4 * s.fires / 4);
-        ctx.fillStyle = "#0c0f11";
-        ctx.beginPath(); ctx.arc(wx(v, cx2), wy(v, cy2), Math.max(1, (5 + k * 3.4) * scl), 0, Math.PI * 2); ctx.fill();
-      }
     }
   }
   ctx.restore();
@@ -7061,7 +6995,14 @@ function drawSideElevation(ctx, ship, L, ink, bg) {
       ctx.moveTo(p.pts[0][0], p.pts[0][1]);
       for (let i = 1; i < p.pts.length; i++) ctx.lineTo(p.pts[i][0], p.pts[i][1]);
       if (p.close) ctx.closePath();
-      if (p.fill) { ctx.fillStyle = bg; ctx.fill(); }       // opaque-wireframe: hide what is behind, stay an outline
+      if (p.fill) {
+        ctx.fillStyle=bg;ctx.fill();
+        // Tone existing surfaces without changing their measured silhouettes.
+        const tag=p.tag||'';
+        if(tag==='hull'||tag.startsWith('mount:')||tag.startsWith('barbette:')||tag==='funnel'){
+          ctx.save();ctx.globalAlpha*=tag.startsWith('mount:')?.15:tag==='hull'?.06:.09;ctx.fillStyle=ink;ctx.fill();ctx.restore();
+        }
+      }       // opaque-wireframe: hide what is behind, stay an outline
       ctx.strokeStyle = ink; ctx.stroke();
     }
   }
@@ -7381,8 +7322,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "2.0-alpha.29";
-const ECHELON_BUILD_NOTE = "Navigation · clear commands · torpedo stores";
+const ECHELON_VERSION = "2.0-alpha.32";
+const ECHELON_BUILD_NOTE = "Direct controls · squadron manoeuvres";
 // The version is written into the page from here at load, so the markup can never
 // drift from the constant again: bumping a build means editing these two lines.
 function stampVersion() {
@@ -9568,6 +9509,7 @@ function redraw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.scale(dpr, dpr);
   const v = makeViewCss();
+  v.time=performance.now()/1000;
 
   drawSea(ctx, v);
 
@@ -11816,7 +11758,7 @@ function renderMultiSelectPanel(body) {
     game.multiSel = false; game.pendingSel = []; lastSelectionToggle = { id: null, t: 0 };
     if (sq) {
       rememberSquadronOrganisation();
-      game.selSquadId = sq.id; game.selectedId = sq.leaderId; game.menuMode = "squad";
+      steamOpenNavigation();game.selSquadId = sq.id; game.selectedId = sq.leaderId; game.menuMode = "squad";
       logLine(`Squadron ${squadronDisplayNumber(sq)} formed under ${shipById(sq.leaderId).name}.`, "");
     }
     setMultiSelBtn(); syncPanel();
@@ -12190,7 +12132,7 @@ function cycleShip(dir) {
   let i = own.findIndex((x) => x.id === game.selectedId);
   i = i < 0 ? 0 : (i + dir + own.length) % own.length;
   const s = own[i];
-  game.selectedId = s.id; game.menuMode = "ship"; game.cardId = null; game.selSquadId = null;
+  steamOpenNavigation();game.selectedId = s.id; game.menuMode = "ship"; game.cardId = null; game.selSquadId = null;
   game._camGoal = { x: s.x, y: s.y };
   syncPanel();
 }
@@ -12203,7 +12145,7 @@ function cycleSquadron(dir) {
   let i = own.findIndex((sq) => sq.id === game.selSquadId);
   i = i < 0 ? 0 : (i + dir + own.length) % own.length;
   const sq = own[i], lead = shipById(sq.leaderId);
-  game.plotRoute=false; game.selSquadId = sq.id; game.menuMode = "squad"; game.selectedId = lead.id; game.cardId = null;
+  steamOpenNavigation(); game.selSquadId = sq.id; game.menuMode = "squad"; game.selectedId = lead.id; game.cardId = null;
   game.targetId = lead.targetId || null;
   game._camGoal = { x: lead.x, y: lead.y };
   syncPanel();
@@ -12333,7 +12275,7 @@ function onPointerUp(e) {
     const ship=shipById(dragStart.hitId);
     if(ship&&steamVisible(ship)){
       if(ship.side===game.playerSide&&!ship.out){
-        game.selectedId=ship.id;game.menuMode='ship';game.selSquadId=null;
+        steamOpenNavigation();game.selectedId=ship.id;game.menuMode='ship';game.selSquadId=null;
         game.targetId=ship.targetId||null;game.cardId=null;
       }else game.cardId=ship.id;
       syncPanel();
@@ -12358,27 +12300,22 @@ function onPointerUp(e) {
             syncPanel();
           }
         } else {
-          game.plotRoute=false; game.selectedId = ship.id; game.menuMode = "ship"; game.selSquadId = null;
+          steamOpenNavigation(); game.selectedId = ship.id; game.menuMode = "ship"; game.selSquadId = null;
           game.targetId = ship.targetId || null;
           game.cardId = null;
           syncPanel();
         }
       } else if (ship && ship.side === game.enemySide && !game.multiSel) {                              // tap an enemy
         steamRememberOrder();
-        if (game.menuMode === "squad" && game.selSquadId) {
-          const sq = squadronById(game.selSquadId);
-          if (sq) { squadronSetTarget(sq, ship.id); game.targetId = ship.id; logLine(`Squadron ${sq.id}: target ${ship.name}.`, ""); }
-        } else if (sel0 && sel0.side === game.playerSide && !sel0.out && sel0.targetId !== ship.id) {
-          sel0.targetId = ship.id; game.targetId = ship.id;steamInvalidate();
-          logLine(`${sel0.name}: target ${ship.name}.`, "");
-          if (isSailEra()) {
-            // Under sail the order that follows a target is usually board, cut cable
-            // or change the shot, so the command chips must stay under your hand
-            // instead of being replaced by the enemy's dossier.
-            showToast(`${sel0.name}: target ${ship.name}`);
-            game.cardId = null; syncPanel();
-            return;
-          }
+        if(sel0&&sel0.side===game.playerSide&&!sel0.out){
+          steamTargetScope(ship.id,game.commandTab!=='torpedoes');
+          logLine(`${sel0.name}: target ${ship.name}.`, '');
+        }
+        // Target taps open Guns; an explicitly opened Torpedoes page stays
+        // available for selecting its target and issuing a torpedo attack.
+        if(sel0&&sel0.side===game.playerSide&&!sel0.out){
+          if(game.commandTab!=='torpedoes')game.commandTab='fire';
+          game.plotRoute=false;
         }
         game.cardId = sel0 ? null : ship.id; if (sel0) sel0._manualTarget = true; syncPanel();
       }
@@ -12681,7 +12618,7 @@ function renderSquadronChips() {
     if (!sq) return;
     const lead = shipById(sq.leaderId); if (!lead || lead.out) return;
     game.multiSel = false; game.pendingSel = []; lastSelectionToggle = { id: null, t: 0 };
-    game.plotRoute=false; game.selSquadId = sq.id; game.menuMode = "squad"; game.selectedId = lead.id; game.cardId = null;
+    steamOpenNavigation(); game.selSquadId = sq.id; game.menuMode = "squad"; game.selectedId = lead.id; game.cardId = null;
     game.targetId = lead.targetId || null; game._camGoal = { x: lead.x, y: lead.y };
     setMultiSelBtn(); syncPanel();
   }));
@@ -12728,7 +12665,7 @@ function openSquadronPicker() {
     const sq = squadronById(parseInt(b.getAttribute("data-sqid"), 10));
     if (!sq) return;
     const lead = shipById(sq.leaderId); if (!lead) return;
-    game.multiSel = false; game.pendingSel = []; game.plotRoute=false; game.selSquadId = sq.id; game.menuMode = "squad"; game.selectedId = lead.id; game.cardId = null;
+    game.multiSel = false; game.pendingSel = []; steamOpenNavigation(); game.selSquadId = sq.id; game.menuMode = "squad"; game.selectedId = lead.id; game.cardId = null;
     game.targetId = lead.targetId || null; game._camGoal = { x: lead.x, y: lead.y };
     ov.classList.remove("show"); setMultiSelBtn(); syncPanel();
   }));
@@ -12783,7 +12720,7 @@ function buildRoster() {
     const s = shipById(row.getAttribute("data-rosid"));
     if (!s) return;
     if (s.out||s.side!==game.playerSide) { game.cardId = s.id;game.selSquadId = null; }
-    else { game.selectedId = s.id; game.menuMode = "ship"; game.cardId = null; game.selSquadId = null;game.targetId=s.targetId||null; game._camGoal = { x: s.x, y: s.y }; }
+    else { steamOpenNavigation();game.selectedId = s.id; game.menuMode = "ship"; game.cardId = null; game.selSquadId = null;game.targetId=s.targetId||null; game._camGoal = { x: s.x, y: s.y }; }
     const ov = document.getElementById("fleetOverlay"); if (ov) ov.classList.remove("show");
     syncPanel();
   }));
@@ -14278,31 +14215,31 @@ function drawSchematic(c,L,B,plan,ink,accent,dim,ship) {
   const g=steamGeometry(ship),k=L/g.L;
   const path=pts=>{c.beginPath();pts.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));c.closePath();};
   c.save();c.scale(k,k);c.strokeStyle=ink;c.fillStyle=accent?.deck||"#213d42";c.lineJoin="round";c.lineWidth=1/k;
-  path(g.hull);c.fill();c.stroke();
+  path(g.hull);steamPaintSurface(c,accent?.deck||'#294147');c.stroke();
   if(L<24){c.restore();return;}
-  c.save();c.clip();c.globalAlpha=.22;c.lineWidth=.4/k;
-  if(L>110)for(let y=-g.B/2;y<g.B/2;y+=1.1){c.beginPath();c.moveTo(-g.L/2,y);c.lineTo(g.L/2,y);c.stroke();}
+  c.save();c.clip();c.globalAlpha*=.13;c.lineWidth=.4/k;
+  if(L>150)for(let y=-g.B/2;y<g.B/2;y+=Math.max(1.1,3/k)){c.beginPath();c.moveTo(-g.L/2,y);c.lineTo(g.L/2,y);c.stroke();}
   for(let i=1;i<g.deck.length;i++)if(Math.abs(g.deck[i][1]-g.deck[i-1][1])>1&&g.deck[i][0]-g.deck[i-1][0]<1){
     c.globalAlpha=.75;c.lineWidth=.7/k;c.beginPath();c.moveTo(g.deck[i][0],-g.B/2);c.lineTo(g.deck[i][0],g.B/2);c.stroke();
   }
   c.restore();
   const layers=[];
   for(const o of g.structures)layers.push({z:o.z+o.height,draw:()=>{
-    c.fillStyle=accent?.fill||"#183139";c.lineWidth=.7/k;
-    c.fillRect(o.x-o.length/2,o.y-o.width/2,o.length,o.width);c.strokeRect(o.x-o.length/2,o.y-o.width/2,o.length,o.width);
+    c.lineWidth=.7/k;c.beginPath();c.rect(o.x-o.length/2,o.y-o.width/2,o.length,o.width);
+    steamPaintSurface(c,accent?.fill||'#23424a');c.stroke();
     if(L>180&&o.kind.includes('bridge')){c.beginPath();c.moveTo(o.x+o.length*.32,o.y-o.width*.4);c.lineTo(o.x+o.length*.32,o.y+o.width*.4);c.stroke();}
   }});
   for(const f of g.funnels)layers.push({z:f.z+f.height,draw:()=>{
     c.fillStyle="#0a2029";c.lineWidth=.8/k;c.beginPath();c.ellipse(f.x,f.y,f.depth/2,f.width/2,0,0,Math.PI*2);c.fill();c.stroke();
-    if(L>100){c.beginPath();c.ellipse(f.x,f.y,f.depth*.32,f.width*.30,0,0,Math.PI*2);c.stroke();}
+    if(f.width*k>4){c.save();c.globalAlpha*=.5;c.beginPath();c.ellipse(f.x,f.y,f.depth*.32,f.width*.30,0,0,Math.PI*2);c.stroke();c.restore();}
   }});
   if(L>110)for(const b of g.boats)layers.push({z:b.z+1,draw:()=>{
     c.lineWidth=.55/k;c.fillStyle=accent?.mount||'#62624c';
-    path([[b.x+b.length/2,b.y],[b.x+b.length*.3,b.y+b.width/2],[b.x-b.length*.4,b.y+b.width*.45],[b.x-b.length/2,b.y],[b.x-b.length*.4,b.y-b.width*.45],[b.x+b.length*.3,b.y-b.width/2]]);c.fill();c.stroke();
+    path([[b.x+b.length/2,b.y],[b.x+b.length*.3,b.y+b.width/2],[b.x-b.length*.4,b.y+b.width*.45],[b.x-b.length/2,b.y],[b.x-b.length*.4,b.y-b.width*.45],[b.x+b.length*.3,b.y-b.width/2]]);steamPaintSurface(c,accent?.mount||'#62624c');c.stroke();
     c.beginPath();c.moveTo(b.x-b.length*.3,b.y);c.lineTo(b.x+b.length*.25,b.y);c.stroke();
   }});
   for(const m of g.mounts){
-    if(!m.main&&L<85)continue;
+    if(!m.main&&(L<85||m.width*k<1.6))continue;
     layers.push({z:m.z+m.height,draw:()=>{
     const b=ship.batteries?.find(b=>b.mountId===m.id),train=steamMountTrain(ship,m);
     c.lineWidth=(m.main?.85:.5)/k;c.fillStyle=b?.knockedOut?'#262b2b':accent?.mount||'#62624c';
@@ -14312,7 +14249,7 @@ function drawSchematic(c,L,B,plan,ink,accent,dim,ship) {
       steamMountFootprint(m,train).forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));c.closePath();c.clip('evenodd');
       c.beginPath();c.arc(m.x,m.y,m.housing?.barbetteRadius??m.width*.48,0,Math.PI*2);c.fill();c.stroke();c.restore();
     }
-    path(steamMountFootprint(m,train));c.fill();c.stroke();
+    path(steamMountFootprint(m,train));steamPaintSurface(c,b?.knockedOut?'#283130':accent?.mount||'#62624c');c.stroke();
     if(m.kind==='shield'){
       const a=train*Math.PI/180,cs=Math.cos(a),sn=Math.sin(a);
       c.lineWidth=.8/k;c.beginPath();
@@ -14321,9 +14258,13 @@ function drawSchematic(c,L,B,plan,ink,accent,dim,ship) {
     }
     if(!b?.knockedOut){
       for(const [a,z] of steamGunDrawingSegments(m,train,b?.disabledBarrels)){
-        c.lineWidth=steamGunInkWidth(m,k);c.lineCap='butt';c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(z[0],z[1]);c.stroke();
+        steamDrawBarrel(c,m,k,a,z,ink);
       }
-    }else{c.beginPath();c.moveTo(m.x-m.width*.4,m.y-m.width*.4);c.lineTo(m.x+m.width*.4,m.y+m.width*.4);c.stroke();}
+    }else{c.save();c.strokeStyle='#b58665';c.beginPath();c.moveTo(m.x-m.width*.3,m.y-m.width*.3);c.lineTo(m.x+m.width*.3,m.y+m.width*.3);c.stroke();c.restore();}
+    if(L>120){
+      const disabled=b?.knockedOut?Array.from({length:m.count},(_,i)=>i):(b?.disabledBarrels||[]);
+      steamGunDrawingSegments(m,train).forEach(([a,z],i)=>{if(disabled.includes(i))steamDrawBarrel(c,m,k,a,z,ink,true);});
+    }
     }});
   }
   layers.sort((a,b)=>a.z-b.z).forEach(o=>o.draw());
@@ -14335,6 +14276,7 @@ function drawSchematic(c,L,B,plan,ink,accent,dim,ship) {
   if(L>180){ // restrained bow fittings, decorative rather than combat objects
     c.lineWidth=.5/k;for(const sign of [-1,1]){c.beginPath();c.moveTo(g.L*.40,sign*g.B*.10);c.lineTo(g.L*.44,sign*g.B*.16);c.stroke();}
   }
+  steamDrawHullScars(c,g,ship,k);
   c.restore();
 }
 function sideElevationPrims(ship,L) {
@@ -15143,9 +15085,9 @@ function steamClone(v){return JSON.parse(JSON.stringify(v));}
 function steamInvalidate(){game._steamRevision=(game._steamRevision||0)+1;game._steamPreview=null;}
 function steamRememberOrder(){
   if(game.exec||game.phase!=='plan')return;
-  const fields=['command','_detached','_manualTarget','_manualThisTurn','_torpMode','_torpSetting','targetId','doctrine'];
+  const fields=['command','_moveOrderTurn','_pursuitTargetId','_pursuitGroupId','_detached','_formationStraggler','_manualTarget','_manualThisTurn','_torpMode','_torpSetting','targetId','doctrine'];
   const ships=game.ships.map(s=>({id:s.id,state:Object.fromEntries(fields.map(k=>[k,s[k]??null]))}));
-  const squads=game.squadrons.map(q=>({id:q.id,leaderId:q.leaderId,followOrder:q.followOrder||null,command:q.command,attack:q.attack,formation:q.formation,spacing:q.spacing,turnMode:q.turnMode}));
+  const squads=game.squadrons.map(q=>({id:q.id,leaderId:q.leaderId,moveOrderTurn:q.moveOrderTurn??null,pursuitTargetId:q.pursuitTargetId??null,_pursuitAppliedTurn:q._pursuitAppliedTurn??null,followOrder:q.followOrder||null,command:q.command,attack:q.attack,formation:q.formation,spacing:q.spacing,turnMode:q.turnMode}));
   const history=game._orderHistory||(game._orderHistory=[]);history.push(steamClone({ships,squads}));if(history.length>20)history.shift();
 }
 function steamUndoOrder(){
@@ -15158,6 +15100,29 @@ function steamUndoOrder(){
 function snapToHex(s){s.hex=worldToHex(s.x,s.y);}
 function steamMaxSpeed(s){return Math.max(0,s.maxSpeed*(s.engine??1)*(1-.4*(s.flooding||0)/100));}
 function steamCanKeepStation(s){return !!s&&!s.out&&steamMaxSpeed(s)>1&&(s.steering??1)>0;}
+// Group orders use the slowest design speed, bounded by the best surviving
+// machinery. A casualty cannot shrink every other ship's manoeuvre choices.
+function steamGroupSpeedLimit(members){
+  const mobile=members.filter(steamCanKeepStation);
+  return mobile.length?Math.min(...mobile.map(s=>s.maxSpeed),Math.max(...mobile.map(steamMaxSpeed))):0;
+}
+function steamCanKeepPace(s,speed){return steamCanKeepStation(s)&&steamMaxSpeed(s)+.05>=speed;}
+function steamGroupGuide(q){
+  const members=steamLineOrder(q).map(shipById).filter(s=>s&&!s.out),limit=steamGroupSpeedLimit(members);
+  // This is only the ship from which a NEW group order is plotted. Selecting
+  // the group never changes a live helm, leader, follow chain or battle save.
+  return members.find(s=>steamCanKeepPace(s,limit))||members[0];
+}
+function steamScopeGuide(q){return q&&!game.exec&&(game.commandTab||'helm')==='helm'?steamGroupGuide(q):shipById(q?.leaderId||game.selectedId);}
+function steamReleaseStraggler(s,q,lead){
+  if(s._detached)return;
+  s._detached=true;s._formationStraggler=true;
+  if(q.turnMode!=='together'&&s.command?.kind==='route'&&lead&&lead.id!==s.id){
+    const c=steamClone(q.command),dx=s.x-lead.x,dy=s.y-lead.y;
+    c.points=c.points.slice(c.index||0).map(p=>({x:p.x+dx,y:p.y+dy}));
+    c.index=0;c.start={x:s.x,y:s.y};s.command=c;
+  }
+}
 function steamMovesHull(s){return !s.out||!s._escaped&&steamHullAfloat(s);}
 function steamMotionParameters(s){
   const light=s.length<100;
@@ -15233,9 +15198,10 @@ function steamSetCommand(s,c,individual=true){
   if(c.kind!=="attack"&&s._torpMode==="ordered")s._torpMode="hold";
   s.command=steamClone(c);s.command.speedKn=clamp(Number(c.speedKn??s.speedKn),0,steamMaxSpeed(s));
   if(individual){
-    s._detached=true;s._follow=null;s._inLine=false;
+    s._detached=true;s._formationStraggler=false;s._follow=null;s._inLine=false;
     reconcileSquadrons();
   }
+  steamMarkMovement(s,individual);
   s._manualThisTurn=true;s._controlStatus="Order set";s.order={...s.hex,heading:c.heading??s.heading};
   steamInvalidate();return true;
 }
@@ -15244,34 +15210,37 @@ function steamSetScopeCommand(c){
   if(!q){return steamSetCommand(shipById(game.selectedId),c,true);}
   const members=q.members.map(shipById).filter(s=>s&&!s.out);
   if(game.exec||!members.length||members.some(s=>s.side!==game.playerSide))return false;
-  const mobile=members.filter(steamCanKeepStation);
-  const speed=Math.min(c.speedKn??Infinity,...(mobile.length?mobile:members).map(steamMaxSpeed));
-  q.command={...steamClone(c),speedKn:speed};q.attack=null;
-  const leader=members.find(s=>s.id===q.leaderId&&steamCanKeepStation(s))||members.find(steamCanKeepStation)||members[0];
+  const speed=clamp(c.speedKn??steamGroupSpeedLimit(members),0,steamGroupSpeedLimit(members));
+  q.command={...steamClone(c),speedKn:speed};q.attack=null;q.moveOrderTurn=game.turn;
+  const leader=steamGroupGuide(q)||members[0];
   q.leaderId=leader.id;
+  const returning=new Set(members.filter(s=>s._formationStraggler).map(s=>s.id));
+  q.followOrder=[...steamLineOrder(q).filter(id=>!returning.has(id)),...returning];
   for(const s of members){
     if(c.kind!=="attack"&&s._torpMode==="ordered")s._torpMode="hold";
-    s._detached=false;s.command={...steamClone(c),speedKn:speed};s._manualThisTurn=false;
+    steamMarkMovement(s,false);s._detached=false;s._formationStraggler=false;s.command={...steamClone(c),speedKn:speed};s._manualThisTurn=false;
     // A simultaneous turn preserves each ship's displacement. Giving every
     // member the flag's destination made an entire division converge on it.
-    if(q.turnMode==="together"&&c.kind==="route"){
+    if((q.turnMode==="together"||!steamCanKeepPace(s,speed))&&c.kind==="route"){
       const dx=s.x-leader.x,dy=s.y-leader.y;
       s.command.points=c.points.map(p=>({x:p.x+dx,y:p.y+dy}));
       s.command.start={x:s.x,y:s.y};
     }
   }
+  for(const s of members)if(!steamCanKeepPace(s,speed)){s._detached=true;s._formationStraggler=true;}
   reconcileSquadrons();steamInvalidate();return true;
 }
 function steamSetWaypoint(x,y,append=false){
   if(game.exec||game.phase!=='plan'||!Number.isFinite(x)||!Number.isFinite(y))return false;
   const q=game.menuMode==="squad"?squadronById(game.selSquadId):null;
-  const s=shipById(q?.leaderId||game.selectedId);if(!s||s.side!==game.playerSide)return false;
+  const s=append&&q?.command?shipById(q.leaderId):steamScopeGuide(q);if(!s||s.side!==game.playerSide)return false;
   steamRememberOrder();
   const prior=s.command;
   // Keep the unfinished legs, including each Together ship's existing offset.
   // Reissuing the whole route at index zero replayed already completed legs.
   if(append&&prior?.kind==='route'){
     const add=(ship,dx=0,dy=0)=>{
+      steamMarkMovement(ship,!q);
       const c=ship.command;
       if(c?.kind==='route')ship.command={...steamClone(c),points:[...steamClone(c.points.slice(c.index||0)),{x:x+dx,y:y+dy}],index:0};
       else ship.command={kind:'route',points:[{x:x+dx,y:y+dy}],index:0,start:{x:ship.x,y:ship.y},speedKn:c?.speedKn??ship.speedKn};
@@ -15279,13 +15248,13 @@ function steamSetWaypoint(x,y,append=false){
     if(!q){if(game.exec)return false;add(s);steamInvalidate();return true;}
     if(game.exec)return false;
     const end=prior.points.at(-1);
-    for(const ship of q.members.map(shipById).filter(a=>a&&!a.out&&!a._detached)){
+    for(const ship of q.members.map(shipById).filter(a=>a&&!a.out&&(!a._detached||a._formationStraggler))){
       const last=ship.command?.kind==='route'?ship.command.points.at(-1):null;
-      const dx=q.turnMode==='together'?(last?last.x-end.x:ship.x-s.x):0;
-      const dy=q.turnMode==='together'?(last?last.y-end.y:ship.y-s.y):0;
+      const dx=(q.turnMode==='together'||ship._formationStraggler)?(last?last.x-end.x:ship.x-s.x):0;
+      const dy=(q.turnMode==='together'||ship._formationStraggler)?(last?last.y-end.y:ship.y-s.y):0;
       add(ship,dx,dy);
     }
-    q.command=steamClone(s.command);steamInvalidate();return true;
+    q.command=steamClone(s.command);q.moveOrderTurn=game.turn;steamInvalidate();return true;
   }
   const points=[];
   points.push({x,y});
@@ -15294,17 +15263,18 @@ function steamSetWaypoint(x,y,append=false){
 function steamSetScopeSpeed(speed){
   if(game.exec||!Number.isFinite(speed))return false;
   const q=game.menuMode==='squad'?squadronById(game.selSquadId):null;
-  const s=shipById(q?.leaderId||game.selectedId);if(!s||s.side!==game.playerSide)return false;
+  const s=steamScopeGuide(q);if(!s||s.side!==game.playerSide)return false;
   if(!q)return steamSetCommand(s,{...steamClone(s.command),speedKn:speed},true);
   if(q&&!q.command&&!q.attack)return steamSetScopeCommand({...steamClone(s.command),speedKn:speed});
-  const members=q?q.members.map(shipById).filter(a=>a&&!a.out&&!a._detached):[s];
+  const members=q.members.map(shipById).filter(a=>a&&!a.out&&(!a._detached||a._formationStraggler));
   if(!members.length)return false;
-  const limit=Math.min(...members.map(steamMaxSpeed));
-  for(const a of members){
-    a.command={...steamClone(a.command),speedKn:clamp(speed,0,limit)};
-    if(!q){a._detached=true;a._follow=null;a._inLine=false;}
-  }
-  if(q?.command)q.command.speedKn=clamp(speed,0,limit);
+  const pace=clamp(speed,0,steamGroupSpeedLimit(members));
+  for(const a of members){steamMarkMovement(a,false);a.command={...steamClone(a.command),speedKn:pace};}
+  q.moveOrderTurn=game.turn;
+  if(q.command){q.command.speedKn=pace;if(q.command.kind==='pursue')q.command=steamClone(s.command);}
+  reconcileSquadrons();
+  for(const a of members)if(a._formationStraggler&&steamCanKeepPace(a,pace))steamRejoin(a);
+
   steamInvalidate();return true;
 }
 function setOrderHex(s,q,r){const p=hexToWorld(q,r);return steamSetCommand(s,{kind:"route",points:[p],index:0,start:{x:s.x,y:s.y},heading:absBearing(s,p),speedKn:s.command?.speedKn??s.speedKn});}
@@ -15314,12 +15284,14 @@ function orderedSpeedKn(s){return s.command?.speedKn??s.speedKn??0;}
 function steamRejoin(s){
   if(!steamCanKeepStation(s)||s.side!==game.playerSide||game.exec||game.phase!=='plan')return false;
   const q=squadronOf(s.id);if(!q)return false;
+  if(q.command&&!steamCanKeepPace(s,q.command.speedKn||0))return false;
   if(!s._detached&&q.command)return true;
   const attached=steamLineOrder(q).filter(id=>{const a=shipById(id);return a&&!a.out&&!a._detached&&a.id!==s.id;});
   // Join the rear of the current working line, not an old roster slot between
   // two ships already in station. The organisational membership is unchanged.
   q.followOrder=[...attached,s.id];
-  s._detached=false;s._manualThisTurn=false;s.command=steamClone(q.command||shipById(q.leaderId)?.command||{kind:"course",heading:s.heading,speedKn:s.speedKn});
+  steamMarkMovement(s,true);s._pursuitTargetId=null;
+  s._detached=false;s._formationStraggler=false;s._manualThisTurn=false;s.command=steamClone(q.command||shipById(q.leaderId)?.command||{kind:"course",heading:s.heading,speedKn:s.speedKn});
   if(!attached.length)q.leaderId=s.id;
   if(q.turnMode==='together'&&s.command.kind==='route'){
     const lead=shipById(q.leaderId),dx=s.x-lead.x,dy=s.y-lead.y;
@@ -15349,14 +15321,25 @@ function rebuildSquadronLines(){
 }
 function steamSyncGroupSelection(){
   const q=game.menuMode==='squad'?squadronById(game.selSquadId):null;
-  if(q){game.selectedId=q.leaderId;game.targetId=shipById(q.leaderId)?.targetId||null;}
+  if(q){game.selectedId=steamScopeGuide(q)?.id||q.leaderId;game.targetId=shipById(game.selectedId)?.targetId||null;}
 }
 function steamReconcileGroups(ships,squadrons,byId,notify){
   let changed=false;
   for(const q of squadrons||[]){
     const lead=byId.get(q.leaderId),members=steamLineOrder(q).map(id=>byId.get(id)).filter(Boolean);
-    if(q.command&&!q.attack)for(const s of members)if(!s._detached&&!steamCanKeepStation(s)){
-      s._detached=true;changed=true;
+    if(q.command&&!q.attack){
+      const mobile=members.filter(s=>!s._detached&&steamCanKeepStation(s));
+      const available=mobile.length?Math.max(...mobile.map(steamMaxSpeed)):0;
+      // If every attached ship has lost speed, keep a working group at the
+      // best surviving pace, instead of detaching the entire division.
+      if(mobile.length&&q.command.speedKn>available){
+        q.command.speedKn=available;
+        for(const s of members)if(!s._detached&&s.command)s.command.speedKn=Math.min(s.command.speedKn,available);
+        changed=true;
+      }
+    }
+    if(q.command&&!q.attack)for(const s of members)if(!s._detached&&!steamCanKeepPace(s,q.command.speedKn||0)){
+      steamReleaseStraggler(s,q,lead);changed=true;
       if(notify&&!s.out)logLine(s.name+' can no longer keep station.','sys');
     }
     if(steamCanKeepStation(lead)&&(!q.command||!lead._detached))continue;
@@ -15410,9 +15393,10 @@ function steamAttackScope(targetId){
   const target=shipById(targetId),ss=steamScopeShips().filter(s=>s.torpedoes?.count>0);
   if(!target||target.side===game.playerSide||!ss.length)return false;
   const q=game.menuMode==="squad"?squadronById(game.selSquadId):null;
-  if(q){q.attack={targetId,orderedAt:game.simSeconds||0,releaseAt:null};q.command=null;}
+  if(q){q.attack={targetId,orderedAt:game.simSeconds||0,releaseAt:null};q.command=null;q.pursuitTargetId=null;}
   ss.forEach((s,i)=>{
-    s._detached=!q;s._follow=null;s._torpMode="ordered";s.targetId=targetId;s._manualTarget=true;
+    steamCancelPursuit(s);steamMarkMovement(s,!q);
+    s._detached=!q;s._formationStraggler=false;s._follow=null;s._torpMode="ordered";s.targetId=targetId;s._manualTarget=true;
     s.command={kind:"attack",targetId,
       attackIndex:i,attackSize:ss.length,phase:"approach",speedKn:steamMaxSpeed(s),orderedAt:game.simSeconds||0};
   });
@@ -15474,6 +15458,11 @@ function steamDesired(s,byId,squadrons){
       speed=clamp(lead.speedKn+error*.012,0,max);
       status=rangeBetween(s,desired)>spacing*.6?"Closing station":"Following track";
     }
+  }else if(c.kind==='pursue'){
+    const t=byId.get(c.targetId),q=squadrons.find(q=>q.members.includes(s.id)&&q.command?.kind==='pursue'),guide=q?.turnMode==='together'&&!s._detached?byId.get(q.leaderId)||s:s;
+    const order=steamPursuitHelm(guide,t,speed);heading=order.heading;speed=order.speed;status=order.status;
+    c.heading=heading;
+    if(!t||t.out){c.kind='course';s._pursuitTargetId=null;s._pursuitGroupId=null;}
   }else if(c.kind==="route"&&c.points?.length){
     let p=c.points[c.index||0];
     if(p){
@@ -15485,12 +15474,8 @@ function steamDesired(s,byId,squadrons){
       else{c.kind="course";c.heading=s.heading;heading=s.heading;status="Route complete; holding course";}
     }
   }
-  // A commanded line shares the speed its slowest attached ship can sustain.
-  const own=squadrons.find(q=>q.leaderId===s.id&&!q.attack);
-  if(own&&own.command&&!s._detached){
-    const members=own.members.map(id=>byId.get(id)).filter(x=>x&&!x.out&&!x._detached);
-    if(members.length){const limit=Math.min(...members.map(steamMaxSpeed));if(speed>limit){speed=limit;status="Speed limited by squadron";}}
-  }
+  if(c.kind!=='attack'&&c.speedKn===0){speed=0;status='Engines stopped';}
+  if(s._formationStraggler&&status==='Holding course')status='Falling behind squadron';
   return{heading,speed,status};
 }
 function steamPoseAdvance(s,desired,dt){
@@ -15707,8 +15692,8 @@ function steamHelmEndpoint(s,heading,speedKn){
 const steamHelmChoiceCache=new WeakMap();
 function steamMoveChoices(s){
   if(!s||s.out||s.side!==game.playerSide||game.exec||game.phase!=='plan')return[];
-  const members=steamScopeShips(),mobile=members.filter(a=>game.menuMode==='squad'?steamCanKeepStation(a):steamMaxSpeed(a)>1);
-  const max=Math.min(...(mobile.length?mobile:members.length?members:[s]).map(steamMaxSpeed));
+  const members=steamScopeShips();
+  const max=game.menuMode==='squad'?steamGroupSpeedLimit(members):steamMaxSpeed(s);
   const key=[HEX_M,s.id,s.x,s.y,s.heading,s.speedKn,s.yawRate,s.engine,s.steering,s.flooding,max].join(':');
   const cached=steamHelmChoiceCache.get(s);if(cached?.key===key)return cached.choices;
   const choices=[],samples=[],cells=new Map(),tolerance=Math.min(8,HEX_M*.045);
@@ -15761,7 +15746,7 @@ function steamVisibleMoveChoices(v,s){
   return shown;
 }
 function steamPickMoveChoice(x,y){
-  const q=game.menuMode==='squad'?squadronById(game.selSquadId):null,s=shipById(q?.leaderId||game.selectedId);
+  const q=game.menuMode==='squad'?squadronById(game.selSquadId):null,s=steamScopeGuide(q);
   const v=makeViewCss(),w=screenToWorld(v,x,y),hex=worldToHex(w.x,w.y),choices=steamVisibleMoveChoices(v,s);
   // The whole available hex is a helm target, as in the original chart. The
   // small extra radius helps touch input when zoomed far out.
@@ -15773,6 +15758,7 @@ function steamPickMoveChoice(x,y){
 function steamSetMoveChoice(p){
   if(!p||game.exec||game.phase!=='plan')return false;
   steamRememberOrder();
+  game.commandTab='helm';game.plotRoute=false;
   const ok=steamSetScopeCommand({kind:'course',heading:p.heading,speedKn:p.speedKn,chartCell:{q:p.q,r:p.r,turn:game.turn}});
   game._steamHelp={id:game.selectedId,text:`Course ${Math.round(steamNorm(p.heading))}° · ${p.speedKn.toFixed(1)} kn · hex ${p.q}, ${p.r}`};
   return ok;
@@ -15837,7 +15823,7 @@ function drawOrderGhost(c,v,s,highlight){
   c.beginPath();path.forEach((p,i)=>{if(i%4&&i!==path.length-1)return;const x=wx(v,p.x),y=wy(v,p.y);i?c.lineTo(x,y):c.moveTo(x,y);});c.stroke();c.setLineDash([]);
   // The forecast hull uses the endpoint's actual integrated heading, not the
   // ordered heading or the tangent of a coarsely sampled dashed track.
-  const end=path.at(-1),L=shipScreenLen(v,s),g=steamGeometry(s),k=L/g.L;
+  const end=path.at(-1),L=Math.max(s.length*v.scale,9),g=steamGeometry(s),k=L/g.L;
   c.translate(wx(v,end.x),wy(v,end.y));rotateBowMinusY(c,end.heading);
   c.fillStyle=highlight?'rgba(193,231,237,.13)':'rgba(147,209,225,.07)';
   c.beginPath();g.hull.forEach(([x,y],i)=>{i?c.lineTo(y*k,-x*k):c.moveTo(y*k,-x*k);});c.closePath();c.fill();c.stroke();
@@ -15864,7 +15850,7 @@ function steamTogglePlayback(){
 function startExecute(){
   if(game.phase!=="plan"||game.exec)return;
   game._orderHistory=[];
-  reconcileSquadrons();steamEnemyOrders();
+  steamApplyTargetPursuit();reconcileSquadrons();steamEnemyOrders();
   game._outAtTurnStart=new Set(game.ships.filter(s=>s.out).map(s=>s.id));
   game._keepSel=game.selectedId;game._keepTgt=game.targetId;
   game.exec={t:0,dur:9,simulated:0,done:false};game.phase="resolve";
@@ -15892,7 +15878,7 @@ function finishExecute(){
   const moved={};
   for(const s of game.ships){moved[s.id]=s._turnStart?rangeBetween(s,s._turnStart):0;s._ax1=s._ay1=null;s._manualThisTurn=false;snapToHex(s);}
   updateMorale();cleanupTargets();reconcileSquadrons();telSnapshotTurn(moved);game.turn+=1;
-  game.exec=null;game.phase="plan";steamInvalidate();
+  game.exec=null;game.phase="plan";steamApplyTargetPursuit();steamInvalidate();
   const selected=shipById(game.selectedId);if(selected&&!selected.out)game.targetId=selected.targetId||null;
   game._keepSel=game._keepTgt=null;
   const verdict=checkVictory();if(verdict.over){game.phase="over";showResult(verdict);}
@@ -15908,6 +15894,88 @@ function skipExecute(){
   e.done=true;finishExecute();
 }
 function advanceTorpedoes(){/* Shared clock owns torpedoes. */}
+
+
+// Targeting is also a pursuit intent. Only an explicit movement order stamped
+// with this turn suppresses it; older orders do not become permanent vetoes.
+function steamMovementOrdered(s){return s._moveOrderTurn===game.turn;}
+function steamMarkMovement(s,individual=true){
+  s._moveOrderTurn=game.turn;
+  if(s.command?.kind==='pursue')s.command={kind:'course',heading:s.command.heading??s.heading,speedKn:s.command.speedKn};
+  if(individual)s._pursuitGroupId=null;
+}
+function steamPursuitTarget(s){
+  const t=shipById(s._pursuitTargetId);return t&&!t.out&&t.side!==s.side?t:null;
+}
+function steamCancelPursuit(s){
+  s._pursuitTargetId=null;s._pursuitGroupId=null;
+  if(s.command?.kind==='pursue')s.command={kind:'course',heading:s.heading,speedKn:s.command.speedKn??s.speedKn};
+}
+function steamPursuitHelm(s,t,speed){
+  if(!t||t.out)return{heading:s.heading,speed:Math.min(speed,steamMaxSpeed(s)),status:'Pursuit ended'};
+  if(!canSight(s,t))return{heading:s.command.heading??s.heading,speed:Math.min(speed,steamMaxSpeed(s)),status:'Target lost from sight'};
+  const guns=s.batteries.filter(b=>steamLiveGunCount(b)),main=guns.filter(b=>b.geometry?.main);
+  const range=Math.max(0,...(main.length?main:guns).map(b=>maxEffectiveRange(b.gun)));
+  // An explicit tactical heuristic, not a period doctrine or extra motion
+  // capability: close to useful gun range, then expose the nearer broadside.
+  const standOff=Math.max((s.length+t.length)*2,Math.min(range*.6,sightLimit(s,t)*.7));
+  const distance=rangeBetween(s,t),bearing=absBearing(s,t);
+  if(distance>standOff){return{heading:bearing,speed:Math.min(speed,steamMaxSpeed(s)),status:'Pursuing target'};}
+  const a=steamNorm(bearing+90),b=steamNorm(bearing-90),heading=Math.abs(wrap180(a-s.heading))<=Math.abs(wrap180(b-s.heading))?a:b;
+  return{heading,speed:Math.min(speed,steamMaxSpeed(s),Math.max(0,t.speedKn||0)),status:'Engaging at gun range'};
+}
+function steamApplyTargetPursuit(){
+  if(game.exec||game.phase!=='plan')return;
+  for(const s of game.ships)if(s._pursuitTargetId&&!steamPursuitTarget(s))steamCancelPursuit(s);
+  for(const q of game.squadrons)if(q.pursuitTargetId){
+    const t=shipById(q.pursuitTargetId);
+    if(!t||t.out){q.pursuitTargetId=null;if(q.command?.kind==='pursue')q.command=steamClone(shipById(q.leaderId)?.command||{});}
+  }
+  const grouped=new Set();
+  for(const q of game.squadrons){
+    const target=shipById(q.pursuitTargetId);if(!target||target.out)continue;
+    const members=q.members.map(shipById).filter(s=>s&&!s.out&&s.side===game.playerSide&&s._pursuitGroupId===q.id&&s._pursuitTargetId===target.id);
+    members.forEach(s=>grouped.add(s.id));
+    if(q.moveOrderTurn===game.turn||q.attack)continue;
+    const eligible=members.filter(s=>!steamMovementOrdered(s)&&s.command?.kind!=='attack');
+    if(!eligible.length)continue;
+    const pace=steamGroupSpeedLimit(eligible),lead=eligible.find(s=>s.id===q.leaderId&&steamCanKeepPace(s,pace))||eligible.find(s=>steamCanKeepPace(s,pace))||eligible[0];
+    if(q._pursuitAppliedTurn===game.turn&&q.command?.kind==='pursue'&&q.command.targetId===target.id)continue;
+    q.leaderId=lead.id;q.command={kind:'pursue',targetId:target.id,heading:lead.heading,speedKn:pace};
+    for(const s of eligible){s.command=steamClone(q.command);s._detached=!steamCanKeepPace(s,pace);s._formationStraggler=s._detached;}
+    q._pursuitAppliedTurn=game.turn;
+  }
+  for(const s of game.ships){
+    if(s.out||s.side!==game.playerSide||grouped.has(s.id)||steamMovementOrdered(s)||s.command?.kind==='attack')continue;
+    const t=steamPursuitTarget(s);if(!t)continue;
+    if(s.command?.kind==='pursue'&&s.command.targetId===t.id)continue;
+    s.command={kind:'pursue',targetId:t.id,heading:s.heading,speedKn:steamMaxSpeed(s)};
+    s._detached=true;s._formationStraggler=false;s._follow=null;
+  }
+  reconcileSquadrons();steamInvalidate();
+}
+function steamTargetScope(id,pursue=true){
+  if(game.exec||game.phase!=='plan')return false;
+  const q=game.menuMode==='squad'?squadronById(game.selSquadId):null,members=steamScopeShips(),t=shipById(id);
+  if(id&&(!t||t.out||t.side===game.playerSide)||!members.length)return false;
+  if(q){q.pursuitTargetId=pursue&&t?t.id:null;q._pursuitAppliedTurn=null;}
+  for(const s of members){
+    s.targetId=t?.id||null;s._manualTarget=!!t;
+    if(!t||!pursue){steamCancelPursuit(s);continue;}
+    s._pursuitTargetId=t.id;
+    // A deliberately individual order keeps its own helm. Its pursuit can
+    // resume next turn without being silently pulled back into a formation.
+    s._pursuitGroupId=q&&!(s._detached&&steamMovementOrdered(s))?q.id:null;
+  }
+  if(q&&(!t||!pursue)&&q.command?.kind==='pursue')q.command=steamClone(shipById(q.leaderId)?.command||{});
+  game.targetId=t?.id||null;steamApplyTargetPursuit();steamInvalidate();return true;
+}
+function steamPursuitStatus(s,q){
+  if(!steamPursuitTarget(s))return '';
+  if(steamMovementOrdered(s)||q?.moveOrderTurn===game.turn)return 'Movement order takes priority this turn';
+  if(s.command?.kind==='attack'||q?.attack)return 'Torpedo manoeuvre takes priority';
+  return s.command?.kind==='pursue'?'Pursuing target':'';
+}
 
 
 // Check the manoeuvre that an encounter rule actually produces. These tracks
@@ -16633,7 +16701,9 @@ function steamTorpedoProfile(s){
     if(s.side==="Germany")return{id:"German 50-centimetre, provisional fit",speed:(long?28:35)*STEAM_KNOT,run:long?10000:5000,charge:195,confidence:"Period setting; individual weapon fit awaiting confirmation"};
     return{id:"British 21-inch, provisional fit",speed:(long?29:44.5)*STEAM_KNOT,run:(long?10750:4500)*.9144,charge:181,confidence:"Period setting; individual weapon fit awaiting confirmation"};
   }
-  return SCN.id==="yalu"?{id:"1894 inherited profile",speed:13.6,run:760,charge:50,confidence:"Inherited estimate"}:
+  // 28 yards is a documented Victorian Whitehead arming run, used here as a
+  // declared period proxy, not an identification of each fleet's torpedo mark.
+  return SCN.id==="yalu"?{id:"1894 inherited profile",speed:13.6,run:760,charge:50,armingRun:28*.9144,confidence:"Inherited estimate; period-proxy arming run"}:
     {id:"1904-1905 inherited profile",speed:15.2,run:1200,charge:90,confidence:"Inherited estimate"};
 }
 function steamIntercept(from,target,speed,maxRun){
@@ -16718,7 +16788,7 @@ function steamLaunchTorpedoes(s,t,sol){
     const origin=steamTorpedoLaunchPoint(s,trained,tube);
     if(!steamTorpedoLaneClear(s,origin,hr,speed,profile.run,game.ships))continue;
     const torp={physical:true,side:s.side,sourceId:s.id,targetId:t.id,x:origin.x,y:origin.y,sourceCleared:true,hr,speed,
-      launchOrigin:{...origin},tubeId:tube.id,tubeTrain:trained,travelled:0,runDist:profile.run,charge:profile.charge,period:profile.id,life:1,trail:[],dead:false,resolved:false};
+      launchOrigin:{...origin},tubeId:tube.id,tubeTrain:trained,travelled:0,runDist:profile.run,armingRun:profile.armingRun||0,charge:profile.charge,period:profile.id,life:1,trail:[],dead:false,resolved:false};
     torp.telId=telTorpedoLaunch(s,t,{runDist:sol.run,flightSec:sol.time,launchFrac:game.exec?game.exec.simulated/GAME_TURN_SECONDS:0},null,i,count);
     game.torpedoes.push(torp);telAgg(s.id).torpFired++;used.push(tube);
     game.effects.push({type:'torpLaunch',x:origin.x,y:origin.y,hr:trained,life:1,fade:2});
@@ -16732,6 +16802,12 @@ function steamLaunchTorpedoes(s,t,sol){
 function steamResolveTorpedo(t,hit,contactPose){
   t.dead=true;t.resolved=true;t.life=0;
   if(!hit){telTorpedoResolve(t,"run exhausted");return;}
+  // A hull contact before the war nose has armed expends the weapon without
+  // counting an explosive hit. Airborne legacy saves keep their saved model.
+  if(t.travelled<(t.armingRun||0)){
+    telTorpedoResolve(t,"unarmed contact "+hit.name);
+    logLine(hit.name+': torpedo struck before arming.','sys');return;
+  }
   const before=hit.out;
   let point={x:t.x,y:t.y};
   if(contactPose){
@@ -16775,6 +16851,7 @@ function steamStepTorpedoes(dt,movingHulls=false){
   for(const t of game.torpedoes){
     if(t.dead)continue;
     const old={x:t.x,y:t.y},distance=Math.max(0,Math.min(t.speed*dt,t.runDist-t.travelled));
+    const timeFraction=t.speed*dt>0?clamp(distance/(t.speed*dt),0,1):0;
     const end={x:t.x+Math.sin(t.hr)*distance,y:t.y-Math.cos(t.hr)*distance};
     let first=null;
     for(const s of game.ships){
@@ -16789,7 +16866,11 @@ function steamStepTorpedoes(dt,movingHulls=false){
         t.sourceCleared=true;
       }
       if(!steamHullAfloat(s))continue;
-      const touch=steamMovingTorpedoContact(s,old,end,movingHulls?s._stepStart:null);
+      const start=movingHulls?s._stepStart:null;
+      // A partly exhausted final step must stop the hull clock at the same
+      // instant as the torpedo, rather than testing a full second of motion.
+      const pose=start&&timeFraction<1?{...s,x:start.x+(s.x-start.x)*timeFraction,y:start.y+(s.y-start.y)*timeFraction,heading:steamNorm(start.heading+wrap180(s.heading-start.heading)*timeFraction)}:s;
+      const touch=steamMovingTorpedoContact(pose,old,end,start);
       if(touch&&(!first||touch.t<first.touch.t||(touch.t===first.touch.t&&s.id<first.ship.id)))first={ship:s,touch};
     }
     t.x=first?first.touch.x:end.x;t.y=first?first.touch.y:end.y;t.travelled+=distance*(first?first.touch.t:1);
@@ -16876,7 +16957,13 @@ function steamBatteryTarget(s,b){
     if(threat)return threat;
   }
   if(valid(primary))return primary;
-  if(s._manualTarget&&b.geometry?.main&&primary&&!primary.out)return null;
+  if(s._manualTarget&&b.geometry?.main&&primary&&!primary.out&&candidates.includes(primary)){
+    const f=steamBatteryFireSolution(s,b,primary);
+    // Keep laying the main battery on an in-range selected enemy. When it is
+    // beyond THIS battery's reach, use a nearby legal shot without retargeting
+    // the ship, changing its pursuit or touching torpedo command rules.
+    if(f?.inRange)return null;
+  }
   return candidates.find(t=>!t.out&&batteryCanBear(s,b,t))||null;
 }
 // Shared horizontal fire-control solution. Ballistic coefficients remain
@@ -16935,7 +17022,7 @@ function steamLaunchBattery(s,b,t,solution){
     launchAt:game.simSeconds,arriveAt:game.simSeconds+flight,turn:game.turn});
   s.firedThisTurn=true;s._firedTurn=game.turn;
   if(cal>=100||s.id===game.selectedId){
-    for(const p of muzzles||[origin])game.effects.push({type:"muzzle",x:p.x,y:p.y,fromId:s.id,toId:t.id,set:true,life:1,fade:7,heavy:cal>=200});
+    for(const p of muzzles||[origin])game.effects.push({type:"muzzle",x:p.x,y:p.y,fromId:s.id,toId:t.id,set:true,life:1,fade:7,heavy:cal>=200,calibre:cal,heading:steamNorm(s.heading+b.train)});
   }
   steamSmokeAdd(s,b.geometry);
 }
@@ -17225,6 +17312,127 @@ function steamDrawAssignmentBadges(c,v,ships){
 }
 
 
+// Presentation only. All positions come from existing hull/mount/motion data.
+// Ink widths, flame forms and wake spread are graphic choices, not new fits.
+function steamVisualSeed(s){return [...s.id].reduce((n,c)=>(n*31+c.charCodeAt(0))>>>0,7);}
+function steamPaintSurface(c,tint){
+  // Opaque underpaint hides lower fittings and deck rules inside this outline.
+  // The enclosing canvas alpha still controls visibility of the whole ship.
+  c.fillStyle='#183039';c.fill();c.fillStyle=tint;c.fill();
+}
+function steamBarrelInk(m,k,a,b){
+  const length=Math.hypot(b[0]-a[0],b[1]-a[1]),width=steamGunInkWidth(m,k);
+  // At tactical zoom the same readable hairline remains. At inspection zoom
+  // the reinforced root and tapered chase separate without moving the muzzle.
+  if(!m.main||length*k<5)return{length,width,root:width,muzzle:width};
+  return{length,width,root:Math.max(width,m.cal/1000*1.8),muzzle:Math.max(.75/k,m.cal/1000*.85)};
+}
+function steamDrawBarrel(c,m,k,a,b,ink,damaged=false){
+  const f=steamBarrelInk(m,k,a,b);if(f.length<1e-7)return;
+  const ux=(b[0]-a[0])/f.length,uy=(b[1]-a[1])/f.length,nx=-uy,ny=ux;
+  c.save();c.strokeStyle=ink;c.fillStyle=ink;c.lineCap='butt';
+  if(damaged){c.globalAlpha*=.38;c.strokeStyle='#b58665';c.lineWidth=f.width;c.setLineDash([1.6/k,1.3/k]);}
+  else if(f.root>f.width*1.1){
+    const shoulder=.25,points=[[0,f.root/2],[shoulder,f.root/2],[1,f.muzzle/2],[1,-f.muzzle/2],[shoulder,-f.root/2],[0,-f.root/2]];
+    c.beginPath();points.forEach(([t,w],i)=>{const x=a[0]+ux*f.length*t+nx*w,y=a[1]+uy*f.length*t+ny*w;i?c.lineTo(x,y):c.moveTo(x,y);});c.closePath();c.fill();c.restore();return;
+  }else c.lineWidth=f.width;
+  c.beginPath();c.moveTo(a[0],a[1]);c.lineTo(b[0],b[1]);c.stroke();c.restore();
+}
+function steamWakeSamples(s){
+  const speed=Number.isFinite(s.speedKn)?s.speedKn:0;
+  if(speed<.35||!steamHullAfloat(s)||s._escaped)return[];
+  const length=s.length*clamp(.35+speed/18,.35,1.7),stern=s.length*.46,h=s.heading*Math.PI/180;
+  const samples=[{x:s.x-Math.sin(h)*stern,y:s.y+Math.cos(h)*stern,heading:s.heading,age:0,width:s.beam*.08}];
+  for(let i=1;i<=12;i++){
+    const age=i/12,back=stern+length*age;
+    const p=s._wake?.length?steamWakeAt(s,(s._distance||0)-back):{x:s.x-Math.sin(h)*back,y:s.y+Math.cos(h)*back,heading:s.heading};
+    samples.push({...p,age,width:s.beam*(.08+.35*age)});
+  }
+  return samples;
+}
+function steamDrawHullWake(c,v,s){
+  const points=steamWakeSamples(s);if(points.length<2)return;
+  const first=points[0],last=points.at(-1),x=wx(v,first.x),y=wy(v,first.y),tx=wx(v,last.x),ty=wy(v,last.y);
+  if(Math.hypot(tx-x,ty-y)<3)return;
+  c.save();c.lineWidth=.7;c.lineCap='round';
+  const fade=c.createLinearGradient(x,y,tx,ty);fade.addColorStop(0,'rgba(218,236,239,.13)');fade.addColorStop(.65,'rgba(218,236,239,.045)');fade.addColorStop(1,'rgba(218,236,239,0)');c.strokeStyle=fade;
+  for(const lane of [-1,0,1]){
+    c.save();if(lane===0)c.globalAlpha*=.7;c.beginPath();
+    points.forEach((p,i)=>{const h=p.heading*Math.PI/180,sx=wx(v,p.x+Math.cos(h)*p.width*lane),sy=wy(v,p.y+Math.sin(h)*p.width*lane);i?c.lineTo(sx,sy):c.moveTo(sx,sy);});
+    c.stroke();c.restore();
+  }
+  c.restore();
+}
+function steamFireSites(s){
+  if(!(s.fires>0)||!steamHullAfloat(s)||s._escaped)return[];
+  const seed=steamVisualSeed(s),g=steamGeometry(s),sites=[];
+  // Fire origins were never saved. Use stable schematic locations on the
+  // existing deck, shared by smoke and flames; do not invent impact history.
+  for(let i=0;i<Math.min(s.fires,4);i++){
+    const x=(hash01(seed+i*17)-.5)*g.L*.58,y=(hash01(seed+i*31)-.5)*g.B*.35;
+    sites.push({x,y,seed:seed+i*11});
+  }
+  return sites;
+}
+function steamDrawFireSmoke(c,v,s,time){
+  const wind=sceneWind();
+  for(const site of steamFireSites(s)){
+    const p=steamMountWorld(s,site);
+    for(let i=0;i<4;i++){
+      const age=(time*.55+i*.9+hash01(site.seed))%3.6;
+      const drift=age*(5+wind.k*.35),r=(3+age*5)*v.scale;
+      steamSmokeCloud(c,wx(v,p.x+wind.x*drift),wy(v,p.y+wind.y*drift),Math.max(1.5,r),.14*Math.sin(Math.PI*age/3.6),site.seed+i);
+    }
+  }
+}
+function steamDrawShipFires(c,v,s,time){
+  c.save();
+  for(const site of steamFireSites(s)){
+    const p=steamMountWorld(s,site),x=wx(v,p.x),y=wy(v,p.y),f=.7+.3*Math.sin(time*7.3+site.seed);
+    const r=clamp((1.3+f)*v.scale,1.15,5),h=r*(1.8+.8*f);
+    c.globalAlpha*=.8;c.fillStyle='#eb8b46';c.beginPath();
+    c.moveTo(x-r,y+r*.3);c.quadraticCurveTo(x-r*1.2,y-r,x+r*.2,y-h);c.quadraticCurveTo(x+r*.7,y-r,x+r,y+r*.3);c.closePath();c.fill();
+    c.fillStyle='#f5d391';c.beginPath();c.ellipse(x,y-r*.2,r*.42,r*.8,0,0,Math.PI*2);c.fill();
+    c.globalAlpha/=.8;
+  }
+  c.restore();
+}
+function steamDrawHullScars(c,g,s,k){
+  if(g.L*k<48)return;
+  c.save();c.beginPath();g.hull.forEach((p,i)=>i?c.lineTo(...p):c.moveTo(...p));c.closePath();c.clip();
+  for(const br of (s._breaches||[]).slice(-6)){
+    const last=s.lastTorpedoImpact,torpedo=last&&Math.abs(last.station-br.t)<.001;
+    const x=br.t*g.L/2,y=Number.isFinite(br.y)?br.y*g.B/2:torpedo?(last.side==='port'?-1:last.side==='starboard'?1:0)*g.B*.44:0;
+    const r=Math.max(1.2/k,Math.min(2.8,g.B*.1));
+    c.fillStyle='#172628';c.beginPath();c.ellipse(x,y,r*1.5,r,hash01(br.t*97),0,Math.PI*2);c.fill();
+    c.strokeStyle='rgba(194,132,85,.6)';c.lineWidth=.65/k;c.beginPath();c.moveTo(x-r,y-r*.4);c.lineTo(x+r,y+r*.3);c.stroke();
+  }
+  c.restore();
+}
+function steamDrawMuzzleFlash(c,v,e){
+  const x=wx(v,e.x),y=wy(v,e.y),life=clamp(e.life,0,1),cal=e.calibre||(e.heavy?305:100);
+  const target=shipById(e.toId),heading=Number.isFinite(e.heading)?e.heading:target?absBearing(e,target):0;
+  const length=clamp(cal*.05*v.scale+cal*.024,4,23)*(1.25-.35*life),width=length*.23;
+  c.save();c.translate(x,y);rotateBowMinusY(c,heading);c.globalAlpha*=life;
+  c.fillStyle='#edba71';c.beginPath();c.moveTo(-width,0);c.lineTo(-width*.6,-length*.45);c.lineTo(0,-length);c.lineTo(width*.7,-length*.35);c.lineTo(width,0);c.closePath();c.fill();
+  c.fillStyle='#fff0cc';c.beginPath();c.ellipse(0,-length*.2,width*.55,length*.29,0,0,Math.PI*2);c.fill();c.restore();
+}
+function steamDrawShellSplash(c,v,e){
+  const p=clamp(1-e.life,0,1),cal=Math.max(40,e.calibre||120),wind=sceneWind();
+  const x=wx(v,e.x),y=wy(v,e.y),size=clamp(cal*.045*v.scale+cal*.018,3,17),rise=Math.sin(Math.min(1,p/.7)*Math.PI);
+  c.save();c.globalAlpha*=e.life;
+  c.strokeStyle='rgba(218,240,243,.6)';c.lineWidth=.9;
+  c.beginPath();c.ellipse(x,y,size*(.3+p*1.4),size*(.18+p*.65),0,0,Math.PI*2);c.stroke();
+  for(let i=0;i<3;i++){
+    const side=i-1,dx=side*size*.25+wind.x*size*p*.35,dy=wind.y*size*p*.35;
+    const h=size*rise*(i===1?2.4:1.5),w=Math.max(.8,size*(.13+p*.12));
+    c.fillStyle=i===1?'rgba(235,249,250,.82)':'rgba(172,212,224,.55)';
+    c.beginPath();c.ellipse(x+dx,y+dy-h*.45,w,Math.max(.6,h*.5),side*.2,0,Math.PI*2);c.fill();
+  }
+  c.fillStyle='rgba(225,245,246,.45)';c.beginPath();c.ellipse(x,y,size*(.3+p*.55),size*(.16+p*.23),0,0,Math.PI*2);c.fill();c.restore();
+}
+
+
 // Compact command surface. The chart remains the heading and route control.
 function steamEscape(v){return String(v??'').replace(/[&<>"']/g,x=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[x]));}
 function steamVisible(s){return s.side===game.playerSide||game.ships.some(a=>a.side===game.playerSide&&!a.out&&canSight(a,s));}
@@ -17337,12 +17545,13 @@ function steamHealthBars(s){
     return `<div class="steam-health"><span>${label}</span><span class="steam-health-track ${hazard?'hazard':''}" role="meter" aria-label="${label}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${Math.round(f*100)}" aria-valuetext="${state}" title="${label}: ${state}"><i style="width:${f*100}%;--health-colour:${hazard?'#db9c63':f>.5?'#92bf9d':f>.25?'#ddbd77':'#dc8878'}"></i></span></div>`;
   }).join('')+'</div>';
 }
+function steamOpenNavigation(){game.commandTab='helm';game.plotRoute=false;game._steamNavFrameKey=null;}
 function steamPanelAction(action,value){
   if(action==='inspect'){game.cardId=game.menuMode==='squad'?squadronById(game.selSquadId)?.leaderId:game.selectedId;syncPanel();return;}
-  if(action==='ship'){game.plotRoute=false;game.selectedId=value;game.menuMode='ship';game.selSquadId=null;game.targetId=shipById(value)?.targetId||null;syncPanel();return;}
+  if(action==='ship'){steamOpenNavigation();game.cardId=null;game.selectedId=value;game.menuMode='ship';game.selSquadId=null;game.targetId=shipById(value)?.targetId||null;syncPanel();return;}
   if(game.exec||game.phase!=="plan")return;
   if(action==='undo'){steamUndoOrder();steamNavigationHelp(action,value);syncPanel();return;}
-  const q=game.menuMode==="squad"?squadronById(game.selSquadId):null,s=shipById(q?.leaderId||game.selectedId);
+  const q=game.menuMode==="squad"?squadronById(game.selSquadId):null,s=steamScopeGuide(q);
   if(!s||s.side!==game.playerSide)return;
   if(!['plot','inspect','ship'].includes(action))steamRememberOrder();
   const current=s.command||{kind:"course",heading:s.heading,speedKn:s.speedKn};
@@ -17355,11 +17564,7 @@ function steamPanelAction(action,value){
   if(action==="formation"&&q){q.formation=value;rebuildSquadronLines();steamInvalidate();}
   if(action==="spacing"&&q){q.spacing=clamp(Number(value),100,2000);steamInvalidate();}
   if(action==="shell")for(const a of steamScopeShips())a.doctrine=value;
-  if(action==="target"){
-    if(value){if(q)squadronSetTarget(q,value);else{s.targetId=value;s._manualTarget=true;}game.targetId=value;}
-    else{for(const a of steamScopeShips()){a._manualTarget=false;a.targetId=null;}game.targetId=null;}
-    steamInvalidate();
-  }
+  if(action==='target')steamTargetScope(value,game.commandTab!=='torpedoes');
   if(action==="attack")steamAttackScope(game.targetId||s.targetId);
   if(action==="abort"){
     for(const a of steamScopeShips())if(a.command?.kind==="attack")a.command.phase="withdraw";
@@ -17382,11 +17587,11 @@ function syncPanel(){
   if(typeof document==="undefined"||game._steamPanelRendering)return;
   game._steamPanelRendering=true;try{
   const body=document.getElementById("panelBody"),panel=document.getElementById("panel");if(!body||!panel)return;
-  steamSyncCommandTabs();
+  steamSyncGroupSelection();steamSyncCommandTabs();
   panel.classList.toggle('steam-card',!!(game.cardId||game.multiSel));
   if(game.cardId||game.multiSel){legacySyncPanel();return;}
   panel.classList.remove('tall');renderSquadronChips();
-  const q=game.menuMode==="squad"?squadronById(game.selSquadId):null,s=shipById(q?.leaderId||game.selectedId);
+  const q=game.menuMode==="squad"?squadronById(game.selSquadId):null,s=steamScopeGuide(q);
   if(s&&s.side!==game.playerSide){game.cardId=s.id;legacySyncPanel();return;}
   if(!s||s.out){setPanelExpanded(panel,false);resizeCanvas();return;}
   const members=q?q.members.map(shipById).filter(a=>a&&!a.out):[s],command=s.command;
@@ -17402,10 +17607,12 @@ function syncPanel(){
   if(tab==="helm"){
     content=`<div class="steam-row steam-helm-controls">${button('plot',steamIcon('route'),'',game.plotRoute,'Route tool: add round waypoints')}${button('hold',steamIcon('hold'),'',false,'Hold present course')}${button('stop',steamIcon('stop'),'',false,'Stop engines')}${button('undo',steamIcon('undo'),'',false,'Undo last order',game._orderHistory?.length?'':'disabled')}${q?['succession','together'].map(v=>button('turn',steamFormationIcon(v),v,(q.turnMode||'succession')===v,v==='succession'?'Follow: turn in the leader’s wake':'Together: turn on parallel courses')).join(''):squadronOf(s.id)?button('rejoin',steamIcon('rejoin'),'',false,'Rejoin '+squadronOf(s.id).name):''}</div>`;
     if(q)content+=`<div class="steam-row steam-formations" aria-label="Formation">${[['line','Line ahead'],['abreast','Line abreast'],['echelon_port','Port echelon'],['echelon_starboard','Starboard echelon']].map(([v,t])=>button('formation',steamFormationIcon(v),v,(q.formation||'line')===v,t)).join('')}<div class="steam-spacing" aria-label="Formation interval">${button('spacing','−',Math.max(100,Math.round((q.spacing||300)/50)*50-50),false,'Reduce interval by fifty metres')}<span>${Math.round(q.spacing||300)} m</span>${button('spacing','+',Math.min(2000,Math.round((q.spacing||300)/50)*50+50),false,'Increase interval by fifty metres')}</div></div>`;
+    const stragglers=members.filter(a=>a._formationStraggler);
+    if(q&&stragglers.length)content+=`<div class="steam-status steam-stragglers"><span>Falling behind squadron</span>: ${stragglers.map(a=>E(a.name)).join(' · ')}</div>`;
     content+=`<div class="steam-status">${game.exec?'Orders locked':game._steamHelp?.id===s.id?E(game._steamHelp.text):game.plotRoute?'Route tool · tap water to add a round waypoint':'Dots: course + speed · hexagon: selected order'}</div>`;
   }
   if(tab==="fire"){
-    content=shellControl+targetControl()+`<div class="steam-status">${E(steamGunneryStatus(s,valid?target:null,members))}</div>`;
+    content=shellControl+targetControl()+(steamPursuitStatus(s,q)?`<div class="steam-status">${E(steamPursuitStatus(s,q))}</div>`:'')+`<div class="steam-status">${E(steamGunneryStatus(s,valid?target:null,members))}</div>`;
   }
   if(tab==="torpedoes"){
     const armed=members.filter(a=>a.torpedoes?.count>0),count=armed.reduce((n,a)=>n+a.torpedoes.count,0),attacking=members.some(a=>a.command?.kind==='attack'),mode=s._torpMode||'hold';
@@ -17432,7 +17639,7 @@ function syncPanel(){
   }finally{game._steamPanelRendering=false;}
 }
 function serializeGame(){
-  const sv=JSON.parse(b64dec(legacySerializeGame()));sv.v=3;sv.commandRevision=14;sv.displayRevision=1;sv.motionRevision=1;sv.torpedoRevision=2;sv.rosterRevision=1;sv.geometryRevision=11;sv.damageRevision=STEAM_DAMAGE_REVISION;sv.shellRevision=STEAM_SHELL_REVISION;sv.simSeconds=game.simSeconds||0;sv.seed=simulationSeed;sv.goals=game.goals;sv.tel=game.tel;
+  const sv=JSON.parse(b64dec(legacySerializeGame()));sv.v=3;sv.commandRevision=15;sv.displayRevision=1;sv.motionRevision=1;sv.torpedoRevision=2;sv.rosterRevision=1;sv.geometryRevision=11;sv.damageRevision=STEAM_DAMAGE_REVISION;sv.shellRevision=STEAM_SHELL_REVISION;sv.simSeconds=game.simSeconds||0;sv.seed=simulationSeed;sv.goals=game.goals;sv.tel=game.tel;
   sv.squads=steamClone(game.squadrons);
   sv.ships.forEach(d=>{
     const s=shipById(d.i);d.x=s.x;d.y=s.y;d.h=s.heading;
@@ -17466,6 +17673,7 @@ function loadGameFromCode(code){
     game.squadrons=sv.squads;game.goals=sv.goals||game.goals;game.tel=sv.tel||game.tel;simulationSeed=sv.seed??simulationSeed;
     for(const d of sv.ships){const s=shipById(d.i);if(!s)continue;const p=d.steam||{};
       Object.assign(s,p.state||{});
+      if(s._moveOrderTurn==null&&s._manualThisTurn)s._moveOrderTurn=game.turn;
       Object.assign(s,{command:p.command||s.command,speedKn:p.speedKn??s.speedKn,yawRate:p.yawRate||0,_detached:!!p.detached,_manualTarget:!!p.manualTarget,_torpMode:p.torpMode||'hold',_torpSetting:p.torpSetting||'fast',_wake:p.wake||s._wake,_distance:p.distance||0});
       s._torpSpent=Array.isArray(p.torpSpent)?p.torpSpent.filter(id=>['bow-port','bow-starboard','stern'].includes(id)):[];
       s.lastTorpedoImpact=p.lastTorpedoImpact||null;s.lastShellImpact=p.lastShellImpact||null;s._breaches=p.breaches||[];
@@ -17570,7 +17778,7 @@ function init(){
       const b=document.createElement('button');b.className='gm-btn';b.textContent=label;b.addEventListener('click',()=>{document.getElementById(id)?.click();ohOv('gameMenu');});controls.appendChild(b);
     }menu.appendChild(controls);
   }
-  const stamp=document.getElementById('buildStamp');if(stamp)stamp.textContent='Controls · 2.0 alpha 29';
+  const stamp=document.getElementById('buildStamp');if(stamp)stamp.textContent='Pursuit · 2.0 alpha 32';
   steamInitLocale();
   const notes=document.getElementById('theatrePanel');
   if(notes){const p=document.createElement('p');p.className='steam-release-note';p.textContent='Steam campaigns · Command revision 2.0 · Sail campaigns parked';notes.appendChild(p);}
