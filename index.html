@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="2.1.0" />
+<meta name="application-version" content="2.1.2" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -976,9 +976,9 @@ body.steam-edition #logModalPre{min-height:0;min-width:0}
 @media(orientation:landscape){#steamNavHint{max-width:calc(100% - 332px)}}
 
 /* Fleet editing shares the fixed command tabs; actions stay outside scrolling. */
-body.steam-edition #main #panel.steam-fleet{max-height:min(64dvh,560px)}
+body.steam-edition #main #panel.steam-fleet{left:auto;right:6px;width:min(360px,calc(100% - 12px));height:auto;max-height:min(44dvh,300px)}
 body.steam-edition #steamFleetActions[hidden]{display:none}
-#steamFleetActions{display:flex;flex:0 0 auto;gap:6px;padding:7px 8px;border-top:1px solid var(--steam-line);background:rgba(9,32,39,.85)}
+#steamFleetActions{display:flex;flex:0 0 auto;gap:6px;padding:5px 8px;border-top:1px solid var(--steam-line);background:rgba(9,32,39,.85)}
 #steamFleetActions button,.steam-fleet-panel button{min-height:44px;border:1px solid rgba(213,193,140,.3);border-radius:6px;background:rgba(9,32,39,.45);color:var(--steam-ink);font:11px/1.35 system-ui,sans-serif;cursor:pointer}
 #steamFleetActions button{flex:1;padding:4px 5px}
 #steamFleetActions .primary{background:#cfb675;color:#132c30}
@@ -991,21 +991,22 @@ body.steam-edition #steamFleetActions[hidden]{display:none}
 .steam-fleet-heading{display:flex;justify-content:space-between;gap:8px;font:12px/1.4 system-ui,sans-serif}
 .steam-fleet-heading b{color:#ecd59c}.steam-fleet-heading span{color:var(--steam-muted)}
 .steam-fleet-note{font:11px/1.5 system-ui,sans-serif;color:var(--steam-muted);margin:5px 0 8px}
-.steam-fleet-members{display:grid;gap:5px}
-.steam-fleet-members button{display:flex;align-items:center;gap:8px;padding:5px 8px;text-align:left;width:100%}
-.steam-fleet-members button>span{flex:1;min-width:0}.steam-fleet-members small{font-size:10px;color:var(--steam-muted)}
-.steam-fleet-members .checked{border-color:rgba(213,193,140,.65)}
-.steam-fleet-check{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;border:1px solid #819b9d;border-radius:3px;flex:0 0 18px;color:#ecd59c;font:14px system-ui}
-.steam-assignment{border:1px solid #b9a56f;border-radius:4px;min-width:18px;text-align:center;padding:2px}
+.steam-fleet-members{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+.steam-fleet-members button{display:flex;align-items:center;gap:5px;padding:4px 5px;text-align:left;width:100%;min-width:0;height:44px}
+.steam-fleet-members button>span{flex:1;min-width:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;overflow-wrap:anywhere;font-size:11px;line-height:14px}.steam-fleet-members small{font-size:10px;color:var(--steam-muted)}
+.steam-fleet-members .checked{border-color:rgba(213,193,140,.65);background:rgba(213,193,140,.18);color:#ecd59c}
+.steam-assignment{flex:0 0 auto;border:1px solid #b9a56f;border-radius:4px;min-width:18px;text-align:center;padding:2px}
 .steam-fleet-summary{display:block;width:100%;padding:8px;text-align:left;margin-bottom:6px}
 .steam-fleet-summary b,.steam-fleet-summary span{display:block}.steam-fleet-summary span{font-size:10px;color:var(--steam-muted);margin-top:4px}
 .steam-command-head>[data-steam="fleet"]{flex:0 0 44px;width:44px;height:44px;padding:2px;border:1px solid rgba(213,193,140,.3);border-radius:5px;background:transparent;color:#d5c18c}
 .steam-command-head>[data-steam="fleet"] .steam-pennant{width:35px;height:32px}
-@media(max-width:960px) and (orientation:portrait){body.steam-edition #main #panel.steam-fleet{max-height:54dvh}}
+
 
 @media(max-height:560px) and (orientation:landscape){
- body.steam-edition #main #panel.steam-fleet{max-height:calc(100% - 12px);width:min(380px,48vw)}
- .steam-fleet-heading{margin-bottom:4px}.steam-fleet-groups{margin-bottom:5px}
+ body.steam-edition #main #panel.steam-fleet{max-height:min(300px,calc(100% - 12px));width:min(360px,48vw)}
+ body.steam-edition #panel.steam-fleet #panelBody{padding:2px 6px}
+ #steamFleetActions{padding:3px 6px}
+ .steam-fleet-heading{margin-bottom:0;font-size:11px;line-height:14px}.steam-fleet-groups{margin-bottom:5px}
 }
 
 </style>
@@ -1073,7 +1074,7 @@ body.steam-edition #steamFleetActions[hidden]{display:none}
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v2.1.0</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v2.1.2</span></div>
       <button class="start-load" id="steamResumeBattle" hidden>Resume saved battle</button>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
@@ -1116,7 +1117,7 @@ body.steam-edition #steamFleetActions[hidden]{display:none}
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v2.1.0 · Fleet management</div>
+    <div class="build-stamp" id="buildStamp">v2.1.2 · Fleet management</div>
     <button id="sailGuideBtn" title="Sail-era guide" aria-label="Sail-era guide" style="display:none;position:fixed;top:10px;right:12px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid #6c7a86;background:#0e1a22;color:#e0b85a;font:600 15px/1 Georgia,serif;cursor:pointer;">i</button>
     <button id="sailDetailBtn" title="Chart detail: names, chips and pips on or off" aria-label="Chart detail" style="display:none;position:fixed;top:42px;right:12px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid #6c7a86;background:#0e1a22;color:#9fb0bc;font:600 11px/1 sans-serif;cursor:pointer;">Aa</button>
     <div id="sailGuide" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(4,10,14,0.84);">
@@ -1350,6 +1351,7 @@ const STEAM_ZH_OTHER_SHIPS={
 // Complete phrases for command help, objectives and after-action verdicts.
 // Display only; the scoring, model strings and save payload remain English.
 const STEAM_ZH_EXTRA={
+'Edit group':'编辑分队',
 "Fleet groups":"舰队编组",
 "Manage fleet groups":"管理舰队编组",
 "Fleet management":"舰队编组管理",
@@ -1360,7 +1362,7 @@ const STEAM_ZH_EXTRA={
 "Disband group":"解散分队",
 "Group saved":"分队已保存",
 "Group disbanded · Undo available in Navigation":"分队已解散 · 可在航海面板撤销",
-"Tick to add, untick to remove. Apply transfers ships from their numbered groups. Current orders continue.":"勾选编入，取消勾选移出。点“应用”后，从徽号对应分队调入；各舰继续执行当前命令。",
+"Tap a ship name to add or remove it. Apply saves the group. Current orders continue.":"点舰名编入或移出，点“应用”保存分队。各舰继续执行当前命令。",
 "Choose at least two ships, or disband the group.":"请至少选择两艘舰艇，或解散分队。",
 "Choose a group to change its ships or disband it.":"选择分队，可调整成员或解散全队。",
 "No groups formed":"尚未组建分队",
@@ -7416,7 +7418,7 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "2.1.0";
+const ECHELON_VERSION = "2.1.2";
 const ECHELON_BUILD_NOTE = "Fleet management";
 // package.json owns the release version; build.py stamps all generated surfaces.
 function stampVersion() {
@@ -12719,7 +12721,7 @@ function renderSquadronChips() {
     game.multiSel = false; game.pendingSel = []; lastSelectionToggle = { id: null, t: 0 };
     steamOpenNavigation(); game.selSquadId = sq.id; game.menuMode = "squad"; game.selectedId = lead.id; game.cardId = null;
     game.targetId = lead.targetId || null; game._camGoal = { x: lead.x, y: lead.y };
-    setMultiSelBtn(); steamOpenFleet(sq.id);
+    setMultiSelBtn(); syncPanel();
   }));
 }
 
@@ -13778,7 +13780,7 @@ function legacyInit() {
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(done, fallback); else fallback();
   }
   bind("menuBtn", openGameMenu);
-  bind("multiSelBtn", () => steamOpenFleet());
+  bind("multiSelBtn", () => beginSquadronSelection());
   bind("gmResume", () => ohOv("gameMenu"));
   bind('gmFinish',()=>{ohOv('gameMenu');skipExecute();});
   bind('gmDownload',()=>{
@@ -17734,6 +17736,7 @@ function steamIcon(id){
     rejoin:'<path d="M17 21V3m-4 4 4-4 4 4M3 20v-5a5 5 0 0 1 5-5h9"/>',
     withdraw:'<path d="M18 21V8a5 5 0 0 0-10 0v11m-4-4 4 4 4-4"/>',
     fleet:'<path d="M9 5h12M9 12h12M9 19h12"/><circle cx="4" cy="5" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="19" r="1"/>',
+    editGroup:'<path d="M3 5h8l3 3-3 3H3ZM3 15h5M12 19l2-5 6-6 3 3-6 6ZM19 9l3 3"/>',
     squad:'<path d="M4 4h10l4 3-4 3H4ZM7 14h10l4 3-4 3H7Z"/>',
     zoom:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5M7.5 10.5h6m-3-3v6"/>'
   };
@@ -17937,7 +17940,7 @@ function syncPanel(){
     if(q)content+=`<div class="steam-members">${members.map(a=>button('ship',E(a.name)+' · '+(a.speedKn||0).toFixed(1)+' kn',a.id)).join('')}</div>`;
   }
   const group=q||squadronOf(s.id);
-  body.innerHTML=`<div class="steam-command"><header class="steam-command-head"><div class="steam-name"><strong title="${E(q?q.name:s.name)}">${E(q?squadronDisplayNumber(q)+' · '+q.name:s.name)}</strong><span>${q?(q.command?controlled.length+'/'+members.length:members.length)+' ships':''}</span></div>${button('fleet',group?steamSquadronMark(squadronDisplayNumber(group)):steamIcon('squad'),group?.id||'',false,'Manage fleet groups')}</header><div class="steam-content">${content}</div></div>`;
+  body.innerHTML=`<div class="steam-command"><header class="steam-command-head"><div class="steam-name"><strong title="${E(q?q.name:s.name)}">${E(q?squadronDisplayNumber(q)+' · '+q.name:s.name)}</strong><span>${q?(q.command?controlled.length+'/'+members.length:members.length)+' ships':''}</span></div>${button('fleet',steamIcon('editGroup'),group?.id||'',false,group?'Edit group':'Manage fleet groups')}</header><div class="steam-content">${content}</div></div>`;
   body.querySelectorAll('[data-steam]').forEach(b=>b.addEventListener('click',()=>steamPanelAction(b.dataset.steam,b.dataset.value)));
   body.querySelectorAll('.steam-details').forEach(d=>d.addEventListener('toggle',()=>{panel.classList.toggle('tall',[...body.querySelectorAll('.steam-details')].some(x=>x.open));resizeCanvas();}));
   setPanelExpanded(panel,true);resizeCanvas();steamFrameNavigation();
@@ -18112,7 +18115,7 @@ function steamOpenFleet(id){
   if(!shipById(game.selectedId)||shipById(game.selectedId).side!==game.playerSide){
     game.selectedId=game.ships.find(s=>s.side===game.playerSide&&!s.out)?.id||null;game.menuMode='ship';game.selSquadId=null;
   }
-  setMultiSelBtn();syncPanel();steamRequestAutosave();
+  setMultiSelBtn();syncPanel();document.getElementById('panelBody').scrollTop=0;steamRequestAutosave();
 }
 function steamRememberOrganisation(){
   steamRememberOrder();const last=game._orderHistory?.at(-1);if(!last)return;
@@ -18172,7 +18175,7 @@ function steamFleetAction(action,value){
   if(action==='group'){steamOpenFleet(Number(value));return;}
   if(game.exec||game.phase!=='plan')return;
   const d=game.fleetPanel;if(!d)return;
-  if(action==='new')game.fleetPanel={groupId:null,members:[]};
+  if(action==='new'){beginSquadronSelection();return;}
   if(action==='member'&&Array.isArray(d.members)){
     const s=shipById(value);if(!s||s.out||s.side!==game.playerSide)return;
     d.members=d.members.includes(value)?d.members.filter(id=>id!==value):[...d.members,value];
@@ -18212,9 +18215,9 @@ function steamRenderFleet(body){
     content=`<div class="steam-fleet-heading"><b>${q?E(q.name):'New group'}</b><span>${d.members.length} <span>selected</span></span></div>`+
       '<div class="steam-fleet-members">'+ordered.map(s=>{
         const group=squadronOf(s.id),checked=d.members.includes(s.id);
-        return steamFleetButton('member',`<i class="steam-fleet-check" aria-hidden="true">${checked?'✓':''}</i><span>${E(steamShipName(s))}</span>${group?`<small class="steam-assignment" title="${E(steamText(group.name))}">${E(squadronDisplayNumber(group))}</small>`:'<small>Independent</small>'}`,s.id,locked,
-          `role="checkbox" aria-checked="${checked}" class="${checked?'checked':''}"`);
-      }).join('')+'</div><p class="steam-fleet-note">Tick to add, untick to remove. Apply transfers ships from their numbered groups. Current orders continue.</p>';
+        return steamFleetButton('member',`<span>${E(steamShipName(s))}</span>${group?`<small class="steam-assignment" title="${E(steamText(group.name))}">${E(squadronDisplayNumber(group))}</small>`:''}`,s.id,locked,
+          `title="${E(steamShipName(s))}" aria-pressed="${checked}" class="${checked?'checked':''}"`);
+      }).join('')+'</div><p class="steam-fleet-note">Tap a ship name to add or remove it. Apply saves the group. Current orders continue.</p>';
     if(d.members.length<2)content+='<p class="steam-fleet-note">Choose at least two ships, or disband the group.</p>';
   }else{
     content='<p class="steam-fleet-note">Choose a group to change its ships or disband it.</p>'+
