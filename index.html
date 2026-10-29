@@ -9,7 +9,7 @@
 <meta name="theme-color" content="#0b252c" />
 <meta name="robots" content="noindex, nofollow" />
 <meta name="apple-mobile-web-app-title" content="Echelon" />
-<meta name="application-version" content="2.1.3" />
+<meta name="application-version" content="2.1.4" />
 <link rel="manifest" href="manifest.webmanifest" />
 <link rel="apple-touch-icon" href="icon.png" />
 <link rel="icon" type="image/png" href="icon.png" />
@@ -1074,7 +1074,7 @@ body.steam-edition #steamFleetActions[hidden]{display:none}
   <div class="overlay-card">
     <!-- 1. choose a theatre -->
     <div id="theatrePanel">
-      <div class="start-kicker">Echelon <span class="version-tag">v2.1.3</span></div>
+      <div class="start-kicker">Echelon <span class="version-tag">v2.1.4</span></div>
       <button class="start-load" id="steamResumeBattle" hidden>Resume saved battle</button>
       <div class="choose-label">Theatre</div>
       <div class="theatre-choices" id="theatreChoices"></div>
@@ -1117,7 +1117,7 @@ body.steam-edition #steamFleetActions[hidden]{display:none}
       <p class="start-blurb" id="startBlurb">-</p>
       <button class="start-go" id="startBtn">Begin</button>
     </div>
-    <div class="build-stamp" id="buildStamp">v2.1.3 · Fleet management</div>
+    <div class="build-stamp" id="buildStamp">v2.1.4 · Torpedo fixes</div>
     <button id="sailGuideBtn" title="Sail-era guide" aria-label="Sail-era guide" style="display:none;position:fixed;top:10px;right:12px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid #6c7a86;background:#0e1a22;color:#e0b85a;font:600 15px/1 Georgia,serif;cursor:pointer;">i</button>
     <button id="sailDetailBtn" title="Chart detail: names, chips and pips on or off" aria-label="Chart detail" style="display:none;position:fixed;top:42px;right:12px;z-index:60;width:26px;height:26px;border-radius:50%;border:1px solid #6c7a86;background:#0e1a22;color:#9fb0bc;font:600 11px/1 sans-serif;cursor:pointer;">Aa</button>
     <div id="sailGuide" style="display:none;position:fixed;inset:0;z-index:70;background:rgba(4,10,14,0.84);">
@@ -1355,6 +1355,7 @@ const STEAM_ZH_EXTRA={
 "Fleet groups":"舰队编组",
 "Manage fleet groups":"管理舰队编组",
 "Fleet management":"舰队编组管理",
+"Torpedo fixes":"鱼雷修正",
 "New group":"新建分队",
 "selected":"已选",
 "Independent":"独立",
@@ -1377,6 +1378,7 @@ const STEAM_ZH_EXTRA={
 'Resume saved battle':'继续已保存的战斗','Battle restored':'已恢复战斗进度','Battle restored · execution paused':'已恢复战斗进度 · 回合执行已暂停','No automatic save available':'没有可恢复的自动存档',
 'Return to the menu?':'返回主菜单？',
 'Hold: keep torpedoes loaded.':'停射：保留已装填的鱼雷。',
+'Bearing tubes empty':'该射向的发射管已空','Loaded tubes':'已装填','Reloading tubes':'装填中','Reserve':'备用',
 'Target: fire when the selected enemy is in range and tubes bear. Helm unchanged.':'指定目标：目标进入射程且发射管对准后发射。保持航行命令。',
 'Any: fire at a visible enemy when able. Helm unchanged.':'自由射击：条件允许时向可见敌舰发射。保持航行命令。',
 'Attack: close, expose tubes, fire, withdraw.':'攻击：接近目标，调整发射角度，发射后撤离。',
@@ -7418,8 +7420,8 @@ Object.assign(SHIP_SIDE, {
 // ===========================================================================
 
 // ---- build identity -------------------------------------------------------
-const ECHELON_VERSION = "2.1.3";
-const ECHELON_BUILD_NOTE = "Fleet management";
+const ECHELON_VERSION = "2.1.4";
+const ECHELON_BUILD_NOTE = "Torpedo fixes";
 // package.json owns the release version; build.py stamps all generated surfaces.
 function stampVersion() {
   try {
@@ -10358,7 +10360,7 @@ function telTorpedoLaunch(shooter, target, sol, failure, salvoIndex, salvoSize) 
 function telTorpedoResolve(t, result, contact) {
   if (!game.tel || !game.tel.torpedoes || !t || !t.telId) return;
   const ev = game.tel.torpedoes.find((x) => x.id === t.telId);
-  if (ev) { ev.result = result; if(contact)Object.assign(ev,contact); }
+  if (ev) { ev.result = result; if(contact)Object.assign(ev,contact); if(t.physical)Object.assign(ev,{actualRun:t.travelled,resolvedSeconds:game.simSeconds||0,contactPoint:{x:t.x,y:t.y}}); }
 }
 
 function resolveTorpedoes() {
@@ -13199,6 +13201,7 @@ function buildMechanicsReport() {
   const shipName = (id) => { const x = shipById(id); return x ? x.name : id || "?"; };
   const zonesText = (zones) => Object.entries(zones || {}).filter(([,n]) => n).sort((a,b)=>b[1]-a[1]).map(([z,n]) => `${z}:${n}`).join(", ") || "none";
   L.push(`${SCN.title.toUpperCase()} - MECHANICS LEDGER`);
+  if(typeof ECHELON_VERSION!=='undefined')L.push(`Echelon ${ECHELON_VERSION} | simulation ${Math.round(game.simSeconds||0)}s`);
   L.push(`Deployment mode changes formation and shell orders only. Armour, accuracy, damage, fire, flooding, systems, morale and loss thresholds use the shared combat model.`);
   L.push(`Turns fought: ${game.turn - 1}`);
   L.push("");
@@ -13220,7 +13223,16 @@ function buildMechanicsReport() {
   L.push("TORPEDO RUNS");
   if (!torps.length) L.push("  No torpedo launches recorded.");
   for (const e of torps) {
-    L.push(`  T${e.turn} ${shipName(e.fromId)} -> ${shipName(e.toId)} | fish ${e.salvoIndex || 1}/${e.salvoSize || 1} | run ${e.range || 0}m | flight ${e.flightSec || 0}s | ${e.result || e.failure || "unresolved"}${e.failure && e.result !== e.failure ? ` (weapon fault: ${e.failure})` : ""}`);
+    L.push(`  T${e.turn} ${shipName(e.fromId)} -> ${shipName(e.toId)} | fish ${e.salvoIndex || 1}/${e.salvoSize || 1} | planned run ${e.range || 0}m | planned flight ${e.flightSec || 0}s | ${e.result || e.failure || "unresolved"}${e.failure && e.result !== e.failure ? ` (weapon fault: ${e.failure})` : ""}`);
+    if(e.origin)L.push(`    launch ${e.seconds}s | tube ${e.tubeId||'unresolved'} | mode ${e.mode} | separation ${Math.round(e.separation)}m | origin ${e.origin.x.toFixed(1)},${e.origin.y.toFixed(1)} | heading ${e.heading.toFixed(1)} | speed ${e.speed.toFixed(2)}m/s | maximum run ${e.maxRun}m | shooter ${JSON.stringify(e.shooterPose)} | target ${JSON.stringify(e.targetPose)}`);
+    if(e.actualRun!=null)L.push(`    actual travel ${e.actualRun.toFixed(1)}m | resolved ${e.resolvedSeconds}s | contact ${e.contactPoint.x.toFixed(1)},${e.contactPoint.y.toFixed(1)}${e.hitId?' | hull '+shipName(e.hitId):''}`);
+  }
+  L.push('','TORPEDO RELEASE DECISIONS');
+  const decisions=Object.values(tel.torpedoDecisions||{});
+  if(!decisions.length)L.push('  This save has no rejected-shot telemetry; the reason for earlier non-launches cannot be reconstructed from this ledger.');
+  for(const row of decisions){
+    L.push(`  T${row.turn} ${shipName(row.shipId)} | mode checks ${JSON.stringify(row.modes)} | decision checks ${JSON.stringify(row.reasons)}`);
+    for(const [reason,e] of Object.entries(row.examples))L.push(`    ${reason}: last sample ${e.seconds}s | mode ${e.mode} | stock ${e.stock} | loads ${JSON.stringify(e.loads)} | position ${e.x.toFixed(1)},${e.y.toFixed(1)} | heading ${e.heading.toFixed(1)} | speed ${e.speedKn.toFixed(1)}kn | candidates ${e.checks.map(c=>shipName(c.id)+': '+c.reason+(c.separation!=null?' at '+c.separation+'m':'')).join('; ')||'not evaluated'}`);
   }
   L.push("");
   L.push("FINAL SYSTEM STATE");
@@ -15284,6 +15296,7 @@ function setupScenario(side,formation){
     s._manualTarget=false;s.yawRate=0;s._torpMode="hold";s._torpSpent=[];s._torpRetryAt=0;
     steamApplyTorpedoStores(s);
     if(s.torpedoes){s.torpedoes.initialCount=s.torpedoes.count;s.torpedoes.cooldownLeft=0;}
+    steamInitTorpedoTubes(s);
     steamInitWake(s);
   }
   // Player-requested convenience organisation, not a reconstructed historical
@@ -15778,7 +15791,7 @@ function steamEnemyOrders(){
 }
 function steamPreview(){
   if(game._steamPreview?.revision===game._steamRevision)return game._steamPreview;
-  const ships=game.ships.map(s=>({...s,command:steamClone(s.command||{}),torpedoes:s.torpedoes?{...s.torpedoes}:null,_torpSpent:[...(s._torpSpent||[])],_wake:(s._wake||[]).map(p=>({...p}))}));
+  const ships=game.ships.map(s=>({...s,command:steamClone(s.command||{}),torpedoes:s.torpedoes?{...s.torpedoes}:null,_torpSpent:[...(s._torpSpent||[])],_torpTubes:steamClone(s._torpTubes||null),_wake:(s._wake||[]).map(p=>({...p}))}));
   const paths=new Map(ships.map(s=>[s.id,[{x:s.x,y:s.y,heading:s.heading,speedKn:s.speedKn}]]));
   const sq=steamClone(game.squadrons||[]);
   for(let t=0;t<GAME_TURN_SECONDS;t+=STEAM_STEP){
@@ -15786,6 +15799,7 @@ function steamPreview(){
     for(const s of ships){
       s._previewSeconds=(game.simSeconds||0)+t+STEAM_STEP;
       if(s.torpedoes)s.torpedoes.cooldownLeft=Math.max(0,(s.torpedoes.cooldownLeft||0)-STEAM_STEP);
+      steamTorpedoReloadStep(s,STEAM_STEP);
       if(s.command?.kind==="attack"&&s.command.phase!=="withdraw"&&s.torpedoes?.count&&s.torpedoes.cooldownLeft<=0){
         const target=ships.find(x=>x.id===s.command.targetId);
         const sol=steamTorpedoSolution(s,target,ships);if(sol){steamConsumeTorpedoTubes(s,sol.tubes.slice(0,steamTorpedoReleaseCount(s,sol)));s.command.phase="withdraw";}
@@ -16810,25 +16824,89 @@ function steamShellProgress(e,time){
 }
 
 
-// Tube groups are layout constraints, not certified individual weapon fits.
-// Only Fulong has directional groups in the inherited roster. Its stations and
-// 20-degree sectors are declared estimates; generic ships retain prior sectors.
-function steamTorpedoTubeOptions(s){
+// Yalu has finite loaded tubes, separate from the carried stock. Numerical
+// stations/traverse remain modelling estimates; see YALU-TORPEDO-FIX.txt.
+// The 260-second reload restores the earlier Yalu model's timing. It is NOT a
+// measured reload for each ship. Other campaigns retain their existing model.
+const STEAM_YALU_TUBE_RELOAD=260;
+function steamHasIndividualTorpedoTubes(s){return SCN.id==='yalu'&&!!s.torpedoes&&s.id!=='fulong';}
+function steamTorpedoTubeLayout(s){
   if(!s.torpedoes)return[];
+  const tube=(id,x,y,centre,half)=>({id,x:s.length*x,y:s.beam*y,centre,half});
+  // Jane (1904): one stern discharge, one on each beam ahead of the barbettes.
+  if(SCN.id==='yalu'&&['dingyuan','zhenyuan'].includes(s.id))return[
+    tube('port',.27,-.45,-90,25),tube('starboard',.27,.45,90,25),tube('stern',-.44,0,180,20)
+  ];
+  // Zhiyuan's bow discharge is visible in McGiffin's contemporary account.
+  // Jingyuan uses its sister's arrangement; detailed station/train is estimated.
+  if(SCN.id==='yalu'&&['zhiyuan','jingyuan_1886'].includes(s.id))return[
+    tube('bow',.44,0,0,20),tube('stern',-.44,0,180,20),
+    tube('port',0,-.45,-90,70),tube('starboard',0,.45,90,70)
+  ];
+  // Jane explicitly identifies the fixed bow discharge on these Japanese ships.
+  // The remaining broadside stations retain an estimated distribution.
+  if(SCN.id==='yalu'&&['yoshino','chiyoda'].includes(s.id)){
+    const rows=[tube('bow',.44,0,0,20)],pairs=s.id==='yoshino'?2:1;
+    for(let i=0;i<pairs;i++)for(const sign of [-1,1])rows.push(tube((sign<0?'port-':'starboard-')+i,(i-(pairs-1)/2)*.18,sign*.4,sign*90,70));
+    return rows;
+  }
   if(s.id==='fulong')return[
     {id:'bow-port',x:s.length*.40,y:-s.beam*.22,centre:0,half:20},
     {id:'bow-starboard',x:s.length*.40,y:s.beam*.22,centre:0,half:20},
     {id:'stern',x:-s.length*.40,y:0,centre:180,half:20}
   ].filter(t=>!(s._torpSpent||[]).includes(t.id));
   const half=shipClassTier(s)==='capital'?25:70;
+  if(steamHasIndividualTorpedoTubes(s)){
+    // Unresolved fits keep the inherited bearing envelope. Split their known
+    // tube count between sides; an odd tube is a shared trainable mount. This
+    // is an explicit fallback, not a claim about their historical arrangement.
+    const n=steamTorpedoTubeCount(s),rows=[];
+    for(let i=0;i<Math.floor(n/2);i++)for(const sign of [-1,1])rows.push(tube((sign<0?'port-':'starboard-')+i,(i-(Math.floor(n/2)-1)/2)*.18,sign*.40,sign*90,half));
+    if(n%2)for(const sign of [-1,1])rows.push(tube('shared',0,0,sign*90,half));
+    return rows;
+  }
   return[-90,90].map(centre=>({id:null,x:0,y:0,centre,half}));
+}
+function steamInitTorpedoTubes(s,saved){
+  if(!steamHasIndividualTorpedoTubes(s)){delete s._torpTubes;return;}
+  const ids=[...new Set(steamTorpedoTubeLayout(s).map(t=>t.id))];
+  let remaining=Math.max(0,s.torpedoes.count||0);s._torpTubes={};
+  for(const id of ids){
+    const previous=saved?.[id],loaded=remaining>0&&(saved?!!previous?.loaded:true);
+    const reloadLeft=!loaded&&remaining>0&&Number.isFinite(previous?.reloadLeft)?clamp(previous.reloadLeft,0,STEAM_YALU_TUBE_RELOAD):0;
+    s._torpTubes[id]={loaded,reloadLeft};if(loaded||reloadLeft>0)remaining--;
+  }
+  steamScheduleTorpedoReloads(s);
+}
+function steamTorpedoTubeOptions(s){
+  return steamTorpedoTubeLayout(s).filter(t=>!steamHasIndividualTorpedoTubes(s)||s._torpTubes?.[t.id]?.loaded);
+}
+function steamScheduleTorpedoReloads(s){
+  if(!steamHasIndividualTorpedoTubes(s)||!s._torpTubes)return;
+  const states=Object.values(s._torpTubes);
+  let reserve=s.torpedoes.count-states.filter(t=>t.loaded||t.reloadLeft>0).length;
+  for(const t of states)if(reserve>0&&!t.loaded&&!t.reloadLeft){t.reloadLeft=STEAM_YALU_TUBE_RELOAD;reserve--;}
+}
+function steamTorpedoReloadStep(s,dt){
+  if(!steamHasIndividualTorpedoTubes(s)||!s._torpTubes)return;
+  for(const t of Object.values(s._torpTubes))if(t.reloadLeft>0){t.reloadLeft=Math.max(0,t.reloadLeft-dt);if(!t.reloadLeft)t.loaded=true;}
+  steamScheduleTorpedoReloads(s);
+}
+function steamTorpedoLoadSummary(s){
+  if(!steamHasIndividualTorpedoTubes(s))return null;
+  const states=Object.values(s._torpTubes||{}),loaded=states.filter(t=>t.loaded).length,reloading=states.filter(t=>t.reloadLeft>0).length;
+  return{loaded,reloading,reserve:Math.max(0,(s.torpedoes?.count||0)-loaded-reloading)};
 }
 function steamTorpedoTubeAllows(s,tube,heading){return Math.abs(wrap180(heading-s.heading-tube.centre))<=tube.half+1e-7;}
 function steamTorpedoTrainHeading(s,tube,heading){return steamNorm(s.heading+tube.centre+clamp(wrap180(heading-s.heading-tube.centre),-tube.half,tube.half));}
 function steamTorpedoReleaseCount(s,sol){return Math.min(s.torpedoes?.count||0,s.command?.kind==='attack'?2:1,sol?.tubes?.length??2);}
 function steamConsumeTorpedoTubes(s,tubes){
-  s._torpSpent=[...(s._torpSpent||[]),...tubes.map(t=>t?.id).filter(Boolean)];
+  if(steamHasIndividualTorpedoTubes(s)){
+    tubes=[...new Map(tubes.filter(t=>s._torpTubes?.[t?.id]?.loaded).map(t=>[t.id,t])).values()];
+    for(const t of tubes)s._torpTubes[t.id].loaded=false;
+  }else s._torpSpent=[...(s._torpSpent||[]),...tubes.map(t=>t?.id).filter(Boolean)];
   s.torpedoes.count=Math.max(0,s.torpedoes.count-tubes.length);
+  steamScheduleTorpedoReloads(s);
 }
 function steamTorpedoLaneClear(s,origin,heading,speed,run,ships){
   const time=run/speed,dx=Math.sin(heading)*run,dy=-Math.cos(heading)*run;
@@ -16964,24 +17042,39 @@ function steamTorpedoCheck(s,t,ships=game.ships){
   if(!t||t.out||s.side===t.side)return{reason:"No target"};
   if(!canSight(s,t))return{reason:"Target unseen"};
   const profile=steamTorpedoProfile(s),ready=[];let reason='Out of range';
-  for(const tube of steamTorpedoTubeOptions(s)){
+  const priority=['Out of range','Tubes masked','Bearing tubes empty','Reloading','Friendly crossing'];
+  const block=value=>{if(priority.indexOf(value)>priority.indexOf(reason))reason=value;};
+  for(const tube of steamTorpedoTubeLayout(s)){
     let origin=steamMountWorld(s,tube),solution=steamIntercept(origin,t,profile.speed,Infinity);
     if(!solution)continue;
     for(let i=0;i<3;i++){
       const heading=absBearing(origin,solution);
       origin=steamTorpedoLaunchPoint(s,heading*Math.PI/180,tube);
-      solution=steamIntercept(origin,t,profile.speed,profile.run);if(!solution)break;
+      solution=steamIntercept(origin,t,profile.speed,Infinity);if(!solution)break;
     }
     if(!solution)continue;
     const heading=absBearing(origin,solution);
-    if(!steamTorpedoTubeAllows(s,tube,heading)){if(reason!=='Friendly crossing')reason='Tubes masked';continue;}
-    if(!steamTorpedoLaneClear(s,origin,heading*Math.PI/180,profile.speed,profile.run,ships)){reason='Friendly crossing';continue;}
+    // The warhead need only reach the hull, not the ship's centre. Screen the
+    // finite nominal track against the target's moving capsule using the same
+    // contact geometry as live torpedoes. A centre-only range gate discarded
+    // valid edge-of-run shots, especially against a long approaching hull.
+    const angle=heading*Math.PI/180,flight=profile.run/profile.speed,v=steamShipVelocity(t);
+    const end={x:origin.x+Math.sin(angle)*profile.run,y:origin.y-Math.cos(angle)*profile.run};
+    const contact=steamMovingTorpedoContact({...t,x:t.x+v.x*flight,y:t.y+v.y*flight},origin,end,{x:t.x,y:t.y,heading:t.heading});
+    if(!contact)continue;
+    solution={...solution,centreRun:solution.run,centreTime:solution.time,run:contact.t*profile.run,time:contact.t*flight};
+    if(!steamTorpedoTubeAllows(s,tube,heading)){block('Tubes masked');continue;}
+    if(steamHasIndividualTorpedoTubes(s)&&!s._torpTubes?.[tube.id]?.loaded){
+      block(s._torpTubes?.[tube.id]?.reloadLeft>0?'Reloading':'Bearing tubes empty');
+      continue;
+    }
+    if(!steamTorpedoLaneClear(s,origin,heading*Math.PI/180,profile.speed,profile.run,ships)){block('Friendly crossing');continue;}
     ready.push({tube,origin,solution});
   }
   if(!ready.length)return{reason};
   // Shared-inventory generic mounts can supply a pair. Named tubes are single
   // loaded weapons, so the stern group cannot release two bow torpedoes.
-  const selected=ready.filter(r=>r.tube.id||r===ready[0]);
+  const selected=ready.filter((r,i)=>r.tube.id?ready.findIndex(v=>v.tube.id===r.tube.id)===i:r===ready[0]);
   if(!selected[0].tube.id)selected.push(selected[0]);
   const first=selected[0];
   return{reason:'Ready',solution:{...first.solution,profile,origin:first.origin,tubes:selected.map(r=>r.tube)}};
@@ -17011,7 +17104,7 @@ function steamTorpedoLaunchPoint(s,heading,tube){
 }
 function steamLaunchTorpedoes(s,t,sol){
   if(!sol)return 0;
-  sol={...sol,tubes:sol.tubes.filter(t=>!t.id||!(s._torpSpent||[]).includes(t.id))};
+  sol={...sol,tubes:sol.tubes.filter(t=>steamHasIndividualTorpedoTubes(s)?s._torpTubes?.[t.id]?.loaded:!t.id||!(s._torpSpent||[]).includes(t.id))};
   const order=s.command,coordinated=order?.kind==='attack',count=steamTorpedoReleaseCount(s,sol);
   if(count<1)return 0;
   const profile=sol.profile,aim=steamObservedTorpedoAim({...s,...sol.origin},t,profile),errors=steamTorpedoErrorModel();
@@ -17028,6 +17121,10 @@ function steamLaunchTorpedoes(s,t,sol){
     const torp={physical:true,side:s.side,sourceId:s.id,targetId:t.id,x:origin.x,y:origin.y,sourceCleared:true,hr,speed,
       launchOrigin:{...origin},tubeId:tube.id,tubeTrain:trained,travelled:0,runDist:profile.run,armingRun:profile.armingRun||0,charge:profile.charge,period:profile.id,life:1,trail:[],dead:false,resolved:false};
     torp.telId=telTorpedoLaunch(s,t,{runDist:sol.run,flightSec:sol.time,launchFrac:game.exec?game.exec.simulated/GAME_TURN_SECONDS:0},null,i,count);
+    const event=game.tel.torpedoes.find(e=>e.id===torp.telId);
+    Object.assign(event,{seconds:game.simSeconds||0,mode:s._torpMode,tubeId:tube.id,origin:{...origin},
+      shooterPose:{x:s.x,y:s.y,heading:s.heading,speedKn:s.speedKn},targetPose:{x:t.x,y:t.y,heading:t.heading,speedKn:t.speedKn},
+      separation:rangeBetween(s,t),centreRun:sol.centreRun,heading:hr*180/Math.PI,speed,maxRun:profile.run});
     game.torpedoes.push(torp);telAgg(s.id).torpFired++;used.push(tube);
     game.effects.push({type:'torpLaunch',x:origin.x,y:origin.y,hr:trained,life:1,fade:2});
   }
@@ -17138,21 +17235,37 @@ function steamTorpedoOrderCheck(s){
   const checks=steamTorpedoCandidates(s).map(t=>steamTorpedoCheck(s,t));
   const ready=checks.find(c=>c.solution);if(ready)return ready;
   // Prefer an actionable nearby obstruction over a distant/invisible enemy.
-  for(const reason of ['Reloading','Friendly crossing','Tubes masked','Out of range','Target unseen','No target']){
+  for(const reason of ['Reloading','Friendly crossing','Bearing tubes empty','Tubes masked','Out of range','Target unseen','No target']){
     const check=checks.find(c=>c.reason===reason);if(check)return check;
   }
   return{reason:'No target'};
 }
 function steamTorpedoOrders(){
   for(const s of game.ships){
-    if(s.out||!s.torpedoes?.count||s.torpedoes.cooldownLeft>0||s._torpMode==="hold")continue;
+    if(!s.torpedoes)continue;
+    let reason=s.out?'Disabled':!s.torpedoes.count?'Empty':s._torpMode==='hold'?'Holding fire':s.torpedoes.cooldownLeft>0?'Reloading':null;
     const attacking=s.command?.kind==="attack";
-    if(attacking&&s.command.phase==="withdraw")continue;
-    for(const target of steamTorpedoCandidates(s)){
-      const sol=steamTorpedoSolution(s,target);
-      if(sol&&steamLaunchTorpedoes(s,target,sol))break;
+    if(!reason&&attacking&&s.command.phase==='withdraw')reason='Withdrawing';
+    const checks=[];
+    if(!reason)for(const target of steamTorpedoCandidates(s)){
+      const check=steamTorpedoCheck(s,target);
+      checks.push({id:target?.id||null,reason:check.reason,separation:target?Math.round(rangeBetween(s,target)):null});
+      if(check.solution){
+        if(steamLaunchTorpedoes(s,target,check.solution)){reason='Released';break;}
+        checks[checks.length-1].reason='Friendly crossing';
+      }
     }
+    if(!reason)reason=['Reloading','Friendly crossing','Bearing tubes empty','Tubes masked','Out of range','Target unseen','No target'].find(r=>checks.some(c=>c.reason===r))||'No target';
+    steamRecordTorpedoDecision(s,reason,checks);
   }
+}
+function steamRecordTorpedoDecision(s,reason,checks){
+  if(!game.tel)game.tel={turns:[],agg:{},salvos:[],torpedoes:[]};
+  const records=game.tel.torpedoDecisions||(game.tel.torpedoDecisions={}),key=game.turn+':'+s.id;
+  const row=records[key]||(records[key]={turn:game.turn,shipId:s.id,modes:{},reasons:{},examples:{}});
+  const mode=s._torpMode||'hold';row.modes[mode]=(row.modes[mode]||0)+1;row.reasons[reason]=(row.reasons[reason]||0)+1;
+  row.examples[reason]={seconds:game.simSeconds||0,mode,heading:s.heading,x:s.x,y:s.y,speedKn:s.speedKn,
+    stock:s.torpedoes.count,loads:steamTorpedoLoadSummary(s),checks};
 }
 function steamSmokeAdd(s,m){
   const p=steamMountWorld(s,m);
@@ -17334,6 +17447,7 @@ function steamCombatStep(dt){
   steamSmokeStep(dt);
   for(const s of game.ships){
     if(s.torpedoes)s.torpedoes.cooldownLeft=Math.max(0,(s.torpedoes.cooldownLeft||0)-dt);
+    steamTorpedoReloadStep(s,dt);
     if(s.out)continue;
     s.turnedHard=Math.abs(wrap180(s.heading-(s._turnStart?.heading??s.heading)))>22;
     if(s._routing)continue;
@@ -17935,6 +18049,8 @@ function syncPanel(){
     const check={reason:ready?(armed.length>1?ready+' ready':'Ready'):[...reasons].map(([reason,n])=>armed.length>1?n+' × '+reason:reason).join(' · ')||'Empty'};
     content=members.some(a=>a.torpedoes)?targetControl()+`<div class="steam-row steam-torp-controls">${[['hold','Hold'],['target','Target'],['auto','Any']].map(([v,t])=>button('torpedoes',t,v,!attacking&&mode===v,v==='hold'?'Hold torpedo fire':v==='target'?'Fire at the selected target when able':'Fire at any visible enemy when able')).join('')}${attacking?button('abort',steamIcon('withdraw'),'',false,'Withdraw from attack'):button('attack','Attack','',false,'Approach, fire, withdraw',!valid||!count?'disabled':'')}</div><div class="steam-status">${count} left · ${attacking?E(s.command?.phase==='withdraw'?'Withdrawing':check.reason):mode==='hold'?'Holding fire':E(check.reason)}${mode==='auto'?' · any enemy':''}</div>`:
       targetControl()+'<div class="steam-status">No tubes</div>';
+    const loads=members.map(steamTorpedoLoadSummary).filter(Boolean);
+    if(loads.length){const sum=k=>loads.reduce((n,a)=>n+a[k],0);content+=`<div class="steam-status steam-torp-loads">${E('Loaded tubes')} ${sum('loaded')} · ${E('Reloading tubes')} ${sum('reloading')} · ${E('Reserve')} ${sum('reserve')}</div>`;}
     if(members.some(a=>a.torpedoes)){
       const help=attacking?'Attack: close, expose tubes, fire, withdraw.':{
         hold:'Hold: keep torpedoes loaded.',
@@ -17958,12 +18074,12 @@ function syncPanel(){
   }finally{game._steamPanelRendering=false;}
 }
 function serializeGame(){
-  const sv=JSON.parse(b64dec(legacySerializeGame()));sv.v=3;sv.commandRevision=16;sv.displayRevision=1;sv.motionRevision=1;sv.torpedoRevision=2;sv.rosterRevision=1;sv.geometryRevision=11;sv.damageRevision=STEAM_DAMAGE_REVISION;sv.shellRevision=STEAM_SHELL_REVISION;sv.simSeconds=game.simSeconds||0;sv.seed=simulationSeed;sv.goals=game.goals;sv.tel=game.tel;
+  const sv=JSON.parse(b64dec(legacySerializeGame()));sv.v=3;sv.commandRevision=16;sv.displayRevision=1;sv.motionRevision=1;sv.torpedoRevision=3;sv.rosterRevision=1;sv.geometryRevision=11;sv.damageRevision=STEAM_DAMAGE_REVISION;sv.shellRevision=STEAM_SHELL_REVISION;sv.simSeconds=game.simSeconds||0;sv.seed=simulationSeed;sv.goals=game.goals;sv.tel=game.tel;
   sv.release=ECHELON_VERSION;sv.squads=steamClone(game.squadrons);sv.resume=steamResumeState();
   sv.ships.forEach(d=>{
     const s=shipById(d.i);d.x=s.x;d.y=s.y;d.h=s.heading;
     d.steam={state:Object.fromEntries(Object.entries(s).filter(([k,v])=>!['_visA','_sinkStart'].includes(k)&&(v===null||["string","number","boolean"].includes(typeof v)))),command:s.command,speedKn:s.speedKn,yawRate:s.yawRate,detached:s._detached,manualTarget:s._manualTarget,
-      torpMode:s._torpMode,torpSetting:s._torpSetting,torpSpent:s._torpSpent,wake:s._wake,distance:s._distance,lastTorpedoImpact:s.lastTorpedoImpact,lastShellImpact:s.lastShellImpact,breaches:s._breaches,turnStart:s._turnStart};
+      torpMode:s._torpMode,torpSetting:s._torpSetting,torpSpent:s._torpSpent,torpTubes:s._torpTubes,wake:s._wake,distance:s._distance,lastTorpedoImpact:s.lastTorpedoImpact,lastShellImpact:s.lastShellImpact,breaches:s._breaches,turnStart:s._turnStart};
     d.b=s.batteries.map(b=>({id:b.mountId,r:b.readiness,k:b.knockedOut,db:b.disabledBarrels,l:b.loadedShell,t:b.train,rt:b.rangeTargetId,rl:b.rangeLevel,shots:b.shotsThisTurn||0}));
   });
   sv.torpedoes=game.torpedoes;sv.smoke=game.smoke;
@@ -18082,6 +18198,8 @@ function loadGameFromCode(code){
       s.torpedoes={count,initialCount:fit.total,ready:count>0&&cooldownLeft<=0,cooldownLeft};
     }
     if(s.torpedoes&&!d.tp){s.torpedoes.count=0;s.torpedoes.ready=false;}
+    steamInitTorpedoTubes(s,d.steam?.torpTubes);
+    if(s._torpMode==='will')s._torpMode='auto';
   }
   game.plotRoute=false;game._orderHistory=[];game._chartLabels=[];game.cardId=null;game.multiSel=null;
   if((sv.damageRevision||0)<STEAM_DAMAGE_REVISION)logLine('Impact model updated: existing ship damage retained. Torpedoes still running will use their saved warhead charge and the revised damage response.','sys');
